@@ -1,8 +1,8 @@
 {
-  "name": "back-end",
+  "name": "wetri",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "우리가 함께 만드는, 트라이애슬론 🏃🏻 | 🏊‍♂️ | 🚴",
+  "author": "원호, 정용",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
