@@ -31,18 +31,16 @@ private func swiftLintCommand() -> String {
 public extension TargetScript {
   static let swiftFormat: Self = .pre(
     script: """
-    if [ "$CONFIGURATION" == "\(ConfigurationName("WeTri").rawValue)" ]; then
-        export PATH="$PATH:/opt/homebrew/bin"
-        if which swiftformat > /dev/null; then
-            if [ "${ENABLE_PREVIEWS}" = "YES" ]; then
-                echo "Not running Swift Format for Xcode Previews"
-                exit 0;
-            fi
-            \(swiftFormatCommand())
-        else
-            echo "warning: SwiftFormat not installed, download from https://github.com/nicklockwood/SwiftFormat"
-        fi
-    fi
+      export PATH="$PATH:/opt/homebrew/bin"
+      if which swiftformat > /dev/null; then
+          if [ "${ENABLE_PREVIEWS}" = "YES" ]; then
+              echo "Not running Swift Format for Xcode Previews"
+              exit 0;
+          fi
+          \(swiftFormatCommand())
+      else
+          echo "warning: SwiftFormat not installed, download from https://github.com/nicklockwood/SwiftFormat"
+      fi
     """,
     name: "SwiftFormat Run Script",
     basedOnDependencyAnalysis: false
@@ -50,14 +48,12 @@ public extension TargetScript {
   
   static var swiftLint: Self = .post(
     script: """
-    if [ "$CONFIGURATION" == "\(ConfigurationName("WeTri").rawValue)" ]; then
-        export PATH="$PATH:/opt/homebrew/bin"
-        if which swiftlint > /dev/null; then
-            \(swiftLintCommand())
-        else
-            echo "warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint"
-        fi
-    fi
+      export PATH="$PATH:/opt/homebrew/bin"
+      if which swiftlint > /dev/null; then
+          \(swiftLintCommand())
+      else
+          echo "warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint"
+      fi
     """,
     name: "SwiftLint Run Script",
     basedOnDependencyAnalysis: false

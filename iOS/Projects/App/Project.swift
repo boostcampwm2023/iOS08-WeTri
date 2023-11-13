@@ -21,11 +21,11 @@ let project = Project.makeModule(
           "UIWindowSceneSessionRoleApplication": [
             [
               "UISceneConfigurationName": "Default Configuration",
-              "UISceneDelegateClassName": "$(PRODUCT_MODULE_NAME).SceneDelegate"
-            ]
-          ]
-        ]
-      ]
+              "UISceneDelegateClassName": "$(PRODUCT_MODULE_NAME).SceneDelegate",
+            ],
+          ],
+        ],
+      ],
     ]
   )
 )

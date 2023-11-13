@@ -32,6 +32,7 @@ public extension Project {
       infoPlist: infoPlist,
       sources: sources,
       resources: resources,
+      scripts: [.swiftLint, .swiftFormat],
       dependencies: dependencies)
     
     let schemes: [Scheme] = [.makeScheme(target: .debug, name: name)]
