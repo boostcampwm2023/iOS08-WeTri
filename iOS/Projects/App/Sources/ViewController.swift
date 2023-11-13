@@ -6,12 +6,13 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import DesignSystem
 import UIKit
 
 final class ViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
 
-    view.backgroundColor = .systemBackground
+    view.backgroundColor = .gray
   }
 }

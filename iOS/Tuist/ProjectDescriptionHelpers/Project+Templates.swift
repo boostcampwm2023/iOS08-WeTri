@@ -10,7 +10,7 @@ public extension Project {
     deploymentTarget: DeploymentTarget? = .iOS(targetVersion: "16.0", devices: [.iphone]),
     dependencies: [TargetDependency] = [],
     sources: SourceFilesList = ["Sources/**"],
-    resources: ResourceFileElements? = nil,
+    resources: ResourceFileElements? = ["Resources/**"],
     infoPlist: InfoPlist = .default,
     isTestable: Bool = false)
   -> Project {
