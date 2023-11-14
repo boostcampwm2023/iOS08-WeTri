@@ -16,12 +16,11 @@ public extension Project {
   -> Project {
     
     let settings: Settings = .settings(
-      base: [:],
+      base: ["ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES"],
       configurations: [
         .debug(name: .debug),
         .release(name: .release)
-      ],
-      defaultSettings: .recommended)
+      ])
     
     let appTarget = Target(
       name: name,
@@ -57,6 +56,7 @@ public extension Project {
     return Project(
       name: name,
       organizationName: organizationName,
+      options: .options(automaticSchemesOptions: .disabled, disableBundleAccessors: true, disableSynthesizedResourceAccessors: true),
       packages: packages,
       settings: settings,
       targets: targets,
