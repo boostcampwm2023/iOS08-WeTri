@@ -72,12 +72,7 @@ public extension UIButton.Configuration {
       default: break
       }
       button.configuration?.title = text
-      button.configuration?.font = UIFont(
-        descriptor: UIFont
-          .preferredFont(forTextStyle: .largeTitle)
-          .fontDescriptor.withSymbolicTraits(.traitBold)!,
-        size: 0
-      )
+      button.configuration?.font = .preferredFont(forTextStyle: .largeTitle, with: .traitBold)
     }
   }
 }
