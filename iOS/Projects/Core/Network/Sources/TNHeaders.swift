@@ -8,8 +8,12 @@
 
 import Foundation
 
-public struct TNHeaders {
-  var headers: [TNHeader]
+public struct TNHeaders: Hashable {
+  private var headers: [TNHeader]
+
+  public init(headers: [TNHeader]) {
+    self.headers = headers
+  }
 
   var dictionary: [String: String] {
     let headersTuple = headers.map { ($0.key, $0.value) }

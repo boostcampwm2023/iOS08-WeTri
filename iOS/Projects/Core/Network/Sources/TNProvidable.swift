@@ -10,67 +10,27 @@ import Foundation
 
 // MARK: - TNProvidable
 
-protocol TNProvidable {
-  func request<EndPoint: TNEndPoint>(endpoint: EndPoint) async throws -> Data
+public protocol TNProvidable {
+  associatedtype EndPoint = TNEndPoint
+  func request(_ service: EndPoint) async throws -> Data
+  func request(_ service: EndPoint, completion: @Sendable @escaping (Data?, URLResponse?, Error?) -> Void) throws
 }
 
 // MARK: - TNProvider
 
-struct TNProvider: TNProvidable {
-  private let session: URLSession
-  init(session: URLSession) {
+public struct TNProvider<T: TNEndPoint>: TNProvidable {
+  private let session: URLSessionProtocol
+  init(session: URLSessionProtocol) {
     self.session = session
   }
 
-  func request(endpoint: some TNEndPoint) async throws -> Data {
-    let (data, urlResponse) = try await session.data(for: endpoint.request())
-
+  public func request(_ service: T) async throws -> Data {
+    // TODO: URLResponse에 대응하는 코드 작성(backend 내려주는 API 문서 활용)
+    let (data, urlResponse) = try await session.data(for: service.request(), delegate: nil)
     return data
   }
-}
 
-private extension TNEndPoint {
-  func request() throws -> URLRequest {
-    guard let targetURL = URL(string: baseURL)?.appending(path: path).appending(query: query)
-    else {
-      throw TNError.invalidURL
-    }
-    var request = URLRequest(url: targetURL)
-    request.httpMethod = method.rawValue
-    request.allHTTPHeaderFields = headers.dictionary
-    request.httpBody = body?.data
-
-    return request
-  }
-}
-
-private extension URL {
-  func appending(query: Encodable?) -> URL? {
-    guard let query else {
-      return self
-    }
-    var urlComponents = URLComponents(string: absoluteString)
-    urlComponents?.queryItems = query.dictionary.map { (key: String, value: Any) in
-      return URLQueryItem(name: key, value: "\(value)")
-    }
-    return urlComponents?.url
-  }
-}
-
-private extension Encodable {
-  var data: Data? {
-    return try? JSONEncoder().encode(self)
-  }
-
-  var dictionary: [String: Any] {
-    guard
-      let data = try? JSONEncoder().encode(self),
-      let jsonData = try? JSONSerialization.jsonObject(with: data),
-      let dictionaryTarget = jsonData as? [String: Any]
-    else {
-      return [:]
-    }
-
-    return dictionaryTarget
+  public func request(_ service: T, completion: @escaping (Data?, URLResponse?, Error?) -> Void) throws {
+    try session.dataTask(with: service.request(), completionHandler: completion).resume()
   }
 }
