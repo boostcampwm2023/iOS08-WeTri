@@ -16,6 +16,7 @@
 --enable sortedSwitchCases
 --enable wrapEnumCases
 --enable wrapSwitchCases
+--guardelse "next-line"
 
 --disable wrapMultilineStatementBraces
 --disable andOperator
