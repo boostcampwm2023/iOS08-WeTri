@@ -8,6 +8,7 @@ let project = Project.makeModule(
   dependencies: [
     ProjectTargetDependency.Trinet,
     ProjectTargetDependency.DesignSystem,
+    ProjectTargetDependency.TNCocoaCombine,
   ],
   isTestable: true
 )
