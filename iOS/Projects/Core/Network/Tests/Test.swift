@@ -42,7 +42,7 @@ final class Test: XCTestCase {
 
     // Assert
     XCTAssertNotNil(targetURL)
-    XCTAssertEqual(targetURL, URL(string: "base"))
+    XCTAssertEqual(targetURL, URL(string: "base/"))
   }
 
   func test_Base와Path를포함_urlRequest를생성_성공() throws {
