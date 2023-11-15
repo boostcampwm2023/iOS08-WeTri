@@ -22,11 +22,36 @@ final class UIPageControll: UIView {
     super.init(coder: coder)
   }
 
-  private let currentPageView: UIView = {
-    let view = UIView()
+  private let currentPageView: RoundShadowView = {
+    let view = RoundShadowView(
+      shadow: .init(
+        shadowColor: DesignSystemColor.main03.cgColor,
+        shadowOffset: CGSize(width: 0, height: 1),
+        shadowOpacity: 0.2, shadowRadius: 4.0
+      ),
+      cornerRadius: 4
+    )
+    
     view.backgroundColor = DesignSystemColor.main03
 
     view.translatesAutoresizingMaskIntoConstraints = false
     return view
   }()
+  
+  private let pageView: RoundShadowView = {
+    let view = RoundShadowView(
+      shadow: .init(
+        shadowColor: DesignSystemColor.main03.cgColor,
+        shadowOffset: CGSize(width: 0, height: 1),
+        shadowOpacity: 0.2, shadowRadius: 4.0
+      ),
+      cornerRadius: 4
+    )
+    
+    view.backgroundColor = DesignSystemColor.main03
+
+    view.translatesAutoresizingMaskIntoConstraints = false
+    return view
+  }()
+  
 }
