@@ -1,5 +1,5 @@
 //
-//  AppCoordinator.swift
+//  BCoordinator.swift
 //  WeTri
 //
 //  Created by 안종표 on 2023/11/15.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-final class AppCoordinator: AppCoordinating {
+final class BCoordinator: BCoordinating {
   var navigationController: UINavigationController
   var childCoordinators: [Coordinating] = []
   weak var finishDelegate: CoordinatorFinishDelegate?
@@ -21,16 +21,7 @@ final class AppCoordinator: AppCoordinating {
   }
 
   func start() {
-    // (LoginFlow와 TabBarFlow 분기 처리) (todo)
-    let tabBarCoordinator = TabBarCoordinator(navigationController: navigationController)
-    tabBarCoordinator.start()
-  }
-
-  func startLoginFlow() {
-    // (LoginViewController 추가되면 로직 추가) (todo)
-  }
-
-  func startTabBarFlow() {
-    // (TabBarController 추가되면 로직 추가) (todo)
+    let viewController = BViewController()
+    navigationController.pushViewController(viewController, animated: false)
   }
 }

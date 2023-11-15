@@ -13,16 +13,17 @@ import UIKit
 protocol Coordinating: AnyObject {
   var navigationController: UINavigationController { get set }
   var childCoordinators: [Coordinating] { get set }
-  var finishDelegate: CoordinatorFinishDelegate { get set }
+  var finishDelegate: CoordinatorFinishDelegate? { get set }
   var flow: CoordinatorFlow { get }
 
   func start()
-  func finish(childCoordinator: Coordinating)
+  func finish()
 }
 
 extension Coordinating {
-  func finish(childCoordinator: Coordinating) {
-    childCoordinators = childCoordinators.filter { $0.flow != childCoordinator.flow }
+  func finish() {
+    childCoordinators.removeAll()
+    finishDelegate?.flowDidFinished(childCoordinator: self)
   }
 }
 

@@ -1,5 +1,5 @@
 //
-//  CoordinatorFinishDelegate.swift
+//  BCoordinating.swift
 //  WeTri
 //
 //  Created by 안종표 on 2023/11/15.
@@ -8,6 +8,4 @@
 
 import Foundation
 
-protocol CoordinatorFinishDelegate: AnyObject {
-  func flowDidFinished(childCoordinator: Coordinating)
-}
+protocol BCoordinating: Coordinating {}
