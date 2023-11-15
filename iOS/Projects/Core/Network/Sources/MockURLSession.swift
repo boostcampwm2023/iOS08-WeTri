@@ -15,17 +15,17 @@ public struct MockURLSession: URLSessionProtocol {
   let mockResponse: URLResponse
   let mockError: Error?
 
-  init(mockData: Data = Data(), mockResponse: URLResponse = URLResponse(), mockError: Error? = nil) {
+  public init(mockData: Data = Data(), mockResponse: URLResponse = URLResponse(), mockError: Error? = nil) {
     self.mockData = mockData
     self.mockResponse = mockResponse
     self.mockError = mockError
   }
 
-  func data(for _: URLRequest, delegate _: URLSessionTaskDelegate?) async throws -> (Data, URLResponse) {
+  public func data(for _: URLRequest, delegate _: URLSessionTaskDelegate?) async throws -> (Data, URLResponse) {
     return (mockData, mockResponse)
   }
 
-  func dataTask(
+  public func dataTask(
     with _: URLRequest,
     completionHandler: @escaping @Sendable (Data?, URLResponse?, Error?) -> Void
   ) -> URLSessionDataTask {

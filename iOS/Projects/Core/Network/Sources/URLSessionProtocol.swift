@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - URLSessionProtocol
 
-protocol URLSessionProtocol {
+public protocol URLSessionProtocol {
   func data(for request: URLRequest, delegate: URLSessionTaskDelegate?) async throws -> (Data, URLResponse)
 
   func dataTask(

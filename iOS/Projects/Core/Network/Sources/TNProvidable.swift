@@ -20,7 +20,8 @@ public protocol TNProvidable {
 
 public struct TNProvider<T: TNEndPoint>: TNProvidable {
   private let session: URLSessionProtocol
-  init(session: URLSessionProtocol) {
+
+  public init(session: URLSessionProtocol) {
     self.session = session
   }
 
