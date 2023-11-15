@@ -12,15 +12,15 @@ import UIKit
 // MARK: - ExerciseSelectController
 
 public class ExerciseSelectController: UIViewController {
-  init() {
-    
+  public init() {
     super.init(nibName: nil, bundle: nil)
   }
+
   public required init?(coder: NSCoder) {
     super.init(coder: coder)
   }
-  
-  public override func viewDidLoad() {
+
+  override public func viewDidLoad() {
     super.viewDidLoad()
     setup()
   }
