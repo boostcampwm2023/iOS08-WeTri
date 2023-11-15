@@ -7,3 +7,8 @@
 //
 
 import Foundation
+
+protocol AppCoordinating: Coordinating {
+  func startLoginFlow()
+  func startTabBarFlow()
+}

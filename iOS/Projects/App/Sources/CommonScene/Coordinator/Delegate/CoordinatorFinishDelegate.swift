@@ -7,3 +7,7 @@
 //
 
 import Foundation
+
+protocol CoordinatorFinishDelegate: AnyObject {
+  func flowDidFinished()
+}

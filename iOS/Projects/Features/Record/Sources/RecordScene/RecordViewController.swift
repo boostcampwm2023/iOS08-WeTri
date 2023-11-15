@@ -7,6 +7,4 @@
 
 import UIKit
 
-class RecordViewController: UIViewController {
-
-}
+class RecordViewController: UIViewController {}
