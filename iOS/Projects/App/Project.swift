@@ -12,10 +12,8 @@ let project = Project.makeModule(
   name: "WeTri",
   product: .app,
   dependencies: [
-    .project(
-      target: "DesignSystem",
-      path: .relativeToRoot("Projects/Shared/DesignSystem")
-    ),
+    ProjectTargetDependency.DesignSystem,
+    ProjectTargetDependency.Trinet,
   ],
   resources: ["Resources/**"],
   infoPlist: .extendingDefault(
