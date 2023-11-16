@@ -6,6 +6,7 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import DesignSystem
 import UIKit
 
 // MARK: - ExerciseSelectViewController
@@ -73,18 +74,18 @@ private extension ExerciseSelectViewController {
 
     view.addSubview(exerciseSelectDescriptionLabel)
     exerciseSelectDescriptionLabel.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
-    exerciseSelectDescriptionLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 23).isActive = true
-    exerciseSelectDescriptionLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -23).isActive = true
+    exerciseSelectDescriptionLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: ConstraintsGuideLine.value).isActive = true
+    exerciseSelectDescriptionLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
 
     view.addSubview(exerciseCardCollectionView)
     exerciseCardCollectionView.topAnchor.constraint(equalTo: exerciseSelectDescriptionLabel.bottomAnchor, constant: 12).isActive = true
-    exerciseCardCollectionView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 23).isActive = true
-    exerciseCardCollectionView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -23).isActive = true
+    exerciseCardCollectionView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: ConstraintsGuideLine.value).isActive = true
+    exerciseCardCollectionView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
     exerciseCardCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -15).isActive = true
 
     view.addSubview(nextButton)
-    nextButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 23).isActive = true
-    nextButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -23).isActive = true
+    nextButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: ConstraintsGuideLine.value).isActive = true
+    nextButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
     nextButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -28).isActive = true
   }
 }
