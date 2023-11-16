@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
   Generated,
   OneToOne,
-  OneToMany
+  OneToMany,
 } from 'typeorm';
 
 @Entity()

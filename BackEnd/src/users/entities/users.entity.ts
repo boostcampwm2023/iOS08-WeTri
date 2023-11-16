@@ -17,7 +17,7 @@ export class UserModel {
   @Column()
   provider: string;
 
-  @OneToOne(() => ProfileModel, (profile)=> profile.user, {
+  @OneToOne(() => ProfileModel, (profile) => profile.user, {
     eager: true,
     cascade: true,
   })
