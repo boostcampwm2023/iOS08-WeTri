@@ -8,6 +8,6 @@
 
 import Foundation
 
-protocol CoordinatorFinishDelegate: AnyObject {
+public protocol CoordinatorFinishDelegate: AnyObject {
   func flowDidFinished(childCoordinator: Coordinating)
 }

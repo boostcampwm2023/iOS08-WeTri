@@ -6,6 +6,7 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import Coordinator
 import Foundation
 
 protocol BCoordinating: Coordinating {}

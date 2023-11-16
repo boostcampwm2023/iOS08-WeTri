@@ -10,7 +10,7 @@ import UIKit
 
 // MARK: - Coordinating
 
-protocol Coordinating: AnyObject {
+public protocol Coordinating: AnyObject {
   var navigationController: UINavigationController { get set }
   var childCoordinators: [Coordinating] { get set }
   var finishDelegate: CoordinatorFinishDelegate? { get set }
@@ -20,16 +20,9 @@ protocol Coordinating: AnyObject {
   func finish()
 }
 
-extension Coordinating {
+public extension Coordinating {
   func finish() {
     childCoordinators.removeAll()
     finishDelegate?.flowDidFinished(childCoordinator: self)
   }
-}
-
-// MARK: - CoordinatorFlow
-
-enum CoordinatorFlow {
-  case login
-  case tabBar
 }

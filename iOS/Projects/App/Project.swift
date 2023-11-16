@@ -13,6 +13,7 @@ let project = Project.makeModule(
   product: .app,
   dependencies: [
     ProjectTargetDependency.Record,
+    ProjectTargetDependency.Coordinator,
   ],
   resources: ["Resources/**"],
   infoPlist: .extendingDefault(
