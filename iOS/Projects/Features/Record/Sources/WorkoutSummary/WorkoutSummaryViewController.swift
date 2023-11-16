@@ -31,6 +31,7 @@ public final class WorkoutSummaryViewController: UIViewController {
   private let endingWorkoutButton: UIButton = {
     let button = UIButton(configuration: .mainCircularEnabled(title: "종료"))
     button.configuration?.font = .preferredFont(forTextStyle: .largeTitle, with: .traitBold)
+    button.accessibilityHint = "운동을 종료합니다."
     return button
   }()
 
