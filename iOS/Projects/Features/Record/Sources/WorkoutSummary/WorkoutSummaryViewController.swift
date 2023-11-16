@@ -164,7 +164,9 @@ public final class WorkoutSummaryViewController: UIViewController {
       cell.configure(with: itemIdentifier)
     }
 
-    participantsDataSource = ParticipantsDataSource(collectionView: participantsCollectionView) { collectionView, indexPath, itemIdentifier in
+    participantsDataSource = ParticipantsDataSource(
+      collectionView: participantsCollectionView
+    ) { collectionView, indexPath, itemIdentifier in
       collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: itemIdentifier)
     }
   }

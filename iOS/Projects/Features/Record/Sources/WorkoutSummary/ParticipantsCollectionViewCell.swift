@@ -28,6 +28,7 @@ final class ParticipantsCollectionViewCell: UICollectionViewCell {
     let label = UILabel()
     label.font = .preferredFont(forTextStyle: .title3)
     label.text = "S043_홍승현"
+    label.accessibilityHint = Strings.nicknameAccessibilityHint
     return label
   }()
 
@@ -35,6 +36,7 @@ final class ParticipantsCollectionViewCell: UICollectionViewCell {
     let label = UILabel()
     label.font = .preferredFont(forTextStyle: .title3, with: .traitBold)
     label.text = "4.3km"
+    label.accessibilityHint = Strings.workoutDistanceAccessibilityHint
     return label
   }()
 
@@ -182,5 +184,10 @@ private extension ParticipantsCollectionViewCell {
     static let profileImageSize: CGFloat = 64
     static let wholeStackViewEdge: CGFloat = 10
     static let markingSize: CGFloat = 12
+  }
+
+  enum Strings {
+    static let nicknameAccessibilityHint = "닉네임"
+    static let workoutDistanceAccessibilityHint = "운동한 거리"
   }
 }
