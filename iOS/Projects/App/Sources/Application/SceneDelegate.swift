@@ -14,9 +14,16 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
   func scene(_ scene: UIScene, willConnectTo _: UISceneSession, options _: UIScene.ConnectionOptions) {
     guard let windowScene = scene as? UIWindowScene else { return }
+    let navigationController = UINavigationController()
     window = UIWindow(windowScene: windowScene)
+<<<<<<< 4d503049592a790312cea053ab0745c044bf3168:iOS/Projects/App/Sources/SceneDelegate.swift
     let nvc = UINavigationController(rootViewController: ExerciseSelectController())
     window?.rootViewController = nvc
+=======
+    window?.rootViewController = navigationController
+    let coordinator = AppCoordinator(navigationController: navigationController)
+    coordinator.start()
+>>>>>>> [GWL-40] Root Coordinator 세팅 (#48):iOS/Projects/App/Sources/Application/SceneDelegate.swift
     window?.makeKeyAndVisible()
   }
 }
