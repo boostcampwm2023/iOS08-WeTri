@@ -10,18 +10,18 @@ import UIKit
 
 // MARK: - GWRoundShadowView
 
-public final class GWRoundShadowView: UIView {
+final class GWRoundShadowView: UIView {
   let containerView = UIView()
   let cornerRadius: CGFloat
   let customShadow: CustomShadow
   private var shadowLayer: CAShapeLayer!
   private var fillColor: CGColor = UIColor.blue.cgColor
 
-  public func update(color: UIColor) {
+  func update(color: UIColor) {
     fillColor = color.cgColor
   }
 
-  override public func layoutSubviews() {
+  override func layoutSubviews() {
     super.layoutSubviews()
     if shadowLayer == nil {
       shadowLayer = CAShapeLayer()
