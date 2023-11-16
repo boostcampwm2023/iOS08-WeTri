@@ -58,7 +58,12 @@ private extension ExerciseSelectViewController {
     let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalHeight(1))
 
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    item.contentInsets = .init(top: 5, leading: 5, bottom: 5, trailing: 5)
+    item.contentInsets = .init(
+      top: Const.CellInset,
+      leading: Const.CellInset,
+      bottom: Const.CellInset,
+      trailing: Const.CellInset
+    )
 
     let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
                                            heightDimension: .fractionalWidth(0.55))
@@ -87,5 +92,9 @@ private extension ExerciseSelectViewController {
     nextButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: ConstraintsGuideLine.value).isActive = true
     nextButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
     nextButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -28).isActive = true
+  }
+
+  enum Const {
+    static let CellInset: CGFloat = 5
   }
 }

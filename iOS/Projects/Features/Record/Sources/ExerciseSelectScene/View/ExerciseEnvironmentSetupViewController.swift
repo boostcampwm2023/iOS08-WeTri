@@ -40,7 +40,7 @@ public final class ExerciseEnvironmentSetupViewController: UIViewController {
   private let exerciseSelectView = ExerciseSelectViewController()
 
   private let pageControl: GWPageControl = {
-    let pageControl = GWPageControl(count: 5)
+    let pageControl = GWPageControl(count: Const.countOfPage)
 
     pageControl.translatesAutoresizingMaskIntoConstraints = false
     return pageControl
@@ -90,5 +90,9 @@ private extension ExerciseEnvironmentSetupViewController {
     contentNAV.view.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor).isActive = true
     contentNAV.view.topAnchor.constraint(equalTo: pageControl.bottomAnchor).isActive = true
     contentNAV.view.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor).isActive = true
+  }
+
+  enum Const {
+    static let countOfPage = 2
   }
 }
