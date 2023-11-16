@@ -19,6 +19,8 @@ public final class WorkoutSummaryViewController: UIViewController {
 
   private var subscriptions: Set<AnyCancellable> = []
 
+  private var participantsDataSource: ParticipantsDataSource?
+
   // MARK: UI Components
 
   private let recordTimerLabel: UILabel = {
@@ -60,6 +62,8 @@ public final class WorkoutSummaryViewController: UIViewController {
     setupConstraints()
     setupStyles()
     bind()
+    generateDataSources()
+    setupInitialSnapshots()
   }
 
   // MARK: Configuration
@@ -94,6 +98,10 @@ public final class WorkoutSummaryViewController: UIViewController {
           equalTo: safeArea.trailingAnchor,
           constant: -Metrics.horizontal
         ),
+        participantsCollectionView.bottomAnchor.constraint(
+          equalTo: endingWorkoutButton.topAnchor,
+          constant: -Metrics.collectionViewBottom
+        ),
 
         endingWorkoutButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
         endingWorkoutButton.widthAnchor.constraint(equalToConstant: Metrics.endingWorkoutButtonSize),
@@ -120,6 +128,34 @@ public final class WorkoutSummaryViewController: UIViewController {
     }
     .store(in: &subscriptions)
   }
+
+  /// DataSource를 생성합니다.
+  private func generateDataSources() {
+    let cellRegistration = ParticipantsCellRegistration { cell, _, itemIdentifier in
+      cell.configure(with: itemIdentifier)
+    }
+
+    participantsDataSource = ParticipantsDataSource(collectionView: participantsCollectionView) { collectionView, indexPath, itemIdentifier in
+      collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: itemIdentifier)
+    }
+  }
+
+  private func setupInitialSnapshots() {
+    guard let participantsDataSource else { return }
+    var snapshot = ParticipantsSnapshot()
+    snapshot.appendSections([.main])
+    snapshot.appendItems(
+      [
+        "house",
+        "square.and.arrow.up",
+        "pencil.circle",
+        "pencil.and.outline",
+        "pencil.tip.crop.circle.badge.minus.fill",
+      ]
+    )
+
+    participantsDataSource.apply(snapshot)
+  }
 }
 
 // MARK: WorkoutSummaryViewController.Metrics
@@ -128,9 +164,25 @@ private extension WorkoutSummaryViewController {
   enum Metrics {
     static let recordTimerLabelTop: CGFloat = 12
     static let collectionViewTop: CGFloat = 12
+    static let collectionViewBottom: CGFloat = 44
     static let horizontal: CGFloat = 36
     static let endingWorkoutButtonSize: CGFloat = 150
     static let endingWorkoutButtonBottom: CGFloat = 32
+  }
+}
+
+// MARK: - Diffable DataSources Options
+
+private extension WorkoutSummaryViewController {
+  typealias ParticipantsCellRegistration = UICollectionView.CellRegistration<ParticipantsCollectionViewCell, Item>
+  typealias ParticipantsDataSource = UICollectionViewDiffableDataSource<Section, Item>
+  typealias ParticipantsSnapshot = NSDiffableDataSourceSnapshot<Section, Item>
+
+  // TODO: API가 정해진 뒤 Item 설정 필요
+  typealias Item = String
+
+  enum Section {
+    case main
   }
 }
 

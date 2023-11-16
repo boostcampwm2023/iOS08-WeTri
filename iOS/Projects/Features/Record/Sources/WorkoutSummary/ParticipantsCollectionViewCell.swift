@@ -17,6 +17,7 @@ final class ParticipantsCollectionViewCell: UICollectionViewCell {
   private let profileImageView: UIImageView = {
     let imageView = UIImageView()
     imageView.contentMode = .scaleAspectFill
+    imageView.backgroundColor = DesignSystemColor.primaryBackGround
     imageView.layer.cornerRadius = Metrics.profileImageSize * 0.5
     imageView.layer.cornerCurve = .continuous
     imageView.clipsToBounds = true
@@ -49,6 +50,7 @@ final class ParticipantsCollectionViewCell: UICollectionViewCell {
   private let markingCircularBackgroundView: UIView = {
     let view = UIView()
     view.backgroundColor = DesignSystemColor.main03
+    view.layer.cornerRadius = Metrics.markingSize * 0.5
     return view
   }()
 
@@ -117,6 +119,8 @@ final class ParticipantsCollectionViewCell: UICollectionViewCell {
     containerView.translatesAutoresizingMaskIntoConstraints = false
     wholeStackView.translatesAutoresizingMaskIntoConstraints = false
     profileImageView.translatesAutoresizingMaskIntoConstraints = false
+    markingCircularContainerView.translatesAutoresizingMaskIntoConstraints = false
+    markingCircularBackgroundView.translatesAutoresizingMaskIntoConstraints = false
 
     NSLayoutConstraint.activate(
       [
@@ -144,6 +148,14 @@ final class ParticipantsCollectionViewCell: UICollectionViewCell {
 
         profileImageView.widthAnchor.constraint(equalToConstant: Metrics.profileImageSize),
         profileImageView.heightAnchor.constraint(equalToConstant: Metrics.profileImageSize),
+
+        markingCircularContainerView.widthAnchor.constraint(equalToConstant: Metrics.markingSize),
+        markingCircularContainerView.heightAnchor.constraint(equalToConstant: Metrics.markingSize),
+
+        markingCircularBackgroundView.topAnchor.constraint(equalTo: markingCircularContainerView.topAnchor),
+        markingCircularBackgroundView.bottomAnchor.constraint(equalTo: markingCircularContainerView.bottomAnchor),
+        markingCircularBackgroundView.leadingAnchor.constraint(equalTo: markingCircularContainerView.leadingAnchor),
+        markingCircularBackgroundView.trailingAnchor.constraint(equalTo: markingCircularContainerView.trailingAnchor),
       ]
     )
   }
@@ -155,6 +167,12 @@ final class ParticipantsCollectionViewCell: UICollectionViewCell {
     contentView.layer.shadowOffset = CGSize(width: 0, height: 2)
     contentView.backgroundColor = .clear
   }
+
+  // MARK: Internal
+
+  func configure(with imageName: String) {
+    profileImageView.image = UIImage(systemName: imageName)
+  }
 }
 
 // MARK: ParticipantsCollectionViewCell.Metrics
@@ -163,5 +181,6 @@ private extension ParticipantsCollectionViewCell {
   enum Metrics {
     static let profileImageSize: CGFloat = 64
     static let wholeStackViewEdge: CGFloat = 10
+    static let markingSize: CGFloat = 12
   }
 }
