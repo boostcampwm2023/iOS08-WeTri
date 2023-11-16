@@ -10,18 +10,18 @@ import UIKit
 
 // MARK: - GWRoundShadowView
 
-final class GWRoundShadowView: UIView {
+public final class GWRoundShadowView: UIView {
   let containerView = UIView()
   let cornerRadius: CGFloat
-  let customShadow: CustomShadow
+  let customShadow: GWShadow
   private var shadowLayer: CAShapeLayer!
   private var fillColor: CGColor = UIColor.blue.cgColor
 
-  func update(color: UIColor) {
+  public func update(color: UIColor) {
     fillColor = color.cgColor
   }
 
-  override func layoutSubviews() {
+  override public func layoutSubviews() {
     super.layoutSubviews()
     if shadowLayer == nil {
       shadowLayer = CAShapeLayer()
@@ -43,7 +43,7 @@ final class GWRoundShadowView: UIView {
     }
   }
 
-  init(shadow: CustomShadow, cornerRadius: CGFloat, backgroundColor: CGColor) {
+  public init(shadow: GWShadow, cornerRadius: CGFloat, backgroundColor: CGColor) {
     customShadow = shadow
     self.cornerRadius = cornerRadius
     fillColor = backgroundColor
@@ -54,13 +54,4 @@ final class GWRoundShadowView: UIView {
   required init?(coder _: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
-}
-
-// MARK: - CustomShadow
-
-struct CustomShadow {
-  let shadowColor: CGColor
-  let shadowOffset: CGSize
-  let shadowOpacity: Float
-  let shadowRadius: CGFloat
 }
