@@ -10,13 +10,13 @@ import Foundation
 
 import UIKit
 
-// MARK: - TNPageControl
+// MARK: - GWPageControl
 
 public final class GWPageControl: UIView {
   let countOfPage: Int
   var currentPageIndex: Int = 0
   let spacing: CGFloat = 8
-  var pages: [RoundShadowView] = []
+  var pages: [GWRoundShadowView] = []
   var pageswidthConstraint: [NSLayoutConstraint] = []
 
   // MARK: - 과연 UIVIew를 optional로 만드는게 맞을까?
@@ -55,7 +55,7 @@ public final class GWPageControl: UIView {
 
 private extension GWPageControl {
   func makePages() {
-    pages = (0 ..< countOfPage).enumerated().map { _, _ -> RoundShadowView in
+    pages = (0 ..< countOfPage).enumerated().map { _, _ -> GWRoundShadowView in
       return pageViewObject
     }
   }
@@ -82,8 +82,8 @@ private extension GWPageControl {
     }
   }
 
-  var pageViewObject: RoundShadowView {
-    let view = RoundShadowView(
+  var pageViewObject: GWRoundShadowView {
+    let view = GWRoundShadowView(
       shadow: .init(
         shadowColor: DesignSystemColor.gray02.cgColor,
         shadowOffset: CGSize(width: 0, height: 1),
