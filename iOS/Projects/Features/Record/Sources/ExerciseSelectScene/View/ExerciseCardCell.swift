@@ -21,6 +21,16 @@ class ExerciseCardCell: UICollectionViewCell {
     setupConstraints()
   }
 
+  override var isSelected: Bool {
+    didSet {
+      if isSelected {
+        makeSelectUI()
+      } else {
+        makeDeslectUI()
+      }
+    }
+  }
+
   private let exerciseIconDescriptionLagel: UILabel = {
     let label = UILabel()
     label.font = UIFont.preferredFont(forTextStyle: .title3)
@@ -37,7 +47,7 @@ class ExerciseCardCell: UICollectionViewCell {
     let icon = UIImage(systemName: "figure.run", withConfiguration: config)
     let imageView = UIImageView(image: icon)
     imageView.contentMode = .scaleAspectFit
-    imageView.tintColor = DesignSystemColor.main03
+    imageView.tintColor = DesignSystemColor.primaryText
 
     imageView.translatesAutoresizingMaskIntoConstraints = false
     return imageView
@@ -76,5 +86,33 @@ private extension ExerciseCardCell {
     layer.masksToBounds = false
     layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: radius).cgPath
     layer.cornerRadius = radius
+  }
+
+  func makeSelectUI() {
+    exerciseIcon.tintColor = DesignSystemColor.main03
+    exerciseIcon.makeShadow()
+    exerciseIconDescriptionLagel.textColor = DesignSystemColor.main03
+    exerciseIconDescriptionLagel.font = .preferredFont(forTextStyle: .title3, with: .traitBold)
+  }
+
+  func makeDeslectUI() {
+    exerciseIcon.tintColor = DesignSystemColor.primaryText
+    exerciseIcon.disableShadow()
+    exerciseIconDescriptionLagel.textColor = DesignSystemColor.primaryText
+    exerciseIconDescriptionLagel.font = .preferredFont(forTextStyle: .title3)
+  }
+}
+
+private extension UIImageView {
+  func makeShadow() {
+    layer.shadowColor = UIColor.black.cgColor
+    layer.shadowOffset = CGSize(width: -2, height: 2)
+    layer.shadowRadius = 2.0
+    layer.shadowOpacity = 0.3
+    layer.masksToBounds = false
+  }
+
+  func disableShadow() {
+    layer.shadowOpacity = 0
   }
 }

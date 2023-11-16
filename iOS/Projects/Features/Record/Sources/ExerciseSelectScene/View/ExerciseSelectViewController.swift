@@ -1,38 +1,29 @@
 //
-//  ExerciseSelectController.swift
+//  ExerciseSelectViewController.swift
 //  RecordFeature
 //
-//  Created by MaraMincho on 11/15/23.
+//  Created by MaraMincho on 11/16/23.
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
-import DesignSystem
 import UIKit
 
-// MARK: - ExerciseSelectController
+// MARK: - ExerciseSelectViewController
 
-public class ExerciseSelectController: UIViewController {
-  public init() {
+final class ExerciseSelectViewController: UIViewController {
+  override init(nibName _: String?, bundle _: Bundle?) {
     super.init(nibName: nil, bundle: nil)
   }
 
-  public required init?(coder: NSCoder) {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    setupConstraints()
+    navigationController?.setNavigationBarHidden(true, animated: false)
+  }
+
+  required init?(coder: NSCoder) {
     super.init(coder: coder)
   }
-
-  override public func viewDidLoad() {
-    super.viewDidLoad()
-    setup()
-    configureDataSource()
-    insertTempSource()
-  }
-
-  private let pageControl: GWPageControl = {
-    let pageControl = GWPageControl(count: 5)
-
-    pageControl.translatesAutoresizingMaskIntoConstraints = false
-    return pageControl
-  }()
 
   private let exerciseSelectDescriptionLabel: UILabel = {
     let label = UILabel()
@@ -59,16 +50,9 @@ public class ExerciseSelectController: UIViewController {
     button.translatesAutoresizingMaskIntoConstraints = false
     return button
   }()
-
-  var dataSource: UICollectionViewDiffableDataSource<Int, UUID>!
 }
 
-private extension ExerciseSelectController {
-  func setup() {
-    view.backgroundColor = .systemBackground
-    setupConstraints()
-  }
-
+private extension ExerciseSelectViewController {
   func makeCollectionViewLayout() -> UICollectionViewLayout {
     let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalHeight(1))
 
@@ -76,7 +60,7 @@ private extension ExerciseSelectController {
     item.contentInsets = .init(top: 5, leading: 5, bottom: 5, trailing: 5)
 
     let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                           heightDimension: .fractionalWidth(0.6))
+                                           heightDimension: .fractionalWidth(0.55))
     let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
 
     let section = NSCollectionLayoutSection(group: group)
@@ -84,41 +68,19 @@ private extension ExerciseSelectController {
     return UICollectionViewCompositionalLayout(section: section)
   }
 
-  func configureDataSource() {
-    dataSource = .init(collectionView: exerciseCardCollectionView, cellProvider: { collectionView, indexPath, _ in
-      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ExerciseCardCell.identifier, for: indexPath)
-      return cell
-    })
-  }
-
-  func insertTempSource() {
-    var snapshot = dataSource.snapshot()
-    snapshot.deleteAllItems()
-    snapshot.appendSections([0])
-    snapshot.appendItems([.init(), .init(), .init(), .init(), .init()])
-
-    dataSource.apply(snapshot)
-  }
-
   func setupConstraints() {
     let safeArea = view.safeAreaLayoutGuide
 
-    view.addSubview(pageControl)
-    pageControl.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 10).isActive = true
-    pageControl.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 23).isActive = true
-    pageControl.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -23).isActive = true
-    pageControl.heightAnchor.constraint(equalToConstant: 30).isActive = true
-
     view.addSubview(exerciseSelectDescriptionLabel)
-    exerciseSelectDescriptionLabel.topAnchor.constraint(equalTo: pageControl.bottomAnchor, constant: 12).isActive = true
+    exerciseSelectDescriptionLabel.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
     exerciseSelectDescriptionLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 23).isActive = true
     exerciseSelectDescriptionLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -23).isActive = true
 
     view.addSubview(exerciseCardCollectionView)
-    exerciseCardCollectionView.topAnchor.constraint(equalTo: exerciseSelectDescriptionLabel.bottomAnchor, constant: 15).isActive = true
+    exerciseCardCollectionView.topAnchor.constraint(equalTo: exerciseSelectDescriptionLabel.bottomAnchor, constant: 12).isActive = true
     exerciseCardCollectionView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 23).isActive = true
     exerciseCardCollectionView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -23).isActive = true
-    exerciseCardCollectionView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor).isActive = true
+    exerciseCardCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -15).isActive = true
 
     view.addSubview(nextButton)
     nextButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 23).isActive = true
