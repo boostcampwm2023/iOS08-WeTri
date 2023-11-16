@@ -17,9 +17,11 @@ public final class WorkoutSummaryViewController: UIViewController {
 
   private let viewModel: WorkoutSummaryViewModelRepresentable
 
+  private var participantsDataSource: ParticipantsDataSource?
+
   private var subscriptions: Set<AnyCancellable> = []
 
-  private var participantsDataSource: ParticipantsDataSource?
+  private let endWorkoutSubject: PassthroughSubject<Void, Never> = .init()
 
   // MARK: UI Components
 
@@ -30,10 +32,16 @@ public final class WorkoutSummaryViewController: UIViewController {
     return label
   }()
 
-  private let endingWorkoutButton: UIButton = {
+  private lazy var endWorkoutButton: UIButton = {
     let button = UIButton(configuration: .mainCircularEnabled(title: "종료"))
     button.configuration?.font = .preferredFont(forTextStyle: .largeTitle, with: .traitBold)
     button.accessibilityHint = "운동을 종료합니다."
+    button.addAction(
+      UIAction { [weak self] _ in
+        self?.endWorkoutSubject.send(())
+      },
+      for: .touchUpInside
+    )
     return button
   }()
 
@@ -76,13 +84,13 @@ public final class WorkoutSummaryViewController: UIViewController {
   private func setupLayouts() {
     view.addSubview(recordTimerLabel)
     view.addSubview(participantsCollectionView)
-    view.addSubview(endingWorkoutButton)
+    view.addSubview(endWorkoutButton)
   }
 
   private func setupConstraints() {
     let safeArea = view.safeAreaLayoutGuide
     recordTimerLabel.translatesAutoresizingMaskIntoConstraints = false
-    endingWorkoutButton.translatesAutoresizingMaskIntoConstraints = false
+    endWorkoutButton.translatesAutoresizingMaskIntoConstraints = false
     participantsCollectionView.translatesAutoresizingMaskIntoConstraints = false
 
     NSLayoutConstraint.activate(
@@ -104,14 +112,14 @@ public final class WorkoutSummaryViewController: UIViewController {
           constant: -Metrics.horizontal
         ),
         participantsCollectionView.bottomAnchor.constraint(
-          equalTo: endingWorkoutButton.topAnchor,
+          equalTo: endWorkoutButton.topAnchor,
           constant: -Metrics.collectionViewBottom
         ),
 
-        endingWorkoutButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-        endingWorkoutButton.widthAnchor.constraint(equalToConstant: Metrics.endingWorkoutButtonSize),
-        endingWorkoutButton.heightAnchor.constraint(equalToConstant: Metrics.endingWorkoutButtonSize),
-        endingWorkoutButton.bottomAnchor.constraint(
+        endWorkoutButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+        endWorkoutButton.widthAnchor.constraint(equalToConstant: Metrics.endingWorkoutButtonSize),
+        endWorkoutButton.heightAnchor.constraint(equalToConstant: Metrics.endingWorkoutButtonSize),
+        endWorkoutButton.bottomAnchor.constraint(
           equalTo: safeArea.bottomAnchor,
           constant: -Metrics.endingWorkoutButtonBottom
         ),
@@ -124,7 +132,7 @@ public final class WorkoutSummaryViewController: UIViewController {
   }
 
   private func bind() {
-    let output = viewModel.transform(input: .init())
+    let output = viewModel.transform(input: .init(endWorkoutPublisher: endWorkoutSubject.eraseToAnyPublisher()))
     output.sink { state in
       switch state {
       case .idle:

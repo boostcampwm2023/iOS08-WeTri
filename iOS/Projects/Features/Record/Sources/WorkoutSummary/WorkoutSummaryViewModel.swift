@@ -10,7 +10,9 @@ import Combine
 
 // MARK: - WorkoutSummaryViewModelInput
 
-public struct WorkoutSummaryViewModelInput {}
+public struct WorkoutSummaryViewModelInput {
+  let endWorkoutPublisher: AnyPublisher<Void, Never>
+}
 
 public typealias WorkoutSummaryViewModelOutput = AnyPublisher<WorkoutSummaryState, Never>
 
@@ -41,11 +43,15 @@ public final class WorkoutSummaryViewModel {
 // MARK: WorkoutSummaryViewModelRepresentable
 
 extension WorkoutSummaryViewModel: WorkoutSummaryViewModelRepresentable {
-  public func transform(input _: WorkoutSummaryViewModelInput) -> WorkoutSummaryViewModelOutput {
+  public func transform(input: WorkoutSummaryViewModelInput) -> WorkoutSummaryViewModelOutput {
     for subscription in subscriptions {
       subscription.cancel()
     }
     subscriptions.removeAll()
+
+    input.endWorkoutPublisher
+      .sink {}
+      .store(in: &subscriptions)
 
     let initialState: WorkoutSummaryViewModelOutput = Just(.idle).eraseToAnyPublisher()
 
