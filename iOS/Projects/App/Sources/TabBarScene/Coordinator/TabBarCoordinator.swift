@@ -56,7 +56,7 @@ final class TabBarCoordinator: TabBarCoordinating {
 
   private func makePageNavigationController(page: TabBarPage) -> UINavigationController {
     let navigationController = UINavigationController()
-    let tabBarItem = UITabBarItem(title: page.title, image: page.image, tag: page.tag)
+    let tabBarItem = UITabBarItem(title: page.title, image: page.image, selectedImage: page.selectedImage)
     navigationController.tabBarItem = tabBarItem
     startTabBarCoordinator(page: page, pageNavigationViewController: navigationController)
     return navigationController
@@ -88,7 +88,6 @@ private enum TabBarPage: CaseIterable {
   case profile
 }
 
-/// (디자인 시스템 수정 후, 각 탭바에 맞는 탭이미지 넣기) (todo)
 private extension TabBarPage {
   var title: String {
     switch self {
@@ -101,25 +100,25 @@ private extension TabBarPage {
     }
   }
 
-  var image: UIImage {
+  var image: UIImage? {
     switch self {
     case .home:
-      return UIImage(systemName: "star.fill")!
+      return UIImage(systemName: "house")
     case .record:
-      return UIImage(systemName: "star.fill")!
+      return UIImage(systemName: "star")
     case .profile:
-      return UIImage(systemName: "star.fill")!
+      return UIImage(systemName: "person")
     }
   }
 
-  var tag: Int {
+  var selectedImage: UIImage? {
     switch self {
     case .home:
-      return 0
+      return UIImage(systemName: "house.fill")
     case .record:
-      return 1
+      return UIImage(systemName: "star.fill")
     case .profile:
-      return 2
+      return UIImage(systemName: "person.fill")
     }
   }
 }
