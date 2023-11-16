@@ -146,20 +146,23 @@ public final class WorkoutSummaryViewController: UIViewController {
     let item = NSCollectionLayoutItem(
       layoutSize: .init(
         widthDimension: .fractionalWidth(1),
-        heightDimension: .absolute(84)
+        heightDimension: .absolute(Metrics.collectionViewCellHeight)
       )
     )
-    item.edgeSpacing = .init(leading: nil, top: .fixed(6), trailing: nil, bottom: .fixed(6))
+    item.edgeSpacing = .init(
+      leading: nil,
+      top: .fixed(Metrics.collectionViewItemSpacing),
+      trailing: nil,
+      bottom: .fixed(Metrics.collectionViewItemSpacing)
+    )
 
     let group = NSCollectionLayoutGroup.vertical(
       layoutSize: .init(
         widthDimension: .fractionalWidth(1),
-        heightDimension: .estimated(468)
+        heightDimension: .estimated(468) // Item 높이와 수에 따라 정해지기에 의미없는 값(468)을 넣음
       ),
       subitems: [item]
     )
-
-    group.interItemSpacing = .fixed(12)
 
     let section = NSCollectionLayoutSection(group: group)
 
@@ -204,9 +207,12 @@ private extension WorkoutSummaryViewController {
     static let recordTimerLabelTop: CGFloat = 12
     static let collectionViewTop: CGFloat = 12
     static let collectionViewBottom: CGFloat = 44
+    static let collectionViewItemSpacing: CGFloat = 6
     static let horizontal: CGFloat = 36
-    static let endingWorkoutButtonSize: CGFloat = 150
     static let endingWorkoutButtonBottom: CGFloat = 32
+
+    static let endingWorkoutButtonSize: CGFloat = 150
+    static let collectionViewCellHeight: CGFloat = 84
   }
 }
 
