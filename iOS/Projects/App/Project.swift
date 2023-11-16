@@ -13,6 +13,7 @@ let project = Project.makeModule(
   product: .app,
   dependencies: [
     ProjectTargetDependency.Record,
+    ProjectTargetDependency.WeTriArchitecture,
   ],
   resources: ["Resources/**"],
   infoPlist: .extendingDefault(
