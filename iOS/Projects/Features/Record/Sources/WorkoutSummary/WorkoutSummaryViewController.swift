@@ -35,6 +35,11 @@ public final class WorkoutSummaryViewController: UIViewController {
     return button
   }()
 
+  private let participantsCollectionView: UICollectionView = {
+    let layout = UICollectionViewCompositionalLayout.list(using: .init(appearance: .insetGrouped))
+    return UICollectionView(frame: .zero, collectionViewLayout: layout)
+  }()
+
   // MARK: Initializations
 
   public init(viewModel: WorkoutSummaryViewModelRepresentable) {
@@ -60,14 +65,16 @@ public final class WorkoutSummaryViewController: UIViewController {
   // MARK: Configuration
 
   private func setupLayouts() {
-    view.addSubview(endingWorkoutButton)
     view.addSubview(recordTimerLabel)
+    view.addSubview(participantsCollectionView)
+    view.addSubview(endingWorkoutButton)
   }
 
   private func setupConstraints() {
     let safeArea = view.safeAreaLayoutGuide
     recordTimerLabel.translatesAutoresizingMaskIntoConstraints = false
     endingWorkoutButton.translatesAutoresizingMaskIntoConstraints = false
+    participantsCollectionView.translatesAutoresizingMaskIntoConstraints = false
 
     NSLayoutConstraint.activate(
       [
@@ -75,10 +82,26 @@ public final class WorkoutSummaryViewController: UIViewController {
         recordTimerLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.horizontal),
         recordTimerLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: Metrics.recordTimerLabelTop),
 
+        participantsCollectionView.topAnchor.constraint(
+          equalTo: recordTimerLabel.bottomAnchor,
+          constant: Metrics.collectionViewTop
+        ),
+        participantsCollectionView.leadingAnchor.constraint(
+          equalTo: safeArea.leadingAnchor,
+          constant: Metrics.horizontal
+        ),
+        participantsCollectionView.trailingAnchor.constraint(
+          equalTo: safeArea.trailingAnchor,
+          constant: -Metrics.horizontal
+        ),
+
         endingWorkoutButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-        endingWorkoutButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -Metrics.endingWorkoutButtonBottom),
         endingWorkoutButton.widthAnchor.constraint(equalToConstant: Metrics.endingWorkoutButtonSize),
         endingWorkoutButton.heightAnchor.constraint(equalToConstant: Metrics.endingWorkoutButtonSize),
+        endingWorkoutButton.bottomAnchor.constraint(
+          equalTo: safeArea.bottomAnchor,
+          constant: -Metrics.endingWorkoutButtonBottom
+        ),
       ]
     )
   }
@@ -104,6 +127,7 @@ public final class WorkoutSummaryViewController: UIViewController {
 private extension WorkoutSummaryViewController {
   enum Metrics {
     static let recordTimerLabelTop: CGFloat = 12
+    static let collectionViewTop: CGFloat = 12
     static let horizontal: CGFloat = 36
     static let endingWorkoutButtonSize: CGFloat = 150
     static let endingWorkoutButtonBottom: CGFloat = 32
