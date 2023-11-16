@@ -37,9 +37,14 @@ public final class WorkoutSummaryViewController: UIViewController {
     return button
   }()
 
-  private let participantsCollectionView: UICollectionView = {
-    let layout = UICollectionViewCompositionalLayout.list(using: .init(appearance: .insetGrouped))
-    return UICollectionView(frame: .zero, collectionViewLayout: layout)
+  private lazy var participantsCollectionView: UICollectionView = {
+    let collectionView = UICollectionView(
+      frame: .zero,
+      collectionViewLayout: createCompositionalLayout()
+    )
+    collectionView.backgroundColor = DesignSystemColor.primaryBackGround
+    collectionView.showsVerticalScrollIndicator = false
+    return collectionView
   }()
 
   // MARK: Initializations
@@ -127,6 +132,30 @@ public final class WorkoutSummaryViewController: UIViewController {
       }
     }
     .store(in: &subscriptions)
+  }
+
+  private func createCompositionalLayout() -> UICollectionViewCompositionalLayout {
+    let item = NSCollectionLayoutItem(
+      layoutSize: .init(
+        widthDimension: .fractionalWidth(1),
+        heightDimension: .absolute(84)
+      )
+    )
+    item.edgeSpacing = .init(leading: nil, top: .fixed(6), trailing: nil, bottom: .fixed(6))
+
+    let group = NSCollectionLayoutGroup.vertical(
+      layoutSize: .init(
+        widthDimension: .fractionalWidth(1),
+        heightDimension: .estimated(468)
+      ),
+      subitems: [item]
+    )
+
+    group.interItemSpacing = .fixed(12)
+
+    let section = NSCollectionLayoutSection(group: group)
+
+    return UICollectionViewCompositionalLayout(section: section)
   }
 
   /// DataSource를 생성합니다.
