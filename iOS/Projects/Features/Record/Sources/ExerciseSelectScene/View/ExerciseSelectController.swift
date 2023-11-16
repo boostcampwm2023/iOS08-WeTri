@@ -27,8 +27,8 @@ public class ExerciseSelectController: UIViewController {
     insertTempSource()
   }
 
-  private let pageControl: UIPageControl = {
-    let pageControl = UIPageControl(count: 5)
+  private let pageControl: GWPageControl = {
+    let pageControl = GWPageControl(count: 5)
 
     pageControl.translatesAutoresizingMaskIntoConstraints = false
     return pageControl

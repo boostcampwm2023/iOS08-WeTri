@@ -9,9 +9,9 @@
 import DesignSystem
 import UIKit
 
-// MARK: - UIPageControl
+// MARK: - TNPageControl
 
-public final class UIPageControl: UIView {
+public final class GWPageControl: UIView {
   let countOfPage: Int
   var currentPageIndex: Int = 0
   let spacing: CGFloat = 8
@@ -52,7 +52,7 @@ public final class UIPageControl: UIView {
   }
 }
 
-private extension UIPageControl {
+private extension GWPageControl {
   func makePages() {
     pages = (0 ..< countOfPage).enumerated().map { _, _ -> RoundShadowView in
       return pageViewObject
@@ -97,7 +97,7 @@ private extension UIPageControl {
   }
 }
 
-public extension UIPageControl {
+public extension GWPageControl {
   func selectPage(at pageIndex: Int) {
     guard 0 ..< pages.count ~= pageIndex else {
       return
