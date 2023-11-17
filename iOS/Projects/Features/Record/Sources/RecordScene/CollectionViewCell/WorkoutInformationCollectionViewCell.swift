@@ -49,7 +49,7 @@ final class WorkoutInformationCollectionViewCell: UICollectionViewCell {
 
   @available(*, unavailable)
   required init?(coder _: NSCoder) {
-    fatalError("xib파일을 사용하지않습니다.")
+    fatalError("No Xib")
   }
 
   func configure(workoutInformation: WorkoutInformation) {
@@ -76,17 +76,17 @@ private extension WorkoutInformationCollectionViewCell {
   }
 }
 
+// MARK: - Metrics
+
+private enum Metrics {
+  static let leadingTrailingpadding: CGFloat = 10
+  static let topBottomPadding: CGFloat = 47
+}
+
 // MARK: - WorkoutInformation
 
 struct WorkoutInformation {
   let sport: String
   let time: String
   let distance: String
-}
-
-// MARK: - Metrics
-
-private enum Metrics {
-  static let leadingTrailingpadding: CGFloat = 10
-  static let topBottomPadding: CGFloat = 47
 }
