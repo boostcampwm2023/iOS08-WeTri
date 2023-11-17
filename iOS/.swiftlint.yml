@@ -25,6 +25,12 @@ colon:
 
 indentation: 2
 
+trailing_comma:
+  mandatory_comma: true
+  
+line_length:
+  warning: 150
+
 custom_rules:
   no_objcMembers:
     name: "@objcMembers"
