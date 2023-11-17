@@ -16,7 +16,7 @@ class ExerciseCardCell: UICollectionViewCell {
 
   override init(frame: CGRect) {
     super.init(frame: frame)
-    shadowDecorate()
+    makeShaodwAndRounded()
     backgroundColor = .white
     setupConstraints()
   }
@@ -75,7 +75,7 @@ private extension ExerciseCardCell {
     exerciseIcon.bottomAnchor.constraint(equalTo: exerciseIconDescriptionLagel.topAnchor, constant: -15).isActive = true
   }
 
-  func shadowDecorate() {
+  func makeShaodwAndRounded() {
     let radius: CGFloat = 10
     contentView.layer.cornerRadius = radius
     contentView.layer.borderWidth = 1
