@@ -11,19 +11,12 @@ import UIKit
 
 // MARK: - ExerciseSelectViewController
 
-final class ExerciseSelectViewController: UIViewController {
-  override init(nibName _: String?, bundle _: Bundle?) {
-    super.init(nibName: nil, bundle: nil)
-  }
+final class ExerciseSelectViewController: UIViewController {  
 
   override func viewDidLoad() {
     super.viewDidLoad()
     setupConstraints()
     navigationController?.setNavigationBarHidden(true, animated: false)
-  }
-
-  required init?(coder: NSCoder) {
-    super.init(coder: coder)
   }
 
   private let exerciseSelectDescriptionLabel: UILabel = {
@@ -59,10 +52,10 @@ private extension ExerciseSelectViewController {
 
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
     item.contentInsets = .init(
-      top: Const.CellInset,
-      leading: Const.CellInset,
-      bottom: Const.CellInset,
-      trailing: Const.CellInset
+      top: Const.cellInsets,
+      leading: Const.cellInsets,
+      bottom: Const.cellInsets,
+      trailing: Const.cellInsets
     )
 
     let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
@@ -104,6 +97,6 @@ private extension ExerciseSelectViewController {
   }
 
   enum Const {
-    static let CellInset: CGFloat = 5
+    static let cellInsets: CGFloat = 5
   }
 }

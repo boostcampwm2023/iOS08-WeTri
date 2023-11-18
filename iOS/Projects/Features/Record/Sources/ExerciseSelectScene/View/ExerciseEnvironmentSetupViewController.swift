@@ -12,13 +12,6 @@ import UIKit
 // MARK: - ExerciseEnvironmentSetupViewController
 
 public final class ExerciseEnvironmentSetupViewController: UIViewController {
-  public init() {
-    super.init(nibName: nil, bundle: nil)
-  }
-
-  public required init?(coder: NSCoder) {
-    super.init(coder: coder)
-  }
 
   override public func viewDidLoad() {
     super.viewDidLoad()
@@ -40,7 +33,7 @@ public final class ExerciseEnvironmentSetupViewController: UIViewController {
   private let exerciseSelectView = ExerciseSelectViewController()
 
   private let pageControl: GWPageControl = {
-    let pageControl = GWPageControl(count: Const.countOfPage)
+    let pageControl = GWPageControl(count: Constant.countOfPage)
 
     pageControl.translatesAutoresizingMaskIntoConstraints = false
     return pageControl
@@ -53,7 +46,7 @@ public final class ExerciseEnvironmentSetupViewController: UIViewController {
 private extension ExerciseEnvironmentSetupViewController {
   func setup() {
     view.backgroundColor = .systemBackground
-    setupConstraints()
+    setupViewHierarchyAndConstraints()
     exerciseCardCollectionView = exerciseSelectView.exerciseCardCollectionView
 
     configureDataSource()
@@ -75,7 +68,7 @@ private extension ExerciseEnvironmentSetupViewController {
     dataSource.apply(snapshot)
   }
 
-  func setupConstraints() {
+  func setupViewHierarchyAndConstraints() {
     let safeArea = view.safeAreaLayoutGuide
 
     view.addSubview(pageControl)
@@ -92,7 +85,7 @@ private extension ExerciseEnvironmentSetupViewController {
     contentNAV.view.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor).isActive = true
   }
 
-  enum Const {
+  enum Constant {
     static let countOfPage = 2
   }
 }

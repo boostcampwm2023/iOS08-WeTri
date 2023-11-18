@@ -16,7 +16,7 @@ class ExerciseCardCell: UICollectionViewCell {
 
   override init(frame: CGRect) {
     super.init(frame: frame)
-    makeShaodwAndRounded()
+    makeShadowAndRounded()
     backgroundColor = .white
     setupConstraints()
   }
@@ -31,7 +31,7 @@ class ExerciseCardCell: UICollectionViewCell {
     }
   }
 
-  private let exerciseIconDescriptionLagel: UILabel = {
+  private let exerciseIconDescriptionLabel: UILabel = {
     let label = UILabel()
     label.font = UIFont.preferredFont(forTextStyle: .title3)
     label.textAlignment = .center
@@ -60,22 +60,22 @@ class ExerciseCardCell: UICollectionViewCell {
 
 private extension ExerciseCardCell {
   func setupConstraints() {
-    contentView.addSubview(exerciseIconDescriptionLagel)
-    exerciseIconDescriptionLagel.bottomAnchor
+    contentView.addSubview(exerciseIconDescriptionLabel)
+    exerciseIconDescriptionLabel.bottomAnchor
       .constraint(equalTo: contentView.bottomAnchor, constant: -12).isActive = true
-    exerciseIconDescriptionLagel.leadingAnchor
+    exerciseIconDescriptionLabel.leadingAnchor
       .constraint(equalTo: contentView.leadingAnchor, constant: 0).isActive = true
-    exerciseIconDescriptionLagel.trailingAnchor
+    exerciseIconDescriptionLabel.trailingAnchor
       .constraint(equalTo: contentView.trailingAnchor, constant: 0).isActive = true
 
     contentView.addSubview(exerciseIcon)
     exerciseIcon.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
     exerciseIcon.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
     exerciseIcon.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5).isActive = true
-    exerciseIcon.bottomAnchor.constraint(equalTo: exerciseIconDescriptionLagel.topAnchor, constant: -15).isActive = true
+    exerciseIcon.bottomAnchor.constraint(equalTo: exerciseIconDescriptionLabel.topAnchor, constant: -15).isActive = true
   }
 
-  func makeShaodwAndRounded() {
+  func makeShadowAndRounded() {
     let radius: CGFloat = 10
     contentView.layer.cornerRadius = radius
     contentView.layer.borderWidth = 1
@@ -94,15 +94,15 @@ private extension ExerciseCardCell {
   func makeSelectUI() {
     exerciseIcon.tintColor = DesignSystemColor.main03
     exerciseIcon.makeShadow()
-    exerciseIconDescriptionLagel.textColor = DesignSystemColor.main03
-    exerciseIconDescriptionLagel.font = .preferredFont(forTextStyle: .title3, with: .traitBold)
+    exerciseIconDescriptionLabel.textColor = DesignSystemColor.main03
+    exerciseIconDescriptionLabel.font = .preferredFont(forTextStyle: .title3, with: .traitBold)
   }
 
   func makeDeslectUI() {
     exerciseIcon.tintColor = DesignSystemColor.primaryText
     exerciseIcon.disableShadow()
-    exerciseIconDescriptionLagel.textColor = DesignSystemColor.primaryText
-    exerciseIconDescriptionLagel.font = .preferredFont(forTextStyle: .title3)
+    exerciseIconDescriptionLabel.textColor = DesignSystemColor.primaryText
+    exerciseIconDescriptionLabel.font = .preferredFont(forTextStyle: .title3)
   }
 }
 
