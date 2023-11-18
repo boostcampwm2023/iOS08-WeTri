@@ -11,7 +11,7 @@ import UIKit
 // MARK: - RecordListViewController
 
 final class RecordListViewController: UIViewController {
-  private var workoutInforamtionDataSource: WorkoutInformationDataSource?
+  private var workoutInformationDataSource: WorkoutInformationDataSource?
 
   private let todayLabel: UILabel = {
     let label = UILabel()
@@ -96,7 +96,7 @@ private extension RecordListViewController {
       )
     }
 
-    workoutInforamtionDataSource = WorkoutInformationDataSource(
+    workoutInformationDataSource = WorkoutInformationDataSource(
       collectionView: workoutInformationCollectionView,
       cellProvider: { collectionView, indexPath, itemIdentifier in
 
@@ -113,7 +113,7 @@ private extension RecordListViewController {
     var snapShot = WorkoutInformationSnapShot()
     snapShot.appendSections([.workoutList])
     snapShot.appendItems(items)
-    workoutInforamtionDataSource?.apply(snapShot)
+    workoutInformationDataSource?.apply(snapShot)
   }
 }
 
