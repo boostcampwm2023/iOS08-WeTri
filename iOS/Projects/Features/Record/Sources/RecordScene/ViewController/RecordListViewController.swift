@@ -10,7 +10,7 @@ import UIKit
 
 // MARK: - RecordListViewController
 
-public final class RecordListViewController: UIViewController {
+final class RecordListViewController: UIViewController {
   private var workoutInforamtionDataSource: WorkoutInformationDataSource?
 
   private let todayLabel: UILabel = {
@@ -41,7 +41,7 @@ public final class RecordListViewController: UIViewController {
     return button
   }()
 
-  override public func viewDidLoad() {
+  override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = .white
     configureUI()
