@@ -19,17 +19,29 @@ public final class RecordContainerViewController: UIViewController {
 
 private extension RecordContainerViewController {
   func configureUI() {
+    view.backgroundColor = .systemBackground
     let safeArea = view.safeAreaLayoutGuide
 
+    let recordCalendarViewController = RecordCalendarViewController()
+    guard let calendarView = recordCalendarViewController.view else { return }
+    calendarView.translatesAutoresizingMaskIntoConstraints = false
+    add(child: recordCalendarViewController)
+    NSLayoutConstraint.activate([
+      calendarView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: Metrics.componentInterval),
+      calendarView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.componentInterval),
+      calendarView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.componentInterval),
+      calendarView.heightAnchor.constraint(equalToConstant: Metrics.calendarHeight),
+    ])
+
     let recordListViewController = RecordListViewController()
-    guard let recordView = recordListViewController.view else { return }
-    recordView.translatesAutoresizingMaskIntoConstraints = false
+    guard let listView = recordListViewController.view else { return }
+    listView.translatesAutoresizingMaskIntoConstraints = false
     add(child: recordListViewController)
     NSLayoutConstraint.activate([
-      recordView.topAnchor.constraint(equalTo: safeArea.topAnchor),
-      recordView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-      recordView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
-      recordView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
+      listView.topAnchor.constraint(equalTo: calendarView.bottomAnchor, constant: Metrics.componentInterval),
+      listView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.componentInterval),
+      listView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.componentInterval),
+      listView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -Metrics.bottomInterval),
     ])
   }
 
@@ -38,4 +50,12 @@ private extension RecordContainerViewController {
     view.addSubview(viewController.view)
     viewController.didMove(toParent: viewController)
   }
+}
+
+// MARK: - Metrics
+
+private enum Metrics {
+  static let componentInterval: CGFloat = 24
+  static let bottomInterval: CGFloat = 215
+  static let calendarHeight: CGFloat = 51
 }

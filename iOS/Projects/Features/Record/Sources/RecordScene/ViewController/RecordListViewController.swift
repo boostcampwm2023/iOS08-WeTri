@@ -62,28 +62,26 @@ final class RecordListViewController: UIViewController {
 
 private extension RecordListViewController {
   func configureUI() {
-    let safeArea = view.safeAreaLayoutGuide
-
     view.addSubview(todayLabel)
     NSLayoutConstraint.activate([
-      todayLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: Metrics.topInterval),
-      todayLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.componentInterval),
-      todayLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.componentInterval),
+      todayLabel.topAnchor.constraint(equalTo: view.topAnchor),
+      todayLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+      todayLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
     ])
 
     view.addSubview(workoutInformationCollectionView)
     NSLayoutConstraint.activate([
       workoutInformationCollectionView.topAnchor.constraint(equalTo: todayLabel.bottomAnchor, constant: Metrics.componentInterval),
-      workoutInformationCollectionView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.componentInterval),
-      workoutInformationCollectionView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.componentInterval),
+      workoutInformationCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+      workoutInformationCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
     ])
 
     view.addSubview(recordButton)
     NSLayoutConstraint.activate([
       recordButton.topAnchor.constraint(equalTo: workoutInformationCollectionView.bottomAnchor, constant: Metrics.componentInterval),
-      recordButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.componentInterval),
-      recordButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.componentInterval),
-      recordButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -Metrics.bottomInterval),
+      recordButton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+      recordButton.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+      recordButton.bottomAnchor.constraint(equalTo: view.bottomAnchor),
     ])
   }
 
@@ -135,8 +133,6 @@ extension RecordListViewController: UICollectionViewDelegateFlowLayout {
 
 private enum Metrics {
   static let componentInterval: CGFloat = 24
-  static let topInterval: CGFloat = 92
-  static let bottomInterval: CGFloat = 215
   static let itemWidthRatio: CGFloat = 2.45
   static let itemHeightRatio: CGFloat = 1.5
 }
