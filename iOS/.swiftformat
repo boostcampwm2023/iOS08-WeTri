@@ -13,7 +13,7 @@
 --enable docComments
 --enable isEmpty
 --enable markTypes
---enable sortedSwitchCases
+--enable sortSwitchCases
 --enable wrapEnumCases
 --enable wrapSwitchCases
 --guardelse "next-line"

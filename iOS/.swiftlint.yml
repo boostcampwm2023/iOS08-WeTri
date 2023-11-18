@@ -14,6 +14,8 @@ only_rules:
   - void_return
   - unowned_variable_capture
   - custom_rules
+  - trailing_comma
+  - line_length
 
 excluded:
   - Carthage
@@ -24,6 +26,12 @@ colon:
   apply_to_dictionaries: false
 
 indentation: 2
+
+trailing_comma:
+  mandatory_comma: true
+  
+line_length:
+  warning: 150
 
 custom_rules:
   no_objcMembers:

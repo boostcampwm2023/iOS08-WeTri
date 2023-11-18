@@ -12,7 +12,7 @@ private let tuistRootDirectory = ProcessInfo.processInfo.environment["TUIST_ROOT
 
 private func swiftFormatCommand() -> String {
   if let tuistRootDirectory {
-    return "swiftformat --config \(tuistRootDirectory)/swiftformat ."
+    return "swiftformat . --config \(tuistRootDirectory)/.swiftformat"
   } else {
     return "swiftformat ."
   }
