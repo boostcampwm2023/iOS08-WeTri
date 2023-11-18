@@ -11,8 +11,7 @@ import UIKit
 
 // MARK: - ExerciseSelectViewController
 
-final class ExerciseSelectViewController: UIViewController {  
-
+final class ExerciseSelectViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     setupConstraints()

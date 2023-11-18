@@ -17,7 +17,7 @@ class ExerciseCardCell: UICollectionViewCell {
   override init(frame: CGRect) {
     super.init(frame: frame)
     makeShadowAndRounded()
-    backgroundColor = .white
+    backgroundColor = DesignSystemColor.primaryBackGround
     setupConstraints()
   }
 

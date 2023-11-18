@@ -12,7 +12,6 @@ import UIKit
 // MARK: - ExerciseEnvironmentSetupViewController
 
 public final class ExerciseEnvironmentSetupViewController: UIViewController {
-
   override public func viewDidLoad() {
     super.viewDidLoad()
     setup()
