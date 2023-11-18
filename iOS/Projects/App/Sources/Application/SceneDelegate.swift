@@ -17,9 +17,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     let navigationController = UINavigationController()
     window = UIWindow(windowScene: windowScene)
     window?.rootViewController = navigationController
-//    let coordinator = AppCoordinator(navigationController: navigationController)
-//    coordinator.start()
-    window?.rootViewController = ExerciseEnvironmentSetupViewController()
+    let coordinator = AppCoordinator(navigationController: navigationController)
+    coordinator.start()
     window?.makeKeyAndVisible()
   }
 }

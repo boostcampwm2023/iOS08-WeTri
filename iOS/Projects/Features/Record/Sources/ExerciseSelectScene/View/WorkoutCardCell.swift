@@ -1,5 +1,5 @@
 //
-//  ExerciseCardCell.swift
+//  WorkoutCardCell.swift
 //  RecordFeature
 //
 //  Created by MaraMincho on 11/16/23.
@@ -9,10 +9,10 @@
 import DesignSystem
 import UIKit
 
-// MARK: - ExerciseCardCell
+// MARK: - WorkoutCardCell
 
-class ExerciseCardCell: UICollectionViewCell {
-  static let identifier = "ExerciseCardCell"
+class WorkoutCardCell: UICollectionViewCell {
+  static let identifier = "WorkoutCardCell"
 
   override init(frame: CGRect) {
     super.init(frame: frame)
@@ -31,7 +31,7 @@ class ExerciseCardCell: UICollectionViewCell {
     }
   }
 
-  private let exerciseIconDescriptionLabel: UILabel = {
+  private let workoutIconDescriptionLabel: UILabel = {
     let label = UILabel()
     label.font = UIFont.preferredFont(forTextStyle: .title3)
     label.textAlignment = .center
@@ -42,7 +42,7 @@ class ExerciseCardCell: UICollectionViewCell {
     return label
   }()
 
-  private let exerciseIcon: UIImageView = {
+  private let workoutIcon: UIImageView = {
     let config = UIImage.SymbolConfiguration(font: .systemFont(ofSize: 120))
     let icon = UIImage(systemName: "figure.run", withConfiguration: config)
     let imageView = UIImageView(image: icon)
@@ -58,21 +58,21 @@ class ExerciseCardCell: UICollectionViewCell {
   }
 }
 
-private extension ExerciseCardCell {
+private extension WorkoutCardCell {
   func setupConstraints() {
-    contentView.addSubview(exerciseIconDescriptionLabel)
-    exerciseIconDescriptionLabel.bottomAnchor
+    contentView.addSubview(workoutIconDescriptionLabel)
+    workoutIconDescriptionLabel.bottomAnchor
       .constraint(equalTo: contentView.bottomAnchor, constant: -12).isActive = true
-    exerciseIconDescriptionLabel.leadingAnchor
+    workoutIconDescriptionLabel.leadingAnchor
       .constraint(equalTo: contentView.leadingAnchor, constant: 0).isActive = true
-    exerciseIconDescriptionLabel.trailingAnchor
+    workoutIconDescriptionLabel.trailingAnchor
       .constraint(equalTo: contentView.trailingAnchor, constant: 0).isActive = true
 
-    contentView.addSubview(exerciseIcon)
-    exerciseIcon.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
-    exerciseIcon.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
-    exerciseIcon.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5).isActive = true
-    exerciseIcon.bottomAnchor.constraint(equalTo: exerciseIconDescriptionLabel.topAnchor, constant: -15).isActive = true
+    contentView.addSubview(workoutIcon)
+    workoutIcon.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
+    workoutIcon.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
+    workoutIcon.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5).isActive = true
+    workoutIcon.bottomAnchor.constraint(equalTo: workoutIconDescriptionLabel.topAnchor, constant: -15).isActive = true
   }
 
   func makeShadowAndRounded() {
@@ -92,17 +92,19 @@ private extension ExerciseCardCell {
   }
 
   func makeSelectUI() {
-    exerciseIcon.tintColor = DesignSystemColor.main03
-    exerciseIcon.makeShadow()
-    exerciseIconDescriptionLabel.textColor = DesignSystemColor.main03
-    exerciseIconDescriptionLabel.font = .preferredFont(forTextStyle: .title3, with: .traitBold)
+    workoutIcon.tintColor = DesignSystemColor.main03
+    workoutIcon.makeShadow()
+    
+    workoutIconDescriptionLabel.textColor = DesignSystemColor.main03
+    workoutIconDescriptionLabel.font = .preferredFont(forTextStyle: .title3, with: .traitBold)
   }
 
   func makeDeslectUI() {
-    exerciseIcon.tintColor = DesignSystemColor.primaryText
-    exerciseIcon.disableShadow()
-    exerciseIconDescriptionLabel.textColor = DesignSystemColor.primaryText
-    exerciseIconDescriptionLabel.font = .preferredFont(forTextStyle: .title3)
+    workoutIcon.tintColor = DesignSystemColor.primaryText
+    workoutIcon.disableShadow()
+    
+    workoutIconDescriptionLabel.textColor = DesignSystemColor.primaryText
+    workoutIconDescriptionLabel.font = .preferredFont(forTextStyle: .title3)
   }
 }
 

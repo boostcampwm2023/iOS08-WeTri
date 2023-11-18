@@ -1,5 +1,5 @@
 //
-//  ExerciseEnvironmentSetupViewController.swift
+//  WorkoutEnvironmentSetupViewController.swift
 //  RecordFeature
 //
 //  Created by MaraMincho on 11/15/23.
@@ -9,9 +9,9 @@
 import DesignSystem
 import UIKit
 
-// MARK: - ExerciseEnvironmentSetupViewController
+// MARK: - WorkoutEnvironmentSetupViewController
 
-public final class ExerciseEnvironmentSetupViewController: UIViewController {
+public final class WorkoutEnvironmentSetupViewController: UIViewController {
   override public func viewDidLoad() {
     super.viewDidLoad()
     setup()
@@ -24,12 +24,12 @@ public final class ExerciseEnvironmentSetupViewController: UIViewController {
   }
 
   lazy var contentNAV: UINavigationController = {
-    let nav = UINavigationController(rootViewController: exerciseSelectView)
+    let nav = UINavigationController(rootViewController: workoutSelectView)
 
     return nav
   }()
 
-  private let exerciseSelectView = ExerciseSelectViewController()
+  private let workoutSelectView = WorkoutSelectViewController()
 
   private let pageControl: GWPageControl = {
     let pageControl = GWPageControl(count: Constant.countOfPage)
@@ -39,21 +39,21 @@ public final class ExerciseEnvironmentSetupViewController: UIViewController {
   }()
 
   var dataSource: UICollectionViewDiffableDataSource<Int, UUID>!
-  var exerciseCardCollectionView: UICollectionView!
+  var workoutCardCollectionView: UICollectionView!
 }
 
-private extension ExerciseEnvironmentSetupViewController {
+private extension WorkoutEnvironmentSetupViewController {
   func setup() {
     view.backgroundColor = .systemBackground
     setupViewHierarchyAndConstraints()
-    exerciseCardCollectionView = exerciseSelectView.exerciseCardCollectionView
+    workoutCardCollectionView = workoutSelectView.workoutCardCollectionView
 
     configureDataSource()
   }
 
   func configureDataSource() {
-    dataSource = .init(collectionView: exerciseCardCollectionView, cellProvider: { collectionView, indexPath, _ in
-      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ExerciseCardCell.identifier, for: indexPath)
+    dataSource = .init(collectionView: workoutCardCollectionView, cellProvider: { collectionView, indexPath, _ in
+      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WorkoutCardCell.identifier, for: indexPath)
       return cell
     })
   }

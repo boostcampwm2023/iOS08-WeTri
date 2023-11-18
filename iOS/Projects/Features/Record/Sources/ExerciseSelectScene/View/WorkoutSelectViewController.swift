@@ -1,5 +1,5 @@
 //
-//  ExerciseSelectViewController.swift
+//  WorkoutSelectViewController.swift
 //  RecordFeature
 //
 //  Created by MaraMincho on 11/16/23.
@@ -9,16 +9,16 @@
 import DesignSystem
 import UIKit
 
-// MARK: - ExerciseSelectViewController
+// MARK: - WorkoutSelectViewController
 
-final class ExerciseSelectViewController: UIViewController {
+final class WorkoutSelectViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     setupConstraints()
     navigationController?.setNavigationBarHidden(true, animated: false)
   }
 
-  private let exerciseSelectDescriptionLabel: UILabel = {
+  private let workoutSelectDescriptionLabel: UILabel = {
     let label = UILabel()
     label.font = .preferredFont(forTextStyle: .title1, with: .traitBold)
     label.textAlignment = .left
@@ -28,9 +28,9 @@ final class ExerciseSelectViewController: UIViewController {
     return label
   }()
 
-  lazy var exerciseCardCollectionView: UICollectionView = {
+  lazy var workoutCardCollectionView: UICollectionView = {
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCollectionViewLayout())
-    collectionView.register(ExerciseCardCell.self, forCellWithReuseIdentifier: ExerciseCardCell.identifier)
+    collectionView.register(WorkoutCardCell.self, forCellWithReuseIdentifier: WorkoutCardCell.identifier)
 
     collectionView.translatesAutoresizingMaskIntoConstraints = false
     return collectionView
@@ -45,7 +45,7 @@ final class ExerciseSelectViewController: UIViewController {
   }()
 }
 
-private extension ExerciseSelectViewController {
+private extension WorkoutSelectViewController {
   func makeCollectionViewLayout() -> UICollectionViewLayout {
     let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalHeight(1))
 
@@ -69,21 +69,21 @@ private extension ExerciseSelectViewController {
   func setupConstraints() {
     let safeArea = view.safeAreaLayoutGuide
 
-    view.addSubview(exerciseSelectDescriptionLabel)
-    exerciseSelectDescriptionLabel.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
-    exerciseSelectDescriptionLabel.leadingAnchor
+    view.addSubview(workoutSelectDescriptionLabel)
+    workoutSelectDescriptionLabel.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
+    workoutSelectDescriptionLabel.leadingAnchor
       .constraint(equalTo: safeArea.leadingAnchor, constant: ConstraintsGuideLine.value).isActive = true
-    exerciseSelectDescriptionLabel.trailingAnchor
+    workoutSelectDescriptionLabel.trailingAnchor
       .constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
 
-    view.addSubview(exerciseCardCollectionView)
-    exerciseCardCollectionView.topAnchor
-      .constraint(equalTo: exerciseSelectDescriptionLabel.bottomAnchor, constant: 12).isActive = true
-    exerciseCardCollectionView.leadingAnchor
+    view.addSubview(workoutCardCollectionView)
+    workoutCardCollectionView.topAnchor
+      .constraint(equalTo: workoutSelectDescriptionLabel.bottomAnchor, constant: 12).isActive = true
+    workoutCardCollectionView.leadingAnchor
       .constraint(equalTo: safeArea.leadingAnchor, constant: ConstraintsGuideLine.value).isActive = true
-    exerciseCardCollectionView.trailingAnchor
+    workoutCardCollectionView.trailingAnchor
       .constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
-    exerciseCardCollectionView.bottomAnchor
+    workoutCardCollectionView.bottomAnchor
       .constraint(equalTo: view.bottomAnchor, constant: -15).isActive = true
 
     view.addSubview(nextButton)
