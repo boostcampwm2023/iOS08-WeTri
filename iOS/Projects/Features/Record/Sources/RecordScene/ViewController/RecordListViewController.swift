@@ -1,5 +1,5 @@
 //
-//  RecordViewController.swift
+//  RecordListViewController.swift
 //  ProjectDescriptionHelpers
 //
 //  Created by 안종표 on 2023/11/16.
@@ -8,9 +8,9 @@
 import DesignSystem
 import UIKit
 
-// MARK: - RecordViewController
+// MARK: - RecordListViewController
 
-public final class RecordViewController: UIViewController {
+public final class RecordListViewController: UIViewController {
   private var workoutInforamtionDataSource: WorkoutInformationDataSource?
 
   private let todayLabel: UILabel = {
@@ -60,7 +60,7 @@ public final class RecordViewController: UIViewController {
 
 // MARK: UI
 
-private extension RecordViewController {
+private extension RecordListViewController {
   func configureUI() {
     let safeArea = view.safeAreaLayoutGuide
 
@@ -121,7 +121,7 @@ private extension RecordViewController {
 
 // MARK: UICollectionViewDelegateFlowLayout
 
-extension RecordViewController: UICollectionViewDelegateFlowLayout {
+extension RecordListViewController: UICollectionViewDelegateFlowLayout {
   public func collectionView(
     _: UICollectionView,
     layout _: UICollectionViewLayout,
@@ -143,7 +143,7 @@ private enum Metrics {
 
 // MARK: RecordViewController DiffableDataSource
 
-private extension RecordViewController {
+private extension RecordListViewController {
   typealias WorkoutInformationCellRegistration = UICollectionView.CellRegistration<WorkoutInformationCollectionViewCell, WorkoutInformationItem>
   typealias WorkoutInformationDataSource = UICollectionViewDiffableDataSource<Section, WorkoutInformationItem>
   typealias WorkoutInformationSnapShot = NSDiffableDataSourceSnapshot<Section, WorkoutInformationItem>
