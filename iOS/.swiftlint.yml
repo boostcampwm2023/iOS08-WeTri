@@ -14,6 +14,8 @@ only_rules:
   - void_return
   - unowned_variable_capture
   - custom_rules
+  - trailing_comma
+  - line_length
 
 excluded:
   - Carthage
