@@ -7,6 +7,12 @@ feature:
 	@./Scripts/create_feature_module.sh
 	tuist edit
 
+demo:
+	chmod +x Scripts/create_demo_module.sh
+	@./Scripts/create_demo_module.sh
+	tuist edit
+
+
 test:
 	tuist clean
 	tuist fetch
