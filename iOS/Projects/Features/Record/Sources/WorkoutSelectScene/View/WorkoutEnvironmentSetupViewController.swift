@@ -23,7 +23,7 @@ public final class WorkoutEnvironmentSetupViewController: UIViewController {
     insertTempSource()
   }
 
-  lazy var contentNAV: UINavigationController = {
+  lazy var contentNavigationController: UINavigationController = {
     let nav = UINavigationController(rootViewController: workoutSelectViewController)
 
     return nav
@@ -54,6 +54,7 @@ private extension WorkoutEnvironmentSetupViewController {
   func setup() {
     view.backgroundColor = DesignSystemColor.primaryBackGround
     setupViewHierarchyAndConstraints()
+    addNavigationGesture()
     bind()
 
     configureDataSource()
@@ -84,16 +85,29 @@ private extension WorkoutEnvironmentSetupViewController {
     pageControl.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -23).isActive = true
     pageControl.heightAnchor.constraint(equalToConstant: 30).isActive = true
 
-    view.addSubview(contentNAV.view)
-    contentNAV.view.translatesAutoresizingMaskIntoConstraints = false
-    contentNAV.view.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor).isActive = true
-    contentNAV.view.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor).isActive = true
-    contentNAV.view.topAnchor.constraint(equalTo: pageControl.bottomAnchor).isActive = true
-    contentNAV.view.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor).isActive = true
+    view.addSubview(contentNavigationController.view)
+    contentNavigationController.view.translatesAutoresizingMaskIntoConstraints = false
+    contentNavigationController.view.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor).isActive = true
+    contentNavigationController.view.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor).isActive = true
+    contentNavigationController.view.topAnchor.constraint(equalTo: pageControl.bottomAnchor).isActive = true
+    contentNavigationController.view.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor).isActive = true
+  }
+
+  func addNavigationGesture() {
+    contentNavigationController.interactivePopGestureRecognizer?.delegate = self
+    contentNavigationController.interactivePopGestureRecognizer?.isEnabled = true
   }
 
   enum Constant {
     static let countOfPage = 2
+  }
+}
+
+// MARK: UIGestureRecognizerDelegate
+
+extension WorkoutEnvironmentSetupViewController: UIGestureRecognizerDelegate {
+  public func gestureRecognizerShouldBegin(_: UIGestureRecognizer) -> Bool {
+    return contentNavigationController.viewControllers.count > 1
   }
 }
 
@@ -102,6 +116,6 @@ private extension WorkoutEnvironmentSetupViewController {
 extension WorkoutEnvironmentSetupViewController: WorkoutSelectViewDelegate {
   func nextButtonDidTap() {
     pageControl.makeNextPage()
-    contentNAV.pushViewController(workoutPeerSelectViewController, animated: true)
+    contentNavigationController.pushViewController(workoutPeerSelectViewController, animated: true)
   }
 }

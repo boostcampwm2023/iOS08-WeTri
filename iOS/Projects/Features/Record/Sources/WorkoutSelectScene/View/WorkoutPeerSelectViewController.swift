@@ -17,13 +17,6 @@ final class WorkoutPeerSelectViewController: UIViewController {
     view.backgroundColor = DesignSystemColor.primaryBackGround
 
     setup()
-
-    dataSource = .init(collectionView: pearTypeSelectCollectionView, cellProvider: { collectionView, indexPath, _ in
-      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WorkoutPeerTypeSelectCell.identifier, for: indexPath)
-
-      return cell
-    })
-    tempInitDataSource()
   }
 
   var dataSource: UICollectionViewDiffableDataSource<Int, UUID>!
@@ -51,6 +44,7 @@ final class WorkoutPeerSelectViewController: UIViewController {
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCollectionViewLayout())
     collectionView.register(WorkoutPeerTypeSelectCell.self, forCellWithReuseIdentifier: WorkoutPeerTypeSelectCell.identifier)
     collectionView.backgroundColor = .clear
+    collectionView.isScrollEnabled = false
 
     collectionView.translatesAutoresizingMaskIntoConstraints = false
     return collectionView
@@ -72,6 +66,14 @@ private extension WorkoutPeerSelectViewController {
 
   func setup() {
     setHierarchyAndConstraints()
+
+    dataSource = .init(collectionView: pearTypeSelectCollectionView, cellProvider: { collectionView, indexPath, _ in
+      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WorkoutPeerTypeSelectCell.identifier, for: indexPath)
+
+      return cell
+    })
+
+    tempInitDataSource()
   }
 
   func setHierarchyAndConstraints() {

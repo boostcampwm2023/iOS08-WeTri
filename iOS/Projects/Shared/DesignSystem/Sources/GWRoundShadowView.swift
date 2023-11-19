@@ -26,7 +26,6 @@ public final class GWRoundShadowView: UIView {
     super.layoutSubviews()
     if shadowLayer == nil {
       shadowLayer = CAShapeLayer()
-
       shadowLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius).cgPath
       shadowLayer.fillColor = fillColor
 

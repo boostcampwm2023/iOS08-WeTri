@@ -95,6 +95,20 @@ public extension GWPageControl {
       layoutIfNeeded()
     }
   }
+
+  func makePrev() {
+    if currentPageIndex >= pages.count {
+      return
+    }
+    deselectPage(at: currentPageIndex)
+    currentPageIndex -= 1
+    selectPage(at: currentPageIndex)
+
+    UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut) { [weak self] in
+      guard let self else { return }
+      layoutIfNeeded()
+    }
+  }
 }
 
 private extension GWPageControl {
