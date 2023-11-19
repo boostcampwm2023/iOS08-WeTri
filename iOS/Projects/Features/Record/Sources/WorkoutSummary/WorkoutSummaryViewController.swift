@@ -50,7 +50,7 @@ public final class WorkoutSummaryViewController: UIViewController {
       frame: .zero,
       collectionViewLayout: createCompositionalLayout()
     )
-    collectionView.backgroundColor = DesignSystemColor.primaryBackGround
+    collectionView.backgroundColor = DesignSystemColor.primaryBackground
     collectionView.showsVerticalScrollIndicator = false
     return collectionView
   }()
@@ -128,7 +128,7 @@ public final class WorkoutSummaryViewController: UIViewController {
   }
 
   private func setupStyles() {
-    view.backgroundColor = DesignSystemColor.primaryBackGround
+    view.backgroundColor = DesignSystemColor.primaryBackground
   }
 
   private func bind() {
