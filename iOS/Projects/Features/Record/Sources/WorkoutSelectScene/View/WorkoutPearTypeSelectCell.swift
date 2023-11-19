@@ -11,7 +11,7 @@ import UIKit
 
 // MARK: - WorkoutPearSelectCell
 
-final class WorkoutPearSelectCell: UICollectionViewCell {
+final class WorkoutPearTypeSelectCell: UICollectionViewCell {
   static let identifier = "WorkoutPearSelectCell"
 
   // MARK: UI Components
@@ -95,7 +95,7 @@ final class WorkoutPearSelectCell: UICollectionViewCell {
 
 // MARK: ParticipantsCollectionViewCell.Metrics
 
-private extension WorkoutPearSelectCell {
+private extension WorkoutPearTypeSelectCell {
   enum Metrics {
     static let iconWidth: CGFloat = 60
     static let iconHeight: CGFloat = 42
