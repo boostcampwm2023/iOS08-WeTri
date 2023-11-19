@@ -30,7 +30,7 @@ public final class WorkoutEnvironmentSetupViewController: UIViewController {
   }()
 
   private let workoutSelectViewController = WorkoutSelectViewController()
-  private let workoutPearSelectViewController = WorkoutPearSelectViewController()
+  private let workoutPeerSelectViewController = WorkoutPeerSelectViewController()
 
   private let pageControl: GWPageControl = {
     let pageControl = GWPageControl(count: Constant.countOfPage)
@@ -102,6 +102,6 @@ private extension WorkoutEnvironmentSetupViewController {
 extension WorkoutEnvironmentSetupViewController: WorkoutSelectViewDelegate {
   func nextButtonDidTap() {
     pageControl.makeNextPage()
-    contentNAV.pushViewController(workoutPearSelectViewController, animated: true)
+    contentNAV.pushViewController(workoutPeerSelectViewController, animated: true)
   }
 }

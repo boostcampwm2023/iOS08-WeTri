@@ -1,5 +1,5 @@
 //
-//  WorkoutPearSelectViewController.swift
+//  WorkoutPeerSelectViewController.swift
 //  RecordFeature
 //
 //  Created by MaraMincho on 11/19/23.
@@ -9,9 +9,9 @@
 import DesignSystem
 import UIKit
 
-// MARK: - WorkoutPearSelectViewController
+// MARK: - WorkoutPeerSelectViewController
 
-final class WorkoutPearSelectViewController: UIViewController {
+final class WorkoutPeerSelectViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = DesignSystemColor.primaryBackGround
@@ -19,7 +19,7 @@ final class WorkoutPearSelectViewController: UIViewController {
     setup()
 
     dataSource = .init(collectionView: pearTypeSelectCollectionView, cellProvider: { collectionView, indexPath, _ in
-      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WorkoutPearTypeSelectCell.identifier, for: indexPath)
+      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WorkoutPeerTypeSelectCell.identifier, for: indexPath)
 
       return cell
     })
@@ -49,7 +49,7 @@ final class WorkoutPearSelectViewController: UIViewController {
 
   lazy var pearTypeSelectCollectionView: UICollectionView = {
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCollectionViewLayout())
-    collectionView.register(WorkoutPearTypeSelectCell.self, forCellWithReuseIdentifier: WorkoutPearTypeSelectCell.identifier)
+    collectionView.register(WorkoutPeerTypeSelectCell.self, forCellWithReuseIdentifier: WorkoutPeerTypeSelectCell.identifier)
     collectionView.backgroundColor = .clear
 
     collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -57,7 +57,7 @@ final class WorkoutPearSelectViewController: UIViewController {
   }()
 }
 
-private extension WorkoutPearSelectViewController {
+private extension WorkoutPeerSelectViewController {
   func makeCollectionViewLayout() -> UICollectionViewCompositionalLayout {
     let item = NSCollectionLayoutItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1)))
     item.contentInsets = .init(top: Materics.itemInsets, leading: Materics.itemInsets, bottom: Materics.itemInsets, trailing: Materics.itemInsets)

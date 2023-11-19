@@ -1,5 +1,5 @@
 //
-//  WorkoutPearTypeSelectCell.swift
+//  WorkoutPeerTypeSelectCell.swift
 //  RecordFeature
 //
 //  Created by MaraMincho on 11/19/23.
@@ -9,9 +9,9 @@
 import DesignSystem
 import UIKit
 
-// MARK: - WorkoutPearTypeSelectCell
+// MARK: - WorkoutPeerTypeSelectCell
 
-final class WorkoutPearTypeSelectCell: UICollectionViewCell {
+final class WorkoutPeerTypeSelectCell: UICollectionViewCell {
   // MARK: - Initializations
 
   override init(frame: CGRect) {
@@ -24,7 +24,7 @@ final class WorkoutPearTypeSelectCell: UICollectionViewCell {
     setup()
   }
 
-  static let identifier = "WorkoutPearSelectCell"
+  static let identifier = "WorkoutPeerSelectCell"
 
   override var isSelected: Bool {
     didSet {
@@ -97,7 +97,7 @@ final class WorkoutPearTypeSelectCell: UICollectionViewCell {
   }()
 }
 
-private extension WorkoutPearTypeSelectCell {
+private extension WorkoutPeerTypeSelectCell {
   func setup() {
     setupHierarchyAndConstraints()
     setBackgroundColor()
