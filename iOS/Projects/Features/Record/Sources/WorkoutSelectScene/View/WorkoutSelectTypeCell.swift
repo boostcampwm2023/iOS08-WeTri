@@ -12,7 +12,7 @@ import UIKit
 // MARK: - WorkoutSelectTypeCell
 
 class WorkoutSelectTypeCell: UICollectionViewCell {
-  static let identifier = "WorkoutTypeCell"
+  static let identifier = "WorkoutTypeSelectCell"
 
   override init(frame: CGRect) {
     super.init(frame: frame)

@@ -24,12 +24,13 @@ public final class WorkoutEnvironmentSetupViewController: UIViewController {
   }
 
   lazy var contentNAV: UINavigationController = {
-    let nav = UINavigationController(rootViewController: workoutSelectView)
+    let nav = UINavigationController(rootViewController: workoutSelectViewController)
 
     return nav
   }()
 
-  private let workoutSelectView = WorkoutSelectViewController()
+  private let workoutSelectViewController = WorkoutSelectViewController()
+  private let workoutPearSelectViewController = WorkoutPearSelectViewController()
 
   private let pageControl: GWPageControl = {
     let pageControl = GWPageControl(count: Constant.countOfPage)
@@ -40,20 +41,27 @@ public final class WorkoutEnvironmentSetupViewController: UIViewController {
 
   var dataSource: UICollectionViewDiffableDataSource<Int, UUID>!
   var workoutTypesCollectionView: UICollectionView!
+  var workoutPaerTypesCollectionView: UICollectionView!
 }
 
 private extension WorkoutEnvironmentSetupViewController {
+  func bind() {
+    workoutTypesCollectionView = workoutSelectViewController.workoutTypesCollectionView
+
+    workoutSelectViewController.delegate = self
+  }
+
   func setup() {
-    view.backgroundColor = .systemBackground
+    view.backgroundColor = DesignSystemColor.primaryBackGround
     setupViewHierarchyAndConstraints()
-    workoutTypesCollectionView = workoutSelectView.workoutTypesCollectionView
+    bind()
 
     configureDataSource()
   }
 
   func configureDataSource() {
     dataSource = .init(collectionView: workoutTypesCollectionView, cellProvider: { collectionView, indexPath, _ in
-      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WorkoutTypeCell.identifier, for: indexPath)
+      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WorkoutSelectTypeCell.identifier, for: indexPath)
       return cell
     })
   }
@@ -86,5 +94,14 @@ private extension WorkoutEnvironmentSetupViewController {
 
   enum Constant {
     static let countOfPage = 2
+  }
+}
+
+// MARK: WorkoutSelectViewDelegate
+
+extension WorkoutEnvironmentSetupViewController: WorkoutSelectViewDelegate {
+  func nextButtonDidTap() {
+    pageControl.makeNextPage()
+    contentNAV.pushViewController(workoutPearSelectViewController, animated: true)
   }
 }
