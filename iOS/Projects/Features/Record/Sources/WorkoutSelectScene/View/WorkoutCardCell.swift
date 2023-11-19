@@ -94,7 +94,7 @@ private extension WorkoutCardCell {
   func makeSelectUI() {
     workoutIcon.tintColor = DesignSystemColor.main03
     workoutIcon.makeShadow()
-    
+
     workoutIconDescriptionLabel.textColor = DesignSystemColor.main03
     workoutIconDescriptionLabel.font = .preferredFont(forTextStyle: .title3, with: .traitBold)
   }
@@ -102,7 +102,7 @@ private extension WorkoutCardCell {
   func makeDeslectUI() {
     workoutIcon.tintColor = DesignSystemColor.primaryText
     workoutIcon.disableShadow()
-    
+
     workoutIconDescriptionLabel.textColor = DesignSystemColor.primaryText
     workoutIconDescriptionLabel.font = .preferredFont(forTextStyle: .title3)
   }

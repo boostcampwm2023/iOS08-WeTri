@@ -12,16 +12,17 @@ public extension Project {
     sources: SourceFilesList = ["Sources/**"],
     resources: ResourceFileElements? = ["Resources/**"],
     infoPlist: InfoPlist = .default,
-    isTestable: Bool = false)
-  -> Project {
-    
+    isTestable: Bool = false
+  )
+    -> Project {
     let settings: Settings = .settings(
       base: ["ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES"],
       configurations: [
         .debug(name: .debug),
-        .release(name: .release)
-      ])
-    
+        .release(name: .release),
+      ]
+    )
+
     let appTarget = Target(
       name: name,
       platform: platform,
@@ -32,12 +33,13 @@ public extension Project {
       sources: sources,
       resources: resources,
       scripts: [.swiftLint, .swiftFormat],
-      dependencies: dependencies)
-    
+      dependencies: dependencies
+    )
+
     let schemes: [Scheme] = [.makeScheme(target: .debug, name: name)]
-    
+
     var targets: [Target] = [appTarget]
-    
+
     if isTestable {
       let testTarget = Target(
         name: "\(name)Tests",
@@ -49,10 +51,10 @@ public extension Project {
         sources: ["Tests/**"],
         dependencies: [.target(name: name)]
       )
-      
+
       targets.append(testTarget)
     }
-    
+
     return Project(
       name: name,
       organizationName: organizationName,
@@ -60,12 +62,13 @@ public extension Project {
       packages: packages,
       settings: settings,
       targets: targets,
-      schemes: schemes)
+      schemes: schemes
+    )
   }
 }
 
 extension Scheme {
-  ///Scheme을 만드는 메소드
+  /// Scheme을 만드는 메소드
   static func makeScheme(target: ConfigurationName, name: String) -> Scheme {
     return Scheme(
       name: name,
