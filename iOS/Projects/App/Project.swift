@@ -5,15 +5,17 @@
 //  Created by 홍승현 on 11/10/23.
 //
 
+import DependencyPlugin
 import ProjectDescription
 import ProjectDescriptionHelpers
+
 
 let project = Project.makeModule(
   name: "WeTri",
   product: .app,
   dependencies: [
-    ProjectTargetDependency.Record,
-    ProjectTargetDependency.Coordinator,
+    .coordinator,
+    .feature(.record)
   ],
   resources: ["Resources/**"],
   infoPlist: .extendingDefault(
