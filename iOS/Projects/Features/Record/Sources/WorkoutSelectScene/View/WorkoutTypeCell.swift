@@ -1,5 +1,5 @@
 //
-//  WorkoutCardCell.swift
+//  WorkoutTypeCell.swift
 //  RecordFeature
 //
 //  Created by MaraMincho on 11/16/23.
@@ -9,10 +9,10 @@
 import DesignSystem
 import UIKit
 
-// MARK: - WorkoutCardCell
+// MARK: - WorkoutTypeCell
 
-class WorkoutCardCell: UICollectionViewCell {
-  static let identifier = "WorkoutCardCell"
+class WorkoutTypeCell: UICollectionViewCell {
+  static let identifier = "WorkoutTypeCell"
 
   override init(frame: CGRect) {
     super.init(frame: frame)
@@ -58,7 +58,7 @@ class WorkoutCardCell: UICollectionViewCell {
   }
 }
 
-private extension WorkoutCardCell {
+private extension WorkoutTypeCell {
   func setupConstraints() {
     contentView.addSubview(workoutIconDescriptionLabel)
     workoutIconDescriptionLabel.bottomAnchor
@@ -94,7 +94,7 @@ private extension WorkoutCardCell {
   func makeSelectUI() {
     workoutIcon.tintColor = DesignSystemColor.main03
     workoutIcon.makeShadow()
-    
+
     workoutIconDescriptionLabel.textColor = DesignSystemColor.main03
     workoutIconDescriptionLabel.font = .preferredFont(forTextStyle: .title3, with: .traitBold)
   }
@@ -102,7 +102,7 @@ private extension WorkoutCardCell {
   func makeDeslectUI() {
     workoutIcon.tintColor = DesignSystemColor.primaryText
     workoutIcon.disableShadow()
-    
+
     workoutIconDescriptionLabel.textColor = DesignSystemColor.primaryText
     workoutIconDescriptionLabel.font = .preferredFont(forTextStyle: .title3)
   }

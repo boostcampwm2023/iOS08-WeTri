@@ -39,21 +39,21 @@ public final class WorkoutEnvironmentSetupViewController: UIViewController {
   }()
 
   var dataSource: UICollectionViewDiffableDataSource<Int, UUID>!
-  var workoutCardCollectionView: UICollectionView!
+  var workoutTypesCollectionView: UICollectionView!
 }
 
 private extension WorkoutEnvironmentSetupViewController {
   func setup() {
     view.backgroundColor = .systemBackground
     setupViewHierarchyAndConstraints()
-    workoutCardCollectionView = workoutSelectView.workoutCardCollectionView
+    workoutTypesCollectionView = workoutSelectView.workoutTypesCollectionView
 
     configureDataSource()
   }
 
   func configureDataSource() {
-    dataSource = .init(collectionView: workoutCardCollectionView, cellProvider: { collectionView, indexPath, _ in
-      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WorkoutCardCell.identifier, for: indexPath)
+    dataSource = .init(collectionView: workoutTypesCollectionView, cellProvider: { collectionView, indexPath, _ in
+      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WorkoutTypeCell.identifier, for: indexPath)
       return cell
     })
   }

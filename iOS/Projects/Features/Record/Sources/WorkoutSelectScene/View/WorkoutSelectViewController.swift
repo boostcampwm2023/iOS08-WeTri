@@ -28,9 +28,9 @@ final class WorkoutSelectViewController: UIViewController {
     return label
   }()
 
-  lazy var workoutCardCollectionView: UICollectionView = {
+  lazy var workoutTypesCollectionView: UICollectionView = {
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCollectionViewLayout())
-    collectionView.register(WorkoutCardCell.self, forCellWithReuseIdentifier: WorkoutCardCell.identifier)
+    collectionView.register(WorkoutTypeCell.self, forCellWithReuseIdentifier: WorkoutTypeCell.identifier)
 
     collectionView.translatesAutoresizingMaskIntoConstraints = false
     return collectionView
@@ -76,14 +76,14 @@ private extension WorkoutSelectViewController {
     workoutSelectDescriptionLabel.trailingAnchor
       .constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
 
-    view.addSubview(workoutCardCollectionView)
-    workoutCardCollectionView.topAnchor
+    view.addSubview(workoutTypesCollectionView)
+    workoutTypesCollectionView.topAnchor
       .constraint(equalTo: workoutSelectDescriptionLabel.bottomAnchor, constant: 12).isActive = true
-    workoutCardCollectionView.leadingAnchor
+    workoutTypesCollectionView.leadingAnchor
       .constraint(equalTo: safeArea.leadingAnchor, constant: ConstraintsGuideLine.value).isActive = true
-    workoutCardCollectionView.trailingAnchor
+    workoutTypesCollectionView.trailingAnchor
       .constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
-    workoutCardCollectionView.bottomAnchor
+    workoutTypesCollectionView.bottomAnchor
       .constraint(equalTo: view.bottomAnchor, constant: -15).isActive = true
 
     view.addSubview(nextButton)
