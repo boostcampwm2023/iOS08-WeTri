@@ -16,10 +16,10 @@ public enum Feature: String {
 }
 
 public extension TargetDependency {
-  static let designSystem: TargetDependency = .project(target: "DesignSystem", path: .relativeToRoot("Projects/Shared/DesignSystem"))
-  static let trinet: TargetDependency = .project(target: "Trinet", path: .relativeToRoot("Projects/Core/Network"))
-  static let coordinator: TargetDependency = .project(target: "Coordinator", path: .relativeToRoot("Projects/Core/Coordinator"))
-  static let combineCocoa: TargetDependency = .project(target: "CombineCocoa", path: .relativeToRoot("Projects/Shared/CombineCocoa"))
+  static let designSystem: TargetDependency = .project(target: "DesignSystem", path: .relativeToShared("DesignSystem"))
+  static let trinet: TargetDependency = .project(target: "Trinet", path: .relativeToCore("Network"))
+  static let coordinator: TargetDependency = .project(target: "Coordinator", path: .relativeToCore("Coordinator"))
+  static let combineCocoa: TargetDependency = .project(target: "CombineCocoa", path: .relativeToShared("CombineCocoa"))
 
   static func feature(_ feature: Feature) -> TargetDependency {
     return .project(
