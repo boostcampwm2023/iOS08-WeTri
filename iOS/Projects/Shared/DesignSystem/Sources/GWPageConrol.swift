@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+import OSLog
 import UIKit
 
 // MARK: - GWPageControl
@@ -16,7 +16,7 @@ public final class GWPageControl: UIView {
   let countOfPage: Int
   var currentPageIndex: Int = 0
   let spacing: CGFloat = 8
-  var pages: [GWRoundShadowView] = []
+  var pages: [UIView] = []
   var pageswidthConstraint: [NSLayoutConstraint] = []
 
   // MARK: - 과연 UIVIew를 optional로 만드는게 맞을까?
@@ -36,26 +36,13 @@ public final class GWPageControl: UIView {
 
   @available(*, unavailable)
   required init?(coder _: NSCoder) {
-    fatalError()
-  }
-
-  private enum UIPageControlDefaultProperty {
-    static let numOfMinPage = 2
-    static let numOfMaxPage = 5
-
-    static let range = numOfMaxPage ... numOfMaxPage
-
-    static let selectedPageColor = DesignSystemColor.main03
-    static let deselectedPageColor = DesignSystemColor.gray02
-
-    static let selectedPageWidth: CGFloat = 40
-    static let deselectedPageWidth: CGFloat = 10
+    fatalError("can not use initialization")
   }
 }
 
 private extension GWPageControl {
   func makePages() {
-    pages = (0 ..< countOfPage).enumerated().map { _, _ -> GWRoundShadowView in
+    pages = (0 ..< countOfPage).enumerated().map { _, _ -> UIView in
       return pageViewObject
     }
   }
@@ -82,16 +69,12 @@ private extension GWPageControl {
     }
   }
 
-  var pageViewObject: GWRoundShadowView {
-    let view = GWRoundShadowView(
-      shadow: .init(
-        shadowColor: DesignSystemColor.gray02.cgColor,
-        shadowOffset: CGSize(width: 0, height: 1),
-        shadowOpacity: 0.2, shadowRadius: 4.0
-      ),
-      cornerRadius: 4,
-      backgroundColor: DesignSystemColor.gray03.cgColor
-    )
+  var pageViewObject: UIView {
+    let view = UIView()
+    view.layer.cornerRadius = 4
+    view.clipsToBounds = true
+    view.backgroundColor = UIPageControlDefaultProperty.deselectedPageColor
+    view.layer.cornerCurve = .continuous
 
     view.translatesAutoresizingMaskIntoConstraints = false
     return view
@@ -99,12 +82,28 @@ private extension GWPageControl {
 }
 
 public extension GWPageControl {
+  func makeNextPage() {
+    if currentPageIndex >= pages.count {
+      return
+    }
+    deselectPage(at: currentPageIndex)
+    currentPageIndex += 1
+    selectPage(at: currentPageIndex)
+
+    UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut) { [weak self] in
+      guard let self else { return }
+      layoutIfNeeded()
+    }
+  }
+}
+
+private extension GWPageControl {
   func selectPage(at pageIndex: Int) {
     guard 0 ..< pages.count ~= pageIndex else {
       return
     }
     let page = pages[pageIndex]
-    page.update(color: UIPageControlDefaultProperty.selectedPageColor)
+    page.backgroundColor = UIPageControlDefaultProperty.selectedPageColor
 
     let pageWidthConstraint = pageswidthConstraint[pageIndex]
     pageWidthConstraint.constant = UIPageControlDefaultProperty.selectedPageWidth
@@ -115,9 +114,22 @@ public extension GWPageControl {
       return
     }
     let page = pages[pageIndex]
-    page.update(color: UIPageControlDefaultProperty.deselectedPageColor)
+    page.backgroundColor = UIPageControlDefaultProperty.deselectedPageColor
 
     let pageWidthConstraint = pageswidthConstraint[pageIndex]
     pageWidthConstraint.constant = UIPageControlDefaultProperty.deselectedPageWidth
+  }
+
+  private enum UIPageControlDefaultProperty {
+    static let numOfMinPage = 2
+    static let numOfMaxPage = 5
+
+    static let range = numOfMaxPage ... numOfMaxPage
+
+    static let selectedPageColor = DesignSystemColor.main03
+    static let deselectedPageColor = DesignSystemColor.gray02
+
+    static let selectedPageWidth: CGFloat = 40
+    static let deselectedPageWidth: CGFloat = 10
   }
 }

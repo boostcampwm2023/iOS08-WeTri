@@ -1,5 +1,5 @@
 //
-//  WorkoutTypeCell.swift
+//  WorkoutSelectTypeCell.swift
 //  RecordFeature
 //
 //  Created by MaraMincho on 11/16/23.
@@ -9,9 +9,9 @@
 import DesignSystem
 import UIKit
 
-// MARK: - WorkoutTypeCell
+// MARK: - WorkoutSelectTypeCell
 
-class WorkoutTypeCell: UICollectionViewCell {
+class WorkoutSelectTypeCell: UICollectionViewCell {
   static let identifier = "WorkoutTypeCell"
 
   override init(frame: CGRect) {
@@ -58,7 +58,7 @@ class WorkoutTypeCell: UICollectionViewCell {
   }
 }
 
-private extension WorkoutTypeCell {
+private extension WorkoutSelectTypeCell {
   func setupConstraints() {
     contentView.addSubview(workoutIconDescriptionLabel)
     workoutIconDescriptionLabel.bottomAnchor

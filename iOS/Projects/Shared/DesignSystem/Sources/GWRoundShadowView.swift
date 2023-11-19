@@ -10,6 +10,7 @@ import UIKit
 
 // MARK: - GWRoundShadowView
 
+///애니메이션이 없는 뷰에서만 써야 합니다.
 public final class GWRoundShadowView: UIView {
   let containerView = UIView()
   let cornerRadius: CGFloat
