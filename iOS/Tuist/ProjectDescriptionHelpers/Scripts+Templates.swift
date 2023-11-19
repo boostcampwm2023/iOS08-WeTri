@@ -18,7 +18,6 @@ private func swiftFormatCommand() -> String {
   }
 }
 
-
 private func swiftLintCommand() -> String {
   if let tuistRootDirectory {
     return "swiftlint --config \(tuistRootDirectory)/.swiftlint.yml"
@@ -26,7 +25,6 @@ private func swiftLintCommand() -> String {
     return "swiftlint"
   }
 }
-
 
 public extension TargetScript {
   static let swiftFormat: Self = .pre(
@@ -45,7 +43,7 @@ public extension TargetScript {
     name: "SwiftFormat Run Script",
     basedOnDependencyAnalysis: false
   )
-  
+
   static var swiftLint: Self = .post(
     script: """
       export PATH="$PATH:/opt/homebrew/bin"

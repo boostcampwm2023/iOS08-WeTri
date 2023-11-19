@@ -9,13 +9,12 @@ import DependencyPlugin
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-
 let project = Project.makeModule(
   name: "WeTri",
   product: .app,
   dependencies: [
     .coordinator,
-    .feature(.record)
+    .feature(.record),
   ],
   resources: ["Resources/**"],
   infoPlist: .extendingDefault(
