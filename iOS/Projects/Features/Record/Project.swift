@@ -1,3 +1,4 @@
+import DependencyPlugin
 import ProjectDescription
 import ProjectDescriptionHelpers
 
@@ -6,9 +7,10 @@ let project = Project.makeModule(
   platform: .iOS,
   product: .framework,
   dependencies: [
-    ProjectTargetDependency.Trinet,
-    ProjectTargetDependency.DesignSystem,
-    ProjectTargetDependency.TNCocoaCombine,
+    .trinet,
+    .designSystem,
+    .combineCocoa,
   ],
+  resources: nil,
   isTestable: true
 )
