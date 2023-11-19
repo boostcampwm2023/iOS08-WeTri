@@ -7,11 +7,14 @@
 
 import ProjectDescription
 
+// MARK: - Feature
+
 public enum Feature: String {
+  case helloTest
   case record
 
   public var targetName: String {
-    rawValue.capitalized
+    return rawValue.prefix(1).capitalized + rawValue.dropFirst()
   }
 }
 
