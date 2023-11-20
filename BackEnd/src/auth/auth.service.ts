@@ -1,6 +1,7 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ProfileModel } from 'src/profiles/entities/profiles.entity';
+import { ProfilesService } from 'src/profiles/profiles.service';
 import { UserModel } from 'src/users/entities/users.entity';
 import { UsersService } from 'src/users/users.service';
 
@@ -9,9 +10,10 @@ export class AuthService {
     constructor(
         private readonly jwtService: JwtService,
         private readonly usersService: UsersService,
+        private readonly profilesService: ProfilesService,
     ){}
 
-    signToken(publicId: Pick<ProfileModel, 'publicId'>, isRefreshToken: boolean) {
+    signToken(publicId: string, isRefreshToken: boolean) {
         //payload에는 sub -> id가 들어감 (사용자를 고유하게 식별하는데 사용), type (access token, refresh token)
         const payload = {
             sub: publicId,
@@ -24,7 +26,7 @@ export class AuthService {
         });
     }
 
-    loginUser(publicId: Pick<ProfileModel, 'publicId'>) {
+    loginUser(publicId: string) {
         return {
             accessToken: this.signToken(publicId, false),
             refreshToken: this.signToken(publicId, true),
@@ -41,7 +43,12 @@ export class AuthService {
         return existingUser
     }
 
-    async registerWithUserIdAndProvider(user: Pick<UserModel, 'userId' | 'provider'>) {
+    async registerWithUserIdAndProvider(user: Pick<UserModel, 'userId' | 'provider'>, profile: Pick<ProfileModel, 'nickname' | 'gender' | 'birthdate' | 'publicId'>) {
+        if(this.profilesService.existByNickname(profile.nickname)) {
+            throw new BadRequestException("중복된 nickname 입니다.")
+        }
+        const newUser = await this.usersService.createUser(user, profile);
         
+        return this.loginUser(newUser.profile.publicId);
     }
 }

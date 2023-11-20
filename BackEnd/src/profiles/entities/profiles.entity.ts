@@ -34,7 +34,7 @@ export class ProfileModel {
 
   @Column({ unique: true })
   @Generated('uuid')
-  publicId: string;
+  publicId: string; //바꿀 예정
 
   @OneToOne(() => UserModel, (user) => user.profile)
   user: UserModel;

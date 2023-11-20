@@ -17,8 +17,10 @@ export class UsersService {
             provider: user.provider,
             profile,
         })
-
-        return await this.usersRepository.save(userObj);
+        
+        const newUesr = await this.usersRepository.save(userObj);
+        
+        return newUesr;
     }
 
     async getUserByUserIdAndProvider(user: Pick<UserModel, 'userId' | 'provider'>) {
