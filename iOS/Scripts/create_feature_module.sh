@@ -28,11 +28,12 @@ import ProjectDescriptionHelpers
 
 let project = Project.makeModule(
   name: "${name}Feature",
-  platform: .iOS,
-  product: .framework,
-  dependencies: [],
-  resources: nil,
-  isTestable: true
+  targets: .feature(
+    .${enum_case_name},
+    testingOptions: [.unitTest],
+    dependencies: [],
+    testDependencies: []
+  )
 )
 EOF
 
