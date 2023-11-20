@@ -29,7 +29,7 @@ export class AuthService {
         }
     }
 
-    // authenticateWithUserIdAndProvider(user: Pick<UserModel, 'userId' | 'provider'>) {
-
-    // }
+    authenticateWithUserIdAndProvider(user: Pick<UserModel, 'userId' | 'provider'>) {
+        
+    }
 }
