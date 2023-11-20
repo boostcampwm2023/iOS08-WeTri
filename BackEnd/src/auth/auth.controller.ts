@@ -8,9 +8,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('signup')
-  signup(
-    @Body() body: SignupDto,
-  ) {
+  signup(@Body() body: SignupDto) {
     return this.authService.registerWithUserIdAndProvider(body);
   }
 
@@ -23,7 +21,7 @@ export class AuthController {
 
     return {
       accessToken: newToken,
-    }
+    };
   }
 
   @Post('token/access')
@@ -35,6 +33,6 @@ export class AuthController {
 
     return {
       refreshToken: newToken,
-    }
+    };
   }
 }

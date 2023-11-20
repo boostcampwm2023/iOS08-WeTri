@@ -14,13 +14,13 @@ export class UserModel {
 
   @Column()
   @IsString({
-    message: 'userId는 string 타입을 입력해야합니다.'
+    message: 'userId는 string 타입을 입력해야합니다.',
   })
   userId: string;
 
   @Column()
   @IsString({
-    message: 'provider는 string 타입을 입력해야합니다.'
+    message: 'provider는 string 타입을 입력해야합니다.',
   })
   provider: string;
 
