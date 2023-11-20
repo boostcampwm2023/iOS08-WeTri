@@ -27,7 +27,7 @@ public final class GWPageControl: UIView {
       count :
       UIPageControlDefaultProperty.numOfMinPage
 
-    super.init(frame: .init(origin: .zero, size: CGSize(width: 60, height: 10)))
+    super.init(frame: .zero)
 
     makePages()
     makePageConstraints()
@@ -81,26 +81,25 @@ private extension GWPageControl {
 
 public extension GWPageControl {
   func select(at pageIndex: Int) {
-    if pageIndex >= pages.count {
+    if pageIndex >= pages.count || currentPageIndex <= 0 {
       return
     }
     updateDeselectPage(at: currentPageIndex)
     currentPageIndex = pageIndex
     updateSelectPage(at: currentPageIndex)
+
+    startAnimation()
   }
 
   func next() {
-    if currentPageIndex >= pages.count {
+    if currentPageIndex >= pages.count || currentPageIndex <= 0 {
       return
     }
     updateDeselectPage(at: currentPageIndex)
     currentPageIndex += 1
     updateSelectPage(at: currentPageIndex)
 
-    UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut) { [weak self] in
-      guard let self else { return }
-      layoutIfNeeded()
-    }
+    startAnimation()
   }
 
   func back() {
@@ -111,14 +110,18 @@ public extension GWPageControl {
     currentPageIndex -= 1
     updateSelectPage(at: currentPageIndex)
 
+    startAnimation()
+  }
+}
+
+private extension GWPageControl {
+  func startAnimation() {
     UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut) { [weak self] in
       guard let self else { return }
       layoutIfNeeded()
     }
   }
-}
 
-private extension GWPageControl {
   func updateSelectPage(at pageIndex: Int) {
     guard 0 ..< pages.count ~= pageIndex else {
       return
