@@ -13,14 +13,13 @@ export class ProfilesService {
     async existByNickname(nickname: string) {
         const nicknameExists = await this.profilesRepository.exist({
             where: {
-                nickname
+                nickname,
             }
         });
 
         if(nicknameExists) {
             return true;
         }
-
         return false;
     }
 }

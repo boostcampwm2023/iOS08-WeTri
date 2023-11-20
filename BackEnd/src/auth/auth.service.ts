@@ -43,8 +43,8 @@ export class AuthService {
         return existingUser
     }
 
-    async registerWithUserIdAndProvider(user: Pick<UserModel, 'userId' | 'provider'>, profile: Pick<ProfileModel, 'nickname' | 'gender' | 'birthdate' | 'publicId'>) {
-        if(this.profilesService.existByNickname(profile.nickname)) {
+    async registerWithUserIdAndProvider(user: Pick<UserModel, 'userId' | 'provider'>, profile: Pick<ProfileModel, 'nickname' | 'gender' | 'birthdate'>) {
+        if(await this.profilesService.existByNickname(profile.nickname)) {
             throw new BadRequestException("중복된 nickname 입니다.")
         }
         const newUser = await this.usersService.createUser(user, profile);

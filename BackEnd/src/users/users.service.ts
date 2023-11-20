@@ -11,7 +11,7 @@ export class UsersService {
         private readonly usersRepository: Repository<UserModel>
     ){}
 
-    async createUser(user: Pick<UserModel, 'userId' | 'provider'>, profile: Pick<ProfileModel, 'nickname' | 'gender' | 'birthdate' | 'publicId'>) {
+    async createUser(user: Pick<UserModel, 'userId' | 'provider'>, profile: Pick<ProfileModel, 'nickname' | 'gender' | 'birthdate'>) {
         const userObj = this.usersRepository.create({
             userId: user.userId,
             provider: user.provider,
