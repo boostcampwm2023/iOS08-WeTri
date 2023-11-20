@@ -6,31 +6,17 @@
 //
 
 import DependencyPlugin
+import EnvironmentPlugin
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-let project = Project.makeModule(
-  name: "WeTri",
-  product: .app,
-  dependencies: [
-    .coordinator,
-    .feature(.record),
-  ],
-  resources: ["Resources/**"],
-  infoPlist: .extendingDefault(
-    with: [
-      "UILaunchStoryboardName": "LaunchScreen",
-      "UIApplicationSceneManifest": [
-        "UIApplicationSupportsMultipleScenes": false,
-        "UISceneConfigurations": [
-          "UIWindowSceneSessionRoleApplication": [
-            [
-              "UISceneConfigurationName": "Default Configuration",
-              "UISceneDelegateClassName": "$(PRODUCT_MODULE_NAME).SceneDelegate",
-            ],
-          ],
-        ],
-      ],
+let projects = Project.makeModule(
+  name: ProjectEnvironment.default.appName,
+  targets: .app(
+    name: ProjectEnvironment.default.targetName,
+    dependencies: [
+      .coordinator,
+      .feature(.record),
     ]
   )
 )
