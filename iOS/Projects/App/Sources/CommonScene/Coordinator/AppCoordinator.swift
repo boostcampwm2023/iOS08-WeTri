@@ -28,11 +28,11 @@ final class AppCoordinator: AppCoordinating {
     tabBarCoordinator.start()
   }
 
-  func startLoginFlow() {
+  func showLoginFlow() {
     // (LoginViewController 추가되면 로직 추가) (todo)
   }
 
-  func startTabBarFlow() {
+  func showTabBarFlow() {
     // (TabBarController 추가되면 로직 추가) (todo)
   }
 }

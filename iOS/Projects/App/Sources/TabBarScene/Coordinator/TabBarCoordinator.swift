@@ -33,6 +33,15 @@ final class TabBarCoordinator: TabBarCoordinating {
     let tabBarController = makeTabBarController(tabBarViewControllers: tabBarViewControllers)
     navigationController.pushViewController(tabBarController, animated: false)
   }
+  
+  private func makePageNavigationController(page: TabBarPage) -> UINavigationController {
+    let navigationController = UINavigationController()
+    let tabBarItem = UITabBarItem(title: page.title, image: page.image, selectedImage: page.selectedImage)
+    navigationController.tabBarItem = tabBarItem
+    startTabBarCoordinator(page: page, pageNavigationViewController: navigationController)
+    return navigationController
+  }
+
 
   private func startTabBarCoordinator(page: TabBarPage, pageNavigationViewController: UINavigationController) {
     switch page {
@@ -52,14 +61,6 @@ final class TabBarCoordinator: TabBarCoordinating {
       profileCoordinator.finishDelegate = self
       profileCoordinator.start()
     }
-  }
-
-  private func makePageNavigationController(page: TabBarPage) -> UINavigationController {
-    let navigationController = UINavigationController()
-    let tabBarItem = UITabBarItem(title: page.title, image: page.image, selectedImage: page.selectedImage)
-    navigationController.tabBarItem = tabBarItem
-    startTabBarCoordinator(page: page, pageNavigationViewController: navigationController)
-    return navigationController
   }
 
   private func makeTabBarController(
