@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from '../auth.service';
-import { ProfilesService } from 'src/profiles/profiles.service';
+import { ProfilesService } from '../../profiles/profiles.service';
 
 @Injectable()
 export class BearerTokenGuard implements CanActivate {

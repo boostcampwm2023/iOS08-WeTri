@@ -8,8 +8,8 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
-import { RecordModel } from 'src/records/entities/records.entity';
-import { ProfileModel } from 'src/profiles/entities/profiles.entity';
+import { RecordModel } from '../../records/entities/records.entity';
+import { ProfileModel } from '../../profiles/entities/profiles.entity';
 
 @Entity()
 export class PostModel {

@@ -5,7 +5,7 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
-import { ProfileModel } from 'src/profiles/entities/profiles.entity';
+import { ProfileModel } from '../../profiles/entities/profiles.entity';
 import { IsString } from 'class-validator';
 @Entity()
 export class UserModel {

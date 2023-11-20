@@ -1,7 +1,7 @@
 import { IsDate, IsString } from 'class-validator';
-import { PostModel } from 'src/posts/entities/posts.entity';
-import { RecordModel } from 'src/records/entities/records.entity';
-import { UserModel } from 'src/users/entities/users.entity';
+import { PostModel } from '../../posts/entities/posts.entity';
+import { RecordModel } from '../../records/entities/records.entity';
+import { UserModel } from '../../users/entities/users.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,

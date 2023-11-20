@@ -4,10 +4,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ProfileModel } from 'src/profiles/entities/profiles.entity';
-import { ProfilesService } from 'src/profiles/profiles.service';
-import { UserModel } from 'src/users/entities/users.entity';
-import { UsersService } from 'src/users/users.service';
+import { ProfilesService } from '../profiles/profiles.service';
+import { UserModel } from '../users/entities/users.entity';
+import { UsersService } from '../users/users.service';
 import { SignupDto } from './dto/signup.dto';
 
 @Injectable()
