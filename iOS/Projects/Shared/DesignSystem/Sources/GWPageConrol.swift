@@ -82,6 +82,15 @@ private extension GWPageControl {
 }
 
 public extension GWPageControl {
+  func makePage(index pageIndex: Int) {
+    if pageIndex >= pages.count {
+      return
+    }
+    deselectPage(at: currentPageIndex)
+    currentPageIndex = pageIndex
+    selectPage(at: currentPageIndex)
+  }
+
   func makeNextPage() {
     if currentPageIndex >= pages.count {
       return

@@ -7,6 +7,7 @@
 //
 
 import DesignSystem
+import OSLog
 import UIKit
 
 // MARK: - WorkoutEnvironmentSetupViewController
@@ -15,11 +16,6 @@ public final class WorkoutEnvironmentSetupViewController: UIViewController {
   override public func viewDidLoad() {
     super.viewDidLoad()
     setup()
-  }
-
-  override public func viewDidAppear(_ animated: Bool) {
-    super.viewDidAppear(animated)
-
     insertTempSource()
   }
 
@@ -94,8 +90,16 @@ private extension WorkoutEnvironmentSetupViewController {
   }
 
   func addNavigationGesture() {
-    contentNavigationController.interactivePopGestureRecognizer?.delegate = self
-    contentNavigationController.interactivePopGestureRecognizer?.isEnabled = true
+    guard let recognizer = contentNavigationController.interactivePopGestureRecognizer else { return }
+    recognizer.addTarget(self, action: #selector(pageControlWithGesture))
+    recognizer.delegate = self
+    recognizer.isEnabled = true
+  }
+
+  @objc func pageControlWithGesture(gesture: UIGestureRecognizer) {
+    if gesture.state == .ended {
+      pageControl.makePrev()
+    }
   }
 
   enum Constant {
