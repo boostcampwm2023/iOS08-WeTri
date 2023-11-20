@@ -20,6 +20,9 @@ fi
 
 tuist scaffold Feature --name "$name"
 
+feature_dir="Projects/Features/$name"
+mkdir -p "$feature_dir"
+
 # Project.swift 파일 생성
 cat <<EOF > Projects/Features/$name/Project.swift
 import DependencyPlugin

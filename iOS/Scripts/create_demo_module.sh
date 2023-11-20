@@ -20,6 +20,9 @@ fi
 
 tuist scaffold Demo --name "$name"
 
+demo_dir="Projects/App/$name"
+mkdir -p "$demo_dir"
+
 # Project.swift 파일 생성
 cat <<EOF > Projects/App/$name/Project.swift
 import DependencyPlugin
