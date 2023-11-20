@@ -16,7 +16,7 @@ export class ProfilesService {
                 publicId,
             }
         });
-        
+
         return profile;
     }
 
@@ -26,7 +26,6 @@ export class ProfilesService {
                 nickname,
             }
         });
-
         if(nicknameExists) {
             return true;
         }

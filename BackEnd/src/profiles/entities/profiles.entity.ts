@@ -1,3 +1,4 @@
+import { IsDate, IsString } from 'class-validator';
 import { PostModel } from 'src/posts/entities/posts.entity';
 import { RecordModel } from 'src/records/entities/records.entity';
 import { UserModel } from 'src/users/entities/users.entity';
@@ -18,12 +19,21 @@ export class ProfileModel {
   id: number;
 
   @Column({ unique: true })
+  @IsString({
+    message: 'nickname은 string 타입으로 입력해야합니다.',
+  })
   nickname: string;
 
   @Column({ nullable: false })
+  @IsString({
+    message: 'gender는 string 타입으로 입력해야합니다.',
+  })
   gender: string;
 
   @Column({ nullable: false })
+  @IsDate({
+    message: 'birthdate date 타입으로 입력해야합니다.',
+  })
   birthdate: Date;
 
   @CreateDateColumn()

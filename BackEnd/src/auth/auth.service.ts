@@ -4,6 +4,7 @@ import { ProfileModel } from 'src/profiles/entities/profiles.entity';
 import { ProfilesService } from 'src/profiles/profiles.service';
 import { UserModel } from 'src/users/entities/users.entity';
 import { UsersService } from 'src/users/users.service';
+import { SignupDto } from './dto/signup.dto';
 
 @Injectable()
 export class AuthService {
@@ -43,11 +44,11 @@ export class AuthService {
         return existingUser
     }
 
-    async registerWithUserIdAndProvider(user: Pick<UserModel, 'userId' | 'provider'>, profile: Pick<ProfileModel, 'nickname' | 'gender' | 'birthdate'>) {
-        if(await this.profilesService.existByNickname(profile.nickname)) {
+    async registerWithUserIdAndProvider(signupInfo: SignupDto) {
+        if(await this.profilesService.existByNickname(signupInfo.nickname)) {
             throw new BadRequestException("중복된 nickname 입니다.")
         }
-        const newUser = await this.usersService.createUser(user, profile);
+        const newUser = await this.usersService.createUser(signupInfo);
         
         return this.loginUser(newUser.profile.publicId);
     }
@@ -74,7 +75,6 @@ export class AuthService {
 
     rotateToken(token: string, isRefreshToken: boolean) {
         const decoded = this.verifyToken(token);
-
         if(decoded.type !== 'refresh') {
             throw new UnauthorizedException('토큰 재발급은 Refresh 토큰으로만 가능합니다.!');
         }

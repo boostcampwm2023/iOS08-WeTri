@@ -1,6 +1,7 @@
 import { Body, Controller, Headers, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RefreshTokenGuard } from './guard/bearerToken.guard';
+import { SignupDto } from './dto/signup.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -8,20 +9,9 @@ export class AuthController {
 
   @Post('signup')
   signup(
-    @Body('userId') userId: string,
-    @Body('provider') provider: string,
-    @Body('nickname') nickname: string,
-    @Body('gender') gender: string,
-    @Body('birthdate') birthdate: Date,
+    @Body() body: SignupDto,
   ) {
-    return this.authService.registerWithUserIdAndProvider({
-      userId,
-      provider
-    }, {
-      nickname,
-      gender,
-      birthdate,
-    });
+    return this.authService.registerWithUserIdAndProvider(body);
   }
 
   @Post('token/access')
