@@ -14,7 +14,7 @@ import UIKit
 final class WorkoutPeerSelectViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
-    view.backgroundColor = DesignSystemColor.primaryBackGround
+    view.backgroundColor = DesignSystemColor.primaryBackground
 
     setup()
   }

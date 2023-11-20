@@ -48,7 +48,7 @@ private extension WorkoutEnvironmentSetupViewController {
   }
 
   func setup() {
-    view.backgroundColor = DesignSystemColor.primaryBackGround
+    view.backgroundColor = DesignSystemColor.primaryBackground
     setupViewHierarchyAndConstraints()
     addNavigationGesture()
     bind()

@@ -114,7 +114,7 @@ private extension WorkoutPeerTypeSelectCell {
   }
 
   func setBackgroundColor() {
-    backgroundColor = DesignSystemColor.primaryBackGround
+    backgroundColor = DesignSystemColor.primaryBackground
   }
 
   func makeShadowAndRounded() {
