@@ -68,7 +68,7 @@ public extension [Target] {
           bundleId: "\(ProjectEnvironment.default.prefixBundleID).\(name.lowercased())Tests",
           sources: "Tests/**",
           scripts: [.swiftLint, .swiftFormat],
-          dependencies: testDependencies
+          dependencies: testDependencies + [.target(name: name)]
         )
       )
     }
@@ -81,7 +81,7 @@ public extension [Target] {
           bundleId: "\(ProjectEnvironment.default.prefixBundleID).\(name.lowercased())UITests",
           sources: "UITests/**",
           scripts: [.swiftLint, .swiftFormat],
-          dependencies: testDependencies
+          dependencies: testDependencies + [.target(name: name)]
         )
       )
     }
@@ -140,7 +140,7 @@ public extension [Target] {
           bundleId: "\(ProjectEnvironment.default.prefixBundleID).\(feature.targetName)FeatureTests",
           sources: "Tests/**",
           scripts: [.swiftLint, .swiftFormat],
-          dependencies: testDependencies
+          dependencies: testDependencies + [.target(name: "\(feature.targetName)Feature")]
         )
       )
     }
@@ -154,7 +154,7 @@ public extension [Target] {
           bundleId: "\(ProjectEnvironment.default.prefixBundleID).\(feature.targetName)FeatureUITests",
           sources: "UITests/**",
           scripts: [.swiftLint, .swiftFormat],
-          dependencies: testDependencies
+          dependencies: testDependencies + [.target(name: "\(feature.targetName)Feature")]
         )
       )
     }
@@ -207,7 +207,7 @@ public extension [Target] {
           bundleId: "\(ProjectEnvironment.default.prefixBundleID).\(name)FeatureTests",
           sources: "Tests/**",
           scripts: [.swiftLint, .swiftFormat],
-          dependencies: testDependencies
+          dependencies: testDependencies + [.target(name: name)]
         )
       )
     }
@@ -221,7 +221,7 @@ public extension [Target] {
           bundleId: "\(ProjectEnvironment.default.prefixBundleID).\(name)FeatureUITests",
           sources: "UITests/**",
           scripts: [.swiftLint, .swiftFormat],
-          dependencies: testDependencies
+          dependencies: testDependencies + [.target(name: name)]
         )
       )
     }
