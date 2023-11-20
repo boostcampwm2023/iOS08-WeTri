@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../auth.service';
 import { ProfilesService } from '../../profiles/profiles.service';
+import { NotAccessTokenException, NotExistToken, NotRefreshTokenException } from '../exceptions/auth.exception';
 
 @Injectable()
 export class BearerTokenGuard implements CanActivate {
@@ -19,7 +20,7 @@ export class BearerTokenGuard implements CanActivate {
     const rawToken = req.headers['authorization'];
 
     if (!rawToken) {
-      throw new UnauthorizedException('토큰이 없습니다.');
+      throw new NotExistToken();
     }
 
     const token = this.authService.extractTokenFromHeader(rawToken);
@@ -46,7 +47,7 @@ export class AccessTokenGuard extends BearerTokenGuard {
     const req = context.switchToHttp().getRequest();
 
     if (req.tokenType !== 'access') {
-      throw new UnauthorizedException('Access Token이 아닙니다.');
+      throw new NotAccessTokenException();
     }
 
     return true;
@@ -61,7 +62,7 @@ export class RefreshTokenGuard extends BearerTokenGuard {
     const req = context.switchToHttp().getRequest();
 
     if (req.tokenType !== 'refresh') {
-      throw new UnauthorizedException('Refresh Token이 아닙니다.');
+      throw new NotRefreshTokenException();
     }
 
     return true;

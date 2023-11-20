@@ -8,6 +8,7 @@ import { ProfilesService } from '../profiles/profiles.service';
 import { UserModel } from '../users/entities/users.entity';
 import { UsersService } from '../users/users.service';
 import { SignupDto } from './dto/signup.dto';
+import { InvalidTokenException, NicknameDuplicateException, NotRefreshTokenException } from './exceptions/auth.exception';
 
 @Injectable()
 export class AuthService {
@@ -44,7 +45,8 @@ export class AuthService {
       await this.usersService.getUserByUserIdAndProvider(user);
 
     if (!existingUser) {
-      throw new UnauthorizedException('존재하지 않는 사용자입니다.');
+    //   throw new UnauthorizedException('존재하지 않는 사용자입니다.');
+        console.log("회원가입 페이지로 리디렉션");
     }
 
     return existingUser;
@@ -52,7 +54,8 @@ export class AuthService {
 
   async registerWithUserIdAndProvider(signupInfo: SignupDto) {
     if (await this.profilesService.existByNickname(signupInfo.nickname)) {
-      throw new BadRequestException('중복된 nickname 입니다.');
+    //   throw new BadRequestException('중복된 nickname 입니다.');
+       throw new NicknameDuplicateException();
     }
     const newUser = await this.usersService.createUser(signupInfo);
 
@@ -65,7 +68,7 @@ export class AuthService {
     const type = splitToken[0];
 
     if (splitToken.length !== 2 || type !== 'Bearer') {
-      throw new UnauthorizedException('잘못된 토큰입니다.');
+      throw new InvalidTokenException();
     }
 
     const token = splitToken[1];
@@ -82,9 +85,7 @@ export class AuthService {
   rotateToken(token: string, isRefreshToken: boolean) {
     const decoded = this.verifyToken(token);
     if (decoded.type !== 'refresh') {
-      throw new UnauthorizedException(
-        '토큰 재발급은 Refresh 토큰으로만 가능합니다.!',
-      );
+      throw new NotRefreshTokenException();
     }
 
     return this.signToken(decoded.sub, isRefreshToken);

@@ -31,8 +31,8 @@ export class ProfileModel {
   gender: string;
 
   @Column({ nullable: false })
-  @IsDate({
-    message: 'birthdate date 타입으로 입력해야합니다.',
+  @IsString({
+    message: 'birthdate string 타입으로 입력해야합니다.',
   })
   birthdate: Date;
 

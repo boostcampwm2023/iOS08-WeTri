@@ -3,8 +3,8 @@ import { AppModule } from './app.module';
 import { SwaggerSetting } from './config/swagger.config';
 import { winstonLogger } from './config/winston.config';
 import { ValidationPipe } from '@nestjs/common';
-import { HttpExceptionFilter } from './common/exception-filter/http.exception-filter';
 import { ResponseTransformInterceptor } from './common/Interceptors/responseTransform. Interceptor';
+import { HttpExceptionFilter } from './common/exceptionFilters/httpException.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
