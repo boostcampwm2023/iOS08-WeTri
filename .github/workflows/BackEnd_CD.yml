@@ -38,5 +38,6 @@ jobs:
               docker pull ${{ secrets.NCP_CONTAINER_REGISTRY }}/my-app:latest
               docker stop my-app || true
               docker rm my-app || true
+              docker cp /var/env/.env my-app:/var/env/.env
               docker run --name my-app -d -p 3000:3000 --env-file /var/env/.env ${{ secrets.NCP_CONTAINER_REGISTRY }}/my-app:latest
             '
