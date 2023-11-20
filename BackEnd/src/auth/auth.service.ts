@@ -41,7 +41,7 @@ export class AuthService {
         return existingUser
     }
 
-    // async registerWithUserIdAndProvider(user: Pick<UserModel, 'userId' | 'provider'>) {
-
-    // }
+    async registerWithUserIdAndProvider(user: Pick<UserModel, 'userId' | 'provider'>) {
+        
+    }
 }
