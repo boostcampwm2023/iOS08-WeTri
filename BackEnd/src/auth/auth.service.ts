@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ProfileModel } from 'src/profiles/entities/profiles.entity';
+import { UserModel } from 'src/users/entities/users.entity';
 
 @Injectable()
 export class AuthService {
@@ -27,4 +28,8 @@ export class AuthService {
             refreshToken: this.signToken(publicId, true),
         }
     }
+
+    // authenticateWithUserIdAndProvider(user: Pick<UserModel, 'userId' | 'provider'>) {
+
+    // }
 }
