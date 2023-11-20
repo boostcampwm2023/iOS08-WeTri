@@ -3,13 +3,13 @@ generate:
 	TUIST_ROOT_DIR=${PWD} tuist generate
 
 feature:
-	chmod +x Scripts/create_feature_module.sh
-	@./Scripts/create_feature_module.sh
+	chmod +x Scripts/create_module.sh
+	@./Scripts/create_module.sh Feature
 	tuist edit
 
 demo:
-	chmod +x Scripts/create_demo_module.sh
-	@./Scripts/create_demo_module.sh
+	chmod +x Scripts/create_module.sh
+	@./Scripts/create_module.sh Demo
 	tuist edit
 
 
