@@ -24,15 +24,15 @@ jobs:
           push: true
           tags: ${{ secrets.NCP_CONTAINER_REGISTRY }}/my-app:latest
 
-      - name: SSH Tunneling and Deploy
+      - name: SSH to Internal Server and Deploy
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.BASTION_HOST }}
           username: ${{ secrets.BASTION_USER }}
-          key: ${{ secrets.BASTION_SSH_KEY }}
+          password: ${{ secrets.BASTION_PASSWORD }}
+          port: 22
           script: |
-            ssh -o StrictHostKeyChecking=no -L 9999:${{ secrets.INTERNAL_SERVER_IP }}:22 ${{ secrets.BASTION_USER }}@localhost -i ${{ secrets.BASTION_SSH_PRIVATE_KEY_PATH }} -fN
-            ssh -o StrictHostKeyChecking=no -p 9999 ${{ secrets.SERVER_USER }}@localhost -i ${{ secrets.SERVER_SSH_PRIVATE_KEY_PATH }} '
+            sshpass -p ${{ secrets.SERVER_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.INTERNAL_SERVER_IP }} -p 22 '
               docker pull ${{ secrets.NCP_CONTAINER_REGISTRY }}/my-app:latest
               docker stop my-app || true
               docker rm my-app || true
