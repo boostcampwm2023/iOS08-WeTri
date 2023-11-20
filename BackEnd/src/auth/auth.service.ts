@@ -20,4 +20,11 @@ export class AuthService {
             expiresIn: isRefreshToken ? 86400 : 3600,
         });
     }
+
+    loginUser(publicId: Pick<ProfileModel, 'publicId'>) {
+        return {
+            accessToken: this.signToken(publicId, false),
+            refreshToken: this.signToken(publicId, true),
+        }
+    }
 }
