@@ -1,0 +1,26 @@
+name: BackEnd-CI
+
+on:
+  pull_request:
+    branches: 'develop'
+    types: [opened, synchronize, reopened, edited]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v3
+
+      - name: node 세팅
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      - name: 의존성 설치
+        run: npm ci
+        working-directory: ./BackEnd
+
+      - name: 테스트 진행
+        run: npm test
+        working-directory: ./BackEnd
