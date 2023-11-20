@@ -9,6 +9,8 @@
 import Coordinator
 import UIKit
 
+// MARK: - AppCoordinator
+
 final class AppCoordinator: AppCoordinating {
   var navigationController: UINavigationController
   var childCoordinators: [Coordinating] = []
@@ -34,5 +36,13 @@ final class AppCoordinator: AppCoordinating {
 
   func showTabBarFlow() {
     // (TabBarController 추가되면 로직 추가) (todo)
+  }
+}
+
+// MARK: CoordinatorFinishDelegate
+
+extension AppCoordinator: CoordinatorFinishDelegate {
+  func flowDidFinished(childCoordinator: Coordinating) {
+    // TODO: 로그아웃 Flow, 로그인 Flow (앱 실행 도중 발생되는 분기처리)
   }
 }

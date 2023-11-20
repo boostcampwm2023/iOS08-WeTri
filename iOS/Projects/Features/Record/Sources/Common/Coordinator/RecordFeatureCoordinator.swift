@@ -48,7 +48,12 @@ public final class RecordFeatureCoordinator: RecordFeatureCoordinating {
 // MARK: CoordinatorFinishDelegate
 
 extension RecordFeatureCoordinator: CoordinatorFinishDelegate {
-  public func flowDidFinished(childCoordinator _: Coordinating) {}
+  public func flowDidFinished(childCoordinator: Coordinating) {
+    childCoordinators = childCoordinators.filter {
+      $0.flow != childCoordinator.flow
+    }
+    navigationController.popToRootViewController(animated: false)
+  }
 }
 
 // MARK: WorkoutSettingCoordinatorFinishDelegate
