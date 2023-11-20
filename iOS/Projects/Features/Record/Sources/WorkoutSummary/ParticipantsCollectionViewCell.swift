@@ -17,7 +17,7 @@ final class ParticipantsCollectionViewCell: UICollectionViewCell {
   private let profileImageView: UIImageView = {
     let imageView = UIImageView()
     imageView.contentMode = .scaleAspectFill
-    imageView.backgroundColor = DesignSystemColor.primaryBackGround
+    imageView.backgroundColor = DesignSystemColor.primaryBackground
     imageView.layer.cornerRadius = Metrics.profileImageSize * 0.5
     imageView.layer.cornerCurve = .continuous
     imageView.clipsToBounds = true
@@ -81,7 +81,7 @@ final class ParticipantsCollectionViewCell: UICollectionViewCell {
   private let containerView: UIView = {
     let view = UIView()
     view.layer.cornerRadius = 8
-    view.backgroundColor = DesignSystemColor.secondaryBackGround
+    view.backgroundColor = DesignSystemColor.secondaryBackground
     return view
   }()
 

@@ -17,9 +17,9 @@ public enum DesignSystemColor {
   public static let main01: UIColor = .main01
   public static let main02: UIColor = .main02
   public static let main03: UIColor = .main03
-  public static let primaryBackGround: UIColor = .primaryBackGround
+  public static let primaryBackground: UIColor = .primaryBackground
   public static let primaryText: UIColor = .primaryText
-  public static let secondaryBackGround: UIColor = .secondaryBackGround
+  public static let secondaryBackground: UIColor = .secondaryBackground
   public static let success: UIColor = .success
   public static let warning: UIColor = .warning
 }

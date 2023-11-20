@@ -17,7 +17,7 @@ class WorkoutSelectTypeCell: UICollectionViewCell {
   override init(frame: CGRect) {
     super.init(frame: frame)
     makeShadowAndRounded()
-    backgroundColor = DesignSystemColor.primaryBackGround
+    backgroundColor = DesignSystemColor.primaryBackground
     setupConstraints()
   }
 
