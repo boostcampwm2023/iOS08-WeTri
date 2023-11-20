@@ -10,6 +10,6 @@ import Coordinator
 import Foundation
 
 protocol AppCoordinating: Coordinating {
-  func startLoginFlow()
-  func startTabBarFlow()
+  func showLoginFlow()
+  func showTabBarFlow()
 }
