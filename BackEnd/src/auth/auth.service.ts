@@ -1,12 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ProfileModel } from 'src/profiles/entities/profiles.entity';
 import { UserModel } from 'src/users/entities/users.entity';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthService {
     constructor(
         private readonly jwtService: JwtService,
+        private readonly usersService: UsersService,
     ){}
 
     signToken(publicId: Pick<ProfileModel, 'publicId'>, isRefreshToken: boolean) {
@@ -29,7 +31,17 @@ export class AuthService {
         }
     }
 
-    authenticateWithUserIdAndProvider(user: Pick<UserModel, 'userId' | 'provider'>) {
+    async authenticateWithUserIdAndProvider(user: Pick<UserModel, 'userId' | 'provider'>) {
+        const existingUser = await this.usersService.getUserByUserIdAndProvider(user);
         
+        if(!existingUser) {
+            throw new UnauthorizedException('존재하지 않는 사용자입니다.');
+        }
+
+        return existingUser
     }
+
+    // async registerWithUserIdAndProvider(user: Pick<UserModel, 'userId' | 'provider'>) {
+
+    // }
 }

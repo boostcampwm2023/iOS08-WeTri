@@ -10,6 +10,7 @@ import { UserModel } from './entities/users.entity';
       UserModel,
     ]),
   ],
+  exports: [UsersService], //exports 해야 다른 모듈에서 사용 가능
   controllers: [UsersController],
   providers: [UsersService],
 })
