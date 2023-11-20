@@ -11,8 +11,8 @@ async function bootstrap() {
     logger: winstonLogger,
   });
   app.useGlobalPipes(new ValidationPipe());
-  app.useGlobalFilters(new HttpExceptionFilter);
-  app.useGlobalInterceptors(new ResponseTransformInterceptor);
+  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalInterceptors(new ResponseTransformInterceptor());
   SwaggerSetting(app);
   await app.listen(3000);
 }

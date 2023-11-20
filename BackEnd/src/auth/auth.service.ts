@@ -8,7 +8,11 @@ import { ProfilesService } from '../profiles/profiles.service';
 import { UserModel } from '../users/entities/users.entity';
 import { UsersService } from '../users/users.service';
 import { SignupDto } from './dto/signup.dto';
-import { InvalidTokenException, NicknameDuplicateException, NotRefreshTokenException } from './exceptions/auth.exception';
+import {
+  InvalidTokenException,
+  NicknameDuplicateException,
+  NotRefreshTokenException,
+} from './exceptions/auth.exception';
 
 @Injectable()
 export class AuthService {
@@ -45,8 +49,8 @@ export class AuthService {
       await this.usersService.getUserByUserIdAndProvider(user);
 
     if (!existingUser) {
-    //   throw new UnauthorizedException('존재하지 않는 사용자입니다.');
-        console.log("회원가입 페이지로 리디렉션");
+      //   throw new UnauthorizedException('존재하지 않는 사용자입니다.');
+      console.log('회원가입 페이지로 리디렉션');
     }
 
     return existingUser;
@@ -54,8 +58,8 @@ export class AuthService {
 
   async registerWithUserIdAndProvider(signupInfo: SignupDto) {
     if (await this.profilesService.existByNickname(signupInfo.nickname)) {
-    //   throw new BadRequestException('중복된 nickname 입니다.');
-       throw new NicknameDuplicateException();
+      //   throw new BadRequestException('중복된 nickname 입니다.');
+      throw new NicknameDuplicateException();
     }
     const newUser = await this.usersService.createUser(signupInfo);
 

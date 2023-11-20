@@ -6,7 +6,11 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../auth.service';
 import { ProfilesService } from '../../profiles/profiles.service';
-import { NotAccessTokenException, NotExistToken, NotRefreshTokenException } from '../exceptions/auth.exception';
+import {
+  NotAccessTokenException,
+  NotExistToken,
+  NotRefreshTokenException,
+} from '../exceptions/auth.exception';
 
 @Injectable()
 export class BearerTokenGuard implements CanActivate {
