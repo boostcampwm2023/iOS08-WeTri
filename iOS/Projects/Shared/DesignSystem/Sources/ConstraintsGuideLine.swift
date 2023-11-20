@@ -10,4 +10,5 @@ import Foundation
 
 public enum ConstraintsGuideLine {
   public static let value: CGFloat = 23
+  public static let secondaryValue: CGFloat = 23
 }
