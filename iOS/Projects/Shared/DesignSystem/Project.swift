@@ -3,6 +3,5 @@ import ProjectDescriptionHelpers
 
 let project = Project.makeModule(
   name: "DesignSystem",
-  product: .framework,
-  isTestable: false
+  targets: .custom(name: "DesignSystem", product: .framework)
 )
