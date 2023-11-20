@@ -91,15 +91,9 @@ private extension WorkoutEnvironmentSetupViewController {
 
   func addNavigationGesture() {
     guard let recognizer = contentNavigationController.interactivePopGestureRecognizer else { return }
-    recognizer.addTarget(self, action: #selector(pageControlWithGesture))
     recognizer.delegate = self
     recognizer.isEnabled = true
-  }
-
-  @objc func pageControlWithGesture(gesture: UIGestureRecognizer) {
-    if gesture.state == .ended {
-      pageControl.makePrev()
-    }
+    contentNavigationController.delegate = self
   }
 
   enum Constant {
@@ -112,6 +106,16 @@ private extension WorkoutEnvironmentSetupViewController {
 extension WorkoutEnvironmentSetupViewController: UIGestureRecognizerDelegate {
   public func gestureRecognizerShouldBegin(_: UIGestureRecognizer) -> Bool {
     return contentNavigationController.viewControllers.count > 1
+  }
+}
+
+// MARK: UINavigationControllerDelegate
+
+extension WorkoutEnvironmentSetupViewController: UINavigationControllerDelegate {
+  public func navigationController(_: UINavigationController, didShow viewController: UIViewController, animated _: Bool) {
+    if viewController == workoutSelectViewController {
+      pageControl.makePage(index: 0)
+    }
   }
 }
 
