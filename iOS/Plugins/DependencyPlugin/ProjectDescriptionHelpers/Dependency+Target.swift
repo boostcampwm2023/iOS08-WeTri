@@ -10,7 +10,6 @@ import ProjectDescription
 // MARK: - Feature
 
 public enum Feature: String {
-  case helloTest
   case record
 
   public var targetName: String {
