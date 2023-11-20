@@ -13,4 +13,6 @@ import Foundation
 public enum CoordinatorFlow {
   case login
   case tabBar
+  case workoutSetting
+  case workout
 }
