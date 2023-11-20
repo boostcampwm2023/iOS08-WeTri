@@ -10,6 +10,16 @@ export class ProfilesService {
         private readonly profilesRepository : Repository<ProfileModel>
     ){}
 
+    async findByPublicId(publicId: string) {
+        const profile = await this.profilesRepository.findOne({
+            where: {
+                publicId,
+            }
+        });
+        
+        return profile;
+    }
+
     async existByNickname(nickname: string) {
         const nicknameExists = await this.profilesRepository.exist({
             where: {

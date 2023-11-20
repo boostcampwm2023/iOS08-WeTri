@@ -1,5 +1,6 @@
-import { Body, Controller, Headers, Post } from '@nestjs/common';
+import { Body, Controller, Headers, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { RefreshTokenGuard } from './guard/bearerToken.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -24,6 +25,7 @@ export class AuthController {
   }
 
   @Post('token/access')
+  @UseGuards(RefreshTokenGuard)
   tokenAccess(@Headers('authorization') raw: string) {
     const token = this.authService.extractTokenFromHeader(raw);
 
@@ -35,6 +37,7 @@ export class AuthController {
   }
 
   @Post('token/access')
+  @UseGuards(RefreshTokenGuard)
   tokenRefresh(@Headers('authorization') raw: string) {
     const token = this.authService.extractTokenFromHeader(raw);
 
