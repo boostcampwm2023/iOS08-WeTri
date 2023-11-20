@@ -51,4 +51,34 @@ export class AuthService {
         
         return this.loginUser(newUser.profile.publicId);
     }
+
+    extractTokenFromHeader(header: string) {
+        const splitToken = header.split(' ');
+        
+        const type = splitToken[0];
+        
+        if(splitToken.length !== 2 || type !== 'Bearer') {
+            throw new UnauthorizedException('잘못된 토큰입니다.');
+        }
+
+        const token = splitToken[1];
+
+        return token;
+    }
+
+    verifyToken(token: string) {
+        return this.jwtService.verify(token, {
+            secret: process.env.JWT_SECRET,
+        })
+    }
+
+    rotateToken(token: string, isRefreshToken: boolean) {
+        const decoded = this.verifyToken(token);
+
+        if(decoded.type !== 'refresh') {
+            throw new UnauthorizedException('토큰 재발급은 Refresh 토큰으로만 가능합니다.!');
+        }
+
+        return this.signToken(decoded.sub, isRefreshToken);
+    }
 }
