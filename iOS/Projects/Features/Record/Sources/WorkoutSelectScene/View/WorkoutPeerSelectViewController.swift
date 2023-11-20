@@ -54,7 +54,7 @@ final class WorkoutPeerSelectViewController: UIViewController {
 private extension WorkoutPeerSelectViewController {
   func makeCollectionViewLayout() -> UICollectionViewCompositionalLayout {
     let item = NSCollectionLayoutItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1)))
-    item.contentInsets = .init(top: Materics.itemInsets, leading: Materics.itemInsets, bottom: Materics.itemInsets, trailing: Materics.itemInsets)
+    item.contentInsets = .init(top: Metrics.itemInsets, leading: Metrics.itemInsets, bottom: Metrics.itemInsets, trailing: Metrics.itemInsets)
 
     let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.15))
     let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
@@ -89,8 +89,8 @@ private extension WorkoutPeerSelectViewController {
     view.addSubview(startButton)
     startButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -50).isActive = true
     startButton.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor).isActive = true
-    startButton.widthAnchor.constraint(equalToConstant: Materics.buttonHeight).isActive = true
-    startButton.heightAnchor.constraint(equalToConstant: Materics.buttonHeight).isActive = true
+    startButton.widthAnchor.constraint(equalToConstant: Metrics.buttonHeight).isActive = true
+    startButton.heightAnchor.constraint(equalToConstant: Metrics.buttonHeight).isActive = true
 
     view.addSubview(pearTypeSelectCollectionView)
     pearTypeSelectCollectionView.topAnchor
@@ -109,7 +109,7 @@ private extension WorkoutPeerSelectViewController {
     dataSource.apply(snapshot)
   }
 
-  enum Materics {
+  enum Metrics {
     static let buttonHeight: CGFloat = 150
     static let buttonWidth: CGFloat = 150
 

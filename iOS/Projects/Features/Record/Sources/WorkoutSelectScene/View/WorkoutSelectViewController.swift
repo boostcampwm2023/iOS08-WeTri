@@ -64,10 +64,10 @@ private extension WorkoutSelectViewController {
 
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
     item.contentInsets = .init(
-      top: Materics.cellInsets,
-      leading: Materics.cellInsets,
-      bottom: Materics.cellInsets,
-      trailing: Materics.cellInsets
+      top: Metrics.cellInsets,
+      leading: Metrics.cellInsets,
+      bottom: Metrics.cellInsets,
+      trailing: Metrics.cellInsets
     )
 
     let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
@@ -116,7 +116,7 @@ private extension WorkoutSelectViewController {
       .store(in: &cancellables)
   }
 
-  enum Materics {
+  enum Metrics {
     static let cellInsets: CGFloat = 5
   }
 }
