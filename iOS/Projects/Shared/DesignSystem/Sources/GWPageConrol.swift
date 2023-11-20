@@ -7,13 +7,12 @@
 //
 
 import Foundation
-import OSLog
 import UIKit
 
 // MARK: - GWPageControl
 
 public final class GWPageControl: UIView {
-  let countOfPage: Int
+  let numberOfPage: Int
   var currentPageIndex: Int = 0
   let spacing: CGFloat = 8
   var pages: [UIView] = []
@@ -21,9 +20,10 @@ public final class GWPageControl: UIView {
 
   // MARK: - 과연 UIVIew를 optional로 만드는게 맞을까?
 
-  /// 2 와 5 사이 숫자를 입력하세요 아닐경우 nil이 리턴됩니다.
-  public init(count: Int = 2) {
-    countOfPage = (UIPageControlDefaultProperty.range).contains(count) ?
+  /// init에서 만약 5보다 큰 수나 2보다 작은 수가 입력되는 경우
+  /// page 갯수가 2개로 설정 됩니다.
+  public init(count: Int) {
+    numberOfPage = (UIPageControlDefaultProperty.range).contains(count) ?
       count :
       UIPageControlDefaultProperty.numOfMinPage
 
@@ -31,7 +31,7 @@ public final class GWPageControl: UIView {
 
     makePages()
     makePageConstraints()
-    selectPage(at: 0)
+    updateSelectPage(at: 0)
   }
 
   @available(*, unavailable)
@@ -42,9 +42,7 @@ public final class GWPageControl: UIView {
 
 private extension GWPageControl {
   func makePages() {
-    pages = (0 ..< countOfPage).enumerated().map { _, _ -> UIView in
-      return pageViewObject
-    }
+    pages = (0 ..< numberOfPage).map { _ in pageView }
   }
 
   func makePageConstraints() {
@@ -69,7 +67,7 @@ private extension GWPageControl {
     }
   }
 
-  var pageViewObject: UIView {
+  private var pageView: UIView {
     let view = UIView()
     view.layer.cornerRadius = 4
     view.clipsToBounds = true
@@ -82,22 +80,22 @@ private extension GWPageControl {
 }
 
 public extension GWPageControl {
-  func makePage(index pageIndex: Int) {
+  func select(at pageIndex: Int) {
     if pageIndex >= pages.count {
       return
     }
-    deselectPage(at: currentPageIndex)
+    updateDeselectPage(at: currentPageIndex)
     currentPageIndex = pageIndex
-    selectPage(at: currentPageIndex)
+    updateSelectPage(at: currentPageIndex)
   }
 
-  func makeNextPage() {
+  func next() {
     if currentPageIndex >= pages.count {
       return
     }
-    deselectPage(at: currentPageIndex)
+    updateDeselectPage(at: currentPageIndex)
     currentPageIndex += 1
-    selectPage(at: currentPageIndex)
+    updateSelectPage(at: currentPageIndex)
 
     UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut) { [weak self] in
       guard let self else { return }
@@ -105,13 +103,13 @@ public extension GWPageControl {
     }
   }
 
-  func makePrev() {
-    if currentPageIndex >= pages.count {
+  func back() {
+    if currentPageIndex >= pages.count || currentPageIndex <= 0 {
       return
     }
-    deselectPage(at: currentPageIndex)
+    updateDeselectPage(at: currentPageIndex)
     currentPageIndex -= 1
-    selectPage(at: currentPageIndex)
+    updateSelectPage(at: currentPageIndex)
 
     UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut) { [weak self] in
       guard let self else { return }
@@ -121,7 +119,7 @@ public extension GWPageControl {
 }
 
 private extension GWPageControl {
-  func selectPage(at pageIndex: Int) {
+  func updateSelectPage(at pageIndex: Int) {
     guard 0 ..< pages.count ~= pageIndex else {
       return
     }
@@ -132,7 +130,7 @@ private extension GWPageControl {
     pageWidthConstraint.constant = UIPageControlDefaultProperty.selectedPageWidth
   }
 
-  func deselectPage(at pageIndex: Int) {
+  func updateDeselectPage(at pageIndex: Int) {
     guard 0 ..< pages.count ~= pageIndex else {
       return
     }

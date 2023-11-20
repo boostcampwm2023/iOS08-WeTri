@@ -114,7 +114,7 @@ extension WorkoutEnvironmentSetupViewController: UIGestureRecognizerDelegate {
 extension WorkoutEnvironmentSetupViewController: UINavigationControllerDelegate {
   public func navigationController(_: UINavigationController, didShow viewController: UIViewController, animated _: Bool) {
     if viewController == workoutSelectViewController {
-      pageControl.makePage(index: 0)
+      pageControl.select(at: 0)
     }
   }
 }
@@ -123,7 +123,7 @@ extension WorkoutEnvironmentSetupViewController: UINavigationControllerDelegate 
 
 extension WorkoutEnvironmentSetupViewController: WorkoutSelectViewDelegate {
   func nextButtonDidTap() {
-    pageControl.makeNextPage()
+    pageControl.next()
     contentNavigationController.pushViewController(workoutPeerSelectViewController, animated: true)
   }
 }
