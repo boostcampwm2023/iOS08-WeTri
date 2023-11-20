@@ -10,6 +10,7 @@ import UIKit
 
 // MARK: - GWRoundShadowView
 
+/// 차후 interaction을 통해 사이즈나 constarints가 달라진다면 쓸 수 없는 UIComponent입니다.
 public final class GWRoundShadowView: UIView {
   let containerView = UIView()
   let cornerRadius: CGFloat
@@ -25,7 +26,6 @@ public final class GWRoundShadowView: UIView {
     super.layoutSubviews()
     if shadowLayer == nil {
       shadowLayer = CAShapeLayer()
-
       shadowLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius).cgPath
       shadowLayer.fillColor = fillColor
 

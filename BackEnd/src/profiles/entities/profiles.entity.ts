@@ -1,6 +1,7 @@
-import { PostModel } from 'src/posts/entities/posts.entity';
-import { RecordModel } from 'src/records/entities/records.entity';
-import { UserModel } from 'src/users/entities/users.entity';
+import { IsDate, IsString } from 'class-validator';
+import { PostModel } from '../../posts/entities/posts.entity';
+import { RecordModel } from '../../records/entities/records.entity';
+import { UserModel } from '../../users/entities/users.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -18,12 +19,21 @@ export class ProfileModel {
   id: number;
 
   @Column({ unique: true })
+  @IsString({
+    message: 'nickname은 string 타입으로 입력해야합니다.',
+  })
   nickname: string;
 
   @Column({ nullable: false })
+  @IsString({
+    message: 'gender는 string 타입으로 입력해야합니다.',
+  })
   gender: string;
 
   @Column({ nullable: false })
+  @IsString({
+    message: 'birthdate string 타입으로 입력해야합니다.',
+  })
   birthdate: Date;
 
   @CreateDateColumn()
@@ -34,7 +44,7 @@ export class ProfileModel {
 
   @Column({ unique: true })
   @Generated('uuid')
-  publicId: string;
+  publicId: string; //바꿀 예정
 
   @OneToOne(() => UserModel, (user) => user.profile)
   user: UserModel;

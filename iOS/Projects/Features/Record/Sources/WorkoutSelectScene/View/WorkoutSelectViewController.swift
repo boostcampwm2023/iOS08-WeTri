@@ -6,17 +6,29 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import Combine
+import CombineCocoa
 import DesignSystem
 import UIKit
+
+// MARK: - WorkoutSelectViewDelegate
+
+protocol WorkoutSelectViewDelegate: AnyObject {
+  func nextButtonDidTap()
+}
 
 // MARK: - WorkoutSelectViewController
 
 final class WorkoutSelectViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
-    setupConstraints()
     navigationController?.setNavigationBarHidden(true, animated: false)
+    setupConstraints()
+    bind()
   }
+
+  private var cancellables = Set<AnyCancellable>()
+  weak var delegate: WorkoutSelectViewDelegate?
 
   private let workoutSelectDescriptionLabel: UILabel = {
     let label = UILabel()
@@ -28,9 +40,10 @@ final class WorkoutSelectViewController: UIViewController {
     return label
   }()
 
-  lazy var workoutCardCollectionView: UICollectionView = {
+  lazy var workoutTypesCollectionView: UICollectionView = {
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCollectionViewLayout())
-    collectionView.register(WorkoutCardCell.self, forCellWithReuseIdentifier: WorkoutCardCell.identifier)
+    collectionView.register(WorkoutSelectTypeCell.self, forCellWithReuseIdentifier: WorkoutSelectTypeCell.identifier)
+    collectionView.backgroundColor = UIColor.clear
 
     collectionView.translatesAutoresizingMaskIntoConstraints = false
     return collectionView
@@ -51,10 +64,10 @@ private extension WorkoutSelectViewController {
 
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
     item.contentInsets = .init(
-      top: Const.cellInsets,
-      leading: Const.cellInsets,
-      bottom: Const.cellInsets,
-      trailing: Const.cellInsets
+      top: Metrics.cellInsets,
+      leading: Metrics.cellInsets,
+      bottom: Metrics.cellInsets,
+      trailing: Metrics.cellInsets
     )
 
     let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
@@ -76,14 +89,14 @@ private extension WorkoutSelectViewController {
     workoutSelectDescriptionLabel.trailingAnchor
       .constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
 
-    view.addSubview(workoutCardCollectionView)
-    workoutCardCollectionView.topAnchor
+    view.addSubview(workoutTypesCollectionView)
+    workoutTypesCollectionView.topAnchor
       .constraint(equalTo: workoutSelectDescriptionLabel.bottomAnchor, constant: 12).isActive = true
-    workoutCardCollectionView.leadingAnchor
+    workoutTypesCollectionView.leadingAnchor
       .constraint(equalTo: safeArea.leadingAnchor, constant: ConstraintsGuideLine.value).isActive = true
-    workoutCardCollectionView.trailingAnchor
+    workoutTypesCollectionView.trailingAnchor
       .constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
-    workoutCardCollectionView.bottomAnchor
+    workoutTypesCollectionView.bottomAnchor
       .constraint(equalTo: view.bottomAnchor, constant: -15).isActive = true
 
     view.addSubview(nextButton)
@@ -95,7 +108,15 @@ private extension WorkoutSelectViewController {
       .constraint(equalTo: safeArea.bottomAnchor, constant: -28).isActive = true
   }
 
-  enum Const {
+  func bind() {
+    nextButton.publisher(.touchUpInside)
+      .sink { [weak self] _ in
+        self?.delegate?.nextButtonDidTap()
+      }
+      .store(in: &cancellables)
+  }
+
+  enum Metrics {
     static let cellInsets: CGFloat = 5
   }
 }

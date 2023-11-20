@@ -7,9 +7,8 @@ import {
   OneToOne,
 } from 'typeorm';
 
-import { UserModel } from 'src/users/entities/users.entity';
-import { PostModel } from 'src/posts/entities/posts.entity';
-import { ProfileModel } from 'src/profiles/entities/profiles.entity';
+import { PostModel } from '../../posts/entities/posts.entity';
+import { ProfileModel } from '../../profiles/entities/profiles.entity';
 @Entity()
 export class RecordModel {
   @PrimaryGeneratedColumn()
