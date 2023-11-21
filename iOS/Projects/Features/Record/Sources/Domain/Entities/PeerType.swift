@@ -9,20 +9,20 @@
 import Foundation
 
 struct PeerType: Hashable {
-  let icon: String
-  let title: String
-  let description: String
+  let iconSystemImage: String
+  let titleText: String
+  let descriptionText: String
   let id = UUID()
 
   init(icon: String, title: String, description: String) {
-    self.icon = icon
-    self.title = title
-    self.description = description
+    iconSystemImage = icon
+    titleText = title
+    descriptionText = description
   }
 
   init(peerTypeDTO dto: PeerTypeDto) {
-    icon = dto.icon
-    title = dto.title
-    description = dto.description
+    iconSystemImage = dto.icon
+    titleText = dto.title
+    descriptionText = dto.description
   }
 }

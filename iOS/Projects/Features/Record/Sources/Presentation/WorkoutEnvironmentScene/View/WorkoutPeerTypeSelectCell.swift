@@ -175,6 +175,18 @@ private extension WorkoutPeerTypeSelectCell {
   }
 }
 
+extension WorkoutPeerTypeSelectCell {
+  func update(descriptionIconSystemName: String, descriptionTitleText: String, descriptionSubTitleText: String) {
+    let imageFont: UIFont = .preferredFont(forTextStyle: .title1)
+    let configure = UIImage.SymbolConfiguration(font: imageFont)
+    let targetImage = UIImage(systemName: descriptionIconSystemName, withConfiguration: configure)
+
+    descriptionIcon.image = targetImage
+    descriptionTitle.text = descriptionTitleText
+    descriptionSubTitle.text = descriptionSubTitleText
+  }
+}
+
 private extension UIImageView {
   func makeShadow() {
     layer.backgroundColor = UIColor.clear.cgColor

@@ -64,7 +64,7 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
           return Result.failure(error)
         }
       }
-    
+
     let workoutPeerType: WorkoutEnvironmentSetupViewModelOutput = input
       .requestWorkoutPeerTypes
       .flatMap { _ in
@@ -72,9 +72,9 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
       }
       .map { results -> Result<WorkoutEnvironmentState, Error> in
         switch results {
-        case .success(let success):
+        case let .success(success):
           return .success(.workoutPeerTypes(success))
-        case .failure(let failure):
+        case let .failure(failure):
           return .failure(failure)
         }
       }.eraseToAnyPublisher()

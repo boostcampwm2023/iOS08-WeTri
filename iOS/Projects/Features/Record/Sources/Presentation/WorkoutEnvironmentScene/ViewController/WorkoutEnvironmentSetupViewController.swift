@@ -53,16 +53,17 @@ public final class WorkoutEnvironmentSetupViewController: UIViewController {
 
   var viewModel: WorkoutEnvironmentSetupViewModelRepresentable?
 
-  var workoutTypes: UICollectionViewDiffableDataSource<Int, WorkoutType>?
-  var peerTypes: UICollectionViewDiffableDataSource<Int, PeerType>?
+  var workoutTypesDataSource: UICollectionViewDiffableDataSource<Int, WorkoutType>?
+  var peerTypesDataSource: UICollectionViewDiffableDataSource<Int, PeerType>?
 
-  var workoutTypesCollectionView: UICollectionView!
-  var workoutPaerTypesCollectionView: UICollectionView!
+  var workoutTypesCollectionView: UICollectionView?
+  var workoutPeerTypesCollectionView: UICollectionView?
 }
 
 private extension WorkoutEnvironmentSetupViewController {
   func bind() {
     workoutTypesCollectionView = workoutSelectViewController.workoutTypesCollectionView
+    workoutPeerTypesCollectionView = workoutPeerSelectViewController.pearTypeSelectCollectionView
 
     workoutSelectViewController.delegate = self
 
@@ -87,16 +88,12 @@ private extension WorkoutEnvironmentSetupViewController {
         switch state {
         case let .success(success):
           switch success {
-          case .idle:
-            break
-          case let .workoutTpyes(workoutTypes):
-            updateWorkoutTypes(workoutTypes)
-          case let .workoutPeerTypes(pear) :
-            break
+          case .idle: break
+          case let .workoutTpyes(workoutTypes): updateWorkoutTypes(workoutTypes)
+          case let .workoutPeerTypes(pear): break
           }
-        case let .failure(failure):
-          // TODO: failure에 알맞는 로직 세우기
-          break
+        // TODO: failure에 알맞는 로직 세우기
+        case let .failure(failure): break
         }
       }
       .store(in: &cancellables)
@@ -112,7 +109,13 @@ private extension WorkoutEnvironmentSetupViewController {
   }
 
   func configureDataSource() {
-    workoutTypes = .init(collectionView: workoutTypesCollectionView, cellProvider: { collectionView, indexPath, item in
+    guard let workoutTypesCollectionView,
+          let workoutPeerTypesCollectionView
+    else {
+      return
+    }
+
+    workoutTypesDataSource = .init(collectionView: workoutTypesCollectionView, cellProvider: { collectionView, indexPath, item in
       guard
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WorkoutSelectTypeCell.identifier, for: indexPath) as? WorkoutSelectTypeCell
       else {
@@ -122,11 +125,27 @@ private extension WorkoutEnvironmentSetupViewController {
       cell.update(systemName: item.workoutIcon, description: item.workoutIconDescription)
       return cell
     })
+
+    peerTypesDataSource = .init(collectionView: workoutPeerTypesCollectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
+      guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WorkoutPeerTypeSelectCell.identifier, for: indexPath)
+        as? WorkoutPeerTypeSelectCell
+      else {
+        return UICollectionViewCell()
+      }
+
+      cell.update(
+        descriptionIconSystemName: itemIdentifier.descriptionText,
+        descriptionTitleText: itemIdentifier.titleText,
+        descriptionSubTitleText: itemIdentifier.descriptionText
+      )
+
+      return cell
+    })
   }
 
   func insertTempSource() {
-    guard let workoutTypes else { return }
-    var snapshot = workoutTypes.snapshot()
+    guard let workoutTypesDataSource else { return }
+    var snapshot = workoutTypesDataSource.snapshot()
     snapshot.deleteAllItems()
     snapshot.appendSections([0])
     snapshot.appendItems([
@@ -134,18 +153,18 @@ private extension WorkoutEnvironmentSetupViewController {
       WorkoutType(workoutIcon: "square.and.arrow.up.circle.fill", workoutIconDescription: "1s1"),
     ])
 
-    workoutTypes.apply(snapshot)
+    workoutTypesDataSource.apply(snapshot)
   }
 
   func updateWorkoutTypes(_ types: [WorkoutType]) {
-    guard let workoutTypes else { return }
-    var snapshot = workoutTypes.snapshot()
+    guard let workoutTypesDataSource else { return }
+    var snapshot = workoutTypesDataSource.snapshot()
     snapshot.deleteAllItems()
     snapshot.appendSections([0])
     snapshot.appendItems(types)
 
     DispatchQueue.main.async {
-      workoutTypes.apply(snapshot)
+      workoutTypesDataSource.apply(snapshot)
     }
   }
 

@@ -19,8 +19,6 @@ final class WorkoutPeerSelectViewController: UIViewController {
     setup()
   }
 
-  var dataSource: UICollectionViewDiffableDataSource<Int, UUID>!
-
   private let workoutSelectDescriptionLabel: UILabel = {
     let label = UILabel()
     label.font = .preferredFont(forTextStyle: .title1, with: .traitBold)
@@ -66,14 +64,6 @@ private extension WorkoutPeerSelectViewController {
 
   func setup() {
     setHierarchyAndConstraints()
-
-    dataSource = .init(collectionView: pearTypeSelectCollectionView, cellProvider: { collectionView, indexPath, _ in
-      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WorkoutPeerTypeSelectCell.identifier, for: indexPath)
-
-      return cell
-    })
-
-    tempInitDataSource()
   }
 
   func setHierarchyAndConstraints() {
@@ -100,13 +90,6 @@ private extension WorkoutPeerSelectViewController {
     pearTypeSelectCollectionView.trailingAnchor
       .constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.secondaryValue).isActive = true
     pearTypeSelectCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-  }
-
-  func tempInitDataSource() {
-    var snapshot = dataSource.snapshot()
-    snapshot.appendSections([0])
-    snapshot.appendItems([.init(), .init(), .init()])
-    dataSource.apply(snapshot)
   }
 
   enum Metrics {
