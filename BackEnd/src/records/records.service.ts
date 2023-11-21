@@ -7,16 +7,19 @@ import { ProfileModel } from 'src/profiles/entities/profiles.entity';
 
 @Injectable()
 export class RecordsService {
-    constructor(
-        @InjectRepository(RecordModel)
-        private readonly recordsRepository: Repository<RecordModel>,
-    ) {}
-    
-    async createExerciseLog(exerciseLog: CreateExerciseLogDto, profile: ProfileModel) {
-        return await this.recordsRepository.save({
-            ...exerciseLog,
-            checker: false,
-            profile,
-        })
-    }
+  constructor(
+    @InjectRepository(RecordModel)
+    private readonly recordsRepository: Repository<RecordModel>,
+  ) {}
+
+  async createExerciseLog(
+    exerciseLog: CreateExerciseLogDto,
+    profile: ProfileModel,
+  ) {
+    return await this.recordsRepository.save({
+      ...exerciseLog,
+      checker: false,
+      profile,
+    });
+  }
 }

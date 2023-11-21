@@ -12,8 +12,8 @@ export class RecordsController {
   @UseGuards(AccessTokenGuard)
   async createExerciseLog(
     @Profile() profile: ProfileModel,
-    @Body() body: CreateExerciseLogDto
-    ) {
-      return this.recordsService.createExerciseLog(body, profile);
+    @Body() body: CreateExerciseLogDto,
+  ) {
+    return this.recordsService.createExerciseLog(body, profile);
   }
 }

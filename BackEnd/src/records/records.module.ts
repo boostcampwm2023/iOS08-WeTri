@@ -9,8 +9,9 @@ import { RecordModel } from './entities/records.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([RecordModel]),
-    AuthModule, 
-    ProfilesModule],
+    AuthModule,
+    ProfilesModule,
+  ],
   controllers: [RecordsController],
   providers: [RecordsService],
 })
