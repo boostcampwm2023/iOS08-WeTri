@@ -29,21 +29,12 @@ jobs:
           tags: ${{ secrets.NCP_CONTAINER_REGISTRY }}/my-app:latest
 
       - name: SSH to Internal Server and Deploy
-        env:
-          BASTION_HOST: ${{ secrets.BASTION_HOST }}
-          BASTION_USER: ${{ secrets.BASTION_USER }}
-          BASTION_PASSWORD: ${{ secrets.BASTION_PASSWORD }}
-          SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
-          SERVER_USER: ${{ secrets.SERVER_USER }}
-          INTERNAL_SERVER_IP: ${{ secrets.INTERNAL_SERVER_IP }}
-          CONTAINER_REGISTRY: ${{ secrets.NCP_CONTAINER_REGISTRY }}
         run: |
-          sshpass -p $BASTION_PASSWORD ssh -o StrictHostKeyChecking=no $BASTION_USER@$BASTION_HOST -tt << EOF
-            sshpass -p $SERVER_PASSWORD ssh -o StrictHostKeyChecking=no $SERVER_USER@$INTERNAL_SERVER_IP -tt << 'ENDSSH'
-              docker pull $CONTAINER_REGISTRY/my-app:latest
-              docker stop my-app || true
-              docker rm my-app || true
-              docker run --name my-app -d -p 443:3000 -p 80:3000 $CONTAINER_REGISTRY/my-app:latest
-              docker cp /var/env/.env my-app:/app/.env
-            ENDSSH
-          EOF
+          sshpass -p ${{ secrets.BASTION_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.BASTION_USER }}@${{ secrets.BASTION_HOST }} -tt "
+            sshpass -p ${{ secrets.SERVER_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.INTERNAL_SERVER_IP }} '
+              docker pull ${{ secrets.CONTAINER_REGISTRY }}/my-app:latest;
+              docker stop my-app || true;
+              docker rm my-app || true;
+              docker run --name my-app -d -p 443:3000 -p 80:3000 ${{ secrets.CONTAINER_REGISTRY }}/my-app:latest;
+              docker cp /var/env/.env my-app:/app/.env;
+            '"
