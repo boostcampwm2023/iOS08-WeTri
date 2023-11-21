@@ -29,17 +29,21 @@ jobs:
           tags: ${{ secrets.NCP_CONTAINER_REGISTRY }}/my-app:latest
 
       - name: SSH to Internal Server and Deploy
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.BASTION_HOST }}
-          username: ${{ secrets.BASTION_USER }}
-          password: ${{ secrets.BASTION_PASSWORD }}
-          port: 22
-          script: |
-            sshpass -p ${{ secrets.SERVER_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.INTERNAL_SERVER_IP }} -p 22 '
-              docker pull ${{ secrets.NCP_CONTAINER_REGISTRY }}/my-app:latest
+        env:
+          BASTION_HOST: ${{ secrets.BASTION_HOST }}
+          BASTION_USER: ${{ secrets.BASTION_USER }}
+          BASTION_PASSWORD: ${{ secrets.BASTION_PASSWORD }}
+          SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          INTERNAL_SERVER_IP: ${{ secrets.INTERNAL_SERVER_IP }}
+          CONTAINER_REGISTRY: ${{ secrets.NCP_CONTAINER_REGISTRY }}
+        run: |
+          sshpass -p $BASTION_PASSWORD ssh -o StrictHostKeyChecking=no $BASTION_USER@$BASTION_HOST -tt << EOF
+            sshpass -p $SERVER_PASSWORD ssh -o StrictHostKeyChecking=no $SERVER_USER@$INTERNAL_SERVER_IP -tt << 'ENDSSH'
+              docker pull $CONTAINER_REGISTRY/my-app:latest
               docker stop my-app || true
               docker rm my-app || true
-              docker run --name my-app -d -p 443:3000 -p 80:3000 ${{ secrets.NCP_CONTAINER_REGISTRY }}/my-app:latest
+              docker run --name my-app -d -p 443:3000 -p 80:3000 $CONTAINER_REGISTRY/my-app:latest
               docker cp /var/env/.env my-app:/app/.env
-            '
+            ENDSSH
+          EOF
