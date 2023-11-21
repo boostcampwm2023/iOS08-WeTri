@@ -20,6 +20,9 @@ final class WorkoutRouteMapViewController: UIViewController {
 
   private let viewModel: WorkoutRouteMapViewModelRepresentable
 
+  /// 사용자 위치 추적 배열
+  private var locations: [CLLocation] = []
+
   private var subscriptions: Set<AnyCancellable> = []
 
   private lazy var locationManager: CLLocationManager = {
@@ -30,9 +33,10 @@ final class WorkoutRouteMapViewController: UIViewController {
 
   // MARK: UI Components
 
-  private let mapView: MKMapView = {
+  private lazy var mapView: MKMapView = {
     let mapView = MKMapView()
     mapView.showsUserLocation = true
+    mapView.delegate = self
     mapView.setUserTrackingMode(.follow, animated: true)
     return mapView
   }()
@@ -100,10 +104,8 @@ final class WorkoutRouteMapViewController: UIViewController {
   }
 
   private func setupLocationManager() {
-    Logger().debug("\(#function)")
     locationManager.requestWhenInUseAuthorization()
     locationManager.startUpdatingLocation()
-    locationManager.startMonitoringSignificantLocationChanges()
   }
 }
 
@@ -121,8 +123,25 @@ extension WorkoutRouteMapViewController: CLLocationManagerDelegate {
     locationManager.startUpdatingLocation()
   }
 
-  func locationManager(_: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-    Logger().debug("\(locations)")
+  func locationManager(_: CLLocationManager, didUpdateLocations newLocations: [CLLocation]) {
+    guard let newLocation = newLocations.last
+    else {
+      Logger().error("location 값이 존재하지 않습니다.")
+      return
+    }
+
+    locations.append(newLocation)
+    let coordinates = locations.map(\.coordinate)
+    let polyline = MKPolyline(coordinates: coordinates, count: coordinates.count)
+    mapView.addOverlay(polyline)
+
+    // 지도 뷰 업데이트
+    let region = MKCoordinateRegion(
+      center: newLocation.coordinate,
+      latitudinalMeters: Metrics.mapDistance,
+      longitudinalMeters: Metrics.mapDistance
+    )
+    mapView.setRegion(region, animated: true)
   }
 
   func locationManager(_: CLLocationManager, didFailWithError error: Error) {
@@ -130,10 +149,26 @@ extension WorkoutRouteMapViewController: CLLocationManagerDelegate {
   }
 }
 
+// MARK: MKMapViewDelegate
+
+extension WorkoutRouteMapViewController: MKMapViewDelegate {
+  func mapView(_: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+    if let polyline = overlay as? MKPolyline {
+      let renderer = MKPolylineRenderer(polyline: polyline)
+      renderer.strokeColor = DesignSystemColor.main03
+      renderer.lineWidth = 3
+      return renderer
+    }
+
+    return MKOverlayRenderer(overlay: overlay)
+  }
+}
+
 // MARK: WorkoutRouteMapViewController.Metrics
 
 private extension WorkoutRouteMapViewController {
   enum Metrics {
+    static let mapDistance: CLLocationDistance = 500
     static let horizontal: CGFloat = 24
   }
 }
