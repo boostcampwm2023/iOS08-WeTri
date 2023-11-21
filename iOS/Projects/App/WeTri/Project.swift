@@ -17,6 +17,11 @@ let projects = Project.makeModule(
     dependencies: [
       .coordinator,
       .feature(.record),
+    ],
+    infoPlist: [
+      "NSLocationAlwaysUsageDescription": "운동 경로를 보여줄 때 사용합니다",
+      "NSLocationAlwaysAndWhenInUseUsageDescription": "운동 경로를 보여줄 때 사용합니다",
+      "NSLocationWhenInUseUsageDescription": "운동 경로를 보여줄 때 사용합니다",
     ]
   )
 )
