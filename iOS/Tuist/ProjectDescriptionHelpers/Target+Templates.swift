@@ -29,7 +29,10 @@ public extension [Target] {
     testingOptions: Set<TestingOption> = [],
     dependencies: [TargetDependency] = [],
     testDependencies: [TargetDependency] = [],
-    infoPlist: [String: Plist.Value] = [
+    infoPlist: [String: Plist.Value] = [:]
+  ) -> [Target] {
+
+    var defaultInfoPlist: [String: Plist.Value] = [
       "UILaunchStoryboardName": "LaunchScreen",
       "UIApplicationSceneManifest": [
         "UIApplicationSupportsMultipleScenes": false,
@@ -43,7 +46,11 @@ public extension [Target] {
         ],
       ],
     ]
-  ) -> [Target] {
+
+    defaultInfoPlist.merge(infoPlist) { _, new in
+      new
+    }
+
     var targets: [Target] = [
       Target(
         name: name,
@@ -51,7 +58,7 @@ public extension [Target] {
         product: .app,
         bundleId: "\(ProjectEnvironment.default.prefixBundleID).\(name.lowercased())",
         deploymentTarget: ProjectEnvironment.default.deploymentTarget,
-        infoPlist: .extendingDefault(with: infoPlist),
+        infoPlist: .extendingDefault(with: defaultInfoPlist),
         sources: "Sources/**",
         resources: "Resources/**",
         scripts: [.swiftFormat, .swiftLint],
