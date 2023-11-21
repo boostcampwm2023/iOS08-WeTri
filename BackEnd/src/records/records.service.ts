@@ -18,7 +18,6 @@ export class RecordsService {
   ) {
     return await this.recordsRepository.save({
       ...exerciseLog,
-      checker: false,
       profile,
     });
   }
