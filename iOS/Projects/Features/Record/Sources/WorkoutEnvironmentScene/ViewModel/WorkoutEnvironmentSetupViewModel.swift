@@ -8,13 +8,13 @@
 
 import Combine
 
-// MARK: - WorkoutEnvironmentViewModelInput
+// MARK: - WorkoutEnvironmentSetupViewModelInput
 
-struct WorkoutEnvironmentViewModelInput {
+struct WorkoutEnvironmentSetupViewModelInput {
   let endWorkoutEnvironment: AnyPublisher<Void, Never>
 }
 
-typealias WorkoutEnvironmentViewModelOutput = AnyPublisher<WorkoutEnvironmentState, Never>
+typealias WorkoutEnvironmentSetupViewModelOutput = AnyPublisher<WorkoutEnvironmentState, Never>
 
 // MARK: - WorkoutEnvironmentState
 
@@ -22,24 +22,24 @@ enum WorkoutEnvironmentState {
   case idle
 }
 
-// MARK: - WorkoutEnvironmentViewModelRepresentable
+// MARK: - WorkoutEnvironmentSetupViewModelRepresentable
 
-protocol WorkoutEnvironmentViewModelRepresentable {
-  func transform(input: WorkoutEnvironmentViewModelInput) -> WorkoutEnvironmentViewModelOutput
+protocol WorkoutEnvironmentSetupViewModelRepresentable {
+  func transform(input: WorkoutEnvironmentSetupViewModelInput) -> WorkoutEnvironmentSetupViewModelOutput
 }
 
-// MARK: - WorkoutEnvironmentViewModel
+// MARK: - WorkoutEnvironmentSetupViewModel
 
-final class WorkoutEnvironmentViewModel {
+final class WorkoutEnvironmentSetupViewModel {
   private var subscriptions = Set<AnyCancellable>()
 
   init() {}
 }
 
-// MARK: WorkoutEnvironmentViewModelRepresentable
+// MARK: WorkoutEnvironmentSetupViewModelRepresentable
 
-extension WorkoutEnvironmentViewModel: WorkoutEnvironmentViewModelRepresentable {
-  func transform(input: WorkoutEnvironmentViewModelInput) -> WorkoutEnvironmentViewModelOutput {
+extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepresentable {
+  func transform(input: WorkoutEnvironmentSetupViewModelInput) -> WorkoutEnvironmentSetupViewModelOutput {
     subscriptions.removeAll()
 
     input
@@ -47,7 +47,7 @@ extension WorkoutEnvironmentViewModel: WorkoutEnvironmentViewModelRepresentable 
       .sink {}
       .store(in: &subscriptions)
 
-    let initialState: WorkoutEnvironmentViewModelOutput = Just(.idle).eraseToAnyPublisher()
+    let initialState: WorkoutEnvironmentSetupViewModelOutput = Just(.idle).eraseToAnyPublisher()
     return initialState
   }
 }

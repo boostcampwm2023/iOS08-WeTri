@@ -9,6 +9,8 @@
 import Coordinator
 import UIKit
 
+// MARK: - WorkoutSettingCoordinator
+
 final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
   var navigationController: UINavigationController
   var childCoordinators: [Coordinating] = []
@@ -19,7 +21,7 @@ final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
   init(navigationController: UINavigationController) {
     self.navigationController = navigationController
   }
-
+  
   func start() {
     pushWorkoutSelectViewController()
   }
@@ -31,7 +33,9 @@ final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
 
   func pushWorkoutEnvironmentSetupViewController(workoutSetting _: WorkoutSetting) {
     // TODO: WorkoutEnvironmentSetupViewController의 Usecase에 workoutSetting 객체를 전달해줘야한다.
-    let workoutEnvironmentViewController = WorkoutEnvironmentSetupViewController()
+    
+    let syringe = WorkOutEnvironmentSetupSyringe()
+    let workoutEnvironmentViewController: WorkoutEnvironmentSetupViewController = syringe.resolve()
     navigationController.pushViewController(workoutEnvironmentViewController, animated: false)
   }
 
@@ -48,3 +52,31 @@ final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
   }
 }
 
+// MARK: WorkoutSettingCoordinator.WorkOutEnvironmentSetupSyringe
+
+private extension WorkoutSettingCoordinator {
+  class WorkOutEnvironmentSetupSyringe: Injectable {
+    init() { fillUp() }
+
+    var dependencies: [String: Any] = [:]
+
+    func register<T>(_ dependency: T) {
+      let key = String(describing: type(of: T.self))
+      dependencies[key] = dependency
+    }
+
+    func resolve<T>() -> T {
+      let key = String(describing: type(of: T.self))
+      if dependencies[key] == nil {
+        register(T.self)
+      }
+
+      return dependencies[key] as! T
+    }
+
+    func fillUp() {
+      register(WorkoutEnvironmentSetupViewModel())
+      register(WorkoutEnvironmentSetupViewController(viewModel: resolve()))
+    }
+  }
+}

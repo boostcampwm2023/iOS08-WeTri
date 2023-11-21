@@ -13,6 +13,16 @@ import UIKit
 // MARK: - WorkoutEnvironmentSetupViewController
 
 public final class WorkoutEnvironmentSetupViewController: UIViewController {
+  init(viewModel: WorkoutEnvironmentSetupViewModel) {
+    self.viewModel = viewModel
+    super.init(nibName: nil, bundle: nil)
+  }
+
+  @available(*, unavailable)
+  public required init?(coder _: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+
   override public func viewDidLoad() {
     super.viewDidLoad()
     setup()
@@ -35,6 +45,7 @@ public final class WorkoutEnvironmentSetupViewController: UIViewController {
     return pageControl
   }()
 
+  var viewModel: WorkoutEnvironmentSetupViewModelRepresentable?
   var dataSource: UICollectionViewDiffableDataSource<Int, UUID>!
   var workoutTypesCollectionView: UICollectionView!
   var workoutPaerTypesCollectionView: UICollectionView!
