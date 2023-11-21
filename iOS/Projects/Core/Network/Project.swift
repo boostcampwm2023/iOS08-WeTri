@@ -1,5 +1,7 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-/// Trinet
-let project = Project.makeModule(name: "Trinet", platform: .iOS, product: .framework, resources: nil, isTestable: true)
+let project = Project.makeModule(
+  name: "Trinet",
+  targets: .custom(name: "Trinet", product: .framework, testingOptions: [.unitTest])
+)

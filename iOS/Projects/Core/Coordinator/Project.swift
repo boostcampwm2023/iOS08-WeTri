@@ -10,6 +10,5 @@ import ProjectDescriptionHelpers
 
 let project = Project.makeModule(
   name: "Coordinator",
-  product: .framework,
-  resources: nil
+  targets: .custom(name: "Coordinator", product: .framework)
 )

@@ -7,8 +7,8 @@
 //
 
 import Combine
+import CombineCocoa
 import DesignSystem
-import TNCombineCocoa
 import UIKit
 
 // MARK: - WorkoutSelectViewDelegate
