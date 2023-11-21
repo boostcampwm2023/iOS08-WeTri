@@ -1,11 +1,9 @@
 name: BackEnd-CD
 
 on:
-  push:
+  pull_request:
     branches:
       - develop
-    paths:
-      - 'BackEnd/**'
 
 jobs:
   deploy:
@@ -27,6 +25,7 @@ jobs:
           file: ./BackEnd/Dockerfile
           push: true
           tags: ${{ secrets.NCP_CONTAINER_REGISTRY }}/my-app:latest
+          platforms: linux/amd64
 
       - name: SSH to Internal Server and Deploy
         run: |
