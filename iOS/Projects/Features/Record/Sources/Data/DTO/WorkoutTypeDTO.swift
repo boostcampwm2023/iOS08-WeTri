@@ -1,5 +1,5 @@
 //
-//  Temp.swift
+//  WorkoutTypeDTO.swift
 //  RecordFeature
 //
 //  Created by MaraMincho on 11/21/23.
@@ -7,3 +7,8 @@
 //
 
 import Foundation
+
+struct WorkoutTypeDTO: Decodable {
+  let icon: String
+  let description: String
+}

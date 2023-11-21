@@ -32,8 +32,11 @@ protocol WorkoutEnvironmentSetupViewModelRepresentable {
 
 final class WorkoutEnvironmentSetupViewModel {
   private var subscriptions = Set<AnyCancellable>()
+  var useCase: WorkoutEnvironmentSetupUseCaseRepresentable
 
-  init() {}
+  init(useCase: WorkoutEnvironmentSetupUseCaseRepresentable) {
+    self.useCase = useCase
+  }
 }
 
 // MARK: WorkoutEnvironmentSetupViewModelRepresentable

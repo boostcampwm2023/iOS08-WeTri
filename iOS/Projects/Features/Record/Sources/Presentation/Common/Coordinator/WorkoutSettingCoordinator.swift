@@ -32,9 +32,9 @@ final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
   }
 
   func pushWorkoutEnvironmentSetupViewController() {
-    // TODO: WorkoutEnvironmentSetupViewController의 Usecase에 workoutSetting 객체를 전달해줘야한다.
-
     let syringe = WorkOutEnvironmentSetupSyringe()
+    
+    // TODO: WorkoutEnvironmentSetupViewController의 Usecase에 workoutSetting 객체를 전달해줘야한다.
     let workoutEnvironmentViewController: WorkoutEnvironmentSetupViewController = syringe.resolve()
     navigationController.pushViewController(workoutEnvironmentViewController, animated: false)
   }
@@ -68,15 +68,24 @@ private extension WorkoutSettingCoordinator {
     func resolve<T>() -> T {
       let key = String(describing: type(of: T.self))
       if dependencies[key] == nil {
-        register(T.self)
+        fatalError("fillup에 Dependency를 제대로 선언하세요")
       }
 
       return dependencies[key] as! T
     }
 
     func fillUp() {
-      register(WorkoutEnvironmentSetupViewModel())
-      register(WorkoutEnvironmentSetupViewController(viewModel: resolve()))
+      let repository = WorkoutEnvironmentSetupNetworkRepository(session: URLSession.shared)
+      register(repository)
+
+      let useCase = WorkoutEnvironmentSetupUseCase(repository: repository)
+      register(useCase)
+
+      let viewModel = WorkoutEnvironmentSetupViewModel(useCase: useCase)
+      register(viewModel)
+
+      let viewController = WorkoutEnvironmentSetupViewController(viewModel: viewModel)
+      register(viewController)
     }
   }
 }

@@ -26,7 +26,8 @@ public final class RecordFeatureCoordinator: RecordFeatureCoordinating {
   }
 
   public func start() {
-    navigationController.pushViewController(recordContainerViewController, animated: false)
+    showSettingFlow()
+//    navigationController.pushViewController(recordContainerViewController, animated: false)
   }
 
   func showSettingFlow() {
