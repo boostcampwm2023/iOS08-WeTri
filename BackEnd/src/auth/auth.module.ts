@@ -7,6 +7,7 @@ import { ProfilesModule } from '../profiles/profiles.module';
 
 @Module({
   imports: [JwtModule.register({}), UsersModule, ProfilesModule],
+  exports: [AuthService],
   controllers: [AuthController],
   providers: [AuthService],
 })

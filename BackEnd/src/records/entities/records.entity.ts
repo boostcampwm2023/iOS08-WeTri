@@ -9,27 +9,34 @@ import {
 
 import { PostModel } from '../../posts/entities/posts.entity';
 import { ProfileModel } from '../../profiles/entities/profiles.entity';
+import { IsNumber, IsString } from 'class-validator';
 @Entity()
 export class RecordModel {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
+  @IsString()
   exercise: string;
 
   @Column()
+  @IsNumber()
   runningTime: number;
 
   @Column()
+  @IsNumber()
   distance: number;
 
   @Column({ nullable: true })
+  @IsNumber()
   avgBpm: number;
 
   @Column({ nullable: true })
+  @IsNumber()
   minBpm: number;
 
   @Column({ nullable: true })
+  @IsNumber()
   maxBpm: number;
 
   @CreateDateColumn()

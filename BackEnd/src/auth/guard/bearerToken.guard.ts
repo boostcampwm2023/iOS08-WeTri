@@ -2,7 +2,6 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from '../auth.service';
 import { ProfilesService } from '../../profiles/profiles.service';
