@@ -33,7 +33,7 @@ final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
 
   func pushWorkoutEnvironmentSetupViewController() {
     let syringe = WorkOutEnvironmentSetupSyringe()
-    
+
     // TODO: WorkoutEnvironmentSetupViewController의 Usecase에 workoutSetting 객체를 전달해줘야한다.
     let workoutEnvironmentViewController: WorkoutEnvironmentSetupViewController = syringe.resolve()
     navigationController.pushViewController(workoutEnvironmentViewController, animated: false)

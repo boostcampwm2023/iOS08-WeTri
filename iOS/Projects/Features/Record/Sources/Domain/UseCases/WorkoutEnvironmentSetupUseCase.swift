@@ -13,40 +13,68 @@ import Foundation
 
 protocol WorkoutEnvironmentSetupNetworkRepositoryRepresentable {
   func workoutTypes() async throws -> [WorkoutTypeDTO]
+  func workoutTypes() -> AnyPublisher<[WorkoutTypeDTO], Error>
   func peerType() async throws -> [PeerTypeDto]
 }
 
 // MARK: - WorkoutEnvironmentSetupUseCaseRepresentable
 
 protocol WorkoutEnvironmentSetupUseCaseRepresentable {
-  func workoutTpyes() async throws -> Result<[WorkoutTypes], Error>
-  func paerTypes() async throws -> Result<[PeerType], Error>
+  func workoutTpyes() async throws -> [WorkoutType]
+  func workoutTypes() -> AnyPublisher<Result<[WorkoutType], Error>, Never>
+  func paerTypes() async throws -> [PeerType]
 }
 
 // MARK: - WorkoutEnvironmentSetupUseCase
 
 final class WorkoutEnvironmentSetupUseCase: WorkoutEnvironmentSetupUseCaseRepresentable {
   let repository: WorkoutEnvironmentSetupNetworkRepositoryRepresentable
+  var cancellabels = Set<AnyCancellable>()
 
   init(repository: WorkoutEnvironmentSetupNetworkRepositoryRepresentable) {
     self.repository = repository
   }
 
-  func workoutTpyes() async throws -> Result<[WorkoutTypes], Error> {
+  func workoutTpyes() async throws -> [WorkoutType] {
     do {
       let dto = try await repository.workoutTypes()
-      return .success(dto.map { WorkoutTypes(workoutTypesDTO: $0) })
+      return dto.map { WorkoutType(workoutTypesDTO: $0) }
     } catch {
-      return .failure(error)
+      throw error
     }
   }
 
-  func paerTypes() async throws -> Result<[PeerType], Error> {
+  func workoutTypes() -> AnyPublisher<Result<[WorkoutType], Error>, Never> {
+    return Future<Result<[WorkoutType], Error>, Never> { [weak self] promise in
+      guard let self else {
+        promise(.success(.failure(DomainError.didDeinitUseCase)))
+        return
+      }
+
+      repository
+        .workoutTypes()
+        .sink { completion in
+          switch completion {
+          case .finished:
+            break
+          case let .failure(error):
+            promise(.success(.failure(error)))
+          }
+        } receiveValue: { dto in
+          let workoutTypes = dto.map { WorkoutType(workoutTypesDTO: $0) }
+          promise(.success(.success(workoutTypes)))
+        }
+        .store(in: &cancellabels)
+
+    }.eraseToAnyPublisher()
+  }
+
+  func paerTypes() async throws -> [PeerType] {
     do {
       let dto = try await repository.peerType()
-      return .success(dto.map { PeerType(peerTypeDTO: $0) })
+      return dto.map { PeerType(peerTypeDTO: $0) }
     } catch {
-      return .failure(error)
+      throw error
     }
   }
 }

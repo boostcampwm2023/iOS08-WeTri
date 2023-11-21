@@ -8,10 +8,11 @@
 
 import Foundation
 
-struct PeerType {
+struct PeerType: Hashable {
   let icon: String
   let title: String
   let description: String
+  let id = UUID()
 
   init(icon: String, title: String, description: String) {
     self.icon = icon

@@ -6,6 +6,7 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import Combine
 import DesignSystem
 import OSLog
 import UIKit
@@ -45,8 +46,15 @@ public final class WorkoutEnvironmentSetupViewController: UIViewController {
     return pageControl
   }()
 
+  var cancellables = Set<AnyCancellable>()
+  let requestWorkoutTypes = PassthroughSubject<Void, Never>()
+  let endWorkoutEnvironment = PassthroughSubject<Void, Never>()
+
   var viewModel: WorkoutEnvironmentSetupViewModelRepresentable?
-  var dataSource: UICollectionViewDiffableDataSource<Int, UUID>!
+
+  var workoutTypes: UICollectionViewDiffableDataSource<Int, WorkoutType>?
+  var peerTypes: UICollectionViewDiffableDataSource<Int, PeerType>?
+
   var workoutTypesCollectionView: UICollectionView!
   var workoutPaerTypesCollectionView: UICollectionView!
 }
@@ -56,6 +64,26 @@ private extension WorkoutEnvironmentSetupViewController {
     workoutTypesCollectionView = workoutSelectViewController.workoutTypesCollectionView
 
     workoutSelectViewController.delegate = self
+
+    bindViewModel()
+  }
+
+  func bindViewModel() {
+    guard let viewModel else { return }
+
+    let input = WorkoutEnvironmentSetupViewModelInput(
+      requestWorkoutTypes: requestWorkoutTypes.eraseToAnyPublisher(),
+      endWorkoutEnvironment: endWorkoutEnvironment.eraseToAnyPublisher()
+    )
+
+    let output = viewModel.transform(input: input)
+
+    output
+      .sink { [weak self] _ in
+        guard let self else { return }
+        // TODO: 알맞은 로직을 써넣기
+      }
+      .store(in: &cancellables)
   }
 
   func setup() {
@@ -68,19 +96,29 @@ private extension WorkoutEnvironmentSetupViewController {
   }
 
   func configureDataSource() {
-    dataSource = .init(collectionView: workoutTypesCollectionView, cellProvider: { collectionView, indexPath, _ in
-      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WorkoutSelectTypeCell.identifier, for: indexPath)
+    workoutTypes = .init(collectionView: workoutTypesCollectionView, cellProvider: { collectionView, indexPath, item in
+      guard
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WorkoutSelectTypeCell.identifier, for: indexPath) as? WorkoutSelectTypeCell
+      else {
+        return UICollectionViewCell()
+      }
+
+      cell.update(systemName: item.workoutIcon, description: item.workoutIconDescription)
       return cell
     })
   }
 
   func insertTempSource() {
-    var snapshot = dataSource.snapshot()
+    guard let workoutTypes else { return }
+    var snapshot = workoutTypes.snapshot()
     snapshot.deleteAllItems()
     snapshot.appendSections([0])
-    snapshot.appendItems([.init(), .init(), .init(), .init(), .init()])
+    snapshot.appendItems([
+      WorkoutType(workoutIcon: "figure.run", workoutIconDescription: "11"),
+      WorkoutType(workoutIcon: "square.and.arrow.up.circle.fill", workoutIconDescription: "1s1"),
+    ])
 
-    dataSource.apply(snapshot)
+    workoutTypes.apply(snapshot)
   }
 
   func setupViewHierarchyAndConstraints() {

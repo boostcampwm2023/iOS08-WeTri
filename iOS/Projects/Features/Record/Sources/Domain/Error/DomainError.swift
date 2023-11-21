@@ -1,5 +1,5 @@
 //
-//  DataLayerError.swift
+//  DomainError.swift
 //  RecordFeature
 //
 //  Created by MaraMincho on 11/21/23.
@@ -8,7 +8,6 @@
 
 import Foundation
 
-enum DataLayerError: LocalizedError {
-  case noData
-  case repositoryDidDeinit
+enum DomainError: LocalizedError {
+  case didDeinitUseCase
 }

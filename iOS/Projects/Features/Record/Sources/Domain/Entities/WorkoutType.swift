@@ -1,5 +1,5 @@
 //
-//  WorkoutTypes.swift
+//  WorkoutType.swift
 //  RecordFeature
 //
 //  Created by MaraMincho on 11/21/23.
@@ -8,9 +8,10 @@
 
 import Foundation
 
-struct WorkoutTypes {
+struct WorkoutType: Hashable {
   let workoutIcon: String
   let workoutIconDescription: String
+  private let id = UUID()
 
   init(workoutIcon: String, workoutIconDescription: String) {
     self.workoutIcon = workoutIcon
