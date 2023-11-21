@@ -5,6 +5,7 @@ import { winstonLogger } from './config/winston.config';
 import { ValidationPipe } from '@nestjs/common';
 import { ResponseTransformInterceptor } from './common/Interceptors/responseTransform. Interceptor';
 import { HttpExceptionFilter } from './common/exceptionFilters/httpException.filter';
+import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -13,6 +14,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(new ResponseTransformInterceptor());
+  app.use('/static', express.static('public'));
   SwaggerSetting(app);
   await app.listen(3000);
 }
