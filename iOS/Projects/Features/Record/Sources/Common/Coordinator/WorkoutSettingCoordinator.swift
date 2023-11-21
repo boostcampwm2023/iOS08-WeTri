@@ -47,3 +47,4 @@ final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
     settingDidFinishedDelegate?.workoutSettingCoordinatorDidFinished(workoutSetting: workoutSetting)
   }
 }
+

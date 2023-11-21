@@ -42,7 +42,7 @@ final class AppCoordinator: AppCoordinating {
 // MARK: CoordinatorFinishDelegate
 
 extension AppCoordinator: CoordinatorFinishDelegate {
-  func flowDidFinished(childCoordinator: Coordinating) {
+  func flowDidFinished(childCoordinator _: Coordinating) {
     // TODO: 로그아웃 Flow, 로그인 Flow (앱 실행 도중 발생되는 분기처리)
   }
 }
