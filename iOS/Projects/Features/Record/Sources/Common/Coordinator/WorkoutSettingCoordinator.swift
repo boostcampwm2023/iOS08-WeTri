@@ -21,9 +21,9 @@ final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
   init(navigationController: UINavigationController) {
     self.navigationController = navigationController
   }
-  
+
   func start() {
-    pushWorkoutSelectViewController()
+    pushWorkoutEnvironmentSetupViewController()
   }
 
   func pushWorkoutSelectViewController() {
@@ -31,9 +31,9 @@ final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
     navigationController.pushViewController(workoutSelectViewController, animated: false)
   }
 
-  func pushWorkoutEnvironmentSetupViewController(workoutSetting _: WorkoutSetting) {
+  func pushWorkoutEnvironmentSetupViewController() {
     // TODO: WorkoutEnvironmentSetupViewController의 Usecase에 workoutSetting 객체를 전달해줘야한다.
-    
+
     let syringe = WorkOutEnvironmentSetupSyringe()
     let workoutEnvironmentViewController: WorkoutEnvironmentSetupViewController = syringe.resolve()
     navigationController.pushViewController(workoutEnvironmentViewController, animated: false)
