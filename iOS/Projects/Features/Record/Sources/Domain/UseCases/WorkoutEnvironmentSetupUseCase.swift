@@ -12,17 +12,15 @@ import Foundation
 // MARK: - WorkoutEnvironmentSetupNetworkRepositoryRepresentable
 
 protocol WorkoutEnvironmentSetupNetworkRepositoryRepresentable {
-  func workoutTypes() async throws -> [WorkoutTypeDTO]
   func workoutTypes() -> AnyPublisher<[WorkoutTypeDTO], Error>
-  func peerType() async throws -> [PeerTypeDto]
+  func peerType() -> AnyPublisher<[PeerTypeDto], Error>
 }
 
 // MARK: - WorkoutEnvironmentSetupUseCaseRepresentable
 
 protocol WorkoutEnvironmentSetupUseCaseRepresentable {
-  func workoutTpyes() async throws -> [WorkoutType]
   func workoutTypes() -> AnyPublisher<Result<[WorkoutType], Error>, Never>
-  func paerTypes() async throws -> [PeerType]
+  func paerTypes() -> AnyPublisher<Result<[PeerType], Error>, Never>
 }
 
 // MARK: - WorkoutEnvironmentSetupUseCase
@@ -35,13 +33,28 @@ final class WorkoutEnvironmentSetupUseCase: WorkoutEnvironmentSetupUseCaseRepres
     self.repository = repository
   }
 
-  func workoutTpyes() async throws -> [WorkoutType] {
-    do {
-      let dto = try await repository.workoutTypes()
-      return dto.map { WorkoutType(workoutTypesDTO: $0) }
-    } catch {
-      throw error
-    }
+  func paerTypes() -> AnyPublisher<Result<[PeerType], Error>, Never> {
+    return Future<Result<[PeerType], Error>, Never> { [weak self] promise in
+      guard let self else {
+        promise(.success(.failure(DomainError.didDeinitUseCase)))
+        return
+      }
+
+      repository
+        .peerType()
+        .sink { completion in
+          switch completion {
+          case let .failure(error):
+            promise(.success(.failure(error)))
+          case .finished:
+            break
+          }
+
+        } receiveValue: { dto in
+          return promise(.success(.success(dto.map { PeerType(peerTypeDTO: $0) })))
+        }.store(in: &cancellabels)
+
+    }.eraseToAnyPublisher()
   }
 
   func workoutTypes() -> AnyPublisher<Result<[WorkoutType], Error>, Never> {
@@ -67,14 +80,5 @@ final class WorkoutEnvironmentSetupUseCase: WorkoutEnvironmentSetupUseCaseRepres
         .store(in: &cancellabels)
 
     }.eraseToAnyPublisher()
-  }
-
-  func paerTypes() async throws -> [PeerType] {
-    do {
-      let dto = try await repository.peerType()
-      return dto.map { PeerType(peerTypeDTO: $0) }
-    } catch {
-      throw error
-    }
   }
 }

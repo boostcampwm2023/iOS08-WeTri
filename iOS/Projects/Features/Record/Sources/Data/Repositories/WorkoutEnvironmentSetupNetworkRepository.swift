@@ -22,24 +22,12 @@ final class WorkoutEnvironmentSetupNetworkRepository: WorkoutEnvironmentSetupNet
     provider = .init(session: repositorySession)
   }
 
-  func fetchWorkoutTypes() {}
-
-  func workoutTypes() async throws -> [WorkoutTypeDTO] {
-    let data = try await provider.request(.exerciseTypes)
-
-    guard let workoutDTO = try decoder.decode(GWResponse<[WorkoutTypeDTO]>.self, from: data).data
-    else {
-      throw DataLayerError.noData
-    }
-
-    return workoutDTO
-  }
-
   func workoutTypes() -> AnyPublisher<[WorkoutTypeDTO], Error> {
     return Future<[WorkoutTypeDTO], Error> { [weak self] promise in
       guard let self else {
         return promise(.failure(DataLayerError.repositoryDidDeinit))
       }
+
       Task {
         do {
           let data = try await self.provider.request(.exerciseTypes)
@@ -50,20 +38,35 @@ final class WorkoutEnvironmentSetupNetworkRepository: WorkoutEnvironmentSetupNet
           } else {
             promise(.failure(DataLayerError.noData))
           }
+
+        } catch {
+          promise(.failure(error))
         }
       }
     }.eraseToAnyPublisher()
   }
 
-  func peerType() async throws -> [PeerTypeDto] {
-    let data = try await provider.request(.peer)
+  func peerType() -> AnyPublisher<[PeerTypeDto], Error> {
+    return Future<[PeerTypeDto], Error> { [weak self] promise in
+      guard let self else {
+        return promise(.failure(DataLayerError.repositoryDidDeinit))
+      }
 
-    guard let pearTypesDTO = try decoder.decode(GWResponse<[PeerTypeDto]>.self, from: data).data
-    else {
-      throw DataLayerError.noData
-    }
+      Task {
+        do {
+          let data = try await self.provider.request(.peer)
+          let peerDTO = try self.decoder.decode(GWResponse<[PeerTypeDto]>.self, from: data).data
 
-    return pearTypesDTO
+          if let peerDTO {
+            promise(.success(peerDTO))
+          } else {
+            promise(.failure(DataLayerError.noData))
+          }
+        } catch {
+          promise(.failure(error))
+        }
+      }
+    }.eraseToAnyPublisher()
   }
 }
 
@@ -74,12 +77,13 @@ extension WorkoutEnvironmentSetupNetworkRepository {
     case exerciseTypes
     case peer
 
+    // TODO: API에 맞게 수정 예정
     var baseURL: String {
       switch self {
       case .exerciseTypes:
-        return ""
+        return "https://www.naver.com"
       case .peer:
-        return ""
+        return "https://www.naver.com"
       }
     }
 

@@ -28,6 +28,7 @@ public final class WorkoutEnvironmentSetupViewController: UIViewController {
     super.viewDidLoad()
     setup()
     insertTempSource()
+    requestWorkoutTypes.send()
   }
 
   lazy var contentNavigationController: UINavigationController = {
@@ -70,18 +71,33 @@ private extension WorkoutEnvironmentSetupViewController {
 
   func bindViewModel() {
     guard let viewModel else { return }
+    cancellables.removeAll()
 
     let input = WorkoutEnvironmentSetupViewModelInput(
       requestWorkoutTypes: requestWorkoutTypes.eraseToAnyPublisher(),
+      requestWorkoutPeerTypes: requestWorkoutTypes.eraseToAnyPublisher(),
       endWorkoutEnvironment: endWorkoutEnvironment.eraseToAnyPublisher()
     )
 
     let output = viewModel.transform(input: input)
 
     output
-      .sink { [weak self] _ in
+      .sink { [weak self] state in
         guard let self else { return }
-        // TODO: 알맞은 로직을 써넣기
+        switch state {
+        case let .success(success):
+          switch success {
+          case .idle:
+            break
+          case let .workoutTpyes(workoutTypes):
+            updateWorkoutTypes(workoutTypes)
+          case let .workoutPeerTypes(pear) :
+            break
+          }
+        case let .failure(failure):
+          // TODO: failure에 알맞는 로직 세우기
+          break
+        }
       }
       .store(in: &cancellables)
   }
@@ -119,6 +135,18 @@ private extension WorkoutEnvironmentSetupViewController {
     ])
 
     workoutTypes.apply(snapshot)
+  }
+
+  func updateWorkoutTypes(_ types: [WorkoutType]) {
+    guard let workoutTypes else { return }
+    var snapshot = workoutTypes.snapshot()
+    snapshot.deleteAllItems()
+    snapshot.appendSections([0])
+    snapshot.appendItems(types)
+
+    DispatchQueue.main.async {
+      workoutTypes.apply(snapshot)
+    }
   }
 
   func setupViewHierarchyAndConstraints() {
@@ -172,7 +200,8 @@ extension WorkoutEnvironmentSetupViewController: UINavigationControllerDelegate 
 
 extension WorkoutEnvironmentSetupViewController: WorkoutSelectViewDelegate {
   func nextButtonDidTap() {
-    pageControl.next()
-    contentNavigationController.pushViewController(workoutPeerSelectViewController, animated: true)
+    requestWorkoutTypes.send()
+//    pageControl.next()
+//    contentNavigationController.pushViewController(workoutPeerSelectViewController, animated: true)
   }
 }

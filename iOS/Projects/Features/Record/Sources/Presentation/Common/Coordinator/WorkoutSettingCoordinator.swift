@@ -7,6 +7,7 @@
 //
 
 import Coordinator
+import Trinet
 import UIKit
 
 // MARK: - WorkoutSettingCoordinator
@@ -75,7 +76,8 @@ private extension WorkoutSettingCoordinator {
     }
 
     func fillUp() {
-      let repository = WorkoutEnvironmentSetupNetworkRepository(session: URLSession.shared)
+      let mockSession = MockURLSession(mockData: workoutTypesMockData)
+      let repository = WorkoutEnvironmentSetupNetworkRepository(session: mockSession)
       register(repository)
 
       let useCase = WorkoutEnvironmentSetupUseCase(repository: repository)
@@ -87,5 +89,23 @@ private extension WorkoutSettingCoordinator {
       let viewController = WorkoutEnvironmentSetupViewController(viewModel: viewModel)
       register(viewController)
     }
+
+    let workoutTypesMockData =
+      """
+      {
+                "code": null,
+                "errorMesssage": null,
+                "data": [
+      {
+                    "icon": "pencil",
+                    "description": "이거 가능?"
+                },
+      {
+                    "icon": "pencil",
+                    "description": "이거 가능?"
+                }
+      ]
+            }
+      """.data(using: .utf8)!
   }
 }

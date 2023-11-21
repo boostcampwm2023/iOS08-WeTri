@@ -12,6 +12,7 @@ import Combine
 
 struct WorkoutEnvironmentSetupViewModelInput {
   let requestWorkoutTypes: AnyPublisher<Void, Never>
+  let requestWorkoutPeerTypes: AnyPublisher<Void, Never>
   let endWorkoutEnvironment: AnyPublisher<Void, Never>
 }
 
@@ -22,6 +23,7 @@ typealias WorkoutEnvironmentSetupViewModelOutput = AnyPublisher<Result<WorkoutEn
 enum WorkoutEnvironmentState {
   case idle
   case workoutTpyes([WorkoutType])
+  case workoutPeerTypes([PeerType])
 }
 
 // MARK: - WorkoutEnvironmentSetupViewModelRepresentable
@@ -48,49 +50,37 @@ final class WorkoutEnvironmentSetupViewModel {
 extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepresentable {
   func transform(input: WorkoutEnvironmentSetupViewModelInput) -> WorkoutEnvironmentSetupViewModelOutput {
     subscriptions.removeAll()
-    
-    let workOutTypes: WorkoutEnvironmentSetupViewModelOutput = input
+
+    let workoutTypes = input
       .requestWorkoutTypes
-      .flatMap { [weak self] _ -> WorkoutEnvironmentSetupViewModelOutput in
-        guard let self else {
-          return Just(Result.failure(DomainError.didDeinitUseCase)).eraseToAnyPublisher()
-        }
-        
-        return useCase.workoutTypes()
-          .map { results -> Result<WorkoutEnvironmentState, Error> in
-            switch results {
-            case .success(let workoutTypes) :
-              return .success(.workoutTpyes(workoutTypes))
-            case .failure(let error) :
-              return .failure(error)
-            }
-          }
-          .eraseToAnyPublisher()
-      }.eraseToAnyPublisher()
-    
-    
-    let initalState: WorkoutEnvironmentSetupViewModelOutput = Just(Result.success(WorkoutEnvironmentState.idle)).eraseToAnyPublisher()
-    
-    input
-      .requestWorkoutTypes
-      .sink { [weak self] _ in
-        guard let self else { return }
-        Task {
-          do {
-            let result = try await self.useCase.workoutTpyes()
-            self.subject.send(.success(.workoutTpyes(result)))
-          } catch {
-            self.subject.send(.failure(error))
-          }
+      .flatMap { _ in
+        self.useCase.workoutTypes()
+      }
+      .map { results -> Result<WorkoutEnvironmentState, Error> in
+        switch results {
+        case let .success(workOuttypes):
+          return .success(.workoutTpyes(workOuttypes))
+        case let .failure(error):
+          return Result.failure(error)
         }
       }
-      .store(in: &subscriptions)
+    
+    let workoutPeerType: WorkoutEnvironmentSetupViewModelOutput = input
+      .requestWorkoutPeerTypes
+      .flatMap { _ in
+        self.useCase.paerTypes()
+      }
+      .map { results -> Result<WorkoutEnvironmentState, Error> in
+        switch results {
+        case .success(let success):
+          return .success(.workoutPeerTypes(success))
+        case .failure(let failure):
+          return .failure(failure)
+        }
+      }.eraseToAnyPublisher()
 
-    input
-      .endWorkoutEnvironment
-      .sink {}
-      .store(in: &subscriptions)
+    let idle: WorkoutEnvironmentSetupViewModelOutput = Just(Result.success(WorkoutEnvironmentState.idle)).eraseToAnyPublisher()
 
-    return Publishers.Merge(initalState, workOutTypes).eraseToAnyPublisher()
+    return Publishers.Merge3(workoutTypes, idle, workoutPeerType).eraseToAnyPublisher()
   }
 }
