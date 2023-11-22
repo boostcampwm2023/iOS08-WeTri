@@ -18,6 +18,7 @@ final class NoRecordsView: UIView {
     label.text = "아직 기록이 없습니다\n기록하러 가볼까요?"
     label.numberOfLines = 0
     label.font = .preferredFont(forTextStyle: .title3)
+    label.textAlignment = .center
     return label
   }()
 
