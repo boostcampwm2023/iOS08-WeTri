@@ -25,13 +25,16 @@ final class WorkoutSummaryViewController: UIViewController {
     let label = UILabel()
     label.text = "고생하셨어요."
     label.textAlignment = .left
-    label.font = .preferredFont(forTextStyle: .largeTitle, with: .traitBold)
+    label.font = .preferredFont(forTextStyle: .largeTitle, weight: .bold)
     return label
   }()
 
   private let summaryCardView: WorkoutSummaryCardView = {
     let cardView = WorkoutSummaryCardView()
-
+    cardView.layer.shadowOffset = .init(width: 0, height: 2)
+    cardView.layer.shadowRadius = 2
+    cardView.layer.shadowColor = UIColor.black.cgColor
+    cardView.layer.shadowOpacity = 0.25
     return cardView
   }()
 
@@ -73,7 +76,7 @@ final class WorkoutSummaryViewController: UIViewController {
   private func setupLayouts() {
     view.addSubview(stackView)
 
-    for view in [titleLabel, writeButton, homeButton] {
+    for view in [titleLabel, summaryCardView, writeButton, homeButton] {
       stackView.addArrangedSubview(view)
     }
   }
