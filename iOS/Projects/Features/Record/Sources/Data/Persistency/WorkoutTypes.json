@@ -1,0 +1,17 @@
+[
+  {
+      "icon": "figure.run",
+      "description": "이거 가능?",
+      "typeCode" : 1
+  },
+  {
+      "icon": "figure.pool.swim",
+      "description": "수영",
+      "typeCode" : 2
+  },
+   {
+       "icon": "figure.outdoor.cycle",
+       "description": "이거 가능?",
+       "typeCode" : 3
+   }
+]

@@ -28,20 +28,20 @@ final class WorkoutEnvironmentSetupNetworkRepository: WorkoutEnvironmentSetupNet
         return promise(.failure(DataLayerError.repositoryDidDeinit))
       }
 
-      Task {
-        do {
-          let data = try await self.provider.request(.exerciseTypes)
-          let workoutDTO = try self.decoder.decode(GWResponse<[WorkoutTypeDTO]>.self, from: data).data
+      guard
+        let bundle = Bundle(identifier: PersistencyProperty.bundleIdentifier),
+        let path = bundle.path(forResource: PersistencyProperty.workoutTypesFileName, ofType: PersistencyProperty.peerTypesFileNameOfType),
+        let data = try? Data(contentsOf: URL(filePath: path))
+      else {
+        return promise(.failure(DataLayerError.noData))
+      }
+      let decoder = JSONDecoder()
 
-          if let workoutDTO {
-            promise(.success(workoutDTO))
-          } else {
-            promise(.failure(DataLayerError.noData))
-          }
-
-        } catch {
-          promise(.failure(error))
-        }
+      do {
+        let workoutTypes = try decoder.decode([WorkoutTypeDTO].self, from: data)
+        promise(.success(workoutTypes))
+      } catch {
+        promise(.failure(error))
       }
     }.eraseToAnyPublisher()
   }
@@ -106,6 +106,7 @@ extension WorkoutEnvironmentSetupNetworkRepository {
   enum PersistencyProperty {
     static let bundleIdentifier = "kr.codesquad.boostcamp8.RecordFeature"
     static let peerTypesFileName = "PeerTypes"
+    static let workoutTypesFileName = "WorkoutTypes"
     static let peerTypesFileNameOfType = "json"
   }
 }
