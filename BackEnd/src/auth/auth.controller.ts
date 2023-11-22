@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { RefreshTokenGuard } from './guard/bearerToken.guard';
 import { SignupDto } from './dto/signup.dto';
 
-@Controller('auth')
+@Controller('api/v1/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
@@ -24,7 +24,7 @@ export class AuthController {
     };
   }
 
-  @Post('token/access')
+  @Post('token/refresh')
   @UseGuards(RefreshTokenGuard)
   tokenRefresh(@Headers('authorization') raw: string) {
     const token = this.authService.extractTokenFromHeader(raw);

@@ -1,5 +1,5 @@
 //
-//  ParticipantsCollectionViewCell.swift
+//  SessionParticipantCell.swift
 //  RecordFeature
 //
 //  Created by 홍승현 on 11/16/23.
@@ -9,9 +9,9 @@
 import DesignSystem
 import UIKit
 
-// MARK: - ParticipantsCollectionViewCell
+// MARK: - SessionParticipantCell
 
-final class ParticipantsCollectionViewCell: UICollectionViewCell {
+final class SessionParticipantCell: UICollectionViewCell {
   // MARK: UI Components
 
   private let profileImageView: UIImageView = {
@@ -177,9 +177,9 @@ final class ParticipantsCollectionViewCell: UICollectionViewCell {
   }
 }
 
-// MARK: ParticipantsCollectionViewCell.Metrics
+// MARK: SessionParticipantCell.Metrics
 
-private extension ParticipantsCollectionViewCell {
+private extension SessionParticipantCell {
   enum Metrics {
     static let profileImageSize: CGFloat = 64
     static let wholeStackViewEdge: CGFloat = 10
