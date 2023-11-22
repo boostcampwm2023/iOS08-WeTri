@@ -8,7 +8,6 @@
 
 import Combine
 import Foundation
-import OSLog
 import Trinet
 
 // MARK: - WorkoutEnvironmentSetupNetworkRepository
@@ -52,9 +51,10 @@ final class WorkoutEnvironmentSetupNetworkRepository: WorkoutEnvironmentSetupNet
       guard let self else {
         return promise(.failure(DataLayerError.repositoryDidDeinit))
       }
+
       guard
-        let bundle = Bundle(identifier: "kr.codesquad.boostcamp8.RecordFeature"),
-        let path = bundle.path(forResource: "PeerTypes", ofType: "json"),
+        let bundle = Bundle(identifier: PersistencyProperty.bundleIdentifier),
+        let path = bundle.path(forResource: PersistencyProperty.peerTypesFileName, ofType: PersistencyProperty.peerTypesFileNameOfType),
         let data = try? Data(contentsOf: URL(filePath: path))
       else {
         return promise(.failure(DataLayerError.noData))
@@ -62,7 +62,6 @@ final class WorkoutEnvironmentSetupNetworkRepository: WorkoutEnvironmentSetupNet
       let decoder = JSONDecoder()
 
       do {
-        os_log("\(String(data: data, encoding: .utf8)!)")
         let peerTypes = try decoder.decode([PeerTypeDto].self, from: data)
         promise(.success(peerTypes))
       } catch {
@@ -102,5 +101,11 @@ extension WorkoutEnvironmentSetupNetworkRepository {
     var query: Encodable? { nil }
     var body: Encodable? { nil }
     var headers: Trinet.TNHeaders { .init(headers: []) }
+  }
+
+  enum PersistencyProperty {
+    static let bundleIdentifier = "kr.codesquad.boostcamp8.RecordFeature"
+    static let peerTypesFileName = "PeerTypes"
+    static let peerTypesFileNameOfType = "json"
   }
 }
