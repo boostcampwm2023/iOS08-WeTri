@@ -22,6 +22,7 @@ public extension TargetDependency {
   static let trinet: TargetDependency = .project(target: "Trinet", path: .relativeToCore("Network"))
   static let coordinator: TargetDependency = .project(target: "Coordinator", path: .relativeToCore("Coordinator"))
   static let combineCocoa: TargetDependency = .project(target: "CombineCocoa", path: .relativeToShared("CombineCocoa"))
+  static let log: TargetDependency = .project(target: "Log", path: .relativeToShared("Log"))
 
   static func feature(_ feature: Feature) -> TargetDependency {
     return .project(
