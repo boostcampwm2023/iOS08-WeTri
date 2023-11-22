@@ -99,14 +99,14 @@ final class WorkoutSummaryCardView: UIView {
 
   private let activityStackView: UIStackView = {
     let stackView = UIStackView()
-    stackView.distribution = .equalCentering
+    stackView.distribution = .fillEqually
     stackView.alignment = .center
     return stackView
   }()
 
   private let heartRateStackView: UIStackView = {
     let stackView = UIStackView()
-    stackView.distribution = .equalCentering
+    stackView.distribution = .fillEqually
     stackView.alignment = .center
     return stackView
   }()
