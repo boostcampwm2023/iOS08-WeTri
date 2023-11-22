@@ -10,6 +10,8 @@ import Combine
 import DesignSystem
 import UIKit
 
+// MARK: - WorkoutSummaryViewController
+
 final class WorkoutSummaryViewController: UIViewController {
   // MARK: Properties
 
@@ -19,7 +21,30 @@ final class WorkoutSummaryViewController: UIViewController {
 
   // MARK: UI Components
 
-  private let button: UIButton = .init(configuration: .mainEnabled(title: "test button"))
+  private let titleLabel: UILabel = {
+    let label = UILabel()
+    label.text = "고생하셨어요."
+    label.textAlignment = .left
+    label.font = .preferredFont(forTextStyle: .largeTitle, with: .traitBold)
+    return label
+  }()
+
+  private let summaryCardView: WorkoutSummaryCardView = {
+    let cardView = WorkoutSummaryCardView()
+
+    return cardView
+  }()
+
+  private let writeButton: UIButton = .init(configuration: .mainEnabled(title: Constants.writeButton))
+
+  private let homeButton: UIButton = .init(configuration: .mainDisabled(title: Constants.initialScreenButton))
+
+  private let stackView: UIStackView = {
+    let stackView = UIStackView()
+    stackView.axis = .vertical
+    stackView.spacing = 18
+    return stackView
+  }()
 
   // MARK: Initializations
 
@@ -46,16 +71,27 @@ final class WorkoutSummaryViewController: UIViewController {
   // MARK: Configuration
 
   private func setupLayouts() {
-    view.addSubview(button)
+    view.addSubview(stackView)
+
+    for view in [titleLabel, writeButton, homeButton] {
+      stackView.addArrangedSubview(view)
+    }
   }
 
   private func setupConstraints() {
-    button.translatesAutoresizingMaskIntoConstraints = false
+    let safeArea: UILayoutGuide = view.safeAreaLayoutGuide
+
+    stackView.translatesAutoresizingMaskIntoConstraints = false
+    writeButton.translatesAutoresizingMaskIntoConstraints = false
+    homeButton.translatesAutoresizingMaskIntoConstraints = false
 
     NSLayoutConstraint.activate(
       [
-        button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-        button.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+        stackView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: Metrics.stackViewTop),
+        stackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.horizontal),
+        stackView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.horizontal),
+        writeButton.heightAnchor.constraint(equalToConstant: Metrics.buttonHeight),
+        homeButton.heightAnchor.constraint(equalToConstant: Metrics.buttonHeight),
       ]
     )
   }
@@ -73,6 +109,19 @@ final class WorkoutSummaryViewController: UIViewController {
       }
     }
     .store(in: &subscriptions)
+  }
+}
+
+private extension WorkoutSummaryViewController {
+  enum Metrics {
+    static let stackViewTop: CGFloat = 12
+    static let horizontal: CGFloat = 24
+    static let buttonHeight: CGFloat = 44
+  }
+
+  enum Constants {
+    static let writeButton: String = "글쓰러 가기"
+    static let initialScreenButton: String = "처음으로"
   }
 }
 
