@@ -112,7 +112,6 @@ private extension RecordListViewController {
   func render(output: RecordListState) {
     switch output {
     case .idle:
-      // TODO: 뷰 교체
       let temp = ""
     case let .sucessRecords(records):
       let workoutInformationItems = records.map {
