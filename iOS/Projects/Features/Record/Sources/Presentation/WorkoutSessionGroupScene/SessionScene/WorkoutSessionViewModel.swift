@@ -1,5 +1,5 @@
 //
-//  WorkoutSummaryViewModel.swift
+//  WorkoutSessionViewModel.swift
 //  RecordFeature
 //
 //  Created by 홍승현 on 11/16/23.
@@ -22,15 +22,15 @@ public enum WorkoutSummaryState {
   case idle
 }
 
-// MARK: - WorkoutSummaryViewModelRepresentable
+// MARK: - WorkoutSessionViewModelRepresentable
 
-public protocol WorkoutSummaryViewModelRepresentable {
+public protocol WorkoutSessionViewModelRepresentable {
   func transform(input: WorkoutSummaryViewModelInput) -> WorkoutSummaryViewModelOutput
 }
 
-// MARK: - WorkoutSummaryViewModel
+// MARK: - WorkoutSessionViewModel
 
-public final class WorkoutSummaryViewModel {
+public final class WorkoutSessionViewModel {
   // MARK: Properties
 
   private var subscriptions: Set<AnyCancellable> = []
@@ -40,9 +40,9 @@ public final class WorkoutSummaryViewModel {
   public init() {}
 }
 
-// MARK: WorkoutSummaryViewModelRepresentable
+// MARK: WorkoutSessionViewModelRepresentable
 
-extension WorkoutSummaryViewModel: WorkoutSummaryViewModelRepresentable {
+extension WorkoutSessionViewModel: WorkoutSessionViewModelRepresentable {
   public func transform(input: WorkoutSummaryViewModelInput) -> WorkoutSummaryViewModelOutput {
     for subscription in subscriptions {
       subscription.cancel()

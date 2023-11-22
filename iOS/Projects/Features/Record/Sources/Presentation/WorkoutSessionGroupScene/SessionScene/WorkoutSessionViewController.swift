@@ -1,5 +1,5 @@
 //
-//  WorkoutSummaryViewController.swift
+//  WorkoutSessionViewController.swift
 //  RecordFeature
 //
 //  Created by 홍승현 on 11/16/23.
@@ -10,12 +10,12 @@ import Combine
 import DesignSystem
 import UIKit
 
-// MARK: - WorkoutSummaryViewController
+// MARK: - WorkoutSessionViewController
 
-public final class WorkoutSummaryViewController: UIViewController {
+public final class WorkoutSessionViewController: UIViewController {
   // MARK: Properties
 
-  private let viewModel: WorkoutSummaryViewModelRepresentable
+  private let viewModel: WorkoutSessionViewModelRepresentable
 
   private var participantsDataSource: ParticipantsDataSource?
 
@@ -57,7 +57,7 @@ public final class WorkoutSummaryViewController: UIViewController {
 
   // MARK: Initializations
 
-  public init(viewModel: WorkoutSummaryViewModelRepresentable) {
+  public init(viewModel: WorkoutSessionViewModelRepresentable) {
     self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
   }
@@ -200,9 +200,9 @@ public final class WorkoutSummaryViewController: UIViewController {
   }
 }
 
-// MARK: WorkoutSummaryViewController.Metrics
+// MARK: WorkoutSessionViewController.Metrics
 
-private extension WorkoutSummaryViewController {
+private extension WorkoutSessionViewController {
   enum Metrics {
     static let recordTimerLabelTop: CGFloat = 12
     static let collectionViewTop: CGFloat = 12
@@ -218,8 +218,8 @@ private extension WorkoutSummaryViewController {
 
 // MARK: - Diffable DataSources Options
 
-private extension WorkoutSummaryViewController {
-  typealias ParticipantsCellRegistration = UICollectionView.CellRegistration<ParticipantsCollectionViewCell, Item>
+private extension WorkoutSessionViewController {
+  typealias ParticipantsCellRegistration = UICollectionView.CellRegistration<SessionParticipantCell, Item>
   typealias ParticipantsDataSource = UICollectionViewDiffableDataSource<Section, Item>
   typealias ParticipantsSnapshot = NSDiffableDataSourceSnapshot<Section, Item>
 
@@ -233,5 +233,5 @@ private extension WorkoutSummaryViewController {
 
 @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, xrOS 1.0, *)
 #Preview {
-  WorkoutSummaryViewController(viewModel: WorkoutSummaryViewModel())
+  WorkoutSessionViewController(viewModel: WorkoutSessionViewModel())
 }

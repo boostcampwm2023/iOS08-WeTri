@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ProfilesModule } from './profiles/profiles.module';
 import { LiveModule } from './lives/lives.module';
+import { RecordsModule } from './records/records.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { LiveModule } from './lives/lives.module';
     UsersModule,
     ProfilesModule,
     LiveModule,
+    RecordsModule,
   ],
   controllers: [AppController],
 })

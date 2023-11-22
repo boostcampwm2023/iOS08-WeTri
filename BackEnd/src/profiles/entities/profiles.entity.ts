@@ -1,4 +1,4 @@
-import { IsDate, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 import { PostModel } from '../../posts/entities/posts.entity';
 import { RecordModel } from '../../records/entities/records.entity';
 import { UserModel } from '../../users/entities/users.entity';
