@@ -95,7 +95,7 @@ extension WorkoutEnvironmentSetupNetworkRepository {
       }
     }
 
-    var method: Trinet.TNMethod { return .get }
+    var method: TNMethod { return .get }
     var query: Encodable? { nil }
     var body: Encodable? { nil }
     var headers: Trinet.TNHeaders { .init(headers: []) }
