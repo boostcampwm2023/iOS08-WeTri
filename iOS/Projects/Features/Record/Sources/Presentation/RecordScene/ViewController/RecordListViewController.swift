@@ -114,7 +114,7 @@ private extension RecordListViewController {
 
   func render(output: RecordListState) {
     switch output {
-    case .idle: 
+    case .idle:
       break
     case let .sucessRecords(records):
       let workoutInformationItems = records.map {
