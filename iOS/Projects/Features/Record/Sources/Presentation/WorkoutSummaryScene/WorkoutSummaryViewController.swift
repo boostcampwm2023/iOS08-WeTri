@@ -38,9 +38,17 @@ final class WorkoutSummaryViewController: UIViewController {
     return cardView
   }()
 
-  private let writeButton: UIButton = .init(configuration: .mainEnabled(title: Constants.writeButton))
+  private let writeButton: UIButton = {
+    let button = UIButton(configuration: .mainEnabled(title: Constants.writeButton))
+    button.configuration?.font = .preferredFont(forTextStyle: .headline)
+    return button
+  }()
 
-  private let homeButton: UIButton = .init(configuration: .mainDisabled(title: Constants.initialScreenButton))
+  private let homeButton: UIButton = {
+    let button = UIButton(configuration: .mainDisabled(title: Constants.initialScreenButton))
+    button.configuration?.font = .preferredFont(forTextStyle: .headline)
+    return button
+  }()
 
   private let stackView: UIStackView = {
     let stackView = UIStackView()
