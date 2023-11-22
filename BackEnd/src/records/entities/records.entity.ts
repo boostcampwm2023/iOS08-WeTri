@@ -27,6 +27,10 @@ export class RecordModel {
   @IsNumber()
   distance: number;
 
+  @Column()
+  @IsNumber()
+  calorie: number;
+
   @Column({ nullable: true })
   @IsNumber()
   avgBpm: number;
