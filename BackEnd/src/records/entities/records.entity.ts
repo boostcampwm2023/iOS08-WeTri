@@ -46,7 +46,7 @@ export class RecordModel {
   @CreateDateColumn()
   createdAt: Date;
 
-  @Column({default: false})
+  @Column({ default: false })
   checker: boolean;
 
   @ManyToOne(() => ProfileModel, (profile) => profile.records) //manyToOne이 항상 외래키를 갖고 있음

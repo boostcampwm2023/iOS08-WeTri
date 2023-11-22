@@ -14,22 +14,21 @@ export class RecordsController {
     @Profile() profile: ProfileModel,
     @Body() body: CreateExerciseLogDto,
   ) {
-    const workoutLog = await this.recordsService.createWorkOutLog(body, profile);
-    return {recordId: workoutLog.id};
+    const workoutLog = await this.recordsService.createWorkOutLog(
+      body,
+      profile,
+    );
+    return { recordId: workoutLog.id };
   }
 
   @Get('me')
   @UseGuards(AccessTokenGuard)
-  async getUserRecords(
-    @Profile() profile: ProfileModel
-  ) {
+  async getUserRecords(@Profile() profile: ProfileModel) {
     return this.recordsService.findByProfileId(profile.id);
   }
 
   @Get(':recordId')
-  async getRecord(
-    @Param('recordId') recordId : number,
-  ) {
+  async getRecord(@Param('recordId') recordId: number) {
     return this.recordsService.findById(recordId);
   }
 }

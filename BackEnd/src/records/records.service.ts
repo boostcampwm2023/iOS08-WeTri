@@ -26,8 +26,8 @@ export class RecordsService {
   async findByProfileId(profileId: number) {
     return await this.recordsRepository.find({
       where: {
-        profile: {id: profileId},
-      }
+        profile: { id: profileId },
+      },
     });
   }
 
@@ -35,9 +35,9 @@ export class RecordsService {
     const result = await this.recordsRepository.findOne({
       where: {
         id: recordId,
-      }
+      },
     });
-    if(!result) {
+    if (!result) {
       throw new NotFoundRecordException();
     }
 
