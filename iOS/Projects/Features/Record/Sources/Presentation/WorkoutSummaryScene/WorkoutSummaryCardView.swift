@@ -172,7 +172,7 @@ final class WorkoutSummaryCardView: UIView {
         wholeStackView.trailingAnchor.constraint(equalTo: containerRoundedView.trailingAnchor, constant: -Metrics.wholeStackViewInset),
         wholeStackView.bottomAnchor.constraint(equalTo: containerRoundedView.bottomAnchor, constant: -Metrics.wholeStackViewBottomInset),
 
-        mapView.heightAnchor.constraint(equalTo: mapView.widthAnchor),
+        mapView.heightAnchor.constraint(equalTo: mapView.widthAnchor, multiplier: 0.66),
       ]
     )
   }
