@@ -10,6 +10,8 @@ import Combine
 import Foundation
 import Trinet
 
+// MARK: - MockWorkoutRecordsRepository
+
 final class MockWorkoutRecordsRepository: WorkoutRecordsRepository {
   func fetchRecordsList(ymd: String) -> AnyPublisher<[Record], Error> {
     return Future<[Record], Error> { promise in
@@ -35,14 +37,43 @@ final class MockWorkoutRecordsRepository: WorkoutRecordsRepository {
       )
 
       Task {
-        guard let data = try? await provider.request(WorkoutRecordTestEndPoint()),
-              let records = try? JSONDecoder().decode([Record].self, from: data)
-        else {
-          return
+        guard let data = try? await provider.request(WorkoutRecordTestEndPoint()) else {
+          return promise(.failure(WorkoutRecordsRepositoryError.requestError))
         }
-        promise(.success(records))
+        guard let records = try? JSONDecoder().decode([Record].self, from: data) else {
+          return promise(.failure(WorkoutRecordsRepositoryError.decodeError))
+        }
+        return promise(.success(records))
       }
     }
+    .catch { error -> AnyPublisher<[Record], Error> in
+      if let workoutRecordsError = error as? WorkoutRecordsRepositoryError {
+        // TODO: Log로직 추가
+      }
+      return Just([])
+        .setFailureType(to: Error.self)
+        .eraseToAnyPublisher()
+    }
     .eraseToAnyPublisher()
+  }
+}
+
+// MARK: - WorkoutRecordsRepositoryError
+
+enum WorkoutRecordsRepositoryError: Error {
+  case requestError
+  case decodeError
+}
+
+// MARK: LocalizedError
+
+extension WorkoutRecordsRepositoryError: LocalizedError {
+  var errorDescription: String? {
+    switch self {
+    case .requestError:
+      return "Network-Request 실패"
+    case .decodeError:
+      return "decode 실패"
+    }
   }
 }
