@@ -1,5 +1,5 @@
 //
-//  DefaultRecordUpdateUsecase.swift
+//  RecordUpdateUsecase.swift
 //  RecordFeature
 //
 //  Created by 안종표 on 2023/11/21.
@@ -9,10 +9,10 @@
 import Combine
 import Foundation
 
-final class DefaultRecordUpdateUsecase: RecordUpdateUsecase {
-  private let workoutRecordsRepository: WorkoutRecordsRepository
+final class RecordUpdateUsecase: RecordUpdateUsecaseRepresentable {
+  private let workoutRecordsRepository: WorkoutRecordsRepositoryRepresentable
 
-  init(workoutRecordsRepository: WorkoutRecordsRepository) {
+  init(workoutRecordsRepository: WorkoutRecordsRepositoryRepresentable) {
     self.workoutRecordsRepository = workoutRecordsRepository
   }
 

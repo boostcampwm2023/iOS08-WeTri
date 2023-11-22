@@ -1,5 +1,5 @@
 //
-//  DefaultWorkoutRecordsRepository.swift
+//  WorkoutRecordsRepositoryRepresentable.swift
 //  RecordFeature
 //
 //  Created by 안종표 on 2023/11/21.
@@ -8,6 +8,7 @@
 
 import Combine
 import Foundation
-import Trinet
 
-final class DefaultWorkoutRecordsRepository {}
+protocol WorkoutRecordsRepositoryRepresentable {
+  func fetchRecordsList(ymd: String) -> AnyPublisher<[Record], Error>
+}

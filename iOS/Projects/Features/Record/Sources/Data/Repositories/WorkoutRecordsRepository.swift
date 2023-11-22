@@ -8,7 +8,6 @@
 
 import Combine
 import Foundation
+import Trinet
 
-protocol WorkoutRecordsRepository {
-  func fetchRecordsList(ymd: String) -> AnyPublisher<[Record], Error>
-}
+final class WorkoutRecordsRepository {}

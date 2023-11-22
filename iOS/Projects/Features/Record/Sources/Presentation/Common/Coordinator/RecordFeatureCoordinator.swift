@@ -28,8 +28,8 @@ public final class RecordFeatureCoordinator: RecordFeatureCoordinating {
       recordCalendarViewController: RecordCalendarViewController(),
       recordListViewController: RecordListViewController(
         viewModel: RecordListViewModel(
-          recordUpdateUsecase: DefaultRecordUpdateUsecase(workoutRecordsRepository: MockWorkoutRecordsRepository()),
-          dateProvideUsecase: DefaultDateProvideUsecase(),
+          recordUpdateUsecase: RecordUpdateUsecase(workoutRecordsRepository: MockWorkoutRecordsRepository()),
+          dateProvideUsecase: DateProvideUsecase(),
           coordinator: self
         )
       )

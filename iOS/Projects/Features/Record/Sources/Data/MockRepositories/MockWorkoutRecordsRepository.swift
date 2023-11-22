@@ -12,7 +12,7 @@ import Trinet
 
 // MARK: - MockWorkoutRecordsRepository
 
-final class MockWorkoutRecordsRepository: WorkoutRecordsRepository {
+final class MockWorkoutRecordsRepository: WorkoutRecordsRepositoryRepresentable {
   func fetchRecordsList(ymd: String) -> AnyPublisher<[Record], Error> {
     return Future<[Record], Error> { promise in
       let records: [Record] = [

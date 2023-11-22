@@ -1,5 +1,5 @@
 //
-//  RecordUpdateUsecase.swift
+//  RecordUpdateUsecaseRepresentable.swift
 //  RecordFeature
 //
 //  Created by 안종표 on 2023/11/21.
@@ -9,9 +9,9 @@
 import Combine
 import Foundation
 
-// MARK: - RecordUpdateUsecase
+// MARK: - RecordUpdateUsecaseRepresentable
 
-protocol RecordUpdateUsecase {
+protocol RecordUpdateUsecaseRepresentable {
   func execute(dateInfo: DateInfo) -> AnyPublisher<[Record], Error>
 }
 
