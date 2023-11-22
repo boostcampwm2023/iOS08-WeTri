@@ -93,6 +93,8 @@ private extension WorkoutEnvironmentSetupViewController {
       .sink { [weak self] state in
         guard let self else { return }
         switch state {
+          // TODO: failure에 알맞는 로직 세우기
+        case let .failure(failure): break
         case let .success(success):
           switch success {
           case .idle: break
@@ -101,8 +103,6 @@ private extension WorkoutEnvironmentSetupViewController {
           case let .didSelectWorkoutType(bool): workoutSelectViewController.nextButtonEnable(bool)
           case let .didSelectWorkoutPeerType(bool): workoutPeerSelectViewController.startButtonEnable(bool)
           }
-        // TODO: failure에 알맞는 로직 세우기
-        case let .failure(failure): break
         }
       }
       .store(in: &cancellables)
@@ -246,13 +246,10 @@ extension WorkoutEnvironmentSetupViewController: UICollectionViewDelegate {
     else {
       return
     }
-    // 중요: ContainerViewController에서 collectionView가 두개이다.
-    // 그들은 같은 ViewController에서 Deleaget으로 처리된다.
-    // 하나의 ViewController에서 두개의 Delegate가 처리되기 때문에, If else 구문으로 처리
-
-    // importent: ContainerViewController have two UICollectionView
-    // They will be controlled same ViewController (using UIcollectionViewDeleaget)
-    // So using If else, ViewController can detect which they are
+    // Important: The ContainerViewController has two UICollectionViews.
+    // Both are controlled by the same ViewController acting as their UICollectionViewDelegate.
+    // Since one ViewController is managing two UICollectionViews,
+    // an if-else statement is used to differentiate between them.
     if collectionView == workoutTypesCollectionView { workoutTypesCollectionViewDidSelectItemAt(indexPath) }
     else if collectionView == workoutPeerTypesCollectionView { workoutPeerTypesCollectionViewDidSelectItemAt(indexPath) }
   }
