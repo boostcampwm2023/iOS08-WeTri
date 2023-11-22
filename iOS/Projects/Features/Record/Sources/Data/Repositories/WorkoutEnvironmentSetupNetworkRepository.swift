@@ -35,7 +35,6 @@ final class WorkoutEnvironmentSetupNetworkRepository: WorkoutEnvironmentSetupNet
       else {
         return promise(.failure(DataLayerError.noData))
       }
-      let decoder = JSONDecoder()
 
       do {
         let workoutTypes = try decoder.decode([WorkoutTypeDTO].self, from: data)
@@ -59,7 +58,6 @@ final class WorkoutEnvironmentSetupNetworkRepository: WorkoutEnvironmentSetupNet
       else {
         return promise(.failure(DataLayerError.noData))
       }
-      let decoder = JSONDecoder()
 
       do {
         let peerTypes = try decoder.decode([PeerTypeDto].self, from: data)

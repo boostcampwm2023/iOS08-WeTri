@@ -76,7 +76,6 @@ private extension WorkoutSettingCoordinator {
     }
 
     func fillUp() {
-      
       let repository = WorkoutEnvironmentSetupNetworkRepository(session: URLSession.shared)
       register(repository)
 

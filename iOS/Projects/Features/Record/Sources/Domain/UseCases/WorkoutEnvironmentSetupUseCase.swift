@@ -27,58 +27,34 @@ protocol WorkoutEnvironmentSetupUseCaseRepresentable {
 
 final class WorkoutEnvironmentSetupUseCase: WorkoutEnvironmentSetupUseCaseRepresentable {
   let repository: WorkoutEnvironmentSetupNetworkRepositoryRepresentable
-  var cancellabels = Set<AnyCancellable>()
 
   init(repository: WorkoutEnvironmentSetupNetworkRepositoryRepresentable) {
     self.repository = repository
   }
 
   func paerTypes() -> AnyPublisher<Result<[PeerType], Error>, Never> {
-    return Future<Result<[PeerType], Error>, Never> { [weak self] promise in
-      guard let self else {
-        promise(.success(.failure(DomainError.didDeinitUseCase)))
-        return
+    return repository
+      .peerType()
+      .map { dto -> Result<[PeerType], Error> in
+        let peerTypes = dto.map { PeerType(peerTypeDTO: $0) }
+        return .success(peerTypes)
       }
-
-      repository
-        .peerType()
-        .sink { completion in
-          switch completion {
-          case let .failure(error):
-            promise(.success(.failure(error)))
-          case .finished:
-            break
-          }
-
-        } receiveValue: { dto in
-          return promise(.success(.success(dto.map { PeerType(peerTypeDTO: $0) })))
-        }.store(in: &cancellabels)
-
-    }.eraseToAnyPublisher()
+      .catch { error in
+        Just(.failure(error))
+      }
+      .eraseToAnyPublisher()
   }
 
   func workoutTypes() -> AnyPublisher<Result<[WorkoutType], Error>, Never> {
-    return Future<Result<[WorkoutType], Error>, Never> { [weak self] promise in
-      guard let self else {
-        promise(.success(.failure(DomainError.didDeinitUseCase)))
-        return
+    return repository
+      .workoutTypes()
+      .map { dto -> Result<[WorkoutType], Error> in
+        let workoutTypes = dto.map { WorkoutType(workoutTypesDTO: $0) }
+        return .success(workoutTypes)
       }
-
-      repository
-        .workoutTypes()
-        .sink { completion in
-          switch completion {
-          case .finished:
-            break
-          case let .failure(error):
-            promise(.success(.failure(error)))
-          }
-        } receiveValue: { dto in
-          let workoutTypes = dto.map { WorkoutType(workoutTypesDTO: $0) }
-          promise(.success(.success(workoutTypes)))
-        }
-        .store(in: &cancellabels)
-
-    }.eraseToAnyPublisher()
+      .catch { error in
+        Just(.failure(error))
+      }
+      .eraseToAnyPublisher()
   }
 }
