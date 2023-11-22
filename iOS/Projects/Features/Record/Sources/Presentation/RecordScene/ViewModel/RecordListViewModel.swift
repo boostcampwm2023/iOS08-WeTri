@@ -7,13 +7,14 @@
 //
 
 import Combine
+import Coordinator
 import Foundation
 
 // MARK: - RecordListViewModelInput
 
 struct RecordListViewModelInput {
   let appear: AnyPublisher<Void, Never>
-  let moveSelectScene: AnyPublisher<Void, Never>
+  let goRecordButtonDidTapped: AnyPublisher<Void, Never>
 }
 
 typealias RecordListViewModelOutput = AnyPublisher<RecordListState, Error>
@@ -24,6 +25,7 @@ enum RecordListState {
   case idle
   case sucessRecords([Record])
   case sucessDateInfo(DateInfo)
+  case moveScene
 }
 
 // MARK: - RecordListViewModel
@@ -31,18 +33,19 @@ enum RecordListState {
 final class RecordListViewModel {
   private var subscriptions: Set<AnyCancellable> = []
 
+  private let coordinator: RecordFeatureCoordinator
   private let recordUpdateUsecase: RecordUpdateUsecase
   private let dateProvideUsecase: DateProvideUsecase
 
   init(
     recordUpdateUsecase: RecordUpdateUsecase,
-    dateProvideUsecase: DateProvideUsecase
+    dateProvideUsecase: DateProvideUsecase,
+    coordinator: RecordFeatureCoordinator
   ) {
     self.recordUpdateUsecase = recordUpdateUsecase
     self.dateProvideUsecase = dateProvideUsecase
+    self.coordinator = coordinator
   }
-  // input 종류
-  // 기록하러가기 버튼 탭 - 운동선택화면으로 이동한다.
 }
 
 // MARK: RecordListViewModelRepresentable
@@ -81,6 +84,12 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
         .sucessDateInfo(dateInfo)
       }
       .eraseToAnyPublisher()
+
+    input.goRecordButtonDidTapped
+      .sink { [weak self] _ in
+        self?.coordinator.showSettingFlow()
+      }
+      .store(in: &subscriptions)
 
     let initialState: RecordListViewModelOutput = Just(.idle)
       .setFailureType(to: Error.self)

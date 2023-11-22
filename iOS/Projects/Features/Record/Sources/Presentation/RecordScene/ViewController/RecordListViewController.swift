@@ -6,6 +6,7 @@
 //
 
 import Combine
+import CombineCocoa
 import DesignSystem
 import UIKit
 
@@ -13,8 +14,9 @@ import UIKit
 
 final class RecordListViewController: UIViewController {
   private var subscriptions: Set<AnyCancellable> = []
-  private let appear = PassthroughSubject<Void, Never>()
-  private let moveSelectScene = PassthroughSubject<Void, Never>()
+
+  private let appearSubject = PassthroughSubject<Void, Never>()
+  private let moveWorkoutEnvironmentSceneSubject = PassthroughSubject<Void, Never>()
 
   private let viewModel: RecordListViewModel
   private var workoutInformationDataSource: WorkoutInformationDataSource?
@@ -39,7 +41,7 @@ final class RecordListViewController: UIViewController {
     return collectionView
   }()
 
-  private let recordButton: UIButton = {
+  private let goRecordButton: UIButton = {
     var configuration = UIButton.Configuration.mainEnabled(title: "기록하러가기")
     configuration.font = .preferredFont(forTextStyle: .headline, with: .traitBold)
     let button = UIButton(configuration: configuration)
@@ -69,22 +71,23 @@ final class RecordListViewController: UIViewController {
     view.backgroundColor = .white
     configureUI()
     configureDataSource()
-    bind()
-    appear.send()
+    bindViewModel()
+    bindUI()
+    appearSubject.send()
   }
 }
 
 // MARK: Binding
 
 private extension RecordListViewController {
-  func bind() {
+  func bindViewModel() {
     subscriptions.forEach {
       $0.cancel()
     }
     subscriptions.removeAll()
     let input = RecordListViewModelInput(
-      appear: appear.eraseToAnyPublisher(),
-      moveSelectScene: moveSelectScene.eraseToAnyPublisher()
+      appear: appearSubject.eraseToAnyPublisher(),
+      goRecordButtonDidTapped: moveWorkoutEnvironmentSceneSubject.eraseToAnyPublisher()
     )
     let output = viewModel.transform(input: input)
     output.sink(
@@ -123,7 +126,18 @@ private extension RecordListViewController {
     case let .sucessDateInfo(dateInfo):
       guard let dayOfWeek = dateInfo.dayOfWeek else { return }
       todayLabel.text = "오늘\n \(dateInfo.month)월 \(dateInfo.date)일 \(dayOfWeek)"
+    case .moveScene:
+      let viewController = WorkoutEnvironmentSetupViewController()
+      navigationController?.pushViewController(viewController, animated: false)
     }
+  }
+
+  func bindUI() {
+    goRecordButton.publisher(.touchUpInside)
+      .sink { [weak self] _ in
+        self?.moveWorkoutEnvironmentSceneSubject.send()
+      }
+      .store(in: &subscriptions)
   }
 }
 
@@ -145,12 +159,12 @@ private extension RecordListViewController {
       workoutInformationCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
     ])
 
-    view.addSubview(recordButton)
+    view.addSubview(goRecordButton)
     NSLayoutConstraint.activate([
-      recordButton.topAnchor.constraint(equalTo: workoutInformationCollectionView.bottomAnchor, constant: Metrics.componentInterval),
-      recordButton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-      recordButton.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-      recordButton.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+      goRecordButton.topAnchor.constraint(equalTo: workoutInformationCollectionView.bottomAnchor, constant: Metrics.componentInterval),
+      goRecordButton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+      goRecordButton.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+      goRecordButton.bottomAnchor.constraint(equalTo: view.bottomAnchor),
     ])
 
     view.addSubview(noRecordsView)

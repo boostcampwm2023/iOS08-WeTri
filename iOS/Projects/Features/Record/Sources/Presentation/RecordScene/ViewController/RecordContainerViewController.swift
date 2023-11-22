@@ -32,7 +32,9 @@ private extension RecordContainerViewController {
       calendarView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.componentInterval),
       calendarView.heightAnchor.constraint(equalToConstant: Metrics.calendarHeight),
     ])
-
+    guard let navigationController else {
+      return
+    }
     let recordListViewController = RecordListViewController(viewModel:
       RecordListViewModel(
         recordUpdateUsecase:
@@ -41,7 +43,8 @@ private extension RecordContainerViewController {
           MockWorkoutRecordsRepository()
         ),
         dateProvideUsecase:
-        DefaultDateProvideUsecase()
+        DefaultDateProvideUsecase(),
+        coordinator: RecordFeatureCoordinator(navigationController: navigationController)
       )
     )
     guard let listView = recordListViewController.view else { return }
