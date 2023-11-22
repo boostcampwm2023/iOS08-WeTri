@@ -176,6 +176,17 @@ final class WorkoutSummaryCardView: UIView {
       ]
     )
   }
+
+  func configure(with model: WorkoutSummaryDTO) {
+    dateLabel.text = model.createdAt
+    timeItemView.configure(withTitle: "시간", value: "\(model.workoutTime)")
+    distanceItemView.configure(withTitle: "거리", value: "\(model.distance)")
+    caloriesItemView.configure(withTitle: "칼로리", value: "\(model.calorie)")
+
+    averageHeartRateItemView.configure(withTitle: "Avg.HR", value: "\(model.avgBPM.flatMap(String.init) ?? "-")")
+    minimumHeartRateItemView.configure(withTitle: "Min.HR", value: "\(model.minBPM.flatMap(String.init) ?? "-")")
+    maximumHeartRateItemView.configure(withTitle: "Max.HR", value: "\(model.maxBPM.flatMap(String.init) ?? "-")")
+  }
 }
 
 // MARK: WorkoutSummaryCardView.Metrics

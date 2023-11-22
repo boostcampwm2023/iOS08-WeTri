@@ -13,6 +13,10 @@ import UIKit
 // MARK: - WorkoutSummaryViewController
 
 final class WorkoutSummaryViewController: UIViewController {
+  // MARK: - Subjects
+
+  private let viewDidLoadSubject: PassthroughSubject<Void, Never> = .init()
+
   // MARK: Properties
 
   private let viewModel: WorkoutSummaryViewModelRepresentable
@@ -112,10 +116,15 @@ final class WorkoutSummaryViewController: UIViewController {
   }
 
   private func bind() {
-    let output = viewModel.transform(input: .init())
-    output.sink { state in
+    let output = viewModel.transform(input: .init(viewDidLoad: viewDidLoadSubject.eraseToAnyPublisher()))
+
+    output.sink { [weak self] state in
       switch state {
       case .idle:
+        break
+      case let .fetchSummary(model):
+        self?.summaryCardView.configure(with: model)
+      case let .alert(error):
         break
       }
     }
@@ -138,5 +147,5 @@ private extension WorkoutSummaryViewController {
 
 @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, xrOS 1.0, *)
 #Preview {
-  WorkoutSummaryViewController(viewModel: WorkoutSummaryViewModel())
+  WorkoutSummaryViewController(viewModel: WorkoutSummaryViewModel(workoutSummaryUseCase: WorkoutSummaryUseCase(repository: WorkoutSummaryRepository(session: URLSession.shared), workoutRecordID: 0)))
 }

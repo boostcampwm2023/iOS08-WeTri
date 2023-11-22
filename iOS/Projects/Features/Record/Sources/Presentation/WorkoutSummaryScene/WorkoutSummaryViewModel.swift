@@ -11,14 +11,19 @@ import Foundation
 
 // MARK: - WorkoutSummaryViewModelInput
 
-public struct WorkoutSummaryViewModelInput {}
+struct WorkoutSummaryViewModelInput {
+  /// 화면이 로드될 때 이벤트가 한 번만 호출됩니다. 그 이후로는 바로 `finished`됩니다.
+  let viewDidLoad: AnyPublisher<Void, Never>
+}
 
-public typealias WorkoutSummaryViewModelOutput = AnyPublisher<WorkoutSummaryState, Never>
+typealias WorkoutSummaryViewModelOutput = AnyPublisher<WorkoutSummaryState, Never>
 
 // MARK: - WorkoutSummaryState
 
-public enum WorkoutSummaryState {
+enum WorkoutSummaryState {
   case idle
+  case fetchSummary(WorkoutSummaryDTO)
+  case alert(Error)
 }
 
 // MARK: - WorkoutSummaryViewModelRepresentable
@@ -33,19 +38,35 @@ final class WorkoutSummaryViewModel {
   // MARK: - Properties
 
   private var subscriptions: Set<AnyCancellable> = []
+
+  private let workoutSummaryUseCase: WorkoutSummaryUseCaseRepresentable
+
+  init(workoutSummaryUseCase: WorkoutSummaryUseCaseRepresentable) {
+    self.workoutSummaryUseCase = workoutSummaryUseCase
+  }
 }
 
 // MARK: WorkoutSummaryViewModelRepresentable
 
 extension WorkoutSummaryViewModel: WorkoutSummaryViewModelRepresentable {
-  public func transform(input _: WorkoutSummaryViewModelInput) -> WorkoutSummaryViewModelOutput {
+  public func transform(input: WorkoutSummaryViewModelInput) -> WorkoutSummaryViewModelOutput {
+    // == Disposing of All Subscriptions ==
+
     for subscription in subscriptions {
       subscription.cancel()
     }
     subscriptions.removeAll()
 
+    // == Input Output Binding ==
+
+    let fetchedWorkoutRecord = input.viewDidLoad
+      .flatMap(workoutSummaryUseCase.workoutSummaryInformation)
+      .map(WorkoutSummaryState.fetchSummary)
+      .catch { return Just(.alert($0)) }
+      .eraseToAnyPublisher()
+
     let initialState: WorkoutSummaryViewModelOutput = Just(.idle).eraseToAnyPublisher()
 
-    return initialState
+    return Publishers.MergeMany([initialState, fetchedWorkoutRecord]).eraseToAnyPublisher()
   }
 }
