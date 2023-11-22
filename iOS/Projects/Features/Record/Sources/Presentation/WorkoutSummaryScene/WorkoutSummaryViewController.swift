@@ -119,7 +119,9 @@ final class WorkoutSummaryViewController: UIViewController {
   private func bind() {
     let output = viewModel.transform(input: .init(viewDidLoad: viewDidLoadSubject.eraseToAnyPublisher()))
 
-    output.sink { [weak self] state in
+    output
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] state in
       switch state {
       case .idle:
         break
