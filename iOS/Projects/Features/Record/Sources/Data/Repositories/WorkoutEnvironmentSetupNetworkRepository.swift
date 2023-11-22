@@ -13,8 +13,8 @@ import Trinet
 // MARK: - WorkoutEnvironmentSetupNetworkRepository
 
 struct WorkoutEnvironmentSetupNetworkRepository: WorkoutEnvironmentSetupNetworkRepositoryRepresentable {
-  let decoder = JSONDecoder()
-  let provider: TNProvider<WorkoutEnvironmentSetupEndPoint>
+  private let decoder = JSONDecoder()
+  private let provider: TNProvider<WorkoutEnvironmentSetupEndPoint>
 
   init(session: URLSessionProtocol) {
     provider = .init(session: session)
@@ -73,7 +73,7 @@ struct WorkoutEnvironmentSetupNetworkRepository: WorkoutEnvironmentSetupNetworkR
 
 // MARK: WorkoutEnvironmentSetupNetworkRepository.WorkoutEnvironmentSetupEndPoint
 
-extension WorkoutEnvironmentSetupNetworkRepository {
+private extension WorkoutEnvironmentSetupNetworkRepository {
   enum WorkoutEnvironmentSetupEndPoint: TNEndPoint {
     case exerciseTypes
     case peer
