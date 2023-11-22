@@ -1,5 +1,5 @@
 //
-//  CalendarData.swift
+//  DateInfo.swift
 //  RecordFeature
 //
 //  Created by 안종표 on 2023/11/21.
@@ -8,8 +8,11 @@
 
 import Foundation
 
-struct CalendarData {
-  let year: Int
-  let month: Int
-  let date: Int
+// MARK: - DateInfo
+
+struct DateInfo {
+  let year: String
+  let month: String
+  let date: String
+  let dayOfWeek: String?
 }

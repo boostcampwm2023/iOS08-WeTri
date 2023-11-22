@@ -34,10 +34,14 @@ private extension RecordContainerViewController {
     ])
 
     let recordListViewController = RecordListViewController(viewModel:
-      RecordListViewModel(recordUpdateUsecase:
-        DefaultRecordUpdateUsecase(workoutRecordsRepository:
+      RecordListViewModel(
+        recordUpdateUsecase:
+        DefaultRecordUpdateUsecase(
+          workoutRecordsRepository:
           MockWorkoutRecordsRepository()
-        )
+        ),
+        dateProvideUsecase:
+        DefaultDateProvideUsecase()
       )
     )
     guard let listView = recordListViewController.view else { return }

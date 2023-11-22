@@ -12,7 +12,7 @@ import Foundation
 // MARK: - RecordUpdateUsecase
 
 protocol RecordUpdateUsecase {
-  func execute(calendarData: CalendarData) -> AnyPublisher<[Record], Error>
+  func execute(dateInfo: DateInfo) -> AnyPublisher<[Record], Error>
 }
 
 // MARK: - RecordUpdateUsecaseError

@@ -22,7 +22,8 @@ typealias RecordListViewModelOutput = AnyPublisher<RecordListState, Error>
 
 enum RecordListState {
   case idle
-  case success([Record])
+  case sucessRecords([Record])
+  case sucessDateInfo(DateInfo)
 }
 
 // MARK: - RecordListViewModel
@@ -31,9 +32,14 @@ final class RecordListViewModel {
   private var subscriptions: Set<AnyCancellable> = []
 
   private let recordUpdateUsecase: RecordUpdateUsecase
+  private let dateProvideUsecase: DateProvideUsecase
 
-  init(recordUpdateUsecase: RecordUpdateUsecase) {
+  init(
+    recordUpdateUsecase: RecordUpdateUsecase,
+    dateProvideUsecase: DateProvideUsecase
+  ) {
     self.recordUpdateUsecase = recordUpdateUsecase
+    self.dateProvideUsecase = dateProvideUsecase
   }
   // input 종류
   // 기록하러가기 버튼 탭 - 운동선택화면으로 이동한다.
@@ -48,17 +54,31 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
     }
     subscriptions.removeAll()
 
-    let appear = input.appear
-      .compactMap { [weak self] _ in
-        return self?.recordUpdateUsecase.execute(calendarData:
-          CalendarData(year: 2023, month: 11, date: 21)
-        )
-      }
-      .flatMap { publisher in
-        return publisher
+    let appearRecords = input.appear
+      .flatMap { [weak self] _ -> AnyPublisher<[Record], Error> in
+        guard let self else {
+          return Fail(error: BindingError.viewModelDeinitialized).eraseToAnyPublisher()
+        }
+        let dateInfo = dateProvideUsecase.today()
+        return recordUpdateUsecase.execute(dateInfo: dateInfo)
       }
       .map { records -> RecordListState in
-        .success(records)
+        .sucessRecords(records)
+      }
+      .eraseToAnyPublisher()
+
+    let appearDate = input.appear
+      .flatMap { [weak self] _ -> AnyPublisher<DateInfo, Error> in
+        guard let self else {
+          return Fail(error: BindingError.viewModelDeinitialized).eraseToAnyPublisher()
+        }
+        let dateInfo = dateProvideUsecase.today()
+        return Just(dateInfo)
+          .setFailureType(to: Error.self)
+          .eraseToAnyPublisher()
+      }
+      .map { dateInfo -> RecordListState in
+        .sucessDateInfo(dateInfo)
       }
       .eraseToAnyPublisher()
 
@@ -67,7 +87,7 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
       .eraseToAnyPublisher()
 
     return Publishers
-      .Merge(initialState, appear)
+      .Merge3(initialState, appearRecords, appearDate)
       .eraseToAnyPublisher()
   }
 }
@@ -76,4 +96,21 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
 
 protocol RecordListViewModelRepresentable {
   func transform(input: RecordListViewModelInput) -> RecordListViewModelOutput
+}
+
+// MARK: - BindingError
+
+private enum BindingError: Error {
+  case viewModelDeinitialized
+}
+
+// MARK: LocalizedError
+
+extension BindingError: LocalizedError {
+  var errorDescription: String? {
+    switch self {
+    case .viewModelDeinitialized:
+      return "viewModel이 메모리에서 해제되었습니다."
+    }
+  }
 }

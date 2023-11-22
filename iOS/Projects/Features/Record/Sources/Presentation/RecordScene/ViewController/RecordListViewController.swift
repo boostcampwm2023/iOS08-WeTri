@@ -114,13 +114,16 @@ private extension RecordListViewController {
     case .idle:
       // TODO: 뷰 교체
       let temp = ""
-    case let .success(records):
+    case let .sucessRecords(records):
       let workoutInformationItems = records.map {
         WorkoutInformationItem(sport: $0.mode.decription, time: $0.timeToTime, distance: "\($0.distance)km")
       }
       configureSnapShot(items: workoutInformationItems)
       workoutInformationCollectionView.isHidden = false
       noRecordsView.isHidden = true
+    case let .sucessDateInfo(dateInfo):
+      guard let dayOfWeek = dateInfo.dayOfWeek else { return }
+      todayLabel.text = "오늘\n \(dateInfo.month)월 \(dateInfo.date)일 \(dayOfWeek)"
     }
   }
 }
