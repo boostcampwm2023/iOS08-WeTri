@@ -21,7 +21,7 @@ export class RecordModel {
 
   @Column()
   @IsNumber()
-  runningTime: number;
+  workoutTime: number;
 
   @Column()
   @IsNumber()
