@@ -22,7 +22,7 @@ struct PeerType: Hashable {
     self.typeCode = typeCode
   }
 
-  init(peerTypeDTO dto: PeerTypeDto) {
+  init(peerTypeDTO dto: PeerTypeDTO) {
     iconSystemImage = dto.icon
     titleText = dto.title
     descriptionText = dto.description

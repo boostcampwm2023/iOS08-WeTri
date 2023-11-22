@@ -1,5 +1,5 @@
 //
-//  PeerTypeDto.swift
+//  PeerTypeDTO.swift
 //  RecordFeature
 //
 //  Created by MaraMincho on 11/21/23.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct PeerTypeDto: Decodable {
+struct PeerTypeDTO: Decodable {
   let icon: String
   let title: String
   let description: String

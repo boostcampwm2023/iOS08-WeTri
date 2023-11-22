@@ -45,8 +45,8 @@ final class WorkoutEnvironmentSetupNetworkRepository: WorkoutEnvironmentSetupNet
     }.eraseToAnyPublisher()
   }
 
-  func peerType() -> AnyPublisher<[PeerTypeDto], Error> {
-    return Future<[PeerTypeDto], Error> { [weak self] promise in
+  func peerType() -> AnyPublisher<[PeerTypeDTO], Error> {
+    return Future<[PeerTypeDTO], Error> { [weak self] promise in
       guard let self else {
         return promise(.failure(DataLayerError.repositoryDidDeinit))
       }
@@ -60,7 +60,7 @@ final class WorkoutEnvironmentSetupNetworkRepository: WorkoutEnvironmentSetupNet
       }
 
       do {
-        let peerTypes = try decoder.decode([PeerTypeDto].self, from: data)
+        let peerTypes = try decoder.decode([PeerTypeDTO].self, from: data)
         promise(.success(peerTypes))
       } catch {
         promise(.failure(error))

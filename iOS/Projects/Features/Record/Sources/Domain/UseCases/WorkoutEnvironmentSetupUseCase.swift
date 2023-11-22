@@ -13,7 +13,7 @@ import Foundation
 
 protocol WorkoutEnvironmentSetupNetworkRepositoryRepresentable {
   func workoutTypes() -> AnyPublisher<[WorkoutTypeDTO], Error>
-  func peerType() -> AnyPublisher<[PeerTypeDto], Error>
+  func peerType() -> AnyPublisher<[PeerTypeDTO], Error>
 }
 
 // MARK: - WorkoutEnvironmentSetupUseCaseRepresentable
