@@ -28,6 +28,7 @@ public final class WorkoutEnvironmentSetupViewController: UIViewController {
     super.viewDidLoad()
     setup()
     requestWorkoutTypes.send()
+    requestWorkoutPeerTypes.send()
   }
 
   lazy var contentNavigationController: UINavigationController = {
@@ -146,7 +147,7 @@ private extension WorkoutEnvironmentSetupViewController {
       }
 
       cell.update(
-        descriptionIconSystemName: itemIdentifier.descriptionText,
+        descriptionIconSystemName: itemIdentifier.iconSystemImage,
         descriptionTitleText: itemIdentifier.titleText,
         descriptionSubTitleText: itemIdentifier.descriptionText,
         typeCode: itemIdentifier.typeCode

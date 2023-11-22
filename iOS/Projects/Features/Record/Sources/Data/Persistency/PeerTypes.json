@@ -1,0 +1,14 @@
+[
+  {
+    "description" : "혼자 진행하기",
+    "icon" : "person.fill",
+    "title" : "혼자 하기",
+    "typeCode" : 1
+  },
+  {
+    "description" : "랜덤한 사용자와 같이 진행하세요",
+    "icon" : "person.3.fill",
+    "title" : "같이 하기",
+    "typeCode" : 2
+  }
+]

@@ -8,6 +8,7 @@
 
 import Combine
 import Foundation
+import OSLog
 import Trinet
 
 // MARK: - WorkoutEnvironmentSetupNetworkRepository
@@ -51,20 +52,21 @@ final class WorkoutEnvironmentSetupNetworkRepository: WorkoutEnvironmentSetupNet
       guard let self else {
         return promise(.failure(DataLayerError.repositoryDidDeinit))
       }
+      guard
+        let bundle = Bundle(identifier: "kr.codesquad.boostcamp8.RecordFeature"),
+        let path = bundle.path(forResource: "PeerTypes", ofType: "json"),
+        let data = try? Data(contentsOf: URL(filePath: path))
+      else {
+        return promise(.failure(DataLayerError.noData))
+      }
+      let decoder = JSONDecoder()
 
-      Task {
-        do {
-          let data = try await self.provider.request(.peer)
-          let peerDTO = try self.decoder.decode(GWResponse<[PeerTypeDto]>.self, from: data).data
-
-          if let peerDTO {
-            promise(.success(peerDTO))
-          } else {
-            promise(.failure(DataLayerError.noData))
-          }
-        } catch {
-          promise(.failure(error))
-        }
+      do {
+        os_log("\(String(data: data, encoding: .utf8)!)")
+        let peerTypes = try decoder.decode([PeerTypeDto].self, from: data)
+        promise(.success(peerTypes))
+      } catch {
+        promise(.failure(error))
       }
     }.eraseToAnyPublisher()
   }
