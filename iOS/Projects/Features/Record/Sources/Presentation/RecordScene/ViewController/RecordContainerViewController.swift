@@ -33,7 +33,13 @@ private extension RecordContainerViewController {
       calendarView.heightAnchor.constraint(equalToConstant: Metrics.calendarHeight),
     ])
 
-    let recordListViewController = RecordListViewController()
+    let recordListViewController = RecordListViewController(viewModel:
+      RecordListViewModel(recordUpdateUsecase:
+        DefaultRecordUpdateUsecase(workoutRecordsRepository:
+          MockWorkoutRecordsRepository()
+        )
+      )
+    )
     guard let listView = recordListViewController.view else { return }
     listView.translatesAutoresizingMaskIntoConstraints = false
     add(child: recordListViewController)

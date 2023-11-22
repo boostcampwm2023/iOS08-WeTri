@@ -5,12 +5,18 @@
 //  Created by 안종표 on 2023/11/16.
 //
 
+import Combine
 import DesignSystem
 import UIKit
 
 // MARK: - RecordListViewController
 
 final class RecordListViewController: UIViewController {
+  private var subscriptions: Set<AnyCancellable> = []
+  private let appear = PassthroughSubject<Void, Never>()
+  private let moveSelectScene = PassthroughSubject<Void, Never>()
+
+  private let viewModel: RecordListViewModel
   private var workoutInformationDataSource: WorkoutInformationDataSource?
 
   private let todayLabel: UILabel = {
@@ -41,20 +47,56 @@ final class RecordListViewController: UIViewController {
     return button
   }()
 
+  init(viewModel: RecordListViewModel) {
+    self.viewModel = viewModel
+    super.init(nibName: nil, bundle: nil)
+  }
+
+  @available(*, unavailable)
+  required init?(coder _: NSCoder) {
+    fatalError("No Xib")
+  }
+
   override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = .white
     configureUI()
     configureDataSource()
-    // ViewModel 생성 전, 앱이 돌아가는지 확인하기 위한 간단한 예제
-    let items: [WorkoutInformationItem] = [
-      .init(sport: "수영", time: "08:00~09:00", distance: "12.12Km"),
-      .init(sport: "수영", time: "08:00~09:00", distance: "12.12Km"),
-      .init(sport: "수영", time: "08:00~09:00", distance: "12.12Km"),
-      .init(sport: "수영", time: "08:00~09:00", distance: "12.12Km"),
-      .init(sport: "수영", time: "08:00~09:00", distance: "12.12Km"),
-    ]
-    configureSnapShot(items: items)
+    bind()
+    appear.send()
+  }
+}
+
+// MARK: Binding
+
+private extension RecordListViewController {
+  func bind() {
+    subscriptions.forEach {
+      $0.cancel()
+    }
+    subscriptions.removeAll()
+    let input = RecordListViewModelInput(
+      appear: appear.eraseToAnyPublisher(),
+      moveSelectScene: moveSelectScene.eraseToAnyPublisher()
+    )
+    let output = viewModel.transform(input: input)
+    output.sink { [weak self] state in
+      self?.render(output: state)
+    }
+    .store(in: &subscriptions)
+  }
+
+  func render(output: RecordListState) {
+    switch output {
+    case .idle:
+      // TODO: 뷰 교체
+      let temp = ""
+    case let .success(records):
+      let workoutInformationItems = records.map {
+        WorkoutInformationItem(sport: $0.mode.decription, time: $0.timeToTime, distance: "\($0.distance)km")
+      }
+      configureSnapShot(items: workoutInformationItems)
+    }
   }
 }
 
