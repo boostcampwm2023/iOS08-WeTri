@@ -16,8 +16,10 @@ enum WorkoutMode {
   case cycle
 }
 
-extension WorkoutMode {
-  var decription: String {
+// MARK: CustomStringConvertible
+
+extension WorkoutMode: CustomStringConvertible {
+  var description: String {
     switch self {
     case .run:
       return "달리기"
