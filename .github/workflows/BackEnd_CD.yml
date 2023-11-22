@@ -1,11 +1,9 @@
 name: BackEnd-CD
 
 on:
-  push:
-    branches:
-      - develop
-    paths:
-      - 'BackEnd/**'
+  pull_request:
+    branches: 'develop'
+    types: [ opened, synchronize, reopened, edited ]
 
 jobs:
   deploy:
