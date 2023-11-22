@@ -12,7 +12,6 @@ struct PeerType: Hashable {
   let iconSystemImage: String
   let titleText: String
   let descriptionText: String
-  let id = UUID()
   let typeCode: Int
 
   init(icon: String, title: String, description: String, typeCode: Int) {

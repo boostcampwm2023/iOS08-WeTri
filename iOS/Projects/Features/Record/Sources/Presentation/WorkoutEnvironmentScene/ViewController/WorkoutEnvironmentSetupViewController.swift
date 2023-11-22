@@ -60,11 +60,7 @@ public final class WorkoutEnvironmentSetupViewController: UIViewController {
     return pageControl
   }()
 
-  lazy var contentNavigationController: UINavigationController = {
-    let nav = UINavigationController(rootViewController: workoutSelectViewController)
-
-    return nav
-  }()
+  lazy var contentNavigationController = UINavigationController()
 }
 
 private extension WorkoutEnvironmentSetupViewController {
@@ -81,9 +77,11 @@ private extension WorkoutEnvironmentSetupViewController {
     let safeArea = view.safeAreaLayoutGuide
 
     view.addSubview(pageControl)
-    pageControl.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 10).isActive = true
-    pageControl.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 23).isActive = true
-    pageControl.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -23).isActive = true
+    pageControl.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 0).isActive = true
+    pageControl.leadingAnchor
+      .constraint(equalTo: safeArea.leadingAnchor, constant: ConstraintsGuideLine.value + 11).isActive = true
+    pageControl.trailingAnchor
+      .constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
     pageControl.heightAnchor.constraint(equalToConstant: 30).isActive = true
 
     view.addSubview(contentNavigationController.view)
@@ -156,7 +154,7 @@ private extension WorkoutEnvironmentSetupViewController {
       return
     }
 
-    workoutTypesDataSource = .init(collectionView: workoutTypesCollectionView, cellProvider: { collectionView, indexPath, item in
+    workoutTypesDataSource = .init(collectionView: workoutTypesCollectionView) { collectionView, indexPath, item in
       guard
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WorkoutSelectTypeCell.identifier, for: indexPath) as? WorkoutSelectTypeCell
       else {
@@ -169,7 +167,7 @@ private extension WorkoutEnvironmentSetupViewController {
         typeCode: item.typeCode
       )
       return cell
-    })
+    }
   }
 
   func configureWorkoutPeerTypesDataSource() {
@@ -177,7 +175,7 @@ private extension WorkoutEnvironmentSetupViewController {
       return
     }
 
-    workoutPeerTypesDataSource = .init(collectionView: workoutPeerTypesCollectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
+    workoutPeerTypesDataSource = .init(collectionView: workoutPeerTypesCollectionView) { collectionView, indexPath, itemIdentifier in
       guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WorkoutPeerTypeSelectCell.identifier, for: indexPath)
         as? WorkoutPeerTypeSelectCell
       else {
@@ -190,9 +188,8 @@ private extension WorkoutEnvironmentSetupViewController {
         descriptionSubTitleText: itemIdentifier.descriptionText,
         typeCode: itemIdentifier.typeCode
       )
-
       return cell
-    })
+    }
   }
 
   enum Constant {

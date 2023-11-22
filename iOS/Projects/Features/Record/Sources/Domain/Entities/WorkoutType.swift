@@ -12,7 +12,6 @@ public struct WorkoutType: Hashable {
   let workoutIcon: String
   let workoutIconDescription: String
   let typeCode: Int
-  private let id = UUID()
 
   init(workoutIcon: String, workoutIconDescription: String, typeCode: Int) {
     self.workoutIcon = workoutIcon

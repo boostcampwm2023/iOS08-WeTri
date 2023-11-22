@@ -62,13 +62,17 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
 
     let workoutTypes: WorkoutEnvironmentSetupViewModelOutput = input
       .requestWorkoutTypes
-      .flatMap { _ in
-        self.useCase.workoutTypes()
+      .flatMap { [weak self] _ -> AnyPublisher<Result<[WorkoutType], Error>, Never> in
+        guard let self else {
+          return Just(Result.failure(ViewModelError.viewModelDidDeinit)).eraseToAnyPublisher()
+        }
+        return useCase.workoutTypes()
       }
       .map { results -> Result<WorkoutEnvironmentState, Error> in
         switch results {
         case let .success(workOuttypes):
-          return .success(.workoutTpyes(workOuttypes))
+          let uniquePeerTypes = Array(Set(workOuttypes))
+          return .success(.workoutTpyes(uniquePeerTypes))
         case let .failure(error):
           return Result.failure(error)
         }
@@ -76,13 +80,17 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
 
     let workoutPeerType: WorkoutEnvironmentSetupViewModelOutput = input
       .requestWorkoutPeerTypes
-      .flatMap { _ in
-        self.useCase.paerTypes()
+      .flatMap { [weak self] _ -> AnyPublisher<Result<[PeerType], Error>, Never> in
+        guard let self else {
+          return Just(Result.failure(ViewModelError.viewModelDidDeinit)).eraseToAnyPublisher()
+        }
+        return useCase.paerTypes()
       }
       .map { results -> Result<WorkoutEnvironmentState, Error> in
         switch results {
-        case let .success(success):
-          return .success(.workoutPeerTypes(success))
+        case let .success(peerTypes):
+          let uniquePeerTypes = Array(Set(peerTypes))
+          return .success(.workoutPeerTypes(uniquePeerTypes))
         case let .failure(failure):
           return .failure(failure)
         }

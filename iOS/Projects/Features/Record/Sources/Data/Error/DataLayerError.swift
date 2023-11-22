@@ -11,4 +11,5 @@ import Foundation
 enum DataLayerError: LocalizedError {
   case noData
   case repositoryDidDeinit
+  case curreptedData
 }

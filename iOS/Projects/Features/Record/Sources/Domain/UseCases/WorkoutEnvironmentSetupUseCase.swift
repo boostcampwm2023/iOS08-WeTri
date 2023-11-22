@@ -9,13 +9,6 @@
 import Combine
 import Foundation
 
-// MARK: - WorkoutEnvironmentSetupNetworkRepositoryRepresentable
-
-protocol WorkoutEnvironmentSetupNetworkRepositoryRepresentable {
-  func workoutTypes() -> AnyPublisher<[WorkoutTypeDTO], Error>
-  func peerType() -> AnyPublisher<[PeerTypeDTO], Error>
-}
-
 // MARK: - WorkoutEnvironmentSetupUseCaseRepresentable
 
 protocol WorkoutEnvironmentSetupUseCaseRepresentable {

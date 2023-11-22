@@ -12,21 +12,16 @@ import Trinet
 
 // MARK: - WorkoutEnvironmentSetupNetworkRepository
 
-final class WorkoutEnvironmentSetupNetworkRepository: WorkoutEnvironmentSetupNetworkRepositoryRepresentable {
+struct WorkoutEnvironmentSetupNetworkRepository: WorkoutEnvironmentSetupNetworkRepositoryRepresentable {
   let decoder = JSONDecoder()
-  let repositorySession: URLSessionProtocol
   let provider: TNProvider<WorkoutEnvironmentSetupEndPoint>
 
   init(session: URLSessionProtocol) {
-    repositorySession = session
-    provider = .init(session: repositorySession)
+    provider = .init(session: session)
   }
 
   func workoutTypes() -> AnyPublisher<[WorkoutTypeDTO], Error> {
-    return Future<[WorkoutTypeDTO], Error> { [weak self] promise in
-      guard let self else {
-        return promise(.failure(DataLayerError.repositoryDidDeinit))
-      }
+    return Future<[WorkoutTypeDTO], Error> { promise in
 
       guard
         let bundle = Bundle(identifier: PersistencyProperty.bundleIdentifier),
@@ -37,7 +32,12 @@ final class WorkoutEnvironmentSetupNetworkRepository: WorkoutEnvironmentSetupNet
       }
 
       do {
-        let workoutTypes = try decoder.decode([WorkoutTypeDTO].self, from: data)
+        let workoutTypes = try decoder.decode(GWResponse<[WorkoutTypeDTO]>.self, from: data).data
+        guard let workoutTypes else {
+          promise(.failure(DataLayerError.curreptedData))
+          return
+        }
+
         promise(.success(workoutTypes))
       } catch {
         promise(.failure(error))
@@ -46,10 +46,7 @@ final class WorkoutEnvironmentSetupNetworkRepository: WorkoutEnvironmentSetupNet
   }
 
   func peerType() -> AnyPublisher<[PeerTypeDTO], Error> {
-    return Future<[PeerTypeDTO], Error> { [weak self] promise in
-      guard let self else {
-        return promise(.failure(DataLayerError.repositoryDidDeinit))
-      }
+    return Future<[PeerTypeDTO], Error> { promise in
 
       guard
         let bundle = Bundle(identifier: PersistencyProperty.bundleIdentifier),
@@ -60,7 +57,12 @@ final class WorkoutEnvironmentSetupNetworkRepository: WorkoutEnvironmentSetupNet
       }
 
       do {
-        let peerTypes = try decoder.decode([PeerTypeDTO].self, from: data)
+        let peerTypes = try decoder.decode(GWResponse<[PeerTypeDTO]>.self, from: data).data
+        guard let peerTypes else {
+          promise(.failure(DataLayerError.curreptedData))
+          return
+        }
+
         promise(.success(peerTypes))
       } catch {
         promise(.failure(error))

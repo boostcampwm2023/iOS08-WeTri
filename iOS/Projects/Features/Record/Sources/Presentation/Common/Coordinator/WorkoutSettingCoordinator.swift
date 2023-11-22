@@ -33,11 +33,15 @@ final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
   }
 
   func pushWorkoutEnvironmentSetupViewController() {
-    let syringe = WorkOutEnvironmentSetupSyringe()
+    let repository = WorkoutEnvironmentSetupNetworkRepository(session: URLSession.shared)
 
-    // TODO: WorkoutEnvironmentSetupViewController의 Usecase에 workoutSetting 객체를 전달해줘야한다.
-    let workoutEnvironmentViewController: WorkoutEnvironmentSetupViewController = syringe.resolve()
-    navigationController.pushViewController(workoutEnvironmentViewController, animated: false)
+    let useCase = WorkoutEnvironmentSetupUseCase(repository: repository)
+
+    let viewModel = WorkoutEnvironmentSetupViewModel(useCase: useCase)
+
+    let viewController = WorkoutEnvironmentSetupViewController(viewModel: viewModel)
+
+    navigationController.pushViewController(viewController, animated: false)
   }
 
   func pushOpponentSearchViewController(workoutSetting _: WorkoutSetting) {
@@ -50,43 +54,5 @@ final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
 
   func finish(workoutSetting: WorkoutSetting) {
     settingDidFinishedDelegate?.workoutSettingCoordinatorDidFinished(workoutSetting: workoutSetting)
-  }
-}
-
-// MARK: WorkoutSettingCoordinator.WorkOutEnvironmentSetupSyringe
-
-private extension WorkoutSettingCoordinator {
-  final class WorkOutEnvironmentSetupSyringe: Injectable {
-    init() { fillUp() }
-
-    var dependencies: [String: Any] = [:]
-
-    func register<T>(_ dependency: T) {
-      let key = String(describing: type(of: T.self))
-      dependencies[key] = dependency
-    }
-
-    func resolve<T>() -> T {
-      let key = String(describing: type(of: T.self))
-      if dependencies[key] == nil {
-        fatalError("fillup에 Dependency를 제대로 선언하세요")
-      }
-
-      return dependencies[key] as! T
-    }
-
-    func fillUp() {
-      let repository = WorkoutEnvironmentSetupNetworkRepository(session: URLSession.shared)
-      register(repository)
-
-      let useCase = WorkoutEnvironmentSetupUseCase(repository: repository)
-      register(useCase)
-
-      let viewModel = WorkoutEnvironmentSetupViewModel(useCase: useCase)
-      register(viewModel)
-
-      let viewController = WorkoutEnvironmentSetupViewController(viewModel: viewModel)
-      register(viewController)
-    }
   }
 }
