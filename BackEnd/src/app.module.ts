@@ -9,6 +9,7 @@ import { ProfilesModule } from './profiles/profiles.module';
 import { LiveModule } from './lives/lives.module';
 import { RecordsModule } from './records/records.module';
 
+
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeOrmConfig),

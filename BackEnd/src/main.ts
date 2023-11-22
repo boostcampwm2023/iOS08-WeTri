@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerSetting } from './config/swagger.config';
-import { winstonLogger } from './config/winston.config';
 import { ValidationPipe } from '@nestjs/common';
 import { ResponseTransformInterceptor } from './common/Interceptors/responseTransform. Interceptor';
 import { HttpExceptionFilter } from './common/exceptionFilters/httpException.filter';
@@ -9,9 +8,7 @@ import { WsAdapter } from '@nestjs/platform-ws';
 import * as express from 'express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    logger: winstonLogger,
-  });
+  const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(new ResponseTransformInterceptor());
