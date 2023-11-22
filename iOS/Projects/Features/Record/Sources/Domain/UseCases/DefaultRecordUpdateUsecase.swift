@@ -19,10 +19,8 @@ final class DefaultRecordUpdateUsecase: RecordUpdateUsecase {
   func execute(dateInfo: DateInfo) -> AnyPublisher<[Record], Error> {
     let ymd = "\(dateInfo.year)-\(dateInfo.month)-\(dateInfo.date)"
     return workoutRecordsRepository.fetchRecordsList(ymd: ymd)
-      .flatMap { [weak self] records -> AnyPublisher<[Record], Error> in
-        guard let isZero = self?.isRecordsCountZero(records: records),
-              isZero
-        else {
+      .flatMap { records -> AnyPublisher<[Record], Error> in
+        guard records.isEmpty else {
           return Just(records)
             .setFailureType(to: Error.self)
             .eraseToAnyPublisher()
@@ -30,12 +28,5 @@ final class DefaultRecordUpdateUsecase: RecordUpdateUsecase {
         return Fail(outputType: [Record].self, failure: RecordUpdateUsecaseError.noRecord).eraseToAnyPublisher()
       }
       .eraseToAnyPublisher()
-  }
-
-  private func isRecordsCountZero(records: [Record]) -> Bool {
-    guard records.isEmpty else {
-      return false
-    }
-    return true
   }
 }

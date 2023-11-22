@@ -114,11 +114,11 @@ private extension RecordListViewController {
 
   func render(output: RecordListState) {
     switch output {
-    case .idle:
-      let temp = ""
+    case .idle: 
+      break
     case let .sucessRecords(records):
       let workoutInformationItems = records.map {
-        WorkoutInformationItem(sport: $0.mode.decription, time: $0.timeToTime, distance: "\($0.distance)km")
+        WorkoutInformationItem(sport: $0.mode.description, time: $0.timeToTime, distance: "\($0.distance)km")
       }
       configureSnapShot(items: workoutInformationItems)
       workoutInformationCollectionView.isHidden = false
