@@ -52,6 +52,7 @@ final class WorkoutSelectViewController: UIViewController {
   private let nextButton: UIButton = {
     let button = UIButton()
     button.configurationUpdateHandler = UIButton.Configuration.main(label: "다음")
+    button.isEnabled = false
 
     button.translatesAutoresizingMaskIntoConstraints = false
     return button
@@ -118,5 +119,11 @@ private extension WorkoutSelectViewController {
 
   enum Metrics {
     static let cellInsets: CGFloat = 5
+  }
+}
+
+extension WorkoutSelectViewController {
+  func nextButtonEnable(_ bool: Bool) {
+    nextButton.isEnabled = bool
   }
 }

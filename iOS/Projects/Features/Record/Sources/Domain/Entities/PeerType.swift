@@ -13,16 +13,19 @@ struct PeerType: Hashable {
   let titleText: String
   let descriptionText: String
   let id = UUID()
+  let typeCode: Int
 
-  init(icon: String, title: String, description: String) {
+  init(icon: String, title: String, description: String, typeCode: Int) {
     iconSystemImage = icon
     titleText = title
     descriptionText = description
+    self.typeCode = typeCode
   }
 
   init(peerTypeDTO dto: PeerTypeDto) {
     iconSystemImage = dto.icon
     titleText = dto.title
     descriptionText = dto.description
+    typeCode = dto.typeCode
   }
 }

@@ -12,4 +12,5 @@ struct PeerTypeDto: Decodable {
   let icon: String
   let title: String
   let description: String
+  let typeCode: Int
 }

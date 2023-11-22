@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Foundation
 
 // MARK: - WorkoutEnvironmentSetupViewModelInput
 
@@ -14,6 +15,8 @@ struct WorkoutEnvironmentSetupViewModelInput {
   let requestWorkoutTypes: AnyPublisher<Void, Never>
   let requestWorkoutPeerTypes: AnyPublisher<Void, Never>
   let endWorkoutEnvironment: AnyPublisher<Void, Never>
+  let selectWorkoutType: AnyPublisher<WorkoutType?, Never>
+  let selectPeerType: AnyPublisher<PeerType?, Never>
 }
 
 typealias WorkoutEnvironmentSetupViewModelOutput = AnyPublisher<Result<WorkoutEnvironmentState, Error>, Never>
@@ -24,6 +27,8 @@ enum WorkoutEnvironmentState {
   case idle
   case workoutTpyes([WorkoutType])
   case workoutPeerTypes([PeerType])
+  case didSelectWorkoutType(Bool)
+  case didSelectWorkoutPeerType(Bool)
 }
 
 // MARK: - WorkoutEnvironmentSetupViewModelRepresentable
@@ -38,6 +43,10 @@ final class WorkoutEnvironmentSetupViewModel {
   private var subscriptions = Set<AnyCancellable>()
   var useCase: WorkoutEnvironmentSetupUseCaseRepresentable
   var subject = PassthroughSubject<Result<WorkoutEnvironmentState, Error>, Never>()
+
+  var didSelectWorkoutType: WorkoutType?
+  var didSelectWorkoutPeerType: PeerType?
+
   var workoutTypes: [WorkoutType] = []
 
   init(useCase: WorkoutEnvironmentSetupUseCaseRepresentable) {
@@ -51,7 +60,7 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
   func transform(input: WorkoutEnvironmentSetupViewModelInput) -> WorkoutEnvironmentSetupViewModelOutput {
     subscriptions.removeAll()
 
-    let workoutTypes = input
+    let workoutTypes: WorkoutEnvironmentSetupViewModelOutput = input
       .requestWorkoutTypes
       .flatMap { _ in
         self.useCase.workoutTypes()
@@ -63,7 +72,7 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
         case let .failure(error):
           return Result.failure(error)
         }
-      }
+      }.eraseToAnyPublisher()
 
     let workoutPeerType: WorkoutEnvironmentSetupViewModelOutput = input
       .requestWorkoutPeerTypes
@@ -79,8 +88,40 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
         }
       }.eraseToAnyPublisher()
 
+    let didSelectWorkoutPeerType: WorkoutEnvironmentSetupViewModelOutput = input
+      .selectPeerType
+      .map { [weak self] peerType -> Result<WorkoutEnvironmentState, Error> in
+        guard let self else {
+          return .failure(ViewModelError.viewModelDidDeinit)
+        }
+        if let peerType {
+          self.didSelectWorkoutPeerType = peerType
+          return .success(.didSelectWorkoutPeerType(true))
+        }
+        return .success(.didSelectWorkoutPeerType(false))
+      }.eraseToAnyPublisher()
+
+    let didSelectWorkoutType: WorkoutEnvironmentSetupViewModelOutput = input
+      .selectWorkoutType
+      .map { [weak self] workoutType -> Result<WorkoutEnvironmentState, Error> in
+        guard let self else {
+          return .failure(ViewModelError.viewModelDidDeinit)
+        }
+        if let workoutType {
+          self.didSelectWorkoutType = workoutType
+          return .success(.didSelectWorkoutType(true))
+        }
+        return .success(.didSelectWorkoutType(false))
+      }.eraseToAnyPublisher()
+
     let idle: WorkoutEnvironmentSetupViewModelOutput = Just(Result.success(WorkoutEnvironmentState.idle)).eraseToAnyPublisher()
 
-    return Publishers.Merge3(workoutTypes, idle, workoutPeerType).eraseToAnyPublisher()
+    return Publishers.Merge5(workoutTypes, idle, workoutPeerType, didSelectWorkoutType, didSelectWorkoutPeerType).eraseToAnyPublisher()
   }
+}
+
+// MARK: - ViewModelError
+
+enum ViewModelError: LocalizedError {
+  case viewModelDidDeinit
 }

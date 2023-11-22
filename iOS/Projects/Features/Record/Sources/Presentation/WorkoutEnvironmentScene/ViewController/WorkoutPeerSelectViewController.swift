@@ -33,6 +33,7 @@ final class WorkoutPeerSelectViewController: UIViewController {
   private let startButton: UIButton = {
     let button = UIButton()
     button.configurationUpdateHandler = UIButton.Configuration.mainCircular(label: "출발")
+    button.isEnabled = false
 
     button.translatesAutoresizingMaskIntoConstraints = false
     return button
@@ -97,5 +98,11 @@ private extension WorkoutPeerSelectViewController {
     static let buttonWidth: CGFloat = 150
 
     static let itemInsets: CGFloat = 9
+  }
+}
+
+extension WorkoutPeerSelectViewController {
+  func startButtonEnable(_ bool: Bool) {
+    startButton.isEnabled = bool
   }
 }

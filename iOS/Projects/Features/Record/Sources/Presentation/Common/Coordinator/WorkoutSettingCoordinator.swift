@@ -98,11 +98,13 @@ private extension WorkoutSettingCoordinator {
                 "data": [
       {
                     "icon": "pencil",
-                    "description": "이거 가능?"
+                    "description": "이거 가능?",
+                    "typeCode" : 3
                 },
       {
-                    "icon": "pencil",
-                    "description": "이거 가능?"
+                    "icon": "figure.run",
+                    "description": "이거 가능?",
+                    "typeCode" : 3
                 }
       ]
             }

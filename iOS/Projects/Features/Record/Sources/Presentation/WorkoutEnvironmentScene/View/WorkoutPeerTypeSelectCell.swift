@@ -25,6 +25,10 @@ final class WorkoutPeerTypeSelectCell: UICollectionViewCell {
   }
 
   static let identifier = "WorkoutPeerSelectCell"
+  private var descriptionIconSystemName: String = ""
+  private var descriptionTitleText: String = ""
+  private var descriptionSubTitleText: String = ""
+  private var typeCode: Int = -1
 
   override var isSelected: Bool {
     didSet {
@@ -176,7 +180,7 @@ private extension WorkoutPeerTypeSelectCell {
 }
 
 extension WorkoutPeerTypeSelectCell {
-  func update(descriptionIconSystemName: String, descriptionTitleText: String, descriptionSubTitleText: String) {
+  func update(descriptionIconSystemName: String, descriptionTitleText: String, descriptionSubTitleText: String, typeCode: Int) {
     let imageFont: UIFont = .preferredFont(forTextStyle: .title1)
     let configure = UIImage.SymbolConfiguration(font: imageFont)
     let targetImage = UIImage(systemName: descriptionIconSystemName, withConfiguration: configure)
@@ -184,6 +188,20 @@ extension WorkoutPeerTypeSelectCell {
     descriptionIcon.image = targetImage
     descriptionTitle.text = descriptionTitleText
     descriptionSubTitle.text = descriptionSubTitleText
+
+    self.descriptionIconSystemName = descriptionIconSystemName
+    self.descriptionTitleText = descriptionTitleText
+    self.descriptionSubTitleText = descriptionSubTitleText
+    self.typeCode = typeCode
+  }
+
+  func info() -> PeerType {
+    return .init(
+      icon: descriptionIconSystemName,
+      title: descriptionTitleText,
+      description: descriptionSubTitleText,
+      typeCode: typeCode
+    )
   }
 }
 

@@ -11,4 +11,5 @@ import Foundation
 struct WorkoutTypeDTO: Decodable {
   let icon: String
   let description: String
+  let typeCode: Int
 }

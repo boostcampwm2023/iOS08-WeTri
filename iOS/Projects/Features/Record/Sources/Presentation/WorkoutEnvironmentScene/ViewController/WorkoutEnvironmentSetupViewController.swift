@@ -27,7 +27,6 @@ public final class WorkoutEnvironmentSetupViewController: UIViewController {
   override public func viewDidLoad() {
     super.viewDidLoad()
     setup()
-    insertTempSource()
     requestWorkoutTypes.send()
   }
 
@@ -49,12 +48,15 @@ public final class WorkoutEnvironmentSetupViewController: UIViewController {
 
   var cancellables = Set<AnyCancellable>()
   let requestWorkoutTypes = PassthroughSubject<Void, Never>()
+  let requestWorkoutPeerTypes = PassthroughSubject<Void, Never>()
+  let selectWorkoutType = PassthroughSubject<WorkoutType?, Never>()
+  let selectPeerType = PassthroughSubject<PeerType?, Never>()
   let endWorkoutEnvironment = PassthroughSubject<Void, Never>()
 
   var viewModel: WorkoutEnvironmentSetupViewModelRepresentable?
 
   var workoutTypesDataSource: UICollectionViewDiffableDataSource<Int, WorkoutType>?
-  var peerTypesDataSource: UICollectionViewDiffableDataSource<Int, PeerType>?
+  var workoutPeerTypesDataSource: UICollectionViewDiffableDataSource<Int, PeerType>?
 
   var workoutTypesCollectionView: UICollectionView?
   var workoutPeerTypesCollectionView: UICollectionView?
@@ -63,7 +65,9 @@ public final class WorkoutEnvironmentSetupViewController: UIViewController {
 private extension WorkoutEnvironmentSetupViewController {
   func bind() {
     workoutTypesCollectionView = workoutSelectViewController.workoutTypesCollectionView
+    workoutTypesCollectionView?.delegate = self
     workoutPeerTypesCollectionView = workoutPeerSelectViewController.pearTypeSelectCollectionView
+    workoutPeerTypesCollectionView?.delegate = self
 
     workoutSelectViewController.delegate = self
 
@@ -76,8 +80,10 @@ private extension WorkoutEnvironmentSetupViewController {
 
     let input = WorkoutEnvironmentSetupViewModelInput(
       requestWorkoutTypes: requestWorkoutTypes.eraseToAnyPublisher(),
-      requestWorkoutPeerTypes: requestWorkoutTypes.eraseToAnyPublisher(),
-      endWorkoutEnvironment: endWorkoutEnvironment.eraseToAnyPublisher()
+      requestWorkoutPeerTypes: requestWorkoutPeerTypes.eraseToAnyPublisher(),
+      endWorkoutEnvironment: endWorkoutEnvironment.eraseToAnyPublisher(),
+      selectWorkoutType: selectWorkoutType.eraseToAnyPublisher(),
+      selectPeerType: selectPeerType.eraseToAnyPublisher()
     )
 
     let output = viewModel.transform(input: input)
@@ -89,8 +95,10 @@ private extension WorkoutEnvironmentSetupViewController {
         case let .success(success):
           switch success {
           case .idle: break
-          case let .workoutTpyes(workoutTypes): updateWorkoutTypes(workoutTypes)
-          case let .workoutPeerTypes(pear): break
+          case let .workoutTpyes(workoutTypes): updateWorkout(types: workoutTypes)
+          case let .workoutPeerTypes(peer): updateWorkoutPeer(types: peer)
+          case let .didSelectWorkoutType(bool): workoutSelectViewController.nextButtonEnable(bool)
+          case let .didSelectWorkoutPeerType(bool): workoutPeerSelectViewController.startButtonEnable(bool)
           }
         // TODO: failure에 알맞는 로직 세우기
         case let .failure(failure): break
@@ -122,11 +130,15 @@ private extension WorkoutEnvironmentSetupViewController {
         return UICollectionViewCell()
       }
 
-      cell.update(systemName: item.workoutIcon, description: item.workoutIconDescription)
+      cell.update(
+        systemName: item.workoutIcon,
+        description: item.workoutIconDescription,
+        typeCode: item.typeCode
+      )
       return cell
     })
 
-    peerTypesDataSource = .init(collectionView: workoutPeerTypesCollectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
+    workoutPeerTypesDataSource = .init(collectionView: workoutPeerTypesCollectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
       guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WorkoutPeerTypeSelectCell.identifier, for: indexPath)
         as? WorkoutPeerTypeSelectCell
       else {
@@ -136,27 +148,27 @@ private extension WorkoutEnvironmentSetupViewController {
       cell.update(
         descriptionIconSystemName: itemIdentifier.descriptionText,
         descriptionTitleText: itemIdentifier.titleText,
-        descriptionSubTitleText: itemIdentifier.descriptionText
+        descriptionSubTitleText: itemIdentifier.descriptionText,
+        typeCode: itemIdentifier.typeCode
       )
 
       return cell
     })
   }
 
-  func insertTempSource() {
-    guard let workoutTypesDataSource else { return }
-    var snapshot = workoutTypesDataSource.snapshot()
+  func updateWorkoutPeer(types: [PeerType]) {
+    guard let workoutPeerTypesDataSource else { return }
+    var snapshot = workoutPeerTypesDataSource.snapshot()
     snapshot.deleteAllItems()
     snapshot.appendSections([0])
-    snapshot.appendItems([
-      WorkoutType(workoutIcon: "figure.run", workoutIconDescription: "11"),
-      WorkoutType(workoutIcon: "square.and.arrow.up.circle.fill", workoutIconDescription: "1s1"),
-    ])
+    snapshot.appendItems(types)
 
-    workoutTypesDataSource.apply(snapshot)
+    DispatchQueue.main.async {
+      workoutPeerTypesDataSource.apply(snapshot)
+    }
   }
 
-  func updateWorkoutTypes(_ types: [WorkoutType]) {
+  func updateWorkout(types: [WorkoutType]) {
     guard let workoutTypesDataSource else { return }
     var snapshot = workoutTypesDataSource.snapshot()
     snapshot.deleteAllItems()
@@ -219,8 +231,48 @@ extension WorkoutEnvironmentSetupViewController: UINavigationControllerDelegate 
 
 extension WorkoutEnvironmentSetupViewController: WorkoutSelectViewDelegate {
   func nextButtonDidTap() {
-    requestWorkoutTypes.send()
-//    pageControl.next()
-//    contentNavigationController.pushViewController(workoutPeerSelectViewController, animated: true)
+    pageControl.next()
+    contentNavigationController.pushViewController(workoutPeerSelectViewController, animated: true)
+  }
+}
+
+// MARK: UICollectionViewDelegate
+
+extension WorkoutEnvironmentSetupViewController: UICollectionViewDelegate {
+  public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    guard let workoutTypesCollectionView,
+          let workoutPeerTypesCollectionView
+    else {
+      return
+    }
+    // 중요: ContainerViewController에서 collectionView가 두개이다.
+    // 그들은 같은 ViewController에서 Deleaget으로 처리된다.
+    // 하나의 ViewController에서 두개의 Delegate가 처리되기 때문에, If else 구문으로 처리
+
+    // importent: ContainerViewController have two UICollectionView
+    // They will be controlled same ViewController (using UIcollectionViewDeleaget)
+    // So using If else, ViewController can detect which they are
+    if collectionView == workoutTypesCollectionView { workoutTypesCollectionViewDidSelectItemAt(indexPath) }
+    else if collectionView == workoutPeerTypesCollectionView { workoutPeerTypesCollectionViewDidSelectItemAt(indexPath) }
+  }
+
+  func workoutTypesCollectionViewDidSelectItemAt(_ indexPath: IndexPath) {
+    guard
+      let cell = workoutTypesCollectionView?.dequeueReusableCell(withReuseIdentifier: WorkoutSelectTypeCell.identifier, for: indexPath)
+      as? WorkoutSelectTypeCell
+    else {
+      return
+    }
+    selectWorkoutType.send(cell.info())
+  }
+
+  func workoutPeerTypesCollectionViewDidSelectItemAt(_ indexPath: IndexPath) {
+    guard
+      let cell = workoutPeerTypesCollectionView?.dequeueReusableCell(withReuseIdentifier: WorkoutPeerTypeSelectCell.identifier, for: indexPath)
+      as? WorkoutPeerTypeSelectCell
+    else {
+      return
+    }
+    selectPeerType.send(cell.info())
   }
 }

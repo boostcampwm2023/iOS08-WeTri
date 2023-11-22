@@ -31,6 +31,10 @@ public class WorkoutSelectTypeCell: UICollectionViewCell {
     }
   }
 
+  private var typeCode: Int = -1
+  private var symbolSystemName: String = "figure.run"
+  private var descriptionLabelText: String = "달리기"
+
   private let workoutIconDescriptionLabel: UILabel = {
     let label = UILabel()
     label.font = UIFont.preferredFont(forTextStyle: .title3)
@@ -123,11 +127,19 @@ private extension UIImageView {
 }
 
 public extension WorkoutSelectTypeCell {
-  func update(systemName: String, description: String) {
+  func update(systemName: String, description: String, typeCode: Int) {
     let config = UIImage.SymbolConfiguration(font: .systemFont(ofSize: 120))
     let image = UIImage(systemName: systemName, withConfiguration: config)
     workoutIcon.image = image
 
     workoutIconDescriptionLabel.text = description
+
+    self.typeCode = typeCode
+    symbolSystemName = systemName
+    descriptionLabelText = description
+  }
+
+  func info() -> WorkoutType {
+    .init(workoutIcon: symbolSystemName, workoutIconDescription: descriptionLabelText, typeCode: typeCode)
   }
 }
