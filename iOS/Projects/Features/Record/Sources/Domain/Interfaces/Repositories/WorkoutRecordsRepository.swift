@@ -10,5 +10,5 @@ import Combine
 import Foundation
 
 protocol WorkoutRecordsRepository {
-  func fetchRecordsList(ymd: String) -> AnyPublisher<[Record], Never>
+  func fetchRecordsList(ymd: String) -> AnyPublisher<[Record], Error>
 }

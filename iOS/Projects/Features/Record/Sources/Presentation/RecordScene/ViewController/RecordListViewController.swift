@@ -47,6 +47,13 @@ final class RecordListViewController: UIViewController {
     return button
   }()
 
+  private let noRecordsView: NoRecordsView = {
+    let view = NoRecordsView()
+    view.translatesAutoresizingMaskIntoConstraints = false
+    view.isHidden = true
+    return view
+  }()
+
   init(viewModel: RecordListViewModel) {
     self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
@@ -80,9 +87,25 @@ private extension RecordListViewController {
       moveSelectScene: moveSelectScene.eraseToAnyPublisher()
     )
     let output = viewModel.transform(input: input)
-    output.sink { [weak self] state in
-      self?.render(output: state)
-    }
+    output.sink(
+      receiveCompletion: { [weak self] completion in
+        switch completion {
+        case .finished: break
+        case let .failure(error):
+          if let recordUpdateUsecaseError = error as? RecordUpdateUsecaseError {
+            switch recordUpdateUsecaseError {
+            case .noRecord:
+              self?.workoutInformationCollectionView.isHidden = true
+              self?.noRecordsView.isHidden = false
+            }
+          }
+        }
+      },
+      receiveValue: { [weak self] state in
+        self?.render(output: state)
+      }
+    )
+
     .store(in: &subscriptions)
   }
 
@@ -96,6 +119,8 @@ private extension RecordListViewController {
         WorkoutInformationItem(sport: $0.mode.decription, time: $0.timeToTime, distance: "\($0.distance)km")
       }
       configureSnapShot(items: workoutInformationItems)
+      workoutInformationCollectionView.isHidden = false
+      noRecordsView.isHidden = true
     }
   }
 }
@@ -124,6 +149,13 @@ private extension RecordListViewController {
       recordButton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
       recordButton.trailingAnchor.constraint(equalTo: view.trailingAnchor),
       recordButton.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+    ])
+
+    view.addSubview(noRecordsView)
+    NSLayoutConstraint.activate([
+      noRecordsView.topAnchor.constraint(equalTo: todayLabel.bottomAnchor, constant: Metrics.componentInterval),
+      noRecordsView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+      noRecordsView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
     ])
   }
 

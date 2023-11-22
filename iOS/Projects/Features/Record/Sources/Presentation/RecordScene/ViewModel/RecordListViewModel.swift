@@ -16,7 +16,7 @@ struct RecordListViewModelInput {
   let moveSelectScene: AnyPublisher<Void, Never>
 }
 
-typealias RecordListViewModelOutput = AnyPublisher<RecordListState, Never>
+typealias RecordListViewModelOutput = AnyPublisher<RecordListState, Error>
 
 // MARK: - RecordListState
 
@@ -62,7 +62,9 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
       }
       .eraseToAnyPublisher()
 
-    let initialState: RecordListViewModelOutput = Just(.idle).eraseToAnyPublisher()
+    let initialState: RecordListViewModelOutput = Just(.idle)
+      .setFailureType(to: Error.self)
+      .eraseToAnyPublisher()
 
     return Publishers
       .Merge(initialState, appear)

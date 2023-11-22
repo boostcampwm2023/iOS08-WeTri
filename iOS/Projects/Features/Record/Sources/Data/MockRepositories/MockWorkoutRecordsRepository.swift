@@ -11,18 +11,18 @@ import Foundation
 import Trinet
 
 final class MockWorkoutRecordsRepository: WorkoutRecordsRepository {
-  func fetchRecordsList(ymd: String) -> AnyPublisher<[Record], Never> {
-    return Future<[Record], Never> { promise in
-      let records = [
-        Record(mode: .run, timeToTime: "08:00~09:00", distance: 12.12),
-        Record(mode: .swim, timeToTime: "08:00~09:00", distance: 12.12),
-        Record(mode: .swim, timeToTime: "08:00~09:00", distance: 12.12),
-        Record(mode: .swim, timeToTime: "08:00~09:00", distance: 12.12),
-        Record(mode: .swim, timeToTime: "08:00~09:00", distance: 12.12),
-        Record(mode: .swim, timeToTime: "08:00~09:00", distance: 12.12),
-        Record(mode: .swim, timeToTime: "08:00~09:00", distance: 12.12),
-        Record(mode: .swim, timeToTime: "08:00~09:00", distance: 12.12),
-        Record(mode: .swim, timeToTime: "08:00~09:00", distance: 12.12),
+  func fetchRecordsList(ymd: String) -> AnyPublisher<[Record], Error> {
+    return Future<[Record], Error> { promise in
+      let records: [Record] = [
+        //                Record(mode: .run, timeToTime: "08:00~09:00", distance: 12.12),
+//        Record(mode: .swim, timeToTime: "08:00~09:00", distance: 12.12),
+//        Record(mode: .swim, timeToTime: "08:00~09:00", distance: 12.12),
+//        Record(mode: .swim, timeToTime: "08:00~09:00", distance: 12.12),
+//        Record(mode: .swim, timeToTime: "08:00~09:00", distance: 12.12),
+//        Record(mode: .swim, timeToTime: "08:00~09:00", distance: 12.12),
+//        Record(mode: .swim, timeToTime: "08:00~09:00", distance: 12.12),
+//        Record(mode: .swim, timeToTime: "08:00~09:00", distance: 12.12),
+//        Record(mode: .swim, timeToTime: "08:00~09:00", distance: 12.12),
       ]
 
       let testData = (try? JSONEncoder().encode(records))!
