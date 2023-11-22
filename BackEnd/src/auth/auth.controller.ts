@@ -24,7 +24,7 @@ export class AuthController {
     };
   }
 
-  @Post('token/access')
+  @Post('token/refresh')
   @UseGuards(RefreshTokenGuard)
   tokenRefresh(@Headers('authorization') raw: string) {
     const token = this.authService.extractTokenFromHeader(raw);

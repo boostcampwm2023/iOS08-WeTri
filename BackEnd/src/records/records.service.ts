@@ -4,6 +4,7 @@ import { RecordModel } from './entities/records.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateExerciseLogDto } from './dto/create-exerciseLog.dto';
 import { ProfileModel } from 'src/profiles/entities/profiles.entity';
+import { NotFoundRecordException } from './exceptions/records.exception';
 
 @Injectable()
 export class RecordsService {
@@ -12,7 +13,7 @@ export class RecordsService {
     private readonly recordsRepository: Repository<RecordModel>,
   ) {}
 
-  async createExerciseLog(
+  async createWorkOutLog(
     exerciseLog: CreateExerciseLogDto,
     profile: ProfileModel,
   ) {
@@ -20,5 +21,26 @@ export class RecordsService {
       ...exerciseLog,
       profile,
     });
+  }
+
+  async findByProfileId(profileId: number) {
+    return await this.recordsRepository.find({
+      where: {
+        profile: { id: profileId },
+      },
+    });
+  }
+
+  async findById(recordId: number) {
+    const result = await this.recordsRepository.findOne({
+      where: {
+        id: recordId,
+      },
+    });
+    if (!result) {
+      throw new NotFoundRecordException();
+    }
+
+    return result;
   }
 }

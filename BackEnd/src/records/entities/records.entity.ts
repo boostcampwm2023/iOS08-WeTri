@@ -27,6 +27,10 @@ export class RecordModel {
   @IsNumber()
   distance: number;
 
+  @Column()
+  @IsNumber()
+  calorie: number;
+
   @Column({ nullable: true })
   @IsNumber()
   avgBpm: number;
@@ -42,8 +46,8 @@ export class RecordModel {
   @CreateDateColumn()
   createdAt: Date;
 
-  @Column({default: false})
-  checker: boolean;
+  @Column({ default: false })
+  isPosted: boolean;
 
   @ManyToOne(() => ProfileModel, (profile) => profile.records) //manyToOne이 항상 외래키를 갖고 있음
   profile: ProfileModel;
