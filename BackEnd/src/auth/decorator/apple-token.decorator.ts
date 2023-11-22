@@ -1,16 +1,19 @@
-import { ExecutionContext, InternalServerErrorException, createParamDecorator } from "@nestjs/common";
-
+import {
+  ExecutionContext,
+  InternalServerErrorException,
+  createParamDecorator,
+} from '@nestjs/common';
 
 export const AppleToken = createParamDecorator(
-    (data, context: ExecutionContext) => {
-        const req = context.switchToHttp().getRequest();
-        
-        const token = req.body.token;
+  (data, context: ExecutionContext) => {
+    const req = context.switchToHttp().getRequest();
 
-        if(!token) {
-            throw new InternalServerErrorException('token이 없습니다.');
-        }
+    const token = req.body.token;
 
-        return token;
+    if (!token) {
+      throw new InternalServerErrorException('token이 없습니다.');
     }
+
+    return token;
+  },
 );
