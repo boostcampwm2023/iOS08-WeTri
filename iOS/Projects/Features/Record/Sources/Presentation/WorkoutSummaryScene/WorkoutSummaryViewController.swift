@@ -81,6 +81,7 @@ final class WorkoutSummaryViewController: UIViewController {
     setupConstraints()
     setupStyles()
     bind()
+    viewDidLoadSubject.send(())
   }
 
   // MARK: Configuration
@@ -125,10 +126,19 @@ final class WorkoutSummaryViewController: UIViewController {
       case let .fetchSummary(model):
         self?.summaryCardView.configure(with: model)
       case let .alert(error):
-        break
+        self?.showAlert(with: error)
       }
     }
     .store(in: &subscriptions)
+  }
+
+  // MARK: - Custom Methods
+
+  /// 에러 알림 문구를 보여줍니다.
+  private func showAlert(with error: Error) {
+    let alertController = UIAlertController(title: "알림", message: error.localizedDescription, preferredStyle: .alert)
+    alertController.addAction(UIAlertAction(title: "확인", style: .default))
+    present(alertController, animated: true)
   }
 }
 
