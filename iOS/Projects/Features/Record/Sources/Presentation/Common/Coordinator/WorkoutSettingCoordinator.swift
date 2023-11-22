@@ -56,7 +56,7 @@ final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
 // MARK: WorkoutSettingCoordinator.WorkOutEnvironmentSetupSyringe
 
 private extension WorkoutSettingCoordinator {
-  class WorkOutEnvironmentSetupSyringe: Injectable {
+  final class WorkOutEnvironmentSetupSyringe: Injectable {
     init() { fillUp() }
 
     var dependencies: [String: Any] = [:]
@@ -76,8 +76,8 @@ private extension WorkoutSettingCoordinator {
     }
 
     func fillUp() {
-      let mockSession = MockURLSession(mockData: workoutTypesMockData)
-      let repository = WorkoutEnvironmentSetupNetworkRepository(session: mockSession)
+      
+      let repository = WorkoutEnvironmentSetupNetworkRepository(session: URLSession.shared)
       register(repository)
 
       let useCase = WorkoutEnvironmentSetupUseCase(repository: repository)
@@ -89,25 +89,5 @@ private extension WorkoutSettingCoordinator {
       let viewController = WorkoutEnvironmentSetupViewController(viewModel: viewModel)
       register(viewController)
     }
-
-    let workoutTypesMockData =
-      """
-      {
-                "code": null,
-                "errorMesssage": null,
-                "data": [
-      {
-                    "icon": "pencil",
-                    "description": "이거 가능?",
-                    "typeCode" : 3
-                },
-      {
-                    "icon": "figure.run",
-                    "description": "이거 가능?",
-                    "typeCode" : 3
-                }
-      ]
-            }
-      """.data(using: .utf8)!
   }
 }

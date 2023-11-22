@@ -31,11 +31,24 @@ public final class WorkoutEnvironmentSetupViewController: UIViewController {
     requestWorkoutPeerTypes.send()
   }
 
-  lazy var contentNavigationController: UINavigationController = {
-    let nav = UINavigationController(rootViewController: workoutSelectViewController)
+  var cancellables = Set<AnyCancellable>()
+  var viewModel: WorkoutEnvironmentSetupViewModelRepresentable?
 
-    return nav
-  }()
+  // MARK: - WorkoutEnvironmentSetupViewModelInput
+
+  let requestWorkoutTypes = PassthroughSubject<Void, Never>()
+  let requestWorkoutPeerTypes = PassthroughSubject<Void, Never>()
+  let selectWorkoutType = PassthroughSubject<WorkoutType?, Never>()
+  let selectPeerType = PassthroughSubject<PeerType?, Never>()
+  let endWorkoutEnvironment = PassthroughSubject<Void, Never>()
+
+  // MARK: - ConatinerViewController Control Property
+
+  var workoutTypesDataSource: UICollectionViewDiffableDataSource<Int, WorkoutType>?
+  var workoutPeerTypesDataSource: UICollectionViewDiffableDataSource<Int, PeerType>?
+
+  var workoutTypesCollectionView: UICollectionView?
+  var workoutPeerTypesCollectionView: UICollectionView?
 
   private let workoutSelectViewController = WorkoutSelectViewController()
   private let workoutPeerSelectViewController = WorkoutPeerSelectViewController()
@@ -47,67 +60,14 @@ public final class WorkoutEnvironmentSetupViewController: UIViewController {
     return pageControl
   }()
 
-  var cancellables = Set<AnyCancellable>()
-  let requestWorkoutTypes = PassthroughSubject<Void, Never>()
-  let requestWorkoutPeerTypes = PassthroughSubject<Void, Never>()
-  let selectWorkoutType = PassthroughSubject<WorkoutType?, Never>()
-  let selectPeerType = PassthroughSubject<PeerType?, Never>()
-  let endWorkoutEnvironment = PassthroughSubject<Void, Never>()
+  lazy var contentNavigationController: UINavigationController = {
+    let nav = UINavigationController(rootViewController: workoutSelectViewController)
 
-  var viewModel: WorkoutEnvironmentSetupViewModelRepresentable?
-
-  var workoutTypesDataSource: UICollectionViewDiffableDataSource<Int, WorkoutType>?
-  var workoutPeerTypesDataSource: UICollectionViewDiffableDataSource<Int, PeerType>?
-
-  var workoutTypesCollectionView: UICollectionView?
-  var workoutPeerTypesCollectionView: UICollectionView?
+    return nav
+  }()
 }
 
 private extension WorkoutEnvironmentSetupViewController {
-  func bind() {
-    workoutTypesCollectionView = workoutSelectViewController.workoutTypesCollectionView
-    workoutTypesCollectionView?.delegate = self
-    workoutPeerTypesCollectionView = workoutPeerSelectViewController.pearTypeSelectCollectionView
-    workoutPeerTypesCollectionView?.delegate = self
-
-    workoutSelectViewController.delegate = self
-
-    bindViewModel()
-  }
-
-  func bindViewModel() {
-    guard let viewModel else { return }
-    cancellables.removeAll()
-
-    let input = WorkoutEnvironmentSetupViewModelInput(
-      requestWorkoutTypes: requestWorkoutTypes.eraseToAnyPublisher(),
-      requestWorkoutPeerTypes: requestWorkoutPeerTypes.eraseToAnyPublisher(),
-      endWorkoutEnvironment: endWorkoutEnvironment.eraseToAnyPublisher(),
-      selectWorkoutType: selectWorkoutType.eraseToAnyPublisher(),
-      selectPeerType: selectPeerType.eraseToAnyPublisher()
-    )
-
-    let output = viewModel.transform(input: input)
-
-    output
-      .sink { [weak self] state in
-        guard let self else { return }
-        switch state {
-          // TODO: failure에 알맞는 로직 세우기
-        case let .failure(failure): break
-        case let .success(success):
-          switch success {
-          case .idle: break
-          case let .workoutTpyes(workoutTypes): updateWorkout(types: workoutTypes)
-          case let .workoutPeerTypes(peer): updateWorkoutPeer(types: peer)
-          case let .didSelectWorkoutType(bool): workoutSelectViewController.nextButtonEnable(bool)
-          case let .didSelectWorkoutPeerType(bool): workoutPeerSelectViewController.startButtonEnable(bool)
-          }
-        }
-      }
-      .store(in: &cancellables)
-  }
-
   func setup() {
     view.backgroundColor = DesignSystemColor.primaryBackground
     setupViewHierarchyAndConstraints()
@@ -115,70 +75,6 @@ private extension WorkoutEnvironmentSetupViewController {
     bind()
 
     configureDataSource()
-  }
-
-  func configureDataSource() {
-    guard let workoutTypesCollectionView,
-          let workoutPeerTypesCollectionView
-    else {
-      return
-    }
-
-    workoutTypesDataSource = .init(collectionView: workoutTypesCollectionView, cellProvider: { collectionView, indexPath, item in
-      guard
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WorkoutSelectTypeCell.identifier, for: indexPath) as? WorkoutSelectTypeCell
-      else {
-        return UICollectionViewCell()
-      }
-
-      cell.update(
-        systemName: item.workoutIcon,
-        description: item.workoutIconDescription,
-        typeCode: item.typeCode
-      )
-      return cell
-    })
-
-    workoutPeerTypesDataSource = .init(collectionView: workoutPeerTypesCollectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
-      guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WorkoutPeerTypeSelectCell.identifier, for: indexPath)
-        as? WorkoutPeerTypeSelectCell
-      else {
-        return UICollectionViewCell()
-      }
-
-      cell.update(
-        descriptionIconSystemName: itemIdentifier.iconSystemImage,
-        descriptionTitleText: itemIdentifier.titleText,
-        descriptionSubTitleText: itemIdentifier.descriptionText,
-        typeCode: itemIdentifier.typeCode
-      )
-
-      return cell
-    })
-  }
-
-  func updateWorkoutPeer(types: [PeerType]) {
-    guard let workoutPeerTypesDataSource else { return }
-    var snapshot = workoutPeerTypesDataSource.snapshot()
-    snapshot.deleteAllItems()
-    snapshot.appendSections([0])
-    snapshot.appendItems(types)
-
-    DispatchQueue.main.async {
-      workoutPeerTypesDataSource.apply(snapshot)
-    }
-  }
-
-  func updateWorkout(types: [WorkoutType]) {
-    guard let workoutTypesDataSource else { return }
-    var snapshot = workoutTypesDataSource.snapshot()
-    snapshot.deleteAllItems()
-    snapshot.appendSections([0])
-    snapshot.appendItems(types)
-
-    DispatchQueue.main.async {
-      workoutTypesDataSource.apply(snapshot)
-    }
   }
 
   func setupViewHierarchyAndConstraints() {
@@ -205,8 +101,130 @@ private extension WorkoutEnvironmentSetupViewController {
     contentNavigationController.delegate = self
   }
 
+  func bind() {
+    workoutTypesCollectionView = workoutSelectViewController.workoutTypesCollectionView
+    workoutTypesCollectionView?.delegate = self
+
+    workoutPeerTypesCollectionView = workoutPeerSelectViewController.pearTypeSelectCollectionView
+    workoutPeerTypesCollectionView?.delegate = self
+
+    workoutSelectViewController.delegate = self
+
+    bindViewModel()
+  }
+
+  func bindViewModel() {
+    guard let viewModel else { return }
+    cancellables.removeAll()
+
+    let input = WorkoutEnvironmentSetupViewModelInput(
+      requestWorkoutTypes: requestWorkoutTypes.eraseToAnyPublisher(),
+      requestWorkoutPeerTypes: requestWorkoutPeerTypes.eraseToAnyPublisher(),
+      endWorkoutEnvironment: endWorkoutEnvironment.eraseToAnyPublisher(),
+      selectWorkoutType: selectWorkoutType.eraseToAnyPublisher(),
+      selectPeerType: selectPeerType.eraseToAnyPublisher()
+    )
+
+    let output = viewModel.transform(input: input)
+
+    output
+      .sink { [weak self] state in
+        guard let self else { return }
+        switch state {
+        // TODO: failure에 알맞는 로직 세우기
+        case let .failure(failure): break
+        case let .success(success):
+          switch success {
+          case .idle: break
+          case let .workoutTpyes(workoutTypes): updateWorkout(types: workoutTypes)
+          case let .workoutPeerTypes(peer): updateWorkoutPeer(types: peer)
+          case let .didSelectWorkoutType(bool): workoutSelectViewController.nextButtonEnable(bool)
+          case let .didSelectWorkoutPeerType(bool): workoutPeerSelectViewController.startButtonEnable(bool)
+          }
+        }
+      }
+      .store(in: &cancellables)
+  }
+
+  func configureDataSource() {
+    configureWorkoutTypesDataSource()
+    configureWorkoutPeerTypesDataSource()
+  }
+
+  func configureWorkoutTypesDataSource() {
+    guard let workoutTypesCollectionView else {
+      return
+    }
+
+    workoutTypesDataSource = .init(collectionView: workoutTypesCollectionView, cellProvider: { collectionView, indexPath, item in
+      guard
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WorkoutSelectTypeCell.identifier, for: indexPath) as? WorkoutSelectTypeCell
+      else {
+        return UICollectionViewCell()
+      }
+
+      cell.update(
+        systemName: item.workoutIcon,
+        description: item.workoutIconDescription,
+        typeCode: item.typeCode
+      )
+      return cell
+    })
+  }
+
+  func configureWorkoutPeerTypesDataSource() {
+    guard let workoutPeerTypesCollectionView else {
+      return
+    }
+
+    workoutPeerTypesDataSource = .init(collectionView: workoutPeerTypesCollectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
+      guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WorkoutPeerTypeSelectCell.identifier, for: indexPath)
+        as? WorkoutPeerTypeSelectCell
+      else {
+        return UICollectionViewCell()
+      }
+
+      cell.update(
+        descriptionIconSystemName: itemIdentifier.iconSystemImage,
+        descriptionTitleText: itemIdentifier.titleText,
+        descriptionSubTitleText: itemIdentifier.descriptionText,
+        typeCode: itemIdentifier.typeCode
+      )
+
+      return cell
+    })
+  }
+
   enum Constant {
     static let countOfPage = 2
+  }
+}
+
+// MARK: updateContainerViewController Cell
+
+private extension WorkoutEnvironmentSetupViewController {
+  func updateWorkoutPeer(types: [PeerType]) {
+    guard let workoutPeerTypesDataSource else { return }
+    var snapshot = workoutPeerTypesDataSource.snapshot()
+    snapshot.deleteAllItems()
+    snapshot.appendSections([0])
+    snapshot.appendItems(types)
+
+    DispatchQueue.main.async {
+      workoutPeerTypesDataSource.apply(snapshot)
+    }
+  }
+
+  func updateWorkout(types: [WorkoutType]) {
+    guard let workoutTypesDataSource else { return }
+    var snapshot = workoutTypesDataSource.snapshot()
+    snapshot.deleteAllItems()
+    snapshot.appendSections([0])
+    snapshot.appendItems(types)
+
+    DispatchQueue.main.async {
+      workoutTypesDataSource.apply(snapshot)
+    }
   }
 }
 
