@@ -8,24 +8,24 @@
 
 import Combine
 
-// MARK: - WorkoutSummaryViewModelInput
+// MARK: - WorkoutSessionViewModelInput
 
-public struct WorkoutSummaryViewModelInput {
+public struct WorkoutSessionViewModelInput {
   let endWorkoutPublisher: AnyPublisher<Void, Never>
 }
 
-public typealias WorkoutSummaryViewModelOutput = AnyPublisher<WorkoutSummaryState, Never>
+public typealias WorkoutSessionViewModelOutput = AnyPublisher<WorkoutSessionState, Never>
 
-// MARK: - WorkoutSummaryState
+// MARK: - WorkoutSessionState
 
-public enum WorkoutSummaryState {
+public enum WorkoutSessionState {
   case idle
 }
 
 // MARK: - WorkoutSessionViewModelRepresentable
 
 public protocol WorkoutSessionViewModelRepresentable {
-  func transform(input: WorkoutSummaryViewModelInput) -> WorkoutSummaryViewModelOutput
+  func transform(input: WorkoutSessionViewModelInput) -> WorkoutSessionViewModelOutput
 }
 
 // MARK: - WorkoutSessionViewModel
@@ -43,7 +43,7 @@ public final class WorkoutSessionViewModel {
 // MARK: WorkoutSessionViewModelRepresentable
 
 extension WorkoutSessionViewModel: WorkoutSessionViewModelRepresentable {
-  public func transform(input: WorkoutSummaryViewModelInput) -> WorkoutSummaryViewModelOutput {
+  public func transform(input: WorkoutSessionViewModelInput) -> WorkoutSessionViewModelOutput {
     for subscription in subscriptions {
       subscription.cancel()
     }
@@ -53,7 +53,7 @@ extension WorkoutSessionViewModel: WorkoutSessionViewModelRepresentable {
       .sink {}
       .store(in: &subscriptions)
 
-    let initialState: WorkoutSummaryViewModelOutput = Just(.idle).eraseToAnyPublisher()
+    let initialState: WorkoutSessionViewModelOutput = Just(.idle).eraseToAnyPublisher()
 
     return initialState
   }

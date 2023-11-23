@@ -6,7 +6,9 @@ import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ProfilesModule } from './profiles/profiles.module';
+import { LiveModule } from './lives/lives.module';
 import { RecordsModule } from './records/records.module';
+
 
 @Module({
   imports: [
@@ -14,6 +16,7 @@ import { RecordsModule } from './records/records.module';
     AuthModule,
     UsersModule,
     ProfilesModule,
+    LiveModule,
     RecordsModule,
   ],
   controllers: [AppController],

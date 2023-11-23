@@ -36,6 +36,6 @@ jobs:
               docker pull ${{ secrets.NCP_CONTAINER_REGISTRY }}/my-app:latest;
               docker stop my-app || true;
               docker rm my-app || true;
-              docker run --name my-app -d -p 443:3000 -p 80:3000 ${{ secrets.NCP_CONTAINER_REGISTRY }}/my-app:latest;
+              docker run --name my-app -d -p 3000:3000 -p 3003:3003 ${{ secrets.NCP_CONTAINER_REGISTRY }}/my-app:latest;
               docker cp /var/env/.env my-app:/app/.env;
             '"
