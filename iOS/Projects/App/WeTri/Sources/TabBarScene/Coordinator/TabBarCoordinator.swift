@@ -7,6 +7,7 @@
 //
 
 import Coordinator
+import RecordFeature
 import UIKit
 
 // MARK: - TabBarCoordinator
@@ -49,11 +50,13 @@ final class TabBarCoordinator: TabBarCoordinating {
       childCoordinators.append(homeCoordinator)
       homeCoordinator.finishDelegate = self
       homeCoordinator.start()
+
     case .record:
-      let recordCoordinator = BCoordinator(navigationController: pageNavigationViewController)
+      let recordCoordinator = RecordFeatureCoordinator(navigationController: pageNavigationViewController)
       childCoordinators.append(recordCoordinator)
       recordCoordinator.finishDelegate = self
       recordCoordinator.start()
+
     case .profile:
       let profileCoordinator = CCoordinator(navigationController: pageNavigationViewController)
       childCoordinators.append(profileCoordinator)

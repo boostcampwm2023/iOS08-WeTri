@@ -11,7 +11,7 @@ import Foundation
 
 protocol WorkoutSettingCoordinating: Coordinating {
   func pushWorkoutSelectViewController()
-  func pushWorkoutEnvironmentSetupViewController(workoutSetting: WorkoutSetting)
+  func pushWorkoutEnvironmentSetupViewController()
   func pushOpponentSearchViewController(workoutSetting: WorkoutSetting)
   func pushCountdownViewController(workoutSetting: WorkoutSetting)
   func finish(workoutSetting: WorkoutSetting)
