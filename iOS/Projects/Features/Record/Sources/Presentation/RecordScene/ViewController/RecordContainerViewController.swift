@@ -11,6 +11,20 @@ import UIKit
 // MARK: - RecordContainerViewController
 
 public final class RecordContainerViewController: UIViewController {
+  private let recordCalendarViewController: RecordCalendarViewController
+  private let recordListViewController: RecordListViewController
+
+  init(recordCalendarViewController: RecordCalendarViewController, recordListViewController: RecordListViewController) {
+    self.recordCalendarViewController = recordCalendarViewController
+    self.recordListViewController = recordListViewController
+    super.init(nibName: nil, bundle: nil)
+  }
+
+  @available(*, unavailable)
+  required init?(coder _: NSCoder) {
+    fatalError("No Xib")
+  }
+
   override public func viewDidLoad() {
     super.viewDidLoad()
     configureUI()
@@ -22,7 +36,6 @@ private extension RecordContainerViewController {
     view.backgroundColor = .systemBackground
     let safeArea = view.safeAreaLayoutGuide
 
-    let recordCalendarViewController = RecordCalendarViewController()
     guard let calendarView = recordCalendarViewController.view else { return }
     calendarView.translatesAutoresizingMaskIntoConstraints = false
     add(child: recordCalendarViewController)
@@ -32,8 +45,21 @@ private extension RecordContainerViewController {
       calendarView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.componentInterval),
       calendarView.heightAnchor.constraint(equalToConstant: Metrics.calendarHeight),
     ])
-
-    let recordListViewController = RecordListViewController()
+    guard let navigationController else {
+      return
+    }
+    let recordListViewController = RecordListViewController(viewModel:
+      RecordListViewModel(
+        recordUpdateUsecase:
+        RecordUpdateUseCase(
+          workoutRecordsRepository:
+          MockWorkoutRecordsRepository()
+        ),
+        dateProvideUsecase:
+        DateProvideUseCase(),
+        coordinator: RecordFeatureCoordinator(navigationController: navigationController)
+      )
+    )
     guard let listView = recordListViewController.view else { return }
     listView.translatesAutoresizingMaskIntoConstraints = false
     add(child: recordListViewController)

@@ -16,14 +16,6 @@ struct WorkoutSetting {
   let opponents: [Opponent]
 }
 
-// MARK: - WorkoutMode
-
-enum WorkoutMode {
-  case run
-  case swim
-  case cycle
-}
-
 // MARK: - WorkoutEnvironment
 
 enum WorkoutEnvironment {

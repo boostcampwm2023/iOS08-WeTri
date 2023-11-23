@@ -5,12 +5,20 @@
 //  Created by 안종표 on 2023/11/16.
 //
 
+import Combine
+import CombineCocoa
 import DesignSystem
 import UIKit
 
 // MARK: - RecordListViewController
 
 final class RecordListViewController: UIViewController {
+  private var subscriptions: Set<AnyCancellable> = []
+
+  private let appearSubject = PassthroughSubject<Void, Never>()
+  private let moveWorkoutEnvironmentSceneSubject = PassthroughSubject<Void, Never>()
+
+  private let viewModel: RecordListViewModel
   private var workoutInformationDataSource: WorkoutInformationDataSource?
 
   private let todayLabel: UILabel = {
@@ -33,7 +41,7 @@ final class RecordListViewController: UIViewController {
     return collectionView
   }()
 
-  private let recordButton: UIButton = {
+  private let goRecordButton: UIButton = {
     var configuration = UIButton.Configuration.mainEnabled(title: "기록하러가기")
     configuration.font = .preferredFont(forTextStyle: .headline, with: .traitBold)
     let button = UIButton(configuration: configuration)
@@ -41,20 +49,92 @@ final class RecordListViewController: UIViewController {
     return button
   }()
 
+  private let noRecordsView: NoRecordsView = {
+    let view = NoRecordsView()
+    view.translatesAutoresizingMaskIntoConstraints = false
+    view.isHidden = true
+    return view
+  }()
+
+  init(viewModel: RecordListViewModel) {
+    self.viewModel = viewModel
+    super.init(nibName: nil, bundle: nil)
+  }
+
+  @available(*, unavailable)
+  required init?(coder _: NSCoder) {
+    fatalError("No Xib")
+  }
+
   override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = .white
     configureUI()
     configureDataSource()
-    // ViewModel 생성 전, 앱이 돌아가는지 확인하기 위한 간단한 예제
-    let items: [WorkoutInformationItem] = [
-      .init(sport: "수영", time: "08:00~09:00", distance: "12.12Km"),
-      .init(sport: "수영", time: "08:00~09:00", distance: "12.12Km"),
-      .init(sport: "수영", time: "08:00~09:00", distance: "12.12Km"),
-      .init(sport: "수영", time: "08:00~09:00", distance: "12.12Km"),
-      .init(sport: "수영", time: "08:00~09:00", distance: "12.12Km"),
-    ]
-    configureSnapShot(items: items)
+    bindViewModel()
+    bindUI()
+    appearSubject.send()
+  }
+}
+
+// MARK: Binding
+
+private extension RecordListViewController {
+  func bindViewModel() {
+    subscriptions.forEach {
+      $0.cancel()
+    }
+    subscriptions.removeAll()
+    let input = RecordListViewModelInput(
+      appear: appearSubject.eraseToAnyPublisher(),
+      goRecordButtonDidTapped: moveWorkoutEnvironmentSceneSubject.eraseToAnyPublisher()
+    )
+    let output = viewModel.transform(input: input)
+    output.sink(
+      receiveCompletion: { [weak self] completion in
+        switch completion {
+        case .finished:
+          break
+        case let .failure(error as RecordUpdateUseCaseError) where error == .noRecord:
+          self?.workoutInformationCollectionView.isHidden = true
+          self?.noRecordsView.isHidden = false
+        default:
+          break
+        }
+      },
+      receiveValue: { [weak self] state in
+        self?.render(output: state)
+      }
+    )
+    .store(in: &subscriptions)
+  }
+
+  func render(output: RecordListState) {
+    switch output {
+    case .idle:
+      break
+    case let .sucessRecords(records):
+      let workoutInformationItems = records.map {
+        WorkoutInformationItem(sport: $0.mode.description, time: $0.timeToTime, distance: "\($0.distance)km")
+      }
+      configureSnapShot(items: workoutInformationItems)
+      workoutInformationCollectionView.isHidden = false
+      noRecordsView.isHidden = true
+    case let .sucessDateInfo(dateInfo):
+      guard let dayOfWeek = dateInfo.dayOfWeek else { return }
+      todayLabel.text = "오늘\n \(dateInfo.month)월 \(dateInfo.date)일 \(dayOfWeek)"
+    case .moveScene:
+      let viewController = WorkoutEnvironmentSetupViewController()
+      navigationController?.pushViewController(viewController, animated: false)
+    }
+  }
+
+  func bindUI() {
+    goRecordButton.publisher(.touchUpInside)
+      .sink { [weak self] _ in
+        self?.moveWorkoutEnvironmentSceneSubject.send()
+      }
+      .store(in: &subscriptions)
   }
 }
 
@@ -76,12 +156,19 @@ private extension RecordListViewController {
       workoutInformationCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
     ])
 
-    view.addSubview(recordButton)
+    view.addSubview(goRecordButton)
     NSLayoutConstraint.activate([
-      recordButton.topAnchor.constraint(equalTo: workoutInformationCollectionView.bottomAnchor, constant: Metrics.componentInterval),
-      recordButton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-      recordButton.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-      recordButton.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+      goRecordButton.topAnchor.constraint(equalTo: workoutInformationCollectionView.bottomAnchor, constant: Metrics.componentInterval),
+      goRecordButton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+      goRecordButton.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+      goRecordButton.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+    ])
+
+    view.addSubview(noRecordsView)
+    NSLayoutConstraint.activate([
+      noRecordsView.topAnchor.constraint(equalTo: todayLabel.bottomAnchor, constant: Metrics.componentInterval),
+      noRecordsView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+      noRecordsView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
     ])
   }
 
