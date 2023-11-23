@@ -23,4 +23,8 @@ public extension Path {
   static func relativeToShared(_ path: String) -> Path {
     .relativeToRoot("Projects/Shared/\(path)")
   }
+
+  static func relativeToXCConfig(_ path: String = "Shared") -> Path {
+    .relativeToRoot("XCConfig/\(path).xcconfig")
+  }
 }
