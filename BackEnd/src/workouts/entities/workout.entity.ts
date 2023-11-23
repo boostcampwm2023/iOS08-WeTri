@@ -1,16 +1,16 @@
 import {ApiProperty} from "@nestjs/swagger";
-import {Column, OneToMany, PrimaryGeneratedColumn} from "typeorm";
-import {RecordModel} from "../../records/entities/records.entity";
-import {IsNumber, IsString} from "class-validator";
+import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
+import {Record} from "../../records/entities/records.entity";
+import {IsString} from "class-validator";
 
-export class WorkoutModel {
+@Entity()
+export class Workout {
+
     @ApiProperty({
         example: 1,
         description: '운동 종류 ID',
     })
     @PrimaryGeneratedColumn()
-    @OneToMany(() => RecordModel, (record) => record.workout)
-    @IsNumber()
     id: number;
 
     @ApiProperty({
@@ -20,4 +20,7 @@ export class WorkoutModel {
     @Column()
     @IsString()
     name: string;
+
+    @OneToMany(() => Record, (record) => record.workout)
+    records: Record[];
 }

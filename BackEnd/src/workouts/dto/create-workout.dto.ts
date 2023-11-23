@@ -1,7 +1,7 @@
 import {PickType} from '@nestjs/swagger';
-import {WorkoutModel} from "../entities/workout.entity";
+import {Workout} from "../entities/workout.entity";
 
 
-export class CreateWorkoutDto extends PickType(WorkoutModel, [
+export class CreateWorkoutDto extends PickType(Workout, [
     'name'
 ]){}
