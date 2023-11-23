@@ -124,7 +124,7 @@ private extension RecordListViewController {
       guard let dayOfWeek = dateInfo.dayOfWeek else { return }
       todayLabel.text = "오늘\n \(dateInfo.month)월 \(dateInfo.date)일 \(dayOfWeek)"
     case .moveScene:
-      let viewController = WorkoutEnvironmentSetupViewController()
+      let viewController = UIViewController()
       navigationController?.pushViewController(viewController, animated: false)
     }
   }

@@ -14,7 +14,7 @@ import UIKit
 // MARK: - WorkoutEnvironmentSetupViewController
 
 public final class WorkoutEnvironmentSetupViewController: UIViewController {
-  init(viewModel: WorkoutEnvironmentSetupViewModel) {
+  init(viewModel: WorkoutEnvironmentSetupViewModelRepresentable) {
     self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
   }
