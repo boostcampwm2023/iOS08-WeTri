@@ -10,7 +10,7 @@ import {
 import { PostModel } from '../../posts/entities/posts.entity';
 import { ProfileModel } from '../../profiles/entities/profiles.entity';
 import { IsNumber, IsString } from 'class-validator';
-import {ApiProperty} from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
 @Entity()
 export class RecordModel {
   @PrimaryGeneratedColumn()
@@ -21,37 +21,58 @@ export class RecordModel {
   @IsString()
   workout: string;
 
-  @ApiProperty({ example: '6000000', description: '운동을 한 시간 (초로 환산)' })
+  @ApiProperty({
+    example: '6000000',
+    description: '운동을 한 시간 (초로 환산)',
+  })
   @Column()
   @IsNumber()
   workoutTime: number;
 
-  @ApiProperty( {example: '100000', description: '운동을 한 거리 (미터로 환산)'} )
+  @ApiProperty({
+    example: '100000',
+    description: '운동을 한 거리 (미터로 환산)',
+  })
   @Column()
   @IsNumber()
   distance: number;
 
-  @ApiProperty( {example: '360', description: '운동에 소모한 칼로리 (kcal 기준)'} )
+  @ApiProperty({
+    example: '360',
+    description: '운동에 소모한 칼로리 (kcal 기준)',
+  })
   @Column()
   @IsNumber()
   calorie: number;
 
-  @ApiProperty({example: '60', description: '운동 중 평균 심박수 (평균 기준)'})
+  @ApiProperty({
+    example: '60',
+    description: '운동 중 평균 심박수 (평균 기준)',
+  })
   @Column({ nullable: true })
   @IsNumber()
   avgHeartRate: number;
 
-  @ApiProperty( {example: '120', description: '운동 중 최대 심박수 (최대 기준)'} )
+  @ApiProperty({
+    example: '120',
+    description: '운동 중 최대 심박수 (최대 기준)',
+  })
   @Column({ nullable: true })
   @IsNumber()
   minHeartRate: number;
 
-  @ApiProperty( {example: '180', description: '운동 중 최소 심박수 (최소 기준)'} )
+  @ApiProperty({
+    example: '180',
+    description: '운동 중 최소 심박수 (최소 기준)',
+  })
   @Column({ nullable: true })
   @IsNumber()
   maxHeartRate: number;
 
-  @ApiProperty( {example: 'YYYY-MM-DD hh:mm:ss', description: '운동 기록 생성 날짜'} )
+  @ApiProperty({
+    example: 'YYYY-MM-DD hh:mm:ss',
+    description: '운동 기록 생성 날짜',
+  })
   @CreateDateColumn()
   createdAt: Date;
 
