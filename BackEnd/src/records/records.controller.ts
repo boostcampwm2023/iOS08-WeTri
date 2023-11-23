@@ -2,8 +2,8 @@ import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { RecordsService } from './records.service';
 import { CreateExerciseLogDto } from './dto/create-exerciseLog.dto';
 import { AccessTokenGuard } from 'src/auth/guard/bearerToken.guard';
-import { Profile } from 'src/profiles/decorator/profile.decorator';
-import { ProfileModel } from 'src/profiles/entities/profiles.entity';
+import { ProfileDeco } from 'src/profiles/decorator/profile.decorator';
+import { Profile } from 'src/profiles/entities/profiles.entity';
 import {
   ApiBody,
   ApiCreatedResponse,
@@ -26,7 +26,7 @@ export class RecordsController {
   @ApiCreatedResponse({ type: CreateRecordResDto })
   @UseGuards(AccessTokenGuard)
   async createWorkOutLog(
-    @Profile() profile: ProfileModel,
+    @ProfileDeco() profile: Profile,
     @Body() body: CreateExerciseLogDto,
   ) {
     const workoutLog = await this.recordsService.createWorkOutLog(
@@ -40,7 +40,7 @@ export class RecordsController {
   @ApiOperation({ summary: '내 모든 운동 기록 조회' })
   @ApiCreatedResponse({ type: GetUsersRecordsResDto })
   @UseGuards(AccessTokenGuard)
-  async getUserRecords(@Profile() profile: ProfileModel) {
+  async getUserRecords(@ProfileDeco() profile: Profile) {
     return this.recordsService.findByProfileId(profile.id);
   }
 
