@@ -105,6 +105,24 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
       }
       .eraseToAnyPublisher()
 
+    let selectedDate = input.selectedDate
+
+      .flatMap { [weak self] indexPath -> AnyPublisher<DateInfo, Error> in
+        guard let self else {
+          return Fail(error: BindingError.viewModelDeinitialized).eraseToAnyPublisher()
+        }
+        guard let dateInfo = dateProvideUsecase.selectedDateInfo(index: indexPath.item) else {
+          return Fail(error: BindingError.dateNotFound).eraseToAnyPublisher()
+        }
+        return Just(dateInfo)
+          .setFailureType(to: Error.self)
+          .eraseToAnyPublisher()
+      }
+      .map { dateInfo -> RecordListState in
+        .sucessDateInfo(dateInfo)
+      }
+      .eraseToAnyPublisher()
+
     input.goRecordButtonDidTapped
       .sink { [weak self] _ in
         self?.coordinator.showSettingFlow()
@@ -116,7 +134,7 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
       .eraseToAnyPublisher()
 
     return Publishers
-      .Merge4(initialState, appearRecords, appearDate, selectedRecords)
+      .Merge5(initialState, appearRecords, appearDate, selectedRecords, selectedDate)
       .eraseToAnyPublisher()
   }
 }

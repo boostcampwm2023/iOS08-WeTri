@@ -7,6 +7,7 @@
 //
 
 import Combine
+import OSLog
 import UIKit
 
 // MARK: - RecordContainerViewController
@@ -40,6 +41,7 @@ private extension RecordContainerViewController {
     recordCalendarViewController.selectedDatePublisher
       .sink { [weak self] indexPath in
         self?.recordListViewController.selectedDateSubject.send(indexPath)
+        
       }
       .store(in: &subscriptions)
   }
