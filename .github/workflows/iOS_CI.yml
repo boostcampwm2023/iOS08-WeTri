@@ -31,8 +31,6 @@ jobs:
         run: tuist version
         working-directory: ${{env.working-directory}}
 
-      - name: Set up environment
-        run: echo "CI=true" >> $GITHUB_ENV
       - name: Run Tuist Test
-        run: make test
+        run: make ci
         working-directory: ${{env.working-directory}}
