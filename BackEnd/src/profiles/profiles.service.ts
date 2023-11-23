@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { ProfileModel } from './entities/profiles.entity';
+import { Profile } from './entities/profiles.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class ProfilesService {
   constructor(
-    @InjectRepository(ProfileModel)
-    private readonly profilesRepository: Repository<ProfileModel>,
+    @InjectRepository(Profile)
+    private readonly profilesRepository: Repository<Profile>,
   ) {}
 
   async findByPublicId(publicId: string) {

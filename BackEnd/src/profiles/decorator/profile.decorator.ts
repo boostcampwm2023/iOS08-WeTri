@@ -4,7 +4,7 @@ import {
   createParamDecorator,
 } from '@nestjs/common';
 
-export const Profile = createParamDecorator(
+export const ProfileDeco = createParamDecorator(
   (data, context: ExecutionContext) => {
     const req = context.switchToHttp().getRequest();
 

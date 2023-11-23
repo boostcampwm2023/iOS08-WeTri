@@ -1,7 +1,7 @@
 import { IsString } from 'class-validator';
-import { PostModel } from '../../posts/entities/posts.entity';
-import { RecordModel } from '../../records/entities/records.entity';
-import { UserModel } from '../../users/entities/users.entity';
+import { Post } from '../../posts/entities/posts.entity';
+import { Record } from '../../records/entities/records.entity';
+import { User } from '../../users/entities/users.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -15,7 +15,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
-export class ProfileModel {
+export class Profile {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -57,12 +57,12 @@ export class ProfileModel {
   @Generated('uuid')
   publicId: string; //바꿀 예정
 
-  @OneToOne(() => UserModel, (user) => user.profile)
-  user: UserModel;
+  @OneToOne(() => User, (user) => user.profile)
+  user: User;
 
-  @OneToMany(() => RecordModel, (record) => record.profile)
-  records: RecordModel[];
+  @OneToMany(() => Record, (record) => record.profile)
+  records: Record[];
 
-  @OneToMany(() => PostModel, (post) => post.profile)
-  posts: PostModel[];
+  @OneToMany(() => Post, (post) => post.profile)
+  posts: Post[];
 }
