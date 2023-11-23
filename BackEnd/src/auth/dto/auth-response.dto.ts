@@ -1,12 +1,5 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
-
-class SuccessResDto {
-  @ApiProperty({ description: '에러가 없는 경우 null' })
-  code: number;
-
-  @ApiProperty({ description: '에러가 없는 경우 null' })
-  errorMessage: string;
-}
+import { SuccessResDto } from 'src/common/dto/SuccessRes.dto';
 
 class Token {
   @ApiProperty({

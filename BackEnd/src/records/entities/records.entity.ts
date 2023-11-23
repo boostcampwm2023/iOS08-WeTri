@@ -16,7 +16,7 @@ export class RecordModel {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty({ example: 'biking', description: '선택한 운동 종료' })
+  @ApiProperty({ example: '자전거', description: '선택한 운동 종료' })
   @Column()
   @IsString()
   workout: string;
@@ -51,6 +51,7 @@ export class RecordModel {
   @IsNumber()
   maxHeartRate: number;
 
+  @ApiProperty( {example: 'YYYY-MM-DD hh:mm:ss', description: '운동 기록 생성 날짜'} )
   @CreateDateColumn()
   createdAt: Date;
 
