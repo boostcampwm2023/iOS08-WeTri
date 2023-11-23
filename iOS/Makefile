@@ -15,7 +15,7 @@ demo:
 ci:
 	tuist clean
 	tuist fetch
-	TUIST_ROOT_DIR=${PWD} isCI=true tuist test
+	TUIST_ROOT_DIR=${PWD} CI=true tuist test
 
 test:
 	tuist clean
