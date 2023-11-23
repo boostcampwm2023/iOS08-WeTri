@@ -29,9 +29,11 @@ enum WorkoutEnvironmentState {
   case workoutPeerTypes([PeerType])
   case didSelectWorkoutType(Bool)
   case didSelectWorkoutPeerType(Bool)
-  
+
   case error(WorkoutEnvironmentErrorState)
 }
+
+// MARK: - WorkoutEnvironmentErrorState
 
 enum WorkoutEnvironmentErrorState: LocalizedError {
   case unkownError
@@ -78,7 +80,7 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
         case let .success(workOuttypes):
           let uniquePeerTypes = Array(Set(workOuttypes))
           return .workoutTpyes(uniquePeerTypes)
-        case .failure(_):
+        case .failure:
           return .error(.unkownError)
         }
       }.eraseToAnyPublisher()
@@ -96,7 +98,7 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
         case let .success(peerTypes):
           let uniquePeerTypes = Array(Set(peerTypes))
           return .workoutPeerTypes(uniquePeerTypes)
-        case .failure(_):
+        case .failure:
           return .error(.unkownError)
         }
       }.eraseToAnyPublisher()
