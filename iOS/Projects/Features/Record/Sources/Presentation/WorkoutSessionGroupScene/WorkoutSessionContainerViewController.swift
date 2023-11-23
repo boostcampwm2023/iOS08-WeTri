@@ -21,7 +21,30 @@ final class WorkoutSessionContainerViewController: UIViewController {
 
   // MARK: UI Components
 
-  private let button: UIButton = .init(configuration: .mainEnabled(title: "test button"))
+  private let viewControllers: [UIViewController] = [
+    WorkoutSessionViewController(viewModel: WorkoutSessionViewModel()),
+    WorkoutRouteMapViewController(viewModel: WorkoutRouteMapViewModel()),
+  ]
+
+  private let recordTimerLabel: UILabel = {
+    let label = UILabel()
+    label.font = .preferredFont(forTextStyle: .largeTitle)
+    label.text = "0분 0초"
+    return label
+  }()
+
+  private lazy var endWorkoutButton: UIButton = {
+    let button = UIButton(configuration: .mainCircularEnabled(title: "종료"))
+    button.configuration?.font = .preferredFont(forTextStyle: .largeTitle, weight: .bold)
+    button.accessibilityHint = "운동을 종료합니다."
+    return button
+  }()
+
+  private lazy var pageViewController: UIPageViewController = {
+    let pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+    pageViewController.dataSource = self
+    return pageViewController
+  }()
 
   // MARK: Initializations
 
@@ -48,16 +71,42 @@ final class WorkoutSessionContainerViewController: UIViewController {
   // MARK: Configuration
 
   private func setupLayouts() {
-    view.addSubview(button)
+    addChild(pageViewController)
+    view.addSubview(recordTimerLabel)
+    view.addSubview(pageViewController.view)
+    view.addSubview(endWorkoutButton)
+    pageViewController.didMove(toParent: self)
+
+    if let firstViewController = viewControllers.first {
+      pageViewController.setViewControllers([firstViewController], direction: .forward, animated: false)
+    }
   }
 
   private func setupConstraints() {
-    button.translatesAutoresizingMaskIntoConstraints = false
+    let safeArea = view.safeAreaLayoutGuide
+
+    recordTimerLabel.translatesAutoresizingMaskIntoConstraints = false
+    endWorkoutButton.translatesAutoresizingMaskIntoConstraints = false
+    pageViewController.view.translatesAutoresizingMaskIntoConstraints = false
 
     NSLayoutConstraint.activate(
       [
-        button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-        button.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+        recordTimerLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.horizontal),
+        recordTimerLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.horizontal),
+        recordTimerLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: Metrics.recordTimerLabelTop),
+
+        pageViewController.view.topAnchor.constraint(equalTo: recordTimerLabel.bottomAnchor, constant: Metrics.pageViewControllerTop),
+        pageViewController.view.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.horizontal),
+        pageViewController.view.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.horizontal),
+        pageViewController.view.bottomAnchor.constraint(equalTo: endWorkoutButton.topAnchor, constant: -Metrics.pageViewControllerBottom),
+
+        endWorkoutButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+        endWorkoutButton.widthAnchor.constraint(equalToConstant: Metrics.endingWorkoutButtonSize),
+        endWorkoutButton.heightAnchor.constraint(equalToConstant: Metrics.endingWorkoutButtonSize),
+        endWorkoutButton.bottomAnchor.constraint(
+          equalTo: safeArea.bottomAnchor,
+          constant: -Metrics.endingWorkoutButtonBottom
+        ),
       ]
     )
   }
@@ -75,6 +124,61 @@ final class WorkoutSessionContainerViewController: UIViewController {
       }
     }
     .store(in: &subscriptions)
+  }
+}
+
+// MARK: UIPageViewControllerDataSource
+
+extension WorkoutSessionContainerViewController: UIPageViewControllerDataSource {
+  func pageViewController(_: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+    guard let viewControllerIndex = viewControllers.firstIndex(of: viewController) else {
+      return nil
+    }
+
+    let previousIndex = viewControllerIndex - 1
+
+    guard previousIndex >= 0 else {
+      return nil
+    }
+
+    guard viewControllers.count > previousIndex else {
+      return nil
+    }
+
+    return viewControllers[previousIndex]
+  }
+
+  func pageViewController(_: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+    guard let viewControllerIndex = viewControllers.firstIndex(of: viewController) else {
+      return nil
+    }
+
+    let nextIndex = viewControllerIndex + 1
+    let viewControllersCount = viewControllers.count
+
+    guard viewControllersCount != nextIndex else {
+      return nil
+    }
+
+    guard viewControllersCount > nextIndex else {
+      return nil
+    }
+
+    return viewControllers[nextIndex]
+  }
+}
+
+// MARK: WorkoutSessionContainerViewController.Metrics
+
+private extension WorkoutSessionContainerViewController {
+  enum Metrics {
+    static let horizontal: CGFloat = 36
+    static let recordTimerLabelTop: CGFloat = 12
+    static let pageViewControllerTop: CGFloat = 12
+    static let pageViewControllerBottom: CGFloat = 24
+    static let endingWorkoutButtonBottom: CGFloat = 32
+
+    static let endingWorkoutButtonSize: CGFloat = 150
   }
 }
 
