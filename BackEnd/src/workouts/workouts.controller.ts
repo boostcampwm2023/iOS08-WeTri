@@ -5,7 +5,7 @@ import {WorkoutResDto} from "./dto/workout-response.dto";
 import {AccessTokenGuard} from "../auth/guard/bearerToken.guard";
 
 @ApiTags('운동 종류 API')
-@Controller('workouts')
+@Controller('api/v1/workouts')
 export class WorkoutsController {
   constructor(private readonly workoutsService: WorkoutsService) {}
   @Get()
