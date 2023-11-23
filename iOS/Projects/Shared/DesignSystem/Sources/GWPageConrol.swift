@@ -92,7 +92,7 @@ public extension GWPageControl {
   }
 
   func next() {
-    if currentPageIndex >= pages.count || currentPageIndex <= 0 {
+    if currentPageIndex >= pages.count || currentPageIndex < 0 {
       return
     }
     updateDeselectPage(at: currentPageIndex)

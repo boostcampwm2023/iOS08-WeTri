@@ -11,7 +11,7 @@ import UIKit
 
 // MARK: - WorkoutSelectTypeCell
 
-class WorkoutSelectTypeCell: UICollectionViewCell {
+public class WorkoutSelectTypeCell: UICollectionViewCell {
   static let identifier = "WorkoutTypeSelectCell"
 
   override init(frame: CGRect) {
@@ -21,7 +21,7 @@ class WorkoutSelectTypeCell: UICollectionViewCell {
     setupConstraints()
   }
 
-  override var isSelected: Bool {
+  override public var isSelected: Bool {
     didSet {
       if isSelected {
         makeSelectUI()
@@ -30,6 +30,10 @@ class WorkoutSelectTypeCell: UICollectionViewCell {
       }
     }
   }
+
+  private var typeCode: Int = -1
+  private var symbolSystemName: String = "figure.run"
+  private var descriptionLabelText: String = "달리기"
 
   private let workoutIconDescriptionLabel: UILabel = {
     let label = UILabel()
@@ -119,5 +123,23 @@ private extension UIImageView {
 
   func disableShadow() {
     layer.shadowOpacity = 0
+  }
+}
+
+public extension WorkoutSelectTypeCell {
+  func update(systemName: String, description: String, typeCode: Int) {
+    let config = UIImage.SymbolConfiguration(font: .systemFont(ofSize: 120))
+    let image = UIImage(systemName: systemName, withConfiguration: config)
+    workoutIcon.image = image
+
+    workoutIconDescriptionLabel.text = description
+
+    self.typeCode = typeCode
+    symbolSystemName = systemName
+    descriptionLabelText = description
+  }
+
+  func info() -> WorkoutType {
+    .init(workoutIcon: symbolSystemName, workoutIconDescription: descriptionLabelText, typeCode: typeCode)
   }
 }

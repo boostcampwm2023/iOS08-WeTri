@@ -7,7 +7,10 @@
 //
 
 import Coordinator
+import Trinet
 import UIKit
+
+// MARK: - WorkoutSettingCoordinator
 
 final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
   var navigationController: UINavigationController
@@ -21,7 +24,7 @@ final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
   }
 
   func start() {
-    pushWorkoutSelectViewController()
+    pushWorkoutEnvironmentSetupViewController()
   }
 
   func pushWorkoutSelectViewController() {
@@ -29,10 +32,16 @@ final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
     navigationController.pushViewController(workoutSelectViewController, animated: false)
   }
 
-  func pushWorkoutEnvironmentSetupViewController(workoutSetting _: WorkoutSetting) {
-    // TODO: WorkoutEnvironmentSetupViewController의 Usecase에 workoutSetting 객체를 전달해줘야한다.
-    let workoutEnvironmentViewController = WorkoutEnvironmentSetupViewController()
-    navigationController.pushViewController(workoutEnvironmentViewController, animated: false)
+  func pushWorkoutEnvironmentSetupViewController() {
+    let repository = WorkoutEnvironmentSetupNetworkRepository(session: URLSession.shared)
+
+    let useCase = WorkoutEnvironmentSetupUseCase(repository: repository)
+
+    let viewModel = WorkoutEnvironmentSetupViewModel(useCase: useCase)
+
+    let viewController = WorkoutEnvironmentSetupViewController(viewModel: viewModel)
+
+    navigationController.pushViewController(viewController, animated: false)
   }
 
   func pushOpponentSearchViewController(workoutSetting _: WorkoutSetting) {

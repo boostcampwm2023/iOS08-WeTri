@@ -111,3 +111,7 @@ Derived/
 
 ### Tuist managed dependencies ###
 Tuist/Dependencies
+
+### XCConfig ###
+
+*.xcconfig
