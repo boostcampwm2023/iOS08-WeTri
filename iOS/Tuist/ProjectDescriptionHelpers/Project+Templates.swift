@@ -1,5 +1,8 @@
 import EnvironmentPlugin
 import ProjectDescription
+import Foundation
+
+let isCI = ProcessInfo.processInfo.environment["CI"] != nil
 
 public extension Project {
   static func makeModule(
@@ -11,8 +14,8 @@ public extension Project {
     let settings: Settings = .settings(
       base: ["ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES"],
       configurations: [
-        .debug(name: .debug, xcconfig: .relativeToXCConfig()),
-        .release(name: .release, xcconfig: .relativeToXCConfig()),
+        .debug(name: .debug, xcconfig: isCI ? nil : .relativeToXCConfig()),
+        .release(name: .release, xcconfig: isCI ? nil : .relativeToXCConfig()),
       ]
     )
 
