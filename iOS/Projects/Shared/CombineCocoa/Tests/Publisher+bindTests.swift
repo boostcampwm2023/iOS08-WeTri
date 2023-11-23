@@ -15,7 +15,6 @@ final class Publisher_bindTests: XCTestCase {
   private let publisher: PassthroughSubject<Void, Never> = .init()
   private var sut: AnyPublisher<Void, Never>?
 
-
   override func tearDown() {
     for subscription in subscriptions {
       subscription.cancel()
@@ -29,17 +28,17 @@ final class Publisher_bindTests: XCTestCase {
     let passthroughSubject = PassthroughSubject<String, Never>()
     let testValue = "Test"
 
-    // act
-    Just(testValue)
-      .bind(to: passthroughSubject)
-      .store(in: &subscriptions)
+    // act & assert
 
-    // assert
     passthroughSubject
       .sink { receivedValue in
         XCTAssertEqual(receivedValue, testValue)
         expectation.fulfill()
       }
+      .store(in: &subscriptions)
+
+    Just(testValue)
+      .bind(to: passthroughSubject)
       .store(in: &subscriptions)
 
     wait(for: [expectation], timeout: 1.0)
