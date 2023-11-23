@@ -12,6 +12,8 @@ import Foundation
 // MARK: - DateProvideUseCase
 
 final class DateProvideUseCase: DateProvideUseCaseRepresentable {
+  private var dateInfos: [DateInfo] = []
+
   func today() -> Date {
     let currentDate = Date()
     return currentDate
@@ -35,12 +37,11 @@ final class DateProvideUseCase: DateProvideUseCaseRepresentable {
     )
   }
 
-  private func fetchAllDatesThisMonth() -> [DateInfo] {
+  func fetchAllDatesThisMonth() -> [DateInfo] {
     let calendar = Calendar.current
     let today = today()
     let todayDateInfo = transform(date: today)
 
-    var dateInfos: [DateInfo] = []
     guard let thisYear = Int(todayDateInfo.year),
           let thisMonth = Int(todayDateInfo.month)
     else {
@@ -70,6 +71,7 @@ final class DateProvideUseCase: DateProvideUseCaseRepresentable {
       guard let nextDate = calendar.date(byAdding: .day, value: 1, to: currentDate) else {
         break
       }
+      currentDate = nextDate
     }
     return dateInfos
   }
@@ -109,19 +111,19 @@ private extension DayOfWeek {
   var korean: String {
     switch self {
     case .sunday:
-      return "일요일"
+      return "일"
     case .monday:
-      return "월요일"
+      return "월"
     case .tuesday:
-      return "화요일"
+      return "화"
     case .wednesday:
-      return "수요일"
+      return "수"
     case .thursday:
-      return "목요일"
+      return "목"
     case .friday:
-      return "금요일"
+      return "금"
     case .saturday:
-      return "토요일"
+      return "토"
     }
   }
 }

@@ -26,15 +26,32 @@ enum RecordCalendarState {
 
 // MARK: - RecordCalendarViewModel
 
-final class RecordCalendarViewModel {}
+final class RecordCalendarViewModel {
+  private var subscriptions: Set<AnyCancellable> = []
+  private let dateProvideUseCase: DateProvideUseCaseRepresentable
+
+  init(dateProvideUseCase: DateProvideUseCaseRepresentable) {
+    self.dateProvideUseCase = dateProvideUseCase
+  }
+}
 
 // MARK: RecordCalendarViewModelRepresentable
 
 extension RecordCalendarViewModel: RecordCalendarViewModelRepresentable {
   func transform(input: RecordCalendarViewModelInput) -> RecordCalendarViewModelOutput {
+    subscriptions.forEach {
+      $0.cancel()
+    }
+    subscriptions.removeAll()
+
     let appear = input.appear
-      .flatMap { _ -> AnyPublisher<[DateInfo], Error> in
-        return Just([DateInfo(year: "", month: "", date: "", dayOfWeek: "")])
+      .flatMap { [weak self] _ -> AnyPublisher<[DateInfo], Error> in
+        guard let self else {
+          return Fail(error: BindingError.viewModelDeinitialized)
+            .eraseToAnyPublisher()
+        }
+        let allDates = dateProvideUseCase.fetchAllDatesThisMonth()
+        return Just(allDates)
           .setFailureType(to: Error.self)
           .eraseToAnyPublisher()
       }
@@ -51,4 +68,21 @@ extension RecordCalendarViewModel: RecordCalendarViewModelRepresentable {
 
 protocol RecordCalendarViewModelRepresentable {
   func transform(input: RecordCalendarViewModelInput) -> RecordCalendarViewModelOutput
+}
+
+// MARK: - BindingError
+
+private enum BindingError: Error {
+  case viewModelDeinitialized
+}
+
+// MARK: LocalizedError
+
+extension BindingError: LocalizedError {
+  var errorDescription: String? {
+    switch self {
+    case .viewModelDeinitialized:
+      return "RecordCalendarViewModel이 메모리에서 해제되었습니다."
+    }
+  }
 }

@@ -6,13 +6,30 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import Combine
 import DesignSystem
 import UIKit
 
 // MARK: - RecordCalendarViewController
 
 final class RecordCalendarViewController: UIViewController {
+  private var subscriptions: Set<AnyCancellable> = []
+
+  private let viewModel: RecordCalendarViewModel
   private var dataSource: RecordCalendarDiffableDataSource?
+
+  private let appearSubject = PassthroughSubject<Void, Never>()
+
+  init(viewModel: RecordCalendarViewModel) {
+    self.viewModel = viewModel
+    super.init(nibName: nil, bundle: nil)
+  }
+
+  @available(*, unavailable)
+  required init?(coder _: NSCoder) {
+    fatalError("No Xib")
+  }
+
   private lazy var calendarCollectionView: UICollectionView = {
     let flowLayout = UICollectionViewFlowLayout()
     flowLayout.scrollDirection = .horizontal
@@ -28,21 +45,38 @@ final class RecordCalendarViewController: UIViewController {
     super.viewDidLoad()
     configureUI()
     configureDataSource()
-    let items = [
-      CalendarInforamtionItem(dayOfWeek: "화", date: "17"),
-      CalendarInforamtionItem(dayOfWeek: "화", date: "18"),
-      CalendarInforamtionItem(dayOfWeek: "화", date: "19"),
-      CalendarInforamtionItem(dayOfWeek: "화", date: "20"),
-      CalendarInforamtionItem(dayOfWeek: "화", date: "21"),
-      CalendarInforamtionItem(dayOfWeek: "화", date: "21"),
-      CalendarInforamtionItem(dayOfWeek: "화", date: "21"),
-      CalendarInforamtionItem(dayOfWeek: "화", date: "21"),
-      CalendarInforamtionItem(dayOfWeek: "화", date: "21"),
-      CalendarInforamtionItem(dayOfWeek: "화", date: "21"),
-      CalendarInforamtionItem(dayOfWeek: "화", date: "21"),
-      CalendarInforamtionItem(dayOfWeek: "화", date: "21"),
-    ]
-    configureSnapshot(items: items)
+    bindViewModel()
+    appearSubject.send()
+  }
+}
+
+private extension RecordCalendarViewController {
+  func bindViewModel() {
+    subscriptions.forEach {
+      $0.cancel()
+    }
+    subscriptions.removeAll()
+    let input = RecordCalendarViewModelInput(appear: appearSubject.eraseToAnyPublisher())
+    let output = viewModel.transform(input: input)
+    output.sink { completion in
+      switch completion {
+      case .finished: break
+      case .failure: break
+      }
+    } receiveValue: { [weak self] state in
+      self?.render(output: state)
+    }
+    .store(in: &subscriptions)
+  }
+
+  func render(output: RecordCalendarState) {
+    switch output {
+    case let .date(dateInfos):
+      let calendarInformationItems = dateInfos.map { dateInfo in
+        return CalendarInforamtionItem(dayOfWeek: dateInfo.dayOfWeek!, date: dateInfo.date)
+      }
+      configureSnapshot(items: calendarInformationItems)
+    }
   }
 }
 

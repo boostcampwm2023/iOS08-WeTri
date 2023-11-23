@@ -11,4 +11,5 @@ import Foundation
 protocol DateProvideUseCaseRepresentable {
   func today() -> Date
   func transform(date: Date) -> DateInfo
+  func fetchAllDatesThisMonth() -> [DateInfo]
 }

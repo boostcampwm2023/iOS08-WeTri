@@ -120,7 +120,7 @@ extension BindingError: LocalizedError {
   var errorDescription: String? {
     switch self {
     case .viewModelDeinitialized:
-      return "viewModel이 메모리에서 해제되었습니다."
+      return "RecordListViewModel이 메모리에서 해제되었습니다."
     }
   }
 }

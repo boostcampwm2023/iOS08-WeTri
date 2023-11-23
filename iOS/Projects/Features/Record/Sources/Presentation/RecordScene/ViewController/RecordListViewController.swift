@@ -122,7 +122,7 @@ private extension RecordListViewController {
       noRecordsView.isHidden = true
     case let .sucessDateInfo(dateInfo):
       guard let dayOfWeek = dateInfo.dayOfWeek else { return }
-      todayLabel.text = "오늘\n \(dateInfo.month)월 \(dateInfo.date)일 \(dayOfWeek)"
+      todayLabel.text = "오늘\n \(dateInfo.month)월 \(dateInfo.date)일 \(dayOfWeek)요일"
     case .moveScene:
       let viewController = WorkoutEnvironmentSetupViewController()
       navigationController?.pushViewController(viewController, animated: false)

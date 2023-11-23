@@ -24,12 +24,17 @@ public final class RecordFeatureCoordinator: RecordFeatureCoordinating {
   }
 
   public func start() {
+    let dateProvideUseCase = DateProvideUseCase()
     let recordContainerViewController = RecordContainerViewController(
-      recordCalendarViewController: RecordCalendarViewController(),
+      recordCalendarViewController: RecordCalendarViewController(
+        viewModel: RecordCalendarViewModel(
+          dateProvideUseCase: dateProvideUseCase
+        )
+      ),
       recordListViewController: RecordListViewController(
         viewModel: RecordListViewModel(
           recordUpdateUsecase: RecordUpdateUseCase(workoutRecordsRepository: MockWorkoutRecordsRepository()),
-          dateProvideUsecase: DateProvideUseCase(),
+          dateProvideUsecase: dateProvideUseCase,
           coordinator: self
         )
       )
