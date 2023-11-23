@@ -23,12 +23,12 @@ export class RecordsService {
     });
   }
 
-  async findByProfileId(profileId: number) {
-    return await this.recordsRepository.find({
-      where: {
-        profile: { id: profileId },
-      },
-    });
+  findByDate(profileId: number, year: number, month: number, day: number) {
+    return this.recordsRepository.createQueryBuilder("record")
+        .leftJoinAndSelect("record.workout", "workout")
+        .where("record.profileId = :profileId", { profileId })
+        .andWhere(`YEAR(record.createdAt) = :year AND MONTH(record.createdAt) = :month AND DAY(record.createdAt) = :day`, { year, month, day })
+        .getMany();
   }
 
   async findById(recordId: number) {

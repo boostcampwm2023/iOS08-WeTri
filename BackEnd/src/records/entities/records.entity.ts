@@ -4,7 +4,7 @@ import {
   Column,
   CreateDateColumn,
   ManyToOne,
-  OneToOne,
+  OneToOne, JoinColumn,
 } from 'typeorm';
 import { Post } from '../../posts/entities/posts.entity';
 import { Profile } from '../../profiles/entities/profiles.entity';
@@ -16,11 +16,6 @@ import {Workout} from "../../workouts/entities/workout.entity";
 export class Record {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @ApiProperty({ example: '달리기', description: '선택한 운동 종료' })
-  @Column()
-  @IsString()
-  workout: string;
 
   @ApiProperty({
     example: '6000000',
@@ -86,6 +81,8 @@ export class Record {
   @OneToOne(() => Post, (post) => post.record)
   post: Post;
 
-  @ManyToOne(() => Workout, (name) => name.records)
-  name: Workout;
+  @ApiProperty({ example: '달리기', description: '선택한 운동 종료' })
+  @ManyToOne(() => Workout, (workout) => workout.records)
+  @JoinColumn({ name: "id" })
+  workout: Workout;
 }
