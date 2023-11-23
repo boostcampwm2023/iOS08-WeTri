@@ -1,5 +1,5 @@
 //
-//  RecordUpdateUsecase.swift
+//  RecordUpdateUseCase.swift
 //  RecordFeature
 //
 //  Created by 안종표 on 2023/11/21.
@@ -9,7 +9,7 @@
 import Combine
 import Foundation
 
-final class RecordUpdateUsecase: RecordUpdateUsecaseRepresentable {
+final class RecordUpdateUseCase: RecordUpdateUseCaseRepresentable {
   private let workoutRecordsRepository: WorkoutRecordsRepositoryRepresentable
 
   init(workoutRecordsRepository: WorkoutRecordsRepositoryRepresentable) {
@@ -24,7 +24,7 @@ final class RecordUpdateUsecase: RecordUpdateUsecaseRepresentable {
             .setFailureType(to: Error.self)
             .eraseToAnyPublisher()
         }
-        return Fail(outputType: [Record].self, failure: RecordUpdateUsecaseError.noRecord).eraseToAnyPublisher()
+        return Fail(outputType: [Record].self, failure: RecordUpdateUseCaseError.noRecord).eraseToAnyPublisher()
       }
       .eraseToAnyPublisher()
   }

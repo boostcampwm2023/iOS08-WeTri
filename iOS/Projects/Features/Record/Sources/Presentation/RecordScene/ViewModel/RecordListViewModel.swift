@@ -34,12 +34,12 @@ final class RecordListViewModel {
   private var subscriptions: Set<AnyCancellable> = []
 
   private let coordinator: RecordFeatureCoordinator
-  private let recordUpdateUsecase: RecordUpdateUsecaseRepresentable
-  private let dateProvideUsecase: DateProvideUsecaseRepresentable
+  private let recordUpdateUsecase: RecordUpdateUseCaseRepresentable
+  private let dateProvideUsecase: DateProvideUseCaseRepresentable
 
   init(
-    recordUpdateUsecase: RecordUpdateUsecaseRepresentable,
-    dateProvideUsecase: DateProvideUsecaseRepresentable,
+    recordUpdateUsecase: RecordUpdateUseCaseRepresentable,
+    dateProvideUsecase: DateProvideUseCaseRepresentable,
     coordinator: RecordFeatureCoordinator
   ) {
     self.recordUpdateUsecase = recordUpdateUsecase

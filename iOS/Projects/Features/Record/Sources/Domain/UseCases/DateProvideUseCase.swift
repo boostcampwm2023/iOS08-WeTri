@@ -1,5 +1,5 @@
 //
-//  DateProvideUsecase.swift
+//  DateProvideUseCase.swift
 //  RecordFeature
 //
 //  Created by 안종표 on 2023/11/22.
@@ -9,9 +9,9 @@
 import Combine
 import Foundation
 
-// MARK: - DateProvideUsecase
+// MARK: - DateProvideUseCase
 
-final class DateProvideUsecase: DateProvideUsecaseRepresentable {
+final class DateProvideUseCase: DateProvideUseCaseRepresentable {
   func today() -> Date {
     let currentDate = Date()
     return currentDate

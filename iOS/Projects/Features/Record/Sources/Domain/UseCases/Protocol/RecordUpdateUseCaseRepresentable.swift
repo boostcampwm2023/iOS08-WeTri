@@ -1,5 +1,5 @@
 //
-//  RecordUpdateUsecaseRepresentable.swift
+//  RecordUpdateUseCaseRepresentable.swift
 //  RecordFeature
 //
 //  Created by 안종표 on 2023/11/21.
@@ -9,21 +9,21 @@
 import Combine
 import Foundation
 
-// MARK: - RecordUpdateUsecaseRepresentable
+// MARK: - RecordUpdateUseCaseRepresentable
 
-protocol RecordUpdateUsecaseRepresentable {
+protocol RecordUpdateUseCaseRepresentable {
   func execute(date: Date) -> AnyPublisher<[Record], Error>
 }
 
 // MARK: - RecordUpdateUsecaseError
 
-enum RecordUpdateUsecaseError: Error {
+enum RecordUpdateUseCaseError: Error {
   case noRecord
 }
 
 // MARK: LocalizedError
 
-extension RecordUpdateUsecaseError: LocalizedError {
+extension RecordUpdateUseCaseError: LocalizedError {
   var errorDescription: String? {
     switch self {
     case .noRecord:

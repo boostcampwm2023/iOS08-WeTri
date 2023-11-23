@@ -1,5 +1,5 @@
 //
-//  DateProvideUsecaseRepresentable.swift
+//  DateProvideUseCaseRepresentable.swift
 //  RecordFeature
 //
 //  Created by 안종표 on 2023/11/22.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol DateProvideUsecaseRepresentable {
+protocol DateProvideUseCaseRepresentable {
   func today() -> Date
   func transform(date: Date) -> DateInfo
 }

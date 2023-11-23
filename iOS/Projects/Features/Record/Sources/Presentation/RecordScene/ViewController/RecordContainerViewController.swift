@@ -51,12 +51,12 @@ private extension RecordContainerViewController {
     let recordListViewController = RecordListViewController(viewModel:
       RecordListViewModel(
         recordUpdateUsecase:
-        RecordUpdateUsecase(
+        RecordUpdateUseCase(
           workoutRecordsRepository:
           MockWorkoutRecordsRepository()
         ),
         dateProvideUsecase:
-        DateProvideUsecase(),
+        DateProvideUseCase(),
         coordinator: RecordFeatureCoordinator(navigationController: navigationController)
       )
     )
