@@ -130,15 +130,12 @@ private extension WorkoutEnvironmentSetupViewController {
         guard let self else { return }
         switch state {
         // TODO: failure에 알맞는 로직 세우기
-        case let .failure(failure): break
-        case let .success(success):
-          switch success {
-          case .idle: break
-          case let .workoutTpyes(workoutTypes): updateWorkout(types: workoutTypes)
-          case let .workoutPeerTypes(peer): updateWorkoutPeer(types: peer)
-          case let .didSelectWorkoutType(bool): workoutSelectViewController.nextButtonEnable(bool)
-          case let .didSelectWorkoutPeerType(bool): workoutPeerSelectViewController.startButtonEnable(bool)
-          }
+        case .idle,
+             .unknownError: break
+        case let .workoutTpyes(workoutTypes): updateWorkout(types: workoutTypes)
+        case let .workoutPeerTypes(peer): updateWorkoutPeer(types: peer)
+        case let .didSelectWorkoutType(bool): workoutSelectViewController.nextButtonEnable(bool)
+        case let .didSelectWorkoutPeerType(bool): workoutPeerSelectViewController.startButtonEnable(bool)
         }
       }
       .store(in: &cancellables)

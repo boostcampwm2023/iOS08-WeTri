@@ -19,7 +19,7 @@ struct WorkoutEnvironmentSetupViewModelInput {
   let selectPeerType: AnyPublisher<PeerType?, Never>
 }
 
-typealias WorkoutEnvironmentSetupViewModelOutput = AnyPublisher<Result<WorkoutEnvironmentState, Error>, Never>
+typealias WorkoutEnvironmentSetupViewModelOutput = AnyPublisher<WorkoutEnvironmentState, Never>
 
 // MARK: - WorkoutEnvironmentState
 
@@ -29,6 +29,12 @@ enum WorkoutEnvironmentState {
   case workoutPeerTypes([PeerType])
   case didSelectWorkoutType(Bool)
   case didSelectWorkoutPeerType(Bool)
+  
+  case error(WorkoutEnvironmentErrorState)
+}
+
+enum WorkoutEnvironmentErrorState: LocalizedError {
+  case unkownError
 }
 
 // MARK: - WorkoutEnvironmentSetupViewModelRepresentable
@@ -42,7 +48,6 @@ protocol WorkoutEnvironmentSetupViewModelRepresentable {
 final class WorkoutEnvironmentSetupViewModel {
   private var subscriptions = Set<AnyCancellable>()
   var useCase: WorkoutEnvironmentSetupUseCaseRepresentable
-  var subject = PassthroughSubject<Result<WorkoutEnvironmentState, Error>, Never>()
 
   var didSelectWorkoutType: WorkoutType?
   var didSelectWorkoutPeerType: PeerType?
@@ -68,13 +73,13 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
         }
         return useCase.workoutTypes()
       }
-      .map { results -> Result<WorkoutEnvironmentState, Error> in
+      .map { results -> WorkoutEnvironmentState in
         switch results {
         case let .success(workOuttypes):
           let uniquePeerTypes = Array(Set(workOuttypes))
-          return .success(.workoutTpyes(uniquePeerTypes))
-        case let .failure(error):
-          return Result.failure(error)
+          return .workoutTpyes(uniquePeerTypes)
+        case .failure(_):
+          return .error(.unkownError)
         }
       }.eraseToAnyPublisher()
 
@@ -86,45 +91,45 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
         }
         return useCase.paerTypes()
       }
-      .map { results -> Result<WorkoutEnvironmentState, Error> in
+      .map { results -> WorkoutEnvironmentState in
         switch results {
         case let .success(peerTypes):
           let uniquePeerTypes = Array(Set(peerTypes))
-          return .success(.workoutPeerTypes(uniquePeerTypes))
-        case let .failure(failure):
-          return .failure(failure)
+          return .workoutPeerTypes(uniquePeerTypes)
+        case .failure(_):
+          return .error(.unkownError)
         }
       }.eraseToAnyPublisher()
 
     let didSelectWorkoutPeerType: WorkoutEnvironmentSetupViewModelOutput = input
       .selectPeerType
-      .map { [weak self] peerType -> Result<WorkoutEnvironmentState, Error> in
+      .map { [weak self] peerType -> WorkoutEnvironmentState in
         guard let self else {
-          return .failure(ViewModelError.viewModelDidDeinit)
+          return .error(.unkownError)
         }
         if let peerType {
           self.didSelectWorkoutPeerType = peerType
-          return .success(.didSelectWorkoutPeerType(true))
+          return .didSelectWorkoutPeerType(true)
         }
-        return .success(.didSelectWorkoutPeerType(false))
+        return .didSelectWorkoutPeerType(false)
       }.eraseToAnyPublisher()
 
     let didSelectWorkoutType: WorkoutEnvironmentSetupViewModelOutput = input
       .selectWorkoutType
-      .map { [weak self] workoutType -> Result<WorkoutEnvironmentState, Error> in
+      .map { [weak self] workoutType -> WorkoutEnvironmentState in
         guard let self else {
-          return .failure(ViewModelError.viewModelDidDeinit)
+          return .error(.unkownError)
         }
         if let workoutType {
           self.didSelectWorkoutType = workoutType
-          return .success(.didSelectWorkoutType(true))
+          return .didSelectWorkoutType(true)
         }
-        return .success(.didSelectWorkoutType(false))
+        return .didSelectWorkoutType(false)
       }.eraseToAnyPublisher()
 
-    let idle: WorkoutEnvironmentSetupViewModelOutput = Just(Result.success(WorkoutEnvironmentState.idle)).eraseToAnyPublisher()
+    let idle: WorkoutEnvironmentSetupViewModelOutput = Just(WorkoutEnvironmentState.idle).eraseToAnyPublisher()
 
-    return Publishers.Merge5(workoutTypes, idle, workoutPeerType, didSelectWorkoutType, didSelectWorkoutPeerType).eraseToAnyPublisher()
+    return Publishers.MergeMany(workoutTypes, idle, workoutPeerType, didSelectWorkoutType, didSelectWorkoutPeerType).eraseToAnyPublisher()
   }
 }
 
