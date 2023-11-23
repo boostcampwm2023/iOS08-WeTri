@@ -13,7 +13,7 @@ import Trinet
 // MARK: - MockWorkoutRecordsRepository
 
 final class MockWorkoutRecordsRepository: WorkoutRecordsRepositoryRepresentable {
-  func fetchRecordsList(ymd: String) -> AnyPublisher<[Record], Error> {
+  func fetchRecordsList(date: Date) -> AnyPublisher<[Record], Error> {
     return Future<[Record], Error> { promise in
       let records: [Record] = [
         Record(mode: .run, timeToTime: "08:00~09:00", distance: 12.12),
@@ -27,13 +27,16 @@ final class MockWorkoutRecordsRepository: WorkoutRecordsRepositoryRepresentable 
         Record(mode: .swim, timeToTime: "08:00~09:00", distance: 12.12),
       ]
 
-      let testData = (try? JSONEncoder().encode(records))!
+      let encoder = JSONEncoder()
+      let testData = (try? encoder.encode(records))!
+      encoder.dateEncodingStrategy = .formatted(self.dateFormatter())
+      let requestBody = (try? encoder.encode(date))!
       let mockURLSession = MockURLSession(mockData: testData)
       let provider = TNProvider<WorkoutRecordTestEndPoint>(session: mockURLSession)
       let endpoint = WorkoutRecordTestEndPoint(
         path: "Pathpahtpath",
         method: .post,
-        body: ymd
+        body: requestBody
       )
 
       Task {
@@ -55,6 +58,13 @@ final class MockWorkoutRecordsRepository: WorkoutRecordsRepositoryRepresentable 
         .eraseToAnyPublisher()
     }
     .eraseToAnyPublisher()
+  }
+
+  private func dateFormatter() -> DateFormatter {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "YYYY-MM-dd"
+    formatter.locale = Locale(identifier: "ko_KR")
+    return formatter
   }
 }
 

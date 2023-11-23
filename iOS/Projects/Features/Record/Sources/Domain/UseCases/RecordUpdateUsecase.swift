@@ -16,9 +16,8 @@ final class RecordUpdateUsecase: RecordUpdateUsecaseRepresentable {
     self.workoutRecordsRepository = workoutRecordsRepository
   }
 
-  func execute(dateInfo: DateInfo) -> AnyPublisher<[Record], Error> {
-    let ymd = "\(dateInfo.year)-\(dateInfo.month)-\(dateInfo.date)"
-    return workoutRecordsRepository.fetchRecordsList(ymd: ymd)
+  func execute(date: Date) -> AnyPublisher<[Record], Error> {
+    return workoutRecordsRepository.fetchRecordsList(date: date)
       .flatMap { records -> AnyPublisher<[Record], Error> in
         guard records.isEmpty else {
           return Just(records)

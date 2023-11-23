@@ -9,5 +9,6 @@
 import Foundation
 
 protocol DateProvideUsecaseRepresentable {
-  func today() -> DateInfo
+  func today() -> Date
+  func transform(date: Date) -> DateInfo
 }

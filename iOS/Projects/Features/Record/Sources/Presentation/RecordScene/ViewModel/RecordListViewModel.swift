@@ -62,8 +62,8 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
         guard let self else {
           return Fail(error: BindingError.viewModelDeinitialized).eraseToAnyPublisher()
         }
-        let dateInfo = dateProvideUsecase.today()
-        return recordUpdateUsecase.execute(dateInfo: dateInfo)
+        let todayDate = dateProvideUsecase.today()
+        return recordUpdateUsecase.execute(date: todayDate)
       }
       .map { records -> RecordListState in
         .sucessRecords(records)
@@ -75,7 +75,8 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
         guard let self else {
           return Fail(error: BindingError.viewModelDeinitialized).eraseToAnyPublisher()
         }
-        let dateInfo = dateProvideUsecase.today()
+        let todayDate = dateProvideUsecase.today()
+        let dateInfo = dateProvideUsecase.transform(date: todayDate)
         return Just(dateInfo)
           .setFailureType(to: Error.self)
           .eraseToAnyPublisher()

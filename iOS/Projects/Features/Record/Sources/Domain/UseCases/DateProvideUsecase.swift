@@ -12,12 +12,14 @@ import Foundation
 // MARK: - DateProvideUsecase
 
 final class DateProvideUsecase: DateProvideUsecaseRepresentable {
-  func today() -> DateInfo {
+  func today() -> Date {
     let currentDate = Date()
-    let dateFormatter = DateFormatter()
-    dateFormatter.dateFormat = "YYYY-MM-dd-EEEE"
-    let dateInformation = dateFormatter
-      .string(from: currentDate)
+    return currentDate
+  }
+
+  func transform(date: Date) -> DateInfo {
+    let dateInformation = formatter()
+      .string(from: date)
       .split(separator: "-")
       .map { String($0) }
     let year = dateInformation[0]
@@ -31,6 +33,12 @@ final class DateProvideUsecase: DateProvideUsecaseRepresentable {
       date: date,
       dayOfWeek: dayOfWeek
     )
+  }
+
+  private func formatter() -> DateFormatter {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "YYYY-MM-dd-EEEE"
+    return dateFormatter
   }
 }
 
