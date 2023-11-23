@@ -47,7 +47,6 @@ export class AuthService {
     if (!existingUser) {
       //   throw new UnauthorizedException('존재하지 않는 사용자입니다.');
       console.log('회원가입 페이지로 리디렉션');
-      
     }
 
     return existingUser;
