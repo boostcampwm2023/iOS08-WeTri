@@ -60,7 +60,7 @@ public final class WorkoutEnvironmentSetupViewController: UIViewController {
     return pageControl
   }()
 
-  lazy var contentNavigationController = UINavigationController()
+  lazy var contentNavigationController = UINavigationController(rootViewController: workoutSelectViewController)
 }
 
 private extension WorkoutEnvironmentSetupViewController {
