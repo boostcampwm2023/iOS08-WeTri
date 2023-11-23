@@ -20,6 +20,13 @@ public protocol TNEndPoint {
 }
 
 public extension TNEndPoint {
+  var baseURL: String {
+    // request를 생성할 때 빈 문자열이면 invalidURL Error로 자연스레 들어갑니다.
+    return Bundle.main.infoDictionary?["BaseURL"] as? String ?? ""
+  }
+}
+
+public extension TNEndPoint {
   func request() throws -> URLRequest {
     guard let targetURL = URL(string: baseURL)?.appending(path: path).appending(query: query)
     else {
