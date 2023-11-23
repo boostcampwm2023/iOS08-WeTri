@@ -6,7 +6,7 @@ export class CreateExerciseLogDto extends PickType(RecordModel, [
   'workoutTime',
   'calorie',
   'distance',
-  'avgBpm',
-  'minBpm',
-  'maxBpm',
+  'avgHeartRate',
+  'maxHeartRate',
+  'minHeartRate',
 ]) {}
