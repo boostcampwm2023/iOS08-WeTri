@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { ProfilesModule } from './profiles/profiles.module';
 import { LiveModule } from './lives/lives.module';
 import { RecordsModule } from './records/records.module';
+import { WorkoutsModule } from './workouts/workouts.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { RecordsModule } from './records/records.module';
     ProfilesModule,
     LiveModule,
     RecordsModule,
+    WorkoutsModule,
   ],
   controllers: [AppController],
 })
