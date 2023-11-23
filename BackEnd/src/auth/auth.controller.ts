@@ -2,10 +2,15 @@ import { Body, Controller, Headers, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RefreshTokenGuard } from './guard/bearerToken.guard';
 import { SignupDto } from './dto/signup.dto';
+import { AuthAppleService } from './auth-apple.service';
+import { AppleToken } from './decorator/apple-token.decorator';
 
 @Controller('api/v1/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly authAppleService: AuthAppleService,
+  ) {}
 
   @Post('signup')
   signup(@Body() body: SignupDto) {
@@ -34,5 +39,11 @@ export class AuthController {
     return {
       refreshToken: newToken,
     };
+  }
+
+  @Post('apple/signin')
+  async appleSignIn(@AppleToken() token: string) {
+    const userInfo = await this.authAppleService.getUserInfo(token);
+    console.log(userInfo);
   }
 }

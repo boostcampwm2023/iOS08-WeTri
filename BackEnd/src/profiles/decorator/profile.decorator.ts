@@ -15,7 +15,6 @@ export const Profile = createParamDecorator(
         'AccessTokenGuard를 사용하지 않았습니다.',
       );
     }
-
     return profile;
   },
 );

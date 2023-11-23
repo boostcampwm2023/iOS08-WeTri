@@ -21,7 +21,7 @@ export class RecordModel {
 
   @Column()
   @IsNumber()
-  runningTime: number;
+  workoutTime: number;
 
   @Column()
   @IsNumber()
@@ -33,15 +33,15 @@ export class RecordModel {
 
   @Column({ nullable: true })
   @IsNumber()
-  avgBpm: number;
+  avgHeartRate: number;
 
   @Column({ nullable: true })
   @IsNumber()
-  minBpm: number;
+  minHeartRate: number;
 
   @Column({ nullable: true })
   @IsNumber()
-  maxBpm: number;
+  maxHeartRate: number;
 
   @CreateDateColumn()
   createdAt: Date;
