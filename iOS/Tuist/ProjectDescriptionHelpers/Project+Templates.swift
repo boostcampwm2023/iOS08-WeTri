@@ -2,7 +2,7 @@ import EnvironmentPlugin
 import ProjectDescription
 import Foundation
 
-let isCI = ProcessInfo.processInfo.environment["CI"] != nil
+private let isCI = ProcessInfo.processInfo.environment["TUIST_CI"] != nil
 
 public extension Project {
   static func makeModule(
