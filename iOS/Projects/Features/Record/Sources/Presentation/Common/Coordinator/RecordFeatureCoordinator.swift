@@ -16,18 +16,25 @@ public final class RecordFeatureCoordinator: RecordFeatureCoordinating {
   public var childCoordinators: [Coordinating] = []
   public weak var finishDelegate: CoordinatorFinishDelegate?
   public var flow: CoordinatorFlow = .workoutSetting
-  public var recordContainerViewController: RecordContainerViewController
 
   public init(
     navigationController: UINavigationController
   ) {
     self.navigationController = navigationController
-    recordContainerViewController = RecordContainerViewController()
   }
 
   public func start() {
-    showSettingFlow()
-//    navigationController.pushViewController(recordContainerViewController, animated: false)
+    let recordContainerViewController = RecordContainerViewController(
+      recordCalendarViewController: RecordCalendarViewController(),
+      recordListViewController: RecordListViewController(
+        viewModel: RecordListViewModel(
+          recordUpdateUsecase: RecordUpdateUseCase(workoutRecordsRepository: MockWorkoutRecordsRepository()),
+          dateProvideUsecase: DateProvideUseCase(),
+          coordinator: self
+        )
+      )
+    )
+    navigationController.pushViewController(recordContainerViewController, animated: false)
   }
 
   func showSettingFlow() {

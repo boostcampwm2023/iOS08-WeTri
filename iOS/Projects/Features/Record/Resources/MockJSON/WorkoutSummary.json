@@ -1,0 +1,30 @@
+{
+    "code": null,
+    "errorMessage": null,
+    "data": {
+        "id": 8,
+        "workout": "cycling",
+        "workoutTime": 3600,
+        "distance": 15,
+        "calorie": 120,
+        "avgBpm": 120,
+        "minBpm": 78,
+        "maxBpm": 154,
+        "createdAt": "2023-11-22T02:24:11.942Z",
+        "isPosted": false,
+        "locations": [
+            {
+                "latitude": 37.316769,
+                "longitude": 126.830915
+            },
+            {
+                "latitude": 37.31621310776837,
+                "longitude": 126.84403674469276
+            },
+            {
+                "latitude": 37.3116009783644,
+                "longitude": 126.84472990193373
+            }
+        ]
+    }
+}

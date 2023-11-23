@@ -1,0 +1,92 @@
+{
+  "code": nil,
+  "errorMessage": nil,
+  "data": {
+    [
+      {
+        "mode": "run",
+        "timeToTime": "09:00-10:00",
+        "distance": 11.9
+      },
+      {
+        "mode": "swim",
+        "timeToTime": "19:00-20:00",
+        "distance": 14.1
+      },
+      {
+        "mode": "cycle",
+        "timeToTime": "11:00-12:00",
+        "distance": 10.1
+      }
+      ,
+      {
+        "mode": "swim",
+        "timeToTime": "13:00-15:30",
+        "distance": 13.5
+      },
+      {
+        "mode": "run",
+        "timeToTime": "09:00-10:00",
+        "distance": 11.9
+      },
+      {
+        "mode": "swim",
+        "timeToTime": "19:00-20:00",
+        "distance": 14.1
+      },
+      {
+        "mode": "cycle",
+        "timeToTime": "11:00-12:00",
+        "distance": 10.1
+      }
+      ,
+      {
+        "mode": "swim",
+        "timeToTime": "13:00-15:30",
+        "distance": 13.5
+      },
+      {
+        "mode": "run",
+        "timeToTime": "09:00-10:00",
+        "distance": 11.9
+      },
+      {
+        "mode": "swim",
+        "timeToTime": "19:00-20:00",
+        "distance": 14.1
+      },
+      {
+        "mode": "cycle",
+        "timeToTime": "11:00-12:00",
+        "distance": 10.1
+      }
+      ,
+      {
+        "mode": "swim",
+        "timeToTime": "13:00-15:30",
+        "distance": 13.5
+      },
+      {
+        "mode": "run",
+        "timeToTime": "09:00-10:00",
+        "distance": 11.9
+      },
+      {
+        "mode": "swim",
+        "timeToTime": "19:00-20:00",
+        "distance": 14.1
+      },
+      {
+        "mode": "cycle",
+        "timeToTime": "11:00-12:00",
+        "distance": 10.1
+      }
+      ,
+      {
+        "mode": "swim",
+        "timeToTime": "13:00-15:30",
+        "distance": 13.5
+      }
+    ]
+  }
+}

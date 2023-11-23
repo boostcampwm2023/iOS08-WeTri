@@ -12,6 +12,10 @@ demo:
 	@./Scripts/create_module.sh Demo
 	tuist edit
 
+ci:
+	tuist clean
+	tuist fetch
+	TUIST_ROOT_DIR=${PWD} TUIST_CI=TRUE tuist test
 
 test:
 	tuist clean

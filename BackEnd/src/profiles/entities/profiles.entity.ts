@@ -12,24 +12,35 @@ import {
   OneToOne,
   OneToMany,
 } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
 export class ProfileModel {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @ApiProperty({ example: '닉네임', description: '닉네임 필드를 의미합니다.' })
   @Column({ unique: true })
   @IsString({
     message: 'nickname은 string 타입으로 입력해야합니다.',
   })
   nickname: string;
 
+  @ApiProperty({
+    example: 'Male',
+    description: '성별 필드를 의미합니다',
+    enum: ['Male', 'Female', 'Other'],
+  })
   @Column({ nullable: false })
   @IsString({
     message: 'gender는 string 타입으로 입력해야합니다.',
   })
   gender: string;
 
+  @ApiProperty({
+    example: '2023-11-06',
+    description: '생년월일 필드를 의미합니다.',
+  })
   @Column({ nullable: false })
   @IsString({
     message: 'birthdate string 타입으로 입력해야합니다.',

@@ -4,11 +4,12 @@ import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersModule } from '../users/users.module';
 import { ProfilesModule } from '../profiles/profiles.module';
+import { AuthAppleService } from './auth-apple.service';
 
 @Module({
   imports: [JwtModule.register({}), UsersModule, ProfilesModule],
   exports: [AuthService],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, AuthAppleService],
 })
 export class AuthModule {}
