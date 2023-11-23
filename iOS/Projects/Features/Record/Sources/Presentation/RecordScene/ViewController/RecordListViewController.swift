@@ -17,6 +17,7 @@ final class RecordListViewController: UIViewController {
 
   private let appearSubject = PassthroughSubject<Void, Never>()
   private let moveWorkoutEnvironmentSceneSubject = PassthroughSubject<Void, Never>()
+  let selectedDateSubject = PassthroughSubject<IndexPath, Never>()
 
   private let viewModel: RecordListViewModel
   private var workoutInformationDataSource: WorkoutInformationDataSource?
@@ -87,7 +88,8 @@ private extension RecordListViewController {
     subscriptions.removeAll()
     let input = RecordListViewModelInput(
       appear: appearSubject.eraseToAnyPublisher(),
-      goRecordButtonDidTapped: moveWorkoutEnvironmentSceneSubject.eraseToAnyPublisher()
+      goRecordButtonDidTapped: moveWorkoutEnvironmentSceneSubject.eraseToAnyPublisher(),
+      selectedDate: selectedDateSubject.eraseToAnyPublisher()
     )
     let output = viewModel.transform(input: input)
     output.sink(
@@ -122,7 +124,7 @@ private extension RecordListViewController {
       noRecordsView.isHidden = true
     case let .sucessDateInfo(dateInfo):
       guard let dayOfWeek = dateInfo.dayOfWeek else { return }
-      todayLabel.text = "오늘\n \(dateInfo.month)월 \(dateInfo.date)일 \(dayOfWeek)요일"
+      todayLabel.text = "지금\n \(dateInfo.month)월 \(dateInfo.date)일 \(dayOfWeek)요일"
     case .moveScene:
       let viewController = WorkoutEnvironmentSetupViewController()
       navigationController?.pushViewController(viewController, animated: false)

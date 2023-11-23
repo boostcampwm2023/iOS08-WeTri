@@ -13,10 +13,27 @@ import Foundation
 
 final class DateProvideUseCase: DateProvideUseCaseRepresentable {
   private var dateInfos: [DateInfo] = []
+  private let calendar = Calendar.current
 
   func today() -> Date {
     let currentDate = Date()
     return currentDate
+  }
+
+  func transform(dateInfo: DateInfo) -> Date? {
+    guard let year = Int(dateInfo.year),
+          let month = Int(dateInfo.month),
+          let date = Int(dateInfo.date),
+          let dayOfWeek = dateInfo.dayOfWeek,
+          let weekDay = Int(dayOfWeek)
+    else {
+      return nil
+    }
+    let dateComponents = DateComponents(year: year, month: month, day: date, weekday: weekDay)
+    guard let date = calendar.date(from: dateComponents) else {
+      return nil
+    }
+    return date
   }
 
   func transform(date: Date) -> DateInfo {
@@ -38,7 +55,6 @@ final class DateProvideUseCase: DateProvideUseCaseRepresentable {
   }
 
   func fetchAllDatesThisMonth() -> [DateInfo] {
-    let calendar = Calendar.current
     let today = today()
     let todayDateInfo = transform(date: today)
 
@@ -74,6 +90,10 @@ final class DateProvideUseCase: DateProvideUseCaseRepresentable {
       currentDate = nextDate
     }
     return dateInfos
+  }
+
+  func selectedDateInfo(index: Int) -> DateInfo? {
+    return dateInfos[index]
   }
 
   private func formatter() -> DateFormatter {

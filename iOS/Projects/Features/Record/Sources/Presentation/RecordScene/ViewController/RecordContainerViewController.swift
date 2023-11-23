@@ -6,11 +6,14 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import Combine
 import UIKit
 
 // MARK: - RecordContainerViewController
 
 public final class RecordContainerViewController: UIViewController {
+  private var subscriptions: Set<AnyCancellable> = []
+
   private let recordCalendarViewController: RecordCalendarViewController
   private let recordListViewController: RecordListViewController
 
@@ -28,6 +31,17 @@ public final class RecordContainerViewController: UIViewController {
   override public func viewDidLoad() {
     super.viewDidLoad()
     configureUI()
+    bindRecordCalendarViewController()
+  }
+}
+
+private extension RecordContainerViewController {
+  func bindRecordCalendarViewController() {
+    recordCalendarViewController.selectedDatePublisher
+      .sink { [weak self] indexPath in
+        self?.recordListViewController.selectedDateSubject.send(indexPath)
+      }
+      .store(in: &subscriptions)
   }
 }
 

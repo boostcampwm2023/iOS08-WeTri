@@ -15,6 +15,7 @@ import Foundation
 struct RecordListViewModelInput {
   let appear: AnyPublisher<Void, Never>
   let goRecordButtonDidTapped: AnyPublisher<Void, Never>
+  let selectedDate: AnyPublisher<IndexPath, Never>
 }
 
 typealias RecordListViewModelOutput = AnyPublisher<RecordListState, Error>
@@ -86,6 +87,24 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
       }
       .eraseToAnyPublisher()
 
+    let selectedRecords = input.selectedDate
+      .flatMap { [weak self] indexPath -> AnyPublisher<[Record], Error> in
+        guard let self else {
+          return Fail(error: BindingError.viewModelDeinitialized).eraseToAnyPublisher()
+        }
+        guard let dateInfo = dateProvideUsecase.selectedDateInfo(index: indexPath.item) else {
+          return Fail(error: BindingError.dateNotFound).eraseToAnyPublisher()
+        }
+        guard let date = dateProvideUsecase.transform(dateInfo: dateInfo) else {
+          return Fail(error: BindingError.dateNotFound).eraseToAnyPublisher()
+        }
+        return recordUpdateUsecase.execute(date: date)
+      }
+      .map { records -> RecordListState in
+        .sucessRecords(records)
+      }
+      .eraseToAnyPublisher()
+
     input.goRecordButtonDidTapped
       .sink { [weak self] _ in
         self?.coordinator.showSettingFlow()
@@ -97,7 +116,7 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
       .eraseToAnyPublisher()
 
     return Publishers
-      .Merge3(initialState, appearRecords, appearDate)
+      .Merge4(initialState, appearRecords, appearDate, selectedRecords)
       .eraseToAnyPublisher()
   }
 }
@@ -112,6 +131,8 @@ protocol RecordListViewModelRepresentable {
 
 private enum BindingError: Error {
   case viewModelDeinitialized
+  case dateNotFound
+  case dateInfoNotTransformed
 }
 
 // MARK: LocalizedError
@@ -121,6 +142,10 @@ extension BindingError: LocalizedError {
     switch self {
     case .viewModelDeinitialized:
       return "RecordListViewModel이 메모리에서 해제되었습니다."
+    case .dateNotFound:
+      return "DateProvideUseCase에서 index에 해당하는 날짜를 찾지 못했습니다."
+    case .dateInfoNotTransformed:
+      return "dateInfo를 Date로 변환하지 못했습니다."
     }
   }
 }

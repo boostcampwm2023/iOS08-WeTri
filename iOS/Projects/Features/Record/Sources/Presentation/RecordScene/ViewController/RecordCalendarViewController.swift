@@ -19,6 +19,12 @@ final class RecordCalendarViewController: UIViewController {
   private var dataSource: RecordCalendarDiffableDataSource?
 
   private let appearSubject = PassthroughSubject<Void, Never>()
+  private let calendarDateDidTappedSubject = PassthroughSubject<IndexPath, Never>()
+  private let selectedDateSubject = PassthroughSubject<IndexPath, Never>()
+
+  var selectedDatePublisher: AnyPublisher<IndexPath, Never> {
+    selectedDateSubject.eraseToAnyPublisher()
+  }
 
   init(viewModel: RecordCalendarViewModel) {
     self.viewModel = viewModel
@@ -56,7 +62,10 @@ private extension RecordCalendarViewController {
       $0.cancel()
     }
     subscriptions.removeAll()
-    let input = RecordCalendarViewModelInput(appear: appearSubject.eraseToAnyPublisher())
+    let input = RecordCalendarViewModelInput(
+      appear: appearSubject.eraseToAnyPublisher(),
+      calendarDateDidTapped: calendarDateDidTappedSubject.eraseToAnyPublisher()
+    )
     let output = viewModel.transform(input: input)
     output.sink { completion in
       switch completion {
@@ -139,6 +148,7 @@ extension RecordCalendarViewController: UICollectionViewDelegateFlowLayout {
     guard let cell = collectionView.cellForItem(at: indexPath) as? CalendarCollectionViewCell else {
       return
     }
+    selectedDateSubject.send(indexPath)
     cell.dayOfWeekLabel.textColor = DesignSystemColor.primaryText
     cell.dateLabel.textColor = DesignSystemColor.primaryText
   }
