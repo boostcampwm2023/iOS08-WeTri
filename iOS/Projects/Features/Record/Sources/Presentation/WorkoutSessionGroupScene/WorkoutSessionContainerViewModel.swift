@@ -11,7 +11,9 @@ import Foundation
 
 // MARK: - WorkoutSessionContainerViewModelInput
 
-public struct WorkoutSessionContainerViewModelInput {}
+public struct WorkoutSessionContainerViewModelInput {
+  let endWorkoutPublisher: AnyPublisher<Void, Never>
+}
 
 public typealias WorkoutSessionContainerViewModelOutput = AnyPublisher<WorkoutSessionContainerState, Never>
 
@@ -38,11 +40,15 @@ final class WorkoutSessionContainerViewModel {
 // MARK: WorkoutSessionContainerViewModelRepresentable
 
 extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepresentable {
-  public func transform(input _: WorkoutSessionContainerViewModelInput) -> WorkoutSessionContainerViewModelOutput {
+  public func transform(input: WorkoutSessionContainerViewModelInput) -> WorkoutSessionContainerViewModelOutput {
     for subscription in subscriptions {
       subscription.cancel()
     }
     subscriptions.removeAll()
+
+    input.endWorkoutPublisher
+      .sink {}
+      .store(in: &subscriptions)
 
     let initialState: WorkoutSessionContainerViewModelOutput = Just(.idle).eraseToAnyPublisher()
 

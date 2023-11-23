@@ -21,8 +21,6 @@ public final class WorkoutSessionViewController: UIViewController {
 
   private var subscriptions: Set<AnyCancellable> = []
 
-  private let endWorkoutSubject: PassthroughSubject<Void, Never> = .init()
-
   // MARK: UI Components
 
   private lazy var participantsCollectionView: UICollectionView = {
@@ -84,7 +82,7 @@ public final class WorkoutSessionViewController: UIViewController {
   }
 
   private func bind() {
-    let output = viewModel.transform(input: .init(endWorkoutPublisher: endWorkoutSubject.eraseToAnyPublisher()))
+    let output = viewModel.transform(input: .init())
     output.sink { state in
       switch state {
       case .idle:
