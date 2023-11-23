@@ -35,9 +35,60 @@ final class DateProvideUseCase: DateProvideUseCaseRepresentable {
     )
   }
 
+  private func fetchAllDatesThisMonth() -> [DateInfo] {
+    let calendar = Calendar.current
+    let today = today()
+    let todayDateInfo = transform(date: today)
+
+    var dateInfos: [DateInfo] = []
+    guard let thisYear = Int(todayDateInfo.year),
+          let thisMonth = Int(todayDateInfo.month)
+    else {
+      return dateInfos
+    }
+    let startDateComponents = DateComponents(year: thisYear, month: thisMonth)
+    let endDateComponents = DateComponents(year: thisYear, month: thisMonth + 1, day: 0)
+
+    guard let startDate = calendar.date(from: startDateComponents),
+          let endDate = calendar.date(from: endDateComponents)
+    else {
+      return dateInfos
+    }
+    var currentDate = startDate
+    while currentDate <= endDate {
+      let day = dayFormatter().string(from: currentDate)
+      let dayOfWeek = dayOfWeekFormatter().string(from: currentDate)
+
+      dateInfos.append(
+        DateInfo(
+          year: "\(thisYear)",
+          month: "\(thisMonth)",
+          date: day,
+          dayOfWeek: DayOfWeek(rawValue: dayOfWeek)?.korean
+        )
+      )
+      guard let nextDate = calendar.date(byAdding: .day, value: 1, to: currentDate) else {
+        break
+      }
+    }
+    return dateInfos
+  }
+
   private func formatter() -> DateFormatter {
     let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = "YYYY-MM-dd-EEEE"
+    return dateFormatter
+  }
+
+  private func dayOfWeekFormatter() -> DateFormatter {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "EEEE"
+    return dateFormatter
+  }
+
+  private func dayFormatter() -> DateFormatter {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "dd"
     return dateFormatter
   }
 }
