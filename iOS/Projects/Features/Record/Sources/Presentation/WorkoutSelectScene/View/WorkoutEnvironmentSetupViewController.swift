@@ -7,7 +7,6 @@
 //
 
 import DesignSystem
-import OSLog
 import UIKit
 
 // MARK: - WorkoutEnvironmentSetupViewController
