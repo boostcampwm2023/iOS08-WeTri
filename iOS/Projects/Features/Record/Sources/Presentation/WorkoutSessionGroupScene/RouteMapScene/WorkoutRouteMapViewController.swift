@@ -9,8 +9,8 @@
 import Combine
 import CoreLocation
 import DesignSystem
-import MapKit
 import Log
+import MapKit
 import UIKit
 
 // MARK: - WorkoutRouteMapViewController
