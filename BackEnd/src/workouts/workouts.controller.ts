@@ -1,7 +1,8 @@
-import { Controller, Get } from '@nestjs/common';
+import {Controller, Get, UseGuards} from '@nestjs/common';
 import { WorkoutsService } from './workouts.service';
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 import {WorkoutResDto} from "./dto/workout-response.dto";
+import {AccessTokenGuard} from "../auth/guard/bearerToken.guard";
 
 @ApiTags('운동 종류 API')
 @Controller('workouts')
@@ -15,6 +16,6 @@ export class WorkoutsController {
     type: WorkoutResDto,
   })
   getAllWorkout() {
-    return this.workoutsService.findAll();
+    return this.workoutsService.findAllWorkouts();
   }
 }
