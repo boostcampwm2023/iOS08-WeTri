@@ -9,7 +9,8 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.labels.*.name, '💻백엔드')
+    runs-on: self-hosted
     steps:
       - name: 코드 체크아웃
         uses: actions/checkout@v3
