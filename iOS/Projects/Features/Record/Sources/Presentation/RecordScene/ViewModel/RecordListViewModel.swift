@@ -9,6 +9,7 @@
 import Combine
 import Coordinator
 import Foundation
+import OSLog
 
 // MARK: - RecordListViewModelInput
 
@@ -106,7 +107,6 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
       .eraseToAnyPublisher()
 
     let selectedDate = input.selectedDate
-
       .flatMap { [weak self] indexPath -> AnyPublisher<DateInfo, Error> in
         guard let self else {
           return Fail(error: BindingError.viewModelDeinitialized).eraseToAnyPublisher()

@@ -8,6 +8,7 @@
 
 import Combine
 import Foundation
+import OSLog
 
 // MARK: - DateProvideUseCase
 
@@ -23,13 +24,11 @@ final class DateProvideUseCase: DateProvideUseCaseRepresentable {
   func transform(dateInfo: DateInfo) -> Date? {
     guard let year = Int(dateInfo.year),
           let month = Int(dateInfo.month),
-          let date = Int(dateInfo.date),
-          let dayOfWeek = dateInfo.dayOfWeek,
-          let weekDay = Int(dayOfWeek)
+          let date = Int(dateInfo.date)
     else {
       return nil
     }
-    let dateComponents = DateComponents(year: year, month: month, day: date, weekday: weekDay)
+    let dateComponents = DateComponents(year: year, month: month, day: date)
     guard let date = calendar.date(from: dateComponents) else {
       return nil
     }
@@ -144,6 +143,25 @@ private extension DayOfWeek {
       return "금"
     case .saturday:
       return "토"
+    }
+  }
+
+  var weekday: Int {
+    switch self {
+    case .sunday:
+      return 0
+    case .monday:
+      return 1
+    case .tuesday:
+      return 2
+    case .wednesday:
+      return 3
+    case .thursday:
+      return 4
+    case .friday:
+      return 5
+    case .saturday:
+      return 6
     }
   }
 }

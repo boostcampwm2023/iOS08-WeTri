@@ -41,7 +41,6 @@ private extension RecordContainerViewController {
     recordCalendarViewController.selectedDatePublisher
       .sink { [weak self] indexPath in
         self?.recordListViewController.selectedDateSubject.send(indexPath)
-        
       }
       .store(in: &subscriptions)
   }
@@ -61,21 +60,7 @@ private extension RecordContainerViewController {
       calendarView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.componentInterval),
       calendarView.heightAnchor.constraint(equalToConstant: Metrics.calendarHeight),
     ])
-    guard let navigationController else {
-      return
-    }
-    let recordListViewController = RecordListViewController(viewModel:
-      RecordListViewModel(
-        recordUpdateUsecase:
-        RecordUpdateUseCase(
-          workoutRecordsRepository:
-          MockWorkoutRecordsRepository()
-        ),
-        dateProvideUsecase:
-        DateProvideUseCase(),
-        coordinator: RecordFeatureCoordinator(navigationController: navigationController)
-      )
-    )
+
     guard let listView = recordListViewController.view else { return }
     listView.translatesAutoresizingMaskIntoConstraints = false
     add(child: recordListViewController)

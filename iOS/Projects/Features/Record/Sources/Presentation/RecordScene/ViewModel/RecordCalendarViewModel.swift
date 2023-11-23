@@ -61,16 +61,6 @@ extension RecordCalendarViewModel: RecordCalendarViewModelRepresentable {
       }
       .eraseToAnyPublisher()
 
-//    input.calendarDateDidTapped
-//      .sink { [weak self] indexPath in
-//        guard let dateInfo = self?.dateProvideUseCase.selectedDateInfo(index: indexPath.item) else {
-//          return
-//        }
-//
-//        //RecordUpdateUsecase로 DateInfo받아서 기록 가져오기
-//      }
-//      .store(in: &subscriptions)
-
     return appear
   }
 }

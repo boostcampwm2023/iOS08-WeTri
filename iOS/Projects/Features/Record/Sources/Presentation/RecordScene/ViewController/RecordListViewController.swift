@@ -8,6 +8,7 @@
 import Combine
 import CombineCocoa
 import DesignSystem
+import OSLog
 import UIKit
 
 // MARK: - RecordListViewController
@@ -96,10 +97,13 @@ private extension RecordListViewController {
       receiveCompletion: { [weak self] completion in
         switch completion {
         case .finished:
-          break
+          Logger().debug("finished")
         case let .failure(error as RecordUpdateUseCaseError) where error == .noRecord:
           self?.workoutInformationCollectionView.isHidden = true
           self?.noRecordsView.isHidden = false
+          Logger().debug("\(error)")
+        case let .failure(error):
+          Logger().debug("\(error)")
         default:
           break
         }
