@@ -92,23 +92,17 @@ private extension RecordListViewController {
     let output = viewModel.transform(input: input)
     output.sink(
       receiveCompletion: { [weak self] completion in
-        switch completion {
-        case .finished: break
-        case let .failure(error):
-          if let recordUpdateUsecaseError = error as? RecordUpdateUsecaseError {
-            switch recordUpdateUsecaseError {
-            case .noRecord:
-              self?.workoutInformationCollectionView.isHidden = true
-              self?.noRecordsView.isHidden = false
-            }
-          }
+        if case let .failure(error) = completion,
+           let error = error as? RecordUpdateUsecaseError {
+          guard error == .noRecord else { return }
+          self?.workoutInformationCollectionView.isHidden = true
+          self?.noRecordsView.isHidden = false
         }
       },
       receiveValue: { [weak self] state in
         self?.render(output: state)
       }
     )
-
     .store(in: &subscriptions)
   }
 
