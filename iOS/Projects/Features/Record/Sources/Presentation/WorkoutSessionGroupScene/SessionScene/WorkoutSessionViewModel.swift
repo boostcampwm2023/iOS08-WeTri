@@ -42,9 +42,6 @@ public final class WorkoutSessionViewModel {
 
 extension WorkoutSessionViewModel: WorkoutSessionViewModelRepresentable {
   public func transform(input _: WorkoutSessionViewModelInput) -> WorkoutSessionViewModelOutput {
-    for subscription in subscriptions {
-      subscription.cancel()
-    }
     subscriptions.removeAll()
 
     let initialState: WorkoutSessionViewModelOutput = Just(.idle).eraseToAnyPublisher()

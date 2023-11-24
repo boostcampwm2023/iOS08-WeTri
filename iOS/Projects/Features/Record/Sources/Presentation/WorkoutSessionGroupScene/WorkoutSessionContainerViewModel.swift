@@ -41,9 +41,6 @@ final class WorkoutSessionContainerViewModel {
 
 extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepresentable {
   public func transform(input: WorkoutSessionContainerViewModelInput) -> WorkoutSessionContainerViewModelOutput {
-    for subscription in subscriptions {
-      subscription.cancel()
-    }
     subscriptions.removeAll()
 
     input.endWorkoutPublisher
