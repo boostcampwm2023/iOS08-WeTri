@@ -15,7 +15,7 @@ protocol RecordUpdateUseCaseRepresentable {
   func execute(date: Date) -> AnyPublisher<[Record], Error>
 }
 
-// MARK: - RecordUpdateUsecaseError
+// MARK: - RecordUpdateUseCaseError
 
 enum RecordUpdateUseCaseError: Error {
   case noRecord

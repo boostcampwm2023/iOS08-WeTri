@@ -42,6 +42,8 @@ final class WorkoutSessionContainerViewController: UIViewController {
     return button
   }()
 
+  private lazy var pageControl: GWPageControl = .init(count: viewControllers.count)
+
   private lazy var pageViewController: UIPageViewController = {
     let pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
     pageViewController.dataSource = self
@@ -76,6 +78,7 @@ final class WorkoutSessionContainerViewController: UIViewController {
     addChild(pageViewController)
     view.addSubview(recordTimerLabel)
     view.addSubview(pageViewController.view)
+    view.addSubview(pageControl)
     view.addSubview(endWorkoutButton)
     pageViewController.didMove(toParent: self)
 
@@ -90,6 +93,7 @@ final class WorkoutSessionContainerViewController: UIViewController {
     recordTimerLabel.translatesAutoresizingMaskIntoConstraints = false
     endWorkoutButton.translatesAutoresizingMaskIntoConstraints = false
     pageViewController.view.translatesAutoresizingMaskIntoConstraints = false
+    pageControl.translatesAutoresizingMaskIntoConstraints = false
 
     NSLayoutConstraint.activate(
       [
@@ -100,7 +104,11 @@ final class WorkoutSessionContainerViewController: UIViewController {
         pageViewController.view.topAnchor.constraint(equalTo: recordTimerLabel.bottomAnchor, constant: Metrics.pageViewControllerTop),
         pageViewController.view.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.horizontal),
         pageViewController.view.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.horizontal),
-        pageViewController.view.bottomAnchor.constraint(equalTo: endWorkoutButton.topAnchor, constant: -Metrics.pageViewControllerBottom),
+        pageViewController.view.bottomAnchor.constraint(equalTo: pageControl.topAnchor, constant: -Metrics.pageViewControllerBottom),
+
+        pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+        pageControl.bottomAnchor.constraint(equalTo: endWorkoutButton.topAnchor, constant: -Metrics.pageControlBottom),
+        pageControl.heightAnchor.constraint(equalToConstant: Metrics.pageControlHeight),
 
         endWorkoutButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
         endWorkoutButton.widthAnchor.constraint(equalToConstant: Metrics.endingWorkoutButtonSize),
@@ -146,7 +154,7 @@ extension WorkoutSessionContainerViewController: UIPageViewControllerDataSource 
     guard viewControllers.count > previousIndex else {
       return nil
     }
-
+    pageControl.select(at: previousIndex)
     return viewControllers[previousIndex]
   }
 
@@ -165,7 +173,7 @@ extension WorkoutSessionContainerViewController: UIPageViewControllerDataSource 
     guard viewControllersCount > nextIndex else {
       return nil
     }
-
+    pageControl.select(at: nextIndex)
     return viewControllers[nextIndex]
   }
 }
@@ -178,9 +186,11 @@ private extension WorkoutSessionContainerViewController {
     static let recordTimerLabelTop: CGFloat = 12
     static let pageViewControllerTop: CGFloat = 12
     static let pageViewControllerBottom: CGFloat = 24
+    static let pageControlBottom: CGFloat = 12
     static let endingWorkoutButtonBottom: CGFloat = 32
 
     static let endingWorkoutButtonSize: CGFloat = 150
+    static let pageControlHeight: CGFloat = 8
   }
 }
 

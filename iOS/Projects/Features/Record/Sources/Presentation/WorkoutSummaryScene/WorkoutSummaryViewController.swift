@@ -122,16 +122,16 @@ final class WorkoutSummaryViewController: UIViewController {
     output
       .receive(on: DispatchQueue.main)
       .sink { [weak self] state in
-      switch state {
-      case .idle:
-        break
-      case let .fetchSummary(model):
-        self?.summaryCardView.configure(with: model)
-      case let .alert(error):
-        self?.showAlert(with: error)
+        switch state {
+        case .idle:
+          break
+        case let .fetchSummary(model):
+          self?.summaryCardView.configure(with: model)
+        case let .alert(error):
+          self?.showAlert(with: error)
+        }
       }
-    }
-    .store(in: &subscriptions)
+      .store(in: &subscriptions)
   }
 
   // MARK: - Custom Methods
