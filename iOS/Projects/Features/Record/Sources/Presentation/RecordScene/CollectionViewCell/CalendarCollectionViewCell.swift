@@ -42,6 +42,11 @@ final class CalendarCollectionViewCell: UICollectionViewCell {
     super.init(frame: frame)
   }
 
+  override func prepareForReuse() {
+    dayOfWeekLabel.textColor = DesignSystemColor.gray03
+    dateLabel.textColor = DesignSystemColor.gray03
+  }
+
   @available(*, unavailable)
   required init?(coder _: NSCoder) {
     fatalError("No Xib")
@@ -51,6 +56,16 @@ final class CalendarCollectionViewCell: UICollectionViewCell {
     configureUI()
     dayOfWeekLabel.text = calendarInformation.dayOfWeek
     dateLabel.text = calendarInformation.date
+  }
+
+  func configureTextColor(isSelected: Bool) {
+    guard isSelected else {
+      dayOfWeekLabel.textColor = DesignSystemColor.gray03
+      dateLabel.textColor = DesignSystemColor.gray03
+      return
+    }
+    dayOfWeekLabel.textColor = DesignSystemColor.main03
+    dateLabel.textColor = DesignSystemColor.main03
   }
 }
 

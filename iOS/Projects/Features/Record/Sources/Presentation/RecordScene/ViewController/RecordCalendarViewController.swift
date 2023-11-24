@@ -8,6 +8,7 @@
 
 import Combine
 import DesignSystem
+import OSLog
 import UIKit
 
 // MARK: - RecordCalendarViewController
@@ -19,8 +20,8 @@ final class RecordCalendarViewController: UIViewController {
   private var dataSource: RecordCalendarDiffableDataSource?
 
   private let appearSubject = PassthroughSubject<Void, Never>()
-  private let calendarDateDidTappedSubject = PassthroughSubject<IndexPath, Never>()
   private let selectedDateSubject = PassthroughSubject<IndexPath, Never>()
+  private let cellReuseSubject = PassthroughSubject<Void, Never>()
 
   var selectedDatePublisher: AnyPublisher<IndexPath, Never> {
     selectedDateSubject.eraseToAnyPublisher()
@@ -64,13 +65,15 @@ private extension RecordCalendarViewController {
     subscriptions.removeAll()
     let input = RecordCalendarViewModelInput(
       appear: appearSubject.eraseToAnyPublisher(),
-      calendarDateDidTapped: calendarDateDidTappedSubject.eraseToAnyPublisher()
+      calendarDateDidTapped: selectedDateSubject.eraseToAnyPublisher(),
+      calendarCellReuse: cellReuseSubject.eraseToAnyPublisher()
     )
     let output = viewModel.transform(input: input)
     output.sink { completion in
       switch completion {
       case .finished: break
-      case .failure: break
+      case let .failure(error):
+        Logger().debug("\(error)")
       }
     } receiveValue: { [weak self] state in
       self?.render(output: state)
@@ -85,6 +88,12 @@ private extension RecordCalendarViewController {
         return CalendarInforamtionItem(dayOfWeek: dateInfo.dayOfWeek!, date: dateInfo.date)
       }
       configureSnapshot(items: calendarInformationItems)
+    case let .indexPath(indexPath):
+      Logger().debug("output : \(indexPath.item)")
+      guard let cell = calendarCollectionView.cellForItem(at: indexPath) as? CalendarCollectionViewCell else {
+        return
+      }
+      cell.configureTextColor(isSelected: true)
     }
   }
 }
@@ -112,8 +121,9 @@ private extension RecordCalendarViewController {
 
     dataSource = RecordCalendarDiffableDataSource(
       collectionView: calendarCollectionView,
-      cellProvider: { collectionView, indexPath, itemIdentifier in
-        collectionView.dequeueConfiguredReusableCell(
+      cellProvider: { [weak self] collectionView, indexPath, itemIdentifier in
+        self?.cellReuseSubject.send()
+        return collectionView.dequeueConfiguredReusableCell(
           using: cellRegistration,
           for: indexPath,
           item: itemIdentifier
@@ -148,9 +158,9 @@ extension RecordCalendarViewController: UICollectionViewDelegateFlowLayout {
     guard let cell = collectionView.cellForItem(at: indexPath) as? CalendarCollectionViewCell else {
       return
     }
+    Logger().debug("선택 : \(indexPath.item)")
     selectedDateSubject.send(indexPath)
-    cell.dayOfWeekLabel.textColor = DesignSystemColor.primaryText
-    cell.dateLabel.textColor = DesignSystemColor.primaryText
+    cell.configureTextColor(isSelected: true)
   }
 
   func collectionView(
@@ -160,8 +170,8 @@ extension RecordCalendarViewController: UICollectionViewDelegateFlowLayout {
     guard let cell = collectionView.cellForItem(at: indexPath) as? CalendarCollectionViewCell else {
       return
     }
-    cell.dayOfWeekLabel.textColor = DesignSystemColor.gray03
-    cell.dateLabel.textColor = DesignSystemColor.gray03
+    Logger().debug("선택해제 : \(indexPath.item)")
+    cell.configureTextColor(isSelected: false)
   }
 }
 

@@ -9,12 +9,14 @@
 import Combine
 import Coordinator
 import Foundation
+import OSLog
 
 // MARK: - RecordCalendarViewModelInput
 
 struct RecordCalendarViewModelInput {
   let appear: AnyPublisher<Void, Never>
   let calendarDateDidTapped: AnyPublisher<IndexPath, Never>
+  let calendarCellReuse: AnyPublisher<Void, Never>
 }
 
 typealias RecordCalendarViewModelOutput = AnyPublisher<RecordCalendarState, Error>
@@ -23,6 +25,7 @@ typealias RecordCalendarViewModelOutput = AnyPublisher<RecordCalendarState, Erro
 
 enum RecordCalendarState {
   case date([DateInfo])
+  case indexPath(IndexPath)
 }
 
 // MARK: - RecordCalendarViewModel
@@ -30,6 +33,9 @@ enum RecordCalendarState {
 final class RecordCalendarViewModel {
   private var subscriptions: Set<AnyCancellable> = []
   private let dateProvideUseCase: DateProvideUseCaseRepresentable
+
+  // TODO: 초기값으로 오늘날짜 설정
+  private var currentSelectedIndexPath: IndexPath = .init(item: 0, section: 0)
 
   init(dateProvideUseCase: DateProvideUseCaseRepresentable) {
     self.dateProvideUseCase = dateProvideUseCase
@@ -61,7 +67,30 @@ extension RecordCalendarViewModel: RecordCalendarViewModelRepresentable {
       }
       .eraseToAnyPublisher()
 
-    return appear
+    input.calendarDateDidTapped
+      .sink { [weak self] indexPath in
+        self?.currentSelectedIndexPath = indexPath
+        Logger().debug("currentSelectedIndexPath: \(indexPath.item)")
+      }
+      .store(in: &subscriptions)
+
+    let reuse = input.calendarCellReuse
+      .flatMap { [weak self] _ -> AnyPublisher<IndexPath, Error> in
+        guard let currentSelectedIndexPath = self?.currentSelectedIndexPath else {
+          return Fail(error: BindingError.invalidCurrentSelectedIndexPath).eraseToAnyPublisher()
+        }
+        return Just(currentSelectedIndexPath)
+          .setFailureType(to: Error.self)
+          .eraseToAnyPublisher()
+      }
+      .map { indexPath -> RecordCalendarState in
+        .indexPath(indexPath)
+      }
+      .eraseToAnyPublisher()
+
+    return Publishers
+      .Merge(appear, reuse)
+      .eraseToAnyPublisher()
   }
 }
 
@@ -75,6 +104,7 @@ protocol RecordCalendarViewModelRepresentable {
 
 private enum BindingError: Error {
   case viewModelDeinitialized
+  case invalidCurrentSelectedIndexPath
 }
 
 // MARK: LocalizedError
@@ -84,6 +114,8 @@ extension BindingError: LocalizedError {
     switch self {
     case .viewModelDeinitialized:
       return "RecordCalendarViewModel이 메모리에서 해제되었습니다."
+    case .invalidCurrentSelectedIndexPath:
+      return "currentSelectedIndexPath이 유효하지 않습니다."
     }
   }
 }
