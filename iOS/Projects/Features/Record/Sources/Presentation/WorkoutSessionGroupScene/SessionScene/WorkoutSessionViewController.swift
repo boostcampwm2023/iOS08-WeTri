@@ -21,29 +21,7 @@ public final class WorkoutSessionViewController: UIViewController {
 
   private var subscriptions: Set<AnyCancellable> = []
 
-  private let endWorkoutSubject: PassthroughSubject<Void, Never> = .init()
-
   // MARK: UI Components
-
-  private let recordTimerLabel: UILabel = {
-    let label = UILabel()
-    label.font = .preferredFont(forTextStyle: .largeTitle)
-    label.text = "0분 0초"
-    return label
-  }()
-
-  private lazy var endWorkoutButton: UIButton = {
-    let button = UIButton(configuration: .mainCircularEnabled(title: "종료"))
-    button.configuration?.font = .preferredFont(forTextStyle: .largeTitle, with: .traitBold)
-    button.accessibilityHint = "운동을 종료합니다."
-    button.addAction(
-      UIAction { [weak self] _ in
-        self?.endWorkoutSubject.send(())
-      },
-      for: .touchUpInside
-    )
-    return button
-  }()
 
   private lazy var participantsCollectionView: UICollectionView = {
     let collectionView = UICollectionView(
@@ -82,47 +60,19 @@ public final class WorkoutSessionViewController: UIViewController {
   // MARK: Configuration
 
   private func setupLayouts() {
-    view.addSubview(recordTimerLabel)
     view.addSubview(participantsCollectionView)
-    view.addSubview(endWorkoutButton)
   }
 
   private func setupConstraints() {
     let safeArea = view.safeAreaLayoutGuide
-    recordTimerLabel.translatesAutoresizingMaskIntoConstraints = false
-    endWorkoutButton.translatesAutoresizingMaskIntoConstraints = false
     participantsCollectionView.translatesAutoresizingMaskIntoConstraints = false
 
     NSLayoutConstraint.activate(
       [
-        recordTimerLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.horizontal),
-        recordTimerLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.horizontal),
-        recordTimerLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: Metrics.recordTimerLabelTop),
-
-        participantsCollectionView.topAnchor.constraint(
-          equalTo: recordTimerLabel.bottomAnchor,
-          constant: Metrics.collectionViewTop
-        ),
-        participantsCollectionView.leadingAnchor.constraint(
-          equalTo: safeArea.leadingAnchor,
-          constant: Metrics.horizontal
-        ),
-        participantsCollectionView.trailingAnchor.constraint(
-          equalTo: safeArea.trailingAnchor,
-          constant: -Metrics.horizontal
-        ),
-        participantsCollectionView.bottomAnchor.constraint(
-          equalTo: endWorkoutButton.topAnchor,
-          constant: -Metrics.collectionViewBottom
-        ),
-
-        endWorkoutButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-        endWorkoutButton.widthAnchor.constraint(equalToConstant: Metrics.endingWorkoutButtonSize),
-        endWorkoutButton.heightAnchor.constraint(equalToConstant: Metrics.endingWorkoutButtonSize),
-        endWorkoutButton.bottomAnchor.constraint(
-          equalTo: safeArea.bottomAnchor,
-          constant: -Metrics.endingWorkoutButtonBottom
-        ),
+        participantsCollectionView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+        participantsCollectionView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+        participantsCollectionView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
+        participantsCollectionView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
       ]
     )
   }
@@ -132,7 +82,7 @@ public final class WorkoutSessionViewController: UIViewController {
   }
 
   private func bind() {
-    let output = viewModel.transform(input: .init(endWorkoutPublisher: endWorkoutSubject.eraseToAnyPublisher()))
+    let output = viewModel.transform(input: .init())
     output.sink { state in
       switch state {
       case .idle:
@@ -204,14 +154,7 @@ public final class WorkoutSessionViewController: UIViewController {
 
 private extension WorkoutSessionViewController {
   enum Metrics {
-    static let recordTimerLabelTop: CGFloat = 12
-    static let collectionViewTop: CGFloat = 12
-    static let collectionViewBottom: CGFloat = 44
     static let collectionViewItemSpacing: CGFloat = 6
-    static let horizontal: CGFloat = 36
-    static let endingWorkoutButtonBottom: CGFloat = 32
-
-    static let endingWorkoutButtonSize: CGFloat = 150
     static let collectionViewCellHeight: CGFloat = 84
   }
 }

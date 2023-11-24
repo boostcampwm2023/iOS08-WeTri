@@ -51,10 +51,6 @@ final class WorkoutSummaryViewModel {
 extension WorkoutSummaryViewModel: WorkoutSummaryViewModelRepresentable {
   public func transform(input: WorkoutSummaryViewModelInput) -> WorkoutSummaryViewModelOutput {
     // == Disposing of All Subscriptions ==
-
-    for subscription in subscriptions {
-      subscription.cancel()
-    }
     subscriptions.removeAll()
 
     // == Input Output Binding ==
