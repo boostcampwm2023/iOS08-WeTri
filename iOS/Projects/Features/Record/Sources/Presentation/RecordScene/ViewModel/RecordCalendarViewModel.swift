@@ -25,7 +25,7 @@ typealias RecordCalendarViewModelOutput = AnyPublisher<RecordCalendarState, Erro
 
 enum RecordCalendarState {
   case date([DateInfo])
-  case indexPath(IndexPath)
+  case selectedIndexPath(IndexPath)
 }
 
 // MARK: - RecordCalendarViewModel
@@ -84,7 +84,7 @@ extension RecordCalendarViewModel: RecordCalendarViewModelRepresentable {
           .eraseToAnyPublisher()
       }
       .map { indexPath -> RecordCalendarState in
-        .indexPath(indexPath)
+        .selectedIndexPath(indexPath)
       }
       .eraseToAnyPublisher()
 

@@ -49,6 +49,7 @@ private extension RecordContainerViewController {
 private extension RecordContainerViewController {
   func configureUI() {
     view.backgroundColor = .systemBackground
+    navigationController?.navigationBar.isHidden = true
     let safeArea = view.safeAreaLayoutGuide
 
     guard let calendarView = recordCalendarViewController.view else { return }

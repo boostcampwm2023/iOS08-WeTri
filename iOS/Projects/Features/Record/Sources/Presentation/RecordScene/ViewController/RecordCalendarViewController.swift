@@ -88,7 +88,7 @@ private extension RecordCalendarViewController {
         return CalendarInforamtionItem(dayOfWeek: dateInfo.dayOfWeek!, date: dateInfo.date)
       }
       configureSnapshot(items: calendarInformationItems)
-    case let .indexPath(indexPath):
+    case let .selectedIndexPath(indexPath):
       Logger().debug("output : \(indexPath.item)")
       guard let cell = calendarCollectionView.cellForItem(at: indexPath) as? CalendarCollectionViewCell else {
         return
