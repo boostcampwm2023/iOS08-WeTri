@@ -21,12 +21,24 @@ final class WorkoutSessionContainerViewController: UIViewController {
 
   private let endWorkoutSubject: PassthroughSubject<Void, Never> = .init()
 
-  // MARK: UI Components
+  // MARK: UI Components - ViewController
 
-  private let viewControllers: [UIViewController] = [
-    WorkoutSessionViewController(viewModel: WorkoutSessionViewModel()),
-    WorkoutRouteMapViewController(viewModel: WorkoutRouteMapViewModel()),
+  private let sessionViewController = WorkoutSessionViewController(viewModel: WorkoutSessionViewModel())
+
+  private let routeMapViewController = WorkoutRouteMapViewController(viewModel: WorkoutRouteMapViewModel())
+
+  private lazy var viewControllers: [UIViewController] = [
+    sessionViewController,
+    routeMapViewController,
   ]
+
+  private lazy var pageViewController: UIPageViewController = {
+    let pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+    pageViewController.dataSource = self
+    return pageViewController
+  }()
+
+  // MARK: UI Components
 
   private let recordTimerLabel: UILabel = {
     let label = UILabel()
@@ -43,12 +55,6 @@ final class WorkoutSessionContainerViewController: UIViewController {
   }()
 
   private lazy var pageControl: GWPageControl = .init(count: viewControllers.count)
-
-  private lazy var pageViewController: UIPageViewController = {
-    let pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
-    pageViewController.dataSource = self
-    return pageViewController
-  }()
 
   // MARK: Initializations
 
