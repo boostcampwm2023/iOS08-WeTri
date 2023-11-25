@@ -4,22 +4,18 @@ import {
   Column,
   CreateDateColumn,
   ManyToOne,
-  OneToOne,
+  OneToOne, JoinColumn,
 } from 'typeorm';
-
-import { PostModel } from '../../posts/entities/posts.entity';
-import { ProfileModel } from '../../profiles/entities/profiles.entity';
+import { Post } from '../../posts/entities/posts.entity';
+import { Profile } from '../../profiles/entities/profiles.entity';
 import { IsNumber, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import {Workout} from "../../workouts/entities/workout.entity";
+
 @Entity()
-export class RecordModel {
+export class Record {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @ApiProperty({ example: '자전거', description: '선택한 운동 종료' })
-  @Column()
-  @IsString()
-  workout: string;
 
   @ApiProperty({
     example: '6000000',
@@ -79,9 +75,14 @@ export class RecordModel {
   @Column({ default: false })
   isPosted: boolean;
 
-  @ManyToOne(() => ProfileModel, (profile) => profile.records) //manyToOne이 항상 외래키를 갖고 있음
-  profile: ProfileModel;
+  @ManyToOne(() => Profile, (profile) => profile.records) //manyToOne이 항상 외래키를 갖고 있음
+  profile: Profile;
 
-  @OneToOne(() => PostModel, (post) => post.record)
-  post: PostModel;
+  @OneToOne(() => Post, (post) => post.record)
+  post: Post;
+
+  @ApiProperty({ example: '달리기', description: '선택한 운동 종료' })
+  @ManyToOne(() => Workout, (workout) => workout.records)
+  @JoinColumn({ name: "id" })
+  workout: Workout;
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ProfilesService } from '../profiles/profiles.service';
-import { UserModel } from '../users/entities/users.entity';
+import { User } from '../users/entities/users.entity';
 import { UsersService } from '../users/users.service';
 import { SignupDto } from './dto/signup.dto';
 import {
@@ -39,7 +39,7 @@ export class AuthService {
   }
 
   async authenticateWithUserIdAndProvider(
-    user: Pick<UserModel, 'userId' | 'provider'>,
+    user: Pick<User, 'userId' | 'provider'>,
   ) {
     const existingUser =
       await this.usersService.getUserByUserIdAndProvider(user);

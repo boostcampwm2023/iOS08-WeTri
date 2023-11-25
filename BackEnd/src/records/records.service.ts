@@ -1,21 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { RecordModel } from './entities/records.entity';
+import { Record } from './entities/records.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateExerciseLogDto } from './dto/create-exerciseLog.dto';
-import { ProfileModel } from 'src/profiles/entities/profiles.entity';
+import { Profile } from 'src/profiles/entities/profiles.entity';
 import { NotFoundRecordException } from './exceptions/records.exception';
 
 @Injectable()
 export class RecordsService {
   constructor(
-    @InjectRepository(RecordModel)
-    private readonly recordsRepository: Repository<RecordModel>,
+    @InjectRepository(Record)
+    private readonly recordsRepository: Repository<Record>,
   ) {}
 
   async createWorkOutLog(
     exerciseLog: CreateExerciseLogDto,
-    profile: ProfileModel,
+    profile: Profile,
   ) {
     return await this.recordsRepository.save({
       ...exerciseLog,
@@ -23,12 +23,12 @@ export class RecordsService {
     });
   }
 
-  async findByProfileId(profileId: number) {
-    return await this.recordsRepository.find({
-      where: {
-        profile: { id: profileId },
-      },
-    });
+  findByDate(profileId: number, year: number, month: number, day: number) {
+    return this.recordsRepository.createQueryBuilder("record")
+        .leftJoinAndSelect("record.workout", "workout")
+        .where("record.profileId = :profileId", { profileId })
+        .andWhere(`YEAR(record.createdAt) = :year AND MONTH(record.createdAt) = :month AND DAY(record.createdAt) = :day`, { year, month, day })
+        .getMany();
   }
 
   async findById(recordId: number) {

@@ -8,11 +8,11 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
-import { RecordModel } from '../../records/entities/records.entity';
-import { ProfileModel } from '../../profiles/entities/profiles.entity';
+import { Record } from '../../records/entities/records.entity';
+import { Profile } from '../../profiles/entities/profiles.entity';
 
 @Entity()
-export class PostModel {
+export class Post {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -34,10 +34,10 @@ export class PostModel {
   @Column()
   deletedAt: Date;
 
-  @OneToOne(() => RecordModel)
+  @OneToOne(() => Record)
   @JoinColumn()
-  record: RecordModel;
+  record: Record;
 
-  @ManyToOne(() => ProfileModel, (profile) => profile.posts)
-  profile: ProfileModel;
+  @ManyToOne(() => Profile, (profile) => profile.posts)
+  profile: Profile;
 }

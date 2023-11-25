@@ -5,11 +5,11 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
-import { ProfileModel } from '../../profiles/entities/profiles.entity';
+import { Profile } from '../../profiles/entities/profiles.entity';
 import { IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 @Entity()
-export class UserModel {
+export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -30,10 +30,10 @@ export class UserModel {
   })
   provider: string;
 
-  @OneToOne(() => ProfileModel, (profile) => profile.user, {
+  @OneToOne(() => Profile, (profile) => profile.user, {
     eager: true,
     cascade: true,
   })
   @JoinColumn()
-  profile: ProfileModel;
+  profile: Profile;
 }

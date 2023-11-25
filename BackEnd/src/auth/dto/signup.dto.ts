@@ -1,9 +1,9 @@
 import { IntersectionType, PickType } from '@nestjs/swagger';
-import { ProfileModel } from '../../profiles/entities/profiles.entity';
-import { UserModel } from '../../users/entities/users.entity';
+import { Profile } from '../../profiles/entities/profiles.entity';
+import { User } from '../../users/entities/users.entity';
 
-class UserDto extends PickType(UserModel, ['userId', 'provider']) {}
-class ProfileDto extends PickType(ProfileModel, [
+class UserDto extends PickType(User, ['userId', 'provider']) {}
+class ProfileDto extends PickType(Profile, [
   'nickname',
   'gender',
   'birthdate',
