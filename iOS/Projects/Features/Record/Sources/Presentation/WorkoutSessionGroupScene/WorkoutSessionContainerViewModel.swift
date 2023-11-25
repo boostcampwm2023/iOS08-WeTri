@@ -15,6 +15,7 @@ import Foundation
 public struct WorkoutSessionContainerViewModelInput {
   let endWorkoutPublisher: AnyPublisher<Void, Never>
   let locationPublisher: AnyPublisher<[CLLocation], Never>
+  let healthPublisher: AnyPublisher<WorkoutHealth, Never>
 }
 
 public typealias WorkoutSessionContainerViewModelOutput = AnyPublisher<WorkoutSessionContainerState, Never>
@@ -46,8 +47,8 @@ extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepr
     subscriptions.removeAll()
 
     input.locationPublisher
-      .combineLatest(input.endWorkoutPublisher) { location, _ in
-        return location
+      .combineLatest(input.healthPublisher, input.endWorkoutPublisher) { location, health, _ in
+        return (location, health)
       }
       .sink { _ in
       }

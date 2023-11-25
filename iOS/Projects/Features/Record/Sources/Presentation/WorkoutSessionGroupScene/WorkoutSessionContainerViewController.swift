@@ -23,7 +23,7 @@ final class WorkoutSessionContainerViewController: UIViewController {
 
   // MARK: UI Components - ViewController
 
-  private let sessionViewController = WorkoutSessionViewController(viewModel: WorkoutSessionViewModel())
+  private let sessionViewController: HealthDataProtocol = WorkoutSessionViewController(viewModel: WorkoutSessionViewModel())
 
   private let routeMapViewController: LocationTrackingProtocol = WorkoutRouteMapViewController(viewModel: WorkoutRouteMapViewModel())
 
@@ -135,7 +135,8 @@ final class WorkoutSessionContainerViewController: UIViewController {
     let output = viewModel.transform(
       input: .init(
         endWorkoutPublisher: endWorkoutSubject.eraseToAnyPublisher(),
-        locationPublisher: routeMapViewController.locationPublisher
+        locationPublisher: routeMapViewController.locationPublisher,
+        healthPublisher: sessionViewController.healthDataPublisher
       )
     )
 
