@@ -9,7 +9,6 @@
 import Combine
 import Coordinator
 import Foundation
-import OSLog
 
 // MARK: - RecordListViewModelInput
 

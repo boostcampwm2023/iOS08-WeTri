@@ -21,6 +21,16 @@ final class DateProvideUseCase: DateProvideUseCaseRepresentable {
     return currentDate
   }
 
+  func todayIndex(sectionCount: Int) -> IndexPath {
+    let date: Date = today()
+    let todayDateInfo = transform(date: date)
+    for (index, dateInfo) in dateInfos.enumerated() {
+      guard dateInfo == todayDateInfo else { continue }
+      return IndexPath(item: index, section: sectionCount)
+    }
+    return IndexPath(item: 0, section: sectionCount)
+  }
+
   func transform(dateInfo: DateInfo) -> Date? {
     guard let year = Int(dateInfo.year),
           let month = Int(dateInfo.month),

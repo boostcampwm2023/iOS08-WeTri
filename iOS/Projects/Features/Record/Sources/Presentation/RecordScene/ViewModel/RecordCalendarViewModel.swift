@@ -9,12 +9,12 @@
 import Combine
 import Coordinator
 import Foundation
-import OSLog
 
 // MARK: - RecordCalendarViewModelInput
 
 struct RecordCalendarViewModelInput {
   let appear: AnyPublisher<Void, Never>
+  let appearSection: AnyPublisher<Int, Never>
   let calendarDateDidTapped: AnyPublisher<IndexPath, Never>
   let calendarCellReuse: AnyPublisher<Void, Never>
 }
@@ -34,8 +34,7 @@ final class RecordCalendarViewModel {
   private var subscriptions: Set<AnyCancellable> = []
   private let dateProvideUseCase: DateProvideUseCaseRepresentable
 
-  // TODO: 초기값으로 오늘날짜 설정
-  private var currentSelectedIndexPath: IndexPath = .init(item: 0, section: 0)
+  private(set) var currentSelectedIndexPath: IndexPath?
 
   init(dateProvideUseCase: DateProvideUseCaseRepresentable) {
     self.dateProvideUseCase = dateProvideUseCase
@@ -51,7 +50,7 @@ extension RecordCalendarViewModel: RecordCalendarViewModelRepresentable {
     }
     subscriptions.removeAll()
 
-    let appear = input.appear
+    let appearTotalDateInfo = input.appear
       .flatMap { [weak self] _ -> AnyPublisher<[DateInfo], Error> in
         guard let self else {
           return Fail(error: BindingError.viewModelDeinitialized)
@@ -67,10 +66,25 @@ extension RecordCalendarViewModel: RecordCalendarViewModelRepresentable {
       }
       .eraseToAnyPublisher()
 
+    let appearTodayIndex = input.appearSection
+      .flatMap { [weak self] sectionCount -> AnyPublisher<IndexPath, Error> in
+        guard let self else {
+          return Fail(error: BindingError.viewModelDeinitialized)
+            .eraseToAnyPublisher()
+        }
+        return Just(dateProvideUseCase.todayIndex(sectionCount: sectionCount))
+          .setFailureType(to: Error.self)
+          .eraseToAnyPublisher()
+      }
+      .map { [weak self] indexPath -> RecordCalendarState in
+        self?.currentSelectedIndexPath = indexPath
+        return .selectedIndexPath(indexPath)
+      }
+      .eraseToAnyPublisher()
+
     input.calendarDateDidTapped
       .sink { [weak self] indexPath in
         self?.currentSelectedIndexPath = indexPath
-        Logger().debug("currentSelectedIndexPath: \(indexPath.item)")
       }
       .store(in: &subscriptions)
 
@@ -89,7 +103,7 @@ extension RecordCalendarViewModel: RecordCalendarViewModelRepresentable {
       .eraseToAnyPublisher()
 
     return Publishers
-      .Merge(appear, reuse)
+      .Merge3(appearTotalDateInfo, reuse, appearTodayIndex)
       .eraseToAnyPublisher()
   }
 }
@@ -97,6 +111,8 @@ extension RecordCalendarViewModel: RecordCalendarViewModelRepresentable {
 // MARK: - RecordCalendarViewModelRepresentable
 
 protocol RecordCalendarViewModelRepresentable {
+  var currentSelectedIndexPath: IndexPath? { get }
+
   func transform(input: RecordCalendarViewModelInput) -> RecordCalendarViewModelOutput
 }
 

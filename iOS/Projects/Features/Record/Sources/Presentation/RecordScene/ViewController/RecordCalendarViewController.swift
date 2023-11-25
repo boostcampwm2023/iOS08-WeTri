@@ -20,6 +20,7 @@ final class RecordCalendarViewController: UIViewController {
   private var dataSource: RecordCalendarDiffableDataSource?
 
   private let appearSubject = PassthroughSubject<Void, Never>()
+  private let appearSectionSubject = PassthroughSubject<Int, Never>()
   private let selectedDateSubject = PassthroughSubject<IndexPath, Never>()
   private let cellReuseSubject = PassthroughSubject<Void, Never>()
 
@@ -54,6 +55,7 @@ final class RecordCalendarViewController: UIViewController {
     configureDataSource()
     bindViewModel()
     appearSubject.send()
+    appearSectionSubject.send(Section.allCases.count)
   }
 }
 
@@ -65,6 +67,7 @@ private extension RecordCalendarViewController {
     subscriptions.removeAll()
     let input = RecordCalendarViewModelInput(
       appear: appearSubject.eraseToAnyPublisher(),
+      appearSection: appearSectionSubject.eraseToAnyPublisher(),
       calendarDateDidTapped: selectedDateSubject.eraseToAnyPublisher(),
       calendarCellReuse: cellReuseSubject.eraseToAnyPublisher()
     )
@@ -89,10 +92,10 @@ private extension RecordCalendarViewController {
       }
       configureSnapshot(items: calendarInformationItems)
     case let .selectedIndexPath(indexPath):
-      Logger().debug("output : \(indexPath.item)")
       guard let cell = calendarCollectionView.cellForItem(at: indexPath) as? CalendarCollectionViewCell else {
         return
       }
+
       cell.configureTextColor(isSelected: true)
     }
   }
@@ -110,8 +113,11 @@ private extension RecordCalendarViewController {
   }
 
   func configureDataSource() {
-    let cellRegistration = RecordCalendarCellRegistration { cell, _, itemIdentifier in
-      cell.configure(
+    let cellRegistration = RecordCalendarCellRegistration { [weak self] cell, indexPath, itemIdentifier in
+      if indexPath.item == self?.viewModel.currentSelectedIndexPath?.item {
+        cell.configureTextColor(isSelected: true)
+      }
+      return cell.configure(
         calendarInformation: CalendarInforamtion(
           dayOfWeek: itemIdentifier.dayOfWeek,
           date: itemIdentifier.date
@@ -138,6 +144,13 @@ private extension RecordCalendarViewController {
     snapShot.appendItems(items)
     dataSource?.apply(snapShot)
   }
+
+  func selectCell(at indexPath: IndexPath) {
+    guard let cell = calendarCollectionView.cellForItem(at: indexPath) as? CalendarCollectionViewCell else {
+      return
+    }
+    cell.configureTextColor(isSelected: true)
+  }
 }
 
 // MARK: UICollectionViewDelegateFlowLayout
@@ -158,7 +171,6 @@ extension RecordCalendarViewController: UICollectionViewDelegateFlowLayout {
     guard let cell = collectionView.cellForItem(at: indexPath) as? CalendarCollectionViewCell else {
       return
     }
-    Logger().debug("선택 : \(indexPath.item)")
     selectedDateSubject.send(indexPath)
     cell.configureTextColor(isSelected: true)
   }
@@ -170,7 +182,6 @@ extension RecordCalendarViewController: UICollectionViewDelegateFlowLayout {
     guard let cell = collectionView.cellForItem(at: indexPath) as? CalendarCollectionViewCell else {
       return
     }
-    Logger().debug("선택해제 : \(indexPath.item)")
     cell.configureTextColor(isSelected: false)
   }
 }
@@ -186,6 +197,10 @@ private extension RecordCalendarViewController {
 private enum Section {
   case calendar
 }
+
+// MARK: CaseIterable
+
+extension Section: CaseIterable {}
 
 // MARK: - CalendarInforamtionItem
 
