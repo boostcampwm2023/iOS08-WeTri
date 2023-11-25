@@ -94,7 +94,7 @@ private extension WorkoutPeerRandomMatchingViewController {
   }
 
   func setupStyles() {
-    view.backgroundColor = DesignSystemColor.primaryText.withAlphaComponent(0.4)
+    view.backgroundColor = DesignSystemColor.primaryText.withAlphaComponent(0.9)
   }
 
   func setupHierarchyAndConstraints() {
