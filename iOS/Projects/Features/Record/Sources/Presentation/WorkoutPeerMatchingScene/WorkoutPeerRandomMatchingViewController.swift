@@ -1,5 +1,5 @@
-// 
-//  WorkoutPeerRabdomMatchingViewController.swift
+//
+//  WorkoutPeerRandomMatchingViewController.swift
 //  RecordFeature
 //
 //  Created by MaraMincho on 11/23/23.
@@ -10,11 +10,12 @@ import Combine
 import DesignSystem
 import UIKit
 
-final class WorkoutPeerRabdomMatchingViewController: UIViewController {
+// MARK: - WorkoutPeerRandomMatchingViewController
 
+final class WorkoutPeerRandomMatchingViewController: UIViewController {
   // MARK: Properties
 
-  private let viewModel: WorkoutPeerRabdomMatchingViewModelRepresentable
+  private let viewModel: WorkoutPeerRandomMatchingViewModelRepresentable
 
   private var subscriptions: Set<AnyCancellable> = []
 
@@ -27,23 +28,34 @@ final class WorkoutPeerRabdomMatchingViewController: UIViewController {
     label.contentMode = .scaleAspectFit
     label.numberOfLines = 1
     label.textColor = DesignSystemColor.secondaryBackground
-    
+
     label.translatesAutoresizingMaskIntoConstraints = false
     return label
   }()
-  
+
+  private let activityIndicator: UIActivityIndicatorView = {
+    let activityIndicator = UIActivityIndicatorView()
+    activityIndicator.hidesWhenStopped = false
+    activityIndicator.style = .medium
+    activityIndicator.color = .white
+    activityIndicator.startAnimating()
+
+    return activityIndicator
+
+  }()
+
   private let cancelButton: UIButton = {
     let button = UIButton(configuration: .filled())
     button.backgroundColor = DesignSystemColor.primaryBackground
     button.setTitle("취소", for: .normal)
-    
+
     button.translatesAutoresizingMaskIntoConstraints = false
     return button
   }()
 
   // MARK: Initializations
 
-  init(viewModel: WorkoutPeerRabdomMatchingViewModelRepresentable) {
+  init(viewModel: WorkoutPeerRandomMatchingViewModelRepresentable) {
     self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
   }
@@ -65,12 +77,19 @@ final class WorkoutPeerRabdomMatchingViewController: UIViewController {
   // MARK: Configuration
 
   private func setupHierarchyAndConstraints() {
-    view.addSubview(button)
+    let safeArea = view.safeAreaLayoutGuide
+    view.addSubview(matchingDescriptionLabel)
+    view.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor).isActive = true
+    view.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor).isActive = true
+    view.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: Metrics.labelTopConstraints).isActive = true
+
+    view.addSubview(activityIndicator)
+    activityIndicator.topAnchor.constraint(equalTo: matchingDescriptionLabel.bottomAnchor, constant: Metrics.indicatorTopConstraintsFromLabel).isActive = true
+    activityIndicator.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor).isActive = true
+    activityIndicator.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor).isActive = true
   }
 
-  private func setupConstraints() {
-    
-  }
+  private func setupConstraints() {}
 
   private func setupStyles() {
     view.backgroundColor = DesignSystemColor.primaryText.withAlphaComponent(0.8)
@@ -85,5 +104,14 @@ final class WorkoutPeerRabdomMatchingViewController: UIViewController {
       }
     }
     .store(in: &subscriptions)
+  }
+}
+
+// MARK: WorkoutPeerRandomMatchingViewController.Metrics
+
+private extension WorkoutPeerRandomMatchingViewController {
+  enum Metrics {
+    static let labelTopConstraints: CGFloat = 180
+    static let indicatorTopConstraintsFromLabel: CGFloat = 15
   }
 }

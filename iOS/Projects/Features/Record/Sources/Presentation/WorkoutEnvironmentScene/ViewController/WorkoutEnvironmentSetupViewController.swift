@@ -41,6 +41,7 @@ public final class WorkoutEnvironmentSetupViewController: UIViewController {
   let selectWorkoutType = PassthroughSubject<WorkoutType?, Never>()
   let selectPeerType = PassthroughSubject<PeerType?, Never>()
   let endWorkoutEnvironment = PassthroughSubject<Void, Never>()
+  let didTapStartButton = PassthroughSubject<Void, Never>()
 
   // MARK: - ConatinerViewController Control Property
 
@@ -109,6 +110,17 @@ private extension WorkoutEnvironmentSetupViewController {
     workoutSelectViewController.delegate = self
 
     bindViewModel()
+    bindStartButton()
+  }
+
+  func bindStartButton() {
+    workoutPeerSelectViewController
+      .startButton
+      .publisher(.touchUpInside)
+      .sink { [weak self] _ in
+        self?.didTapStartButton.send(())
+      }
+      .store(in: &cancellables)
   }
 
   func bindViewModel() {
@@ -120,7 +132,8 @@ private extension WorkoutEnvironmentSetupViewController {
       requestWorkoutPeerTypes: requestWorkoutPeerTypes.eraseToAnyPublisher(),
       endWorkoutEnvironment: endWorkoutEnvironment.eraseToAnyPublisher(),
       selectWorkoutType: selectWorkoutType.eraseToAnyPublisher(),
-      selectPeerType: selectPeerType.eraseToAnyPublisher()
+      selectPeerType: selectPeerType.eraseToAnyPublisher(),
+      didTapStartButton: didTapStartButton.eraseToAnyPublisher()
     )
 
     let output = viewModel.transform(input: input)
