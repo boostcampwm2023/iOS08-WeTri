@@ -50,6 +50,7 @@ final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
     let viewController = WorkoutPeerRandomMatchingViewController(viewModel: viewModel)
 
     viewController.modalPresentationStyle = .overFullScreen
+    viewController.modalTransitionStyle = .crossDissolve
     navigationController.present(viewController, animated: true)
     // TODO: 뷰 컨트롤러 시작 로직 작성
   }

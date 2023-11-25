@@ -12,8 +12,6 @@ import UIKit
 
 // MARK: - WorkoutPeerRandomMatchingViewController
 
-// dim뷰 일종의 UIView를 만들어서 처리
-
 final class WorkoutPeerRandomMatchingViewController: UIViewController {
   // MARK: Properties
 
@@ -55,11 +53,10 @@ final class WorkoutPeerRandomMatchingViewController: UIViewController {
     let button = UIButton(configuration: .filled())
     var configuration = button.configuration
     configuration?.baseBackgroundColor = DesignSystemColor.primaryBackground
+    configuration?.title = "취소"
+    configuration?.font = .preferredFont(forTextStyle: .headline, weight: .bold)
+    configuration?.attributedTitle?.foregroundColor = DesignSystemColor.primaryText
     button.configuration = configuration
-
-    button.setTitle("취소", for: .normal)
-    button.titleLabel?.font = .preferredFont(forTextStyle: .headline, weight: .bold)
-    button.setTitleColor(DesignSystemColor.primaryText, for: .normal)
 
     button.translatesAutoresizingMaskIntoConstraints = false
     return button
@@ -134,9 +131,8 @@ private extension WorkoutPeerRandomMatchingViewController {
 
   func didTapCancelButton() {
     cancelButton.publisher(.touchUpInside)
-      .sink { [weak self] _ in
-        self?.cancelButtonDidTapPublisher.send(())
-      }
+      .map { _ in () }
+      .bind(to: cancelButtonDidTapPublisher)
       .store(in: &subscriptions)
   }
 }

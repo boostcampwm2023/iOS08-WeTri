@@ -115,11 +115,8 @@ private extension WorkoutEnvironmentSetupViewController {
 
   func bindStartButton() {
     workoutPeerSelectViewController
-      .startButton
-      .publisher(.touchUpInside)
-      .sink { [weak self] _ in
-        self?.didTapStartButton.send(())
-      }
+      .startButtonDidTapPublisher()
+      .bind(to: didTapStartButton)
       .store(in: &cancellables)
   }
 

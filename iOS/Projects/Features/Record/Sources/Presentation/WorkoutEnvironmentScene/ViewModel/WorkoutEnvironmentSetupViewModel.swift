@@ -50,9 +50,9 @@ protocol WorkoutEnvironmentSetupViewModelRepresentable {
 
 final class WorkoutEnvironmentSetupViewModel {
   private var subscriptions = Set<AnyCancellable>()
-  var useCase: WorkoutEnvironmentSetupUseCaseRepresentable
+  private var useCase: WorkoutEnvironmentSetupUseCaseRepresentable
 
-  weak var coordinator: WorkoutSettingCoordinating?
+  private weak var coordinator: WorkoutSettingCoordinating?
 
   var didSelectWorkoutType: WorkoutType?
   var didSelectWorkoutPeerType: PeerType?

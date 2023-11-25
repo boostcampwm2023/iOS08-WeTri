@@ -6,6 +6,7 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import Combine
 import CombineCocoa
 import DesignSystem
 import UIKit
@@ -31,7 +32,7 @@ final class WorkoutPeerSelectViewController: UIViewController {
     return label
   }()
 
-  let startButton: UIButton = {
+  private let startButton: UIButton = {
     let button = UIButton()
     button.configurationUpdateHandler = UIButton.Configuration.mainCircular(label: "출발")
     button.isEnabled = false
@@ -105,5 +106,12 @@ private extension WorkoutPeerSelectViewController {
 extension WorkoutPeerSelectViewController {
   func startButtonEnable(_ bool: Bool) {
     startButton.isEnabled = bool
+  }
+
+  func startButtonDidTapPublisher() -> AnyPublisher<Void, Never> {
+    return startButton
+      .publisher(.touchUpInside)
+      .map { _ in () }
+      .eraseToAnyPublisher()
   }
 }
