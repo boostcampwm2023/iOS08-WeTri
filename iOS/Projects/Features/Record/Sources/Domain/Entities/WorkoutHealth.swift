@@ -8,6 +8,8 @@
 
 import Foundation
 
+// TODO: 서버 API와 맞추어야합니다.
+
 /// 건강 데이터를 body로 전달하기 위한 요청(request) 모델입니다. 운동 세션이 종료될 때 이 모델을 사용합니다.
 public struct WorkoutHealth: Encodable {
   /// 총 운동한 거리
