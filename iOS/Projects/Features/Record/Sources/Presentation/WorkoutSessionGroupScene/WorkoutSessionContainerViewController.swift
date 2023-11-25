@@ -132,7 +132,13 @@ final class WorkoutSessionContainerViewController: UIViewController {
   }
 
   private func bind() {
-    let output = viewModel.transform(input: .init(endWorkoutPublisher: endWorkoutSubject.eraseToAnyPublisher()))
+    let output = viewModel.transform(
+      input: .init(
+        endWorkoutPublisher: endWorkoutSubject.eraseToAnyPublisher(),
+        locationPublisher: routeMapViewController.locationPublisher
+      )
+    )
+
     output.sink { state in
       switch state {
       case .idle:

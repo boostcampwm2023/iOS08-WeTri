@@ -7,12 +7,14 @@
 //
 
 import Combine
+import CoreLocation
 import Foundation
 
 // MARK: - WorkoutSessionContainerViewModelInput
 
 public struct WorkoutSessionContainerViewModelInput {
   let endWorkoutPublisher: AnyPublisher<Void, Never>
+  let locationPublisher: AnyPublisher<[CLLocation], Never>
 }
 
 public typealias WorkoutSessionContainerViewModelOutput = AnyPublisher<WorkoutSessionContainerState, Never>
@@ -43,8 +45,12 @@ extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepr
   public func transform(input: WorkoutSessionContainerViewModelInput) -> WorkoutSessionContainerViewModelOutput {
     subscriptions.removeAll()
 
-    input.endWorkoutPublisher
-      .sink {}
+    input.locationPublisher
+      .combineLatest(input.endWorkoutPublisher) { location, _ in
+        return location
+      }
+      .sink { _ in
+      }
       .store(in: &subscriptions)
 
     let initialState: WorkoutSessionContainerViewModelOutput = Just(.idle).eraseToAnyPublisher()
