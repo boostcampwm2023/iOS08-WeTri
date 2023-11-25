@@ -59,7 +59,10 @@ final class WorkoutEnvironmentSetupViewModel {
 
   var workoutTypes: [WorkoutType] = []
 
-  init(useCase: WorkoutEnvironmentSetupUseCaseRepresentable, coordinator: WorkoutSettingCoordinator?) {
+  init(
+    useCase: WorkoutEnvironmentSetupUseCaseRepresentable,
+    coordinator: WorkoutSettingCoordinator?
+  ) {
     self.useCase = useCase
     self.coordinator = coordinator
   }

@@ -145,7 +145,7 @@ private extension WorkoutPeerRandomMatchingViewController {
 
 private extension WorkoutPeerRandomMatchingViewController {
   enum Metrics {
-    static let labelTopConstraints: CGFloat = 180
+    static let labelTopConstraints: CGFloat = 222
     static let componentSpacing: CGFloat = 30
   }
 }
