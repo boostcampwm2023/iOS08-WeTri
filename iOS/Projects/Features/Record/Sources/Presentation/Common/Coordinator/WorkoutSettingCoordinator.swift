@@ -45,13 +45,17 @@ final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
   }
 
   func pushPeerRandomMatchingViewController(workoutSetting _: WorkoutSetting) {
-    let viewModel = WorkoutPeerRandomMatchingViewModel()
+    let viewModel = WorkoutPeerRandomMatchingViewModel(coordinating: self)
 
     let viewController = WorkoutPeerRandomMatchingViewController(viewModel: viewModel)
 
-    navigationController.modalPresentationStyle = .fullScreen
+    viewController.modalPresentationStyle = .overFullScreen
     navigationController.present(viewController, animated: true)
     // TODO: 뷰 컨트롤러 시작 로직 작성
+  }
+
+  func popPeerRandomMatchingViewController() {
+    navigationController.dismiss(animated: true)
   }
 
   func pushCountdownViewController(workoutSetting _: WorkoutSetting) {

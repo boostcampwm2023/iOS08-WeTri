@@ -11,7 +11,9 @@ import Foundation
 
 // MARK: - WorkoutPeerRandomMatchingViewModelInput
 
-public struct WorkoutPeerRandomMatchingViewModelInput {}
+public struct WorkoutPeerRandomMatchingViewModelInput {
+  let cancelPublisher: AnyPublisher<Void, Never>
+}
 
 public typealias WorkoutPeerRandomMatchingViewModelOutput = AnyPublisher<WorkoutPeerRandomMatchingState, Never>
 
@@ -32,14 +34,25 @@ protocol WorkoutPeerRandomMatchingViewModelRepresentable {
 final class WorkoutPeerRandomMatchingViewModel {
   // MARK: - Properties
 
+  private weak var coordinating: WorkoutSettingCoordinating?
+  init(coordinating: WorkoutSettingCoordinating) {
+    self.coordinating = coordinating
+  }
+
   private var subscriptions: Set<AnyCancellable> = []
 }
 
 // MARK: WorkoutPeerRandomMatchingViewModelRepresentable
 
 extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModelRepresentable {
-  public func transform(input _: WorkoutPeerRandomMatchingViewModelInput) -> WorkoutPeerRandomMatchingViewModelOutput {
+  public func transform(input: WorkoutPeerRandomMatchingViewModelInput) -> WorkoutPeerRandomMatchingViewModelOutput {
     subscriptions.removeAll()
+
+    input
+      .cancelPublisher
+      .sink { [weak self] _ in
+        self?.coordinating?.popPeerRandomMatchingViewController()
+      }.store(in: &subscriptions)
 
     let initialState: WorkoutPeerRandomMatchingViewModelOutput = Just(.idle).eraseToAnyPublisher()
 

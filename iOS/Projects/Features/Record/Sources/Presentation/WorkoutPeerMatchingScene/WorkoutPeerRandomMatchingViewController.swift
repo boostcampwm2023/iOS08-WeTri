@@ -12,10 +12,14 @@ import UIKit
 
 // MARK: - WorkoutPeerRandomMatchingViewController
 
+// dim뷰 일종의 UIView를 만들어서 처리
+
 final class WorkoutPeerRandomMatchingViewController: UIViewController {
   // MARK: Properties
 
   private let viewModel: WorkoutPeerRandomMatchingViewModelRepresentable
+
+  private let cancelButtonDidTapPublisher = PassthroughSubject<Void, Never>()
 
   private var subscriptions: Set<AnyCancellable> = []
 
@@ -27,6 +31,7 @@ final class WorkoutPeerRandomMatchingViewController: UIViewController {
     label.font = .preferredFont(forTextStyle: .largeTitle, weight: .bold)
     label.contentMode = .scaleAspectFit
     label.numberOfLines = 1
+    label.textAlignment = .center
     label.textColor = DesignSystemColor.secondaryBackground
 
     label.translatesAutoresizingMaskIntoConstraints = false
@@ -39,15 +44,22 @@ final class WorkoutPeerRandomMatchingViewController: UIViewController {
     activityIndicator.style = .medium
     activityIndicator.color = .white
     activityIndicator.startAnimating()
+    activityIndicator.transform = .init(scaleX: 2, y: 2)
 
+    activityIndicator.translatesAutoresizingMaskIntoConstraints = false
     return activityIndicator
 
   }()
 
   private let cancelButton: UIButton = {
     let button = UIButton(configuration: .filled())
-    button.backgroundColor = DesignSystemColor.primaryBackground
+    var configuration = button.configuration
+    configuration?.baseBackgroundColor = DesignSystemColor.primaryBackground
+    button.configuration = configuration
+
     button.setTitle("취소", for: .normal)
+    button.titleLabel?.font = .preferredFont(forTextStyle: .headline, weight: .bold)
+    button.setTitleColor(DesignSystemColor.primaryText, for: .normal)
 
     button.translatesAutoresizingMaskIntoConstraints = false
     return button
@@ -69,34 +81,48 @@ final class WorkoutPeerRandomMatchingViewController: UIViewController {
 
   override func viewDidLoad() {
     super.viewDidLoad()
+    setup()
+  }
+}
+
+private extension WorkoutPeerRandomMatchingViewController {
+  func setup() {
     setupStyles()
     setupHierarchyAndConstraints()
     bind()
+    didTapCancelButton()
   }
 
-  // MARK: Configuration
+  func setupStyles() {
+    view.backgroundColor = DesignSystemColor.primaryText.withAlphaComponent(0.4)
+  }
 
-  private func setupHierarchyAndConstraints() {
+  func setupHierarchyAndConstraints() {
     let safeArea = view.safeAreaLayoutGuide
+
     view.addSubview(matchingDescriptionLabel)
-    view.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor).isActive = true
-    view.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor).isActive = true
-    view.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: Metrics.labelTopConstraints).isActive = true
+    matchingDescriptionLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: Metrics.labelTopConstraints).isActive = true
+    matchingDescriptionLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor).isActive = true
+    matchingDescriptionLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor).isActive = true
 
     view.addSubview(activityIndicator)
-    activityIndicator.topAnchor.constraint(equalTo: matchingDescriptionLabel.bottomAnchor, constant: Metrics.indicatorTopConstraintsFromLabel).isActive = true
+    activityIndicator.topAnchor
+      .constraint(equalTo: matchingDescriptionLabel.bottomAnchor, constant: Metrics.componentSpacing).isActive = true
     activityIndicator.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor).isActive = true
     activityIndicator.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor).isActive = true
+
+    view.addSubview(cancelButton)
+    cancelButton.topAnchor
+      .constraint(equalTo: activityIndicator.bottomAnchor, constant: Metrics.componentSpacing).isActive = true
+    cancelButton.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor).isActive = true
   }
 
-  private func setupConstraints() {}
+  func bind() {
+    let input = WorkoutPeerRandomMatchingViewModelInput(
+      cancelPublisher: cancelButtonDidTapPublisher.eraseToAnyPublisher()
+    )
 
-  private func setupStyles() {
-    view.backgroundColor = DesignSystemColor.primaryText.withAlphaComponent(0.8)
-  }
-
-  private func bind() {
-    let output = viewModel.transform(input: .init())
+    let output = viewModel.transform(input: input)
     output.sink { state in
       switch state {
       case .idle:
@@ -105,6 +131,14 @@ final class WorkoutPeerRandomMatchingViewController: UIViewController {
     }
     .store(in: &subscriptions)
   }
+
+  func didTapCancelButton() {
+    cancelButton.publisher(.touchUpInside)
+      .sink { [weak self] _ in
+        self?.cancelButtonDidTapPublisher.send(())
+      }
+      .store(in: &subscriptions)
+  }
 }
 
 // MARK: WorkoutPeerRandomMatchingViewController.Metrics
@@ -112,6 +146,6 @@ final class WorkoutPeerRandomMatchingViewController: UIViewController {
 private extension WorkoutPeerRandomMatchingViewController {
   enum Metrics {
     static let labelTopConstraints: CGFloat = 180
-    static let indicatorTopConstraintsFromLabel: CGFloat = 15
+    static let componentSpacing: CGFloat = 30
   }
 }

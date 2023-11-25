@@ -15,4 +15,5 @@ protocol WorkoutSettingCoordinating: Coordinating {
   func pushPeerRandomMatchingViewController(workoutSetting: WorkoutSetting)
   func pushCountdownViewController(workoutSetting: WorkoutSetting)
   func finish(workoutSetting: WorkoutSetting)
+  func popPeerRandomMatchingViewController()
 }
