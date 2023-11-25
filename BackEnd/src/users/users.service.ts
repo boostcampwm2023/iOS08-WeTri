@@ -28,9 +28,7 @@ export class UsersService {
     return newUesr;
   }
 
-  async getUserByUserIdAndProvider(
-    user: Pick<User, 'userId' | 'provider'>,
-  ) {
+  async getUserByUserIdAndProvider(user: Pick<User, 'userId' | 'provider'>) {
     return this.usersRepository.findOne({
       where: {
         userId: user.userId,

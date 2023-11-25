@@ -6,14 +6,14 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
-import * as WebSocket from 'ws';
+import { Server, WebSocket } from 'ws';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 
 @WebSocketGateway(3003)
 export class EventsGateway {
-  @WebSocketServer() server: WebSocket.Server;
+  @WebSocketServer() server: Server;
   constructor(private readonly eventsService: EventsService) {}
 
   @SubscribeMessage('events')
