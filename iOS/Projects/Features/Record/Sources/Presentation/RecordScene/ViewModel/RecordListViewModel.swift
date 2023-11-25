@@ -26,7 +26,6 @@ enum RecordListState {
   case idle
   case sucessRecords([Record])
   case sucessDateInfo(DateInfo)
-  case moveScene
 }
 
 // MARK: - RecordListViewModel

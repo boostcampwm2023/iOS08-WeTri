@@ -104,8 +104,6 @@ private extension RecordListViewController {
           Logger().debug("\(error)")
         case let .failure(error):
           Logger().debug("\(error)")
-        default:
-          break
         }
       },
       receiveValue: { [weak self] state in
@@ -129,9 +127,6 @@ private extension RecordListViewController {
     case let .sucessDateInfo(dateInfo):
       guard let dayOfWeek = dateInfo.dayOfWeek else { return }
       todayLabel.text = "지금\n \(dateInfo.month)월 \(dateInfo.date)일 \(dayOfWeek)요일"
-    case .moveScene:
-      let viewController = WorkoutEnvironmentSetupViewController()
-      navigationController?.pushViewController(viewController, animated: false)
     }
   }
 
