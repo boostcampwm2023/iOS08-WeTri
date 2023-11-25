@@ -8,7 +8,6 @@ import { UsersModule } from './users/users.module';
 import { ProfilesModule } from './profiles/profiles.module';
 import { RecordsModule } from './records/records.module';
 import { WorkoutsModule } from './workouts/workouts.module';
-import { MatchesController } from './live-workouts/matches/matches.controller';
 import { EventsModule } from './live-workouts/events/events.module';
 import {MatchesModule} from "./live-workouts/matches/matches.module";
 
@@ -23,7 +22,7 @@ import {MatchesModule} from "./live-workouts/matches/matches.module";
     MatchesModule,
     EventsModule,
   ],
-  controllers: [AppController, MatchesController],
+  controllers: [AppController],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
