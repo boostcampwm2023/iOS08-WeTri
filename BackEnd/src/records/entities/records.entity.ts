@@ -4,13 +4,14 @@ import {
   Column,
   CreateDateColumn,
   ManyToOne,
-  OneToOne, JoinColumn,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Post } from '../../posts/entities/posts.entity';
 import { Profile } from '../../profiles/entities/profiles.entity';
 import { IsNumber, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import {Workout} from "../../workouts/entities/workout.entity";
+import { Workout } from '../../workouts/entities/workout.entity';
 
 @Entity()
 export class Record {
@@ -83,6 +84,6 @@ export class Record {
 
   @ApiProperty({ example: '달리기', description: '선택한 운동 종료' })
   @ManyToOne(() => Workout, (workout) => workout.records)
-  @JoinColumn({ name: "id" })
+  @JoinColumn({ name: 'id' })
   workout: Workout;
 }

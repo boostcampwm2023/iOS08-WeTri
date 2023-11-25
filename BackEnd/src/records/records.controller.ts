@@ -1,4 +1,12 @@
-import {Body, Controller, Get, Param, Post, Query, UseGuards} from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { RecordsService } from './records.service';
 import { CreateExerciseLogDto } from './dto/create-exerciseLog.dto';
 import { AccessTokenGuard } from 'src/auth/guard/bearerToken.guard';
@@ -41,10 +49,10 @@ export class RecordsController {
   @ApiCreatedResponse({ type: GetUsersRecordsResDto })
   @UseGuards(AccessTokenGuard)
   async getUserRecords(
-      @ProfileDeco() profile: Profile,
-      @Query('year') year: number,
-      @Query('month') month: number,
-      @Query('day') day: number
+    @ProfileDeco() profile: Profile,
+    @Query('year') year: number,
+    @Query('month') month: number,
+    @Query('day') day: number,
   ) {
     return this.recordsService.findByDate(profile.id, year, month, day);
   }

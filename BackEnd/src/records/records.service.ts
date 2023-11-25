@@ -13,10 +13,7 @@ export class RecordsService {
     private readonly recordsRepository: Repository<Record>,
   ) {}
 
-  async createWorkOutLog(
-    exerciseLog: CreateExerciseLogDto,
-    profile: Profile,
-  ) {
+  async createWorkOutLog(exerciseLog: CreateExerciseLogDto, profile: Profile) {
     return await this.recordsRepository.save({
       ...exerciseLog,
       profile,
@@ -24,11 +21,15 @@ export class RecordsService {
   }
 
   findByDate(profileId: number, year: number, month: number, day: number) {
-    return this.recordsRepository.createQueryBuilder("record")
-        .leftJoinAndSelect("record.workout", "workout")
-        .where("record.profileId = :profileId", { profileId })
-        .andWhere(`YEAR(record.createdAt) = :year AND MONTH(record.createdAt) = :month AND DAY(record.createdAt) = :day`, { year, month, day })
-        .getMany();
+    return this.recordsRepository
+      .createQueryBuilder('record')
+      .leftJoinAndSelect('record.workout', 'workout')
+      .where('record.profileId = :profileId', { profileId })
+      .andWhere(
+        `YEAR(record.createdAt) = :year AND MONTH(record.createdAt) = :month AND DAY(record.createdAt) = :day`,
+        { year, month, day },
+      )
+      .getMany();
   }
 
   async findById(recordId: number) {
