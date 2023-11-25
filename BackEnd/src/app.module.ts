@@ -6,7 +6,6 @@ import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ProfilesModule } from './profiles/profiles.module';
-import { LiveModule } from './lives/lives.module';
 import { RecordsModule } from './records/records.module';
 import { WorkoutsModule } from './workouts/workouts.module';
 
@@ -16,7 +15,6 @@ import { WorkoutsModule } from './workouts/workouts.module';
     AuthModule,
     UsersModule,
     ProfilesModule,
-    LiveModule,
     RecordsModule,
     WorkoutsModule,
   ],
