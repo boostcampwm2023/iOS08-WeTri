@@ -13,6 +13,14 @@ import Log
 import MapKit
 import UIKit
 
+// MARK: - LocationTrackingProtocol
+
+/// 위치 정보를 제공받기 위해 사용합니다.
+protocol LocationTrackingProtocol: UIViewController {
+  /// 위치 정보를 제공하는 Publisher
+  var locationPublisher: AnyPublisher<[CLLocation], Never> { get }
+}
+
 // MARK: - WorkoutRouteMapViewController
 
 final class WorkoutRouteMapViewController: UIViewController {
@@ -21,7 +29,7 @@ final class WorkoutRouteMapViewController: UIViewController {
   private let viewModel: WorkoutRouteMapViewModelRepresentable
 
   /// 사용자 위치 추적 배열
-  private var locations: [CLLocation] = []
+  @Published private var locations: [CLLocation] = []
 
   private var subscriptions: Set<AnyCancellable> = []
 
@@ -106,6 +114,14 @@ final class WorkoutRouteMapViewController: UIViewController {
   private func setupLocationManager() {
     locationManager.requestWhenInUseAuthorization()
     locationManager.startUpdatingLocation()
+  }
+}
+
+// MARK: LocationTrackingProtocol
+
+extension WorkoutRouteMapViewController: LocationTrackingProtocol {
+  var locationPublisher: AnyPublisher<[CLLocation], Never> {
+    $locations.eraseToAnyPublisher()
   }
 }
 

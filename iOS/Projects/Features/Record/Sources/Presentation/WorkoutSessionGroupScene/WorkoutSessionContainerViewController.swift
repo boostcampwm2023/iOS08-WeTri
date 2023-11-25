@@ -25,7 +25,7 @@ final class WorkoutSessionContainerViewController: UIViewController {
 
   private let sessionViewController = WorkoutSessionViewController(viewModel: WorkoutSessionViewModel())
 
-  private let routeMapViewController = WorkoutRouteMapViewController(viewModel: WorkoutRouteMapViewModel())
+  private let routeMapViewController: LocationTrackingProtocol = WorkoutRouteMapViewController(viewModel: WorkoutRouteMapViewModel())
 
   private lazy var viewControllers: [UIViewController] = [
     sessionViewController,
