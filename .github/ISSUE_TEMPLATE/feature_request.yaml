@@ -1,0 +1,52 @@
+name: 🔨 기능 구현
+description: 기능 구현 또는 개선사항 :)
+title: "[Feat]: "
+labels: ["🔨 구현"]
+body:
+  - type: textarea
+    id: describe
+    attributes:
+      label: 📝 구현 목록
+      description: 기능 구현 사항 또는 개선사항 목록에 대해 자세히 작성해주세요. :D
+      placeholder: |
+        - [ ] A api 설정...
+        - [ ] B 클래스 추가...
+        - [ ] C Config 설정...
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: 🔖 카테고리
+      description: 개선/기능이 속하는 카테고리는 무엇인가요?
+      options:
+        - 온보딩
+        - 로그인
+        - 회원가입
+        - 홈
+        - 게시글 등록
+        - 운동 기록 게시글
+        - 운동 기록 목록
+        - 운동 선택
+        - 운동 세션
+        - 운동 요약
+        - 지도
+        - 알림
+        - 마이페이지
+        - 프로필 설정
+        - 설정
+        - 계정
+        - 네트워크
+        - 기타
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: 기타 카테고리
+      description: 위에서 `기타`를 선택했다면, 여기에 적합한 카테고리를 입력해주세요
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 📷 스크린샷
+      description: 개선 요청/제안을 설명하는 스크린샷을 추가해주세요!
+
