@@ -3,11 +3,11 @@ import { Server, WebSocket } from 'ws';
 export class ExtensionWebSocketServer {
     rooms: Map<string, Set<string>> = new Map();
     sids: Map<string, Set<string>> = new Map();
-    clients: Map<string, WebSocket> = new Map();
+    clientMap: Map<string, WebSocket> = new Map();
     constructor(server: Server) {
         server.rooms = this.rooms;
         server.sids = this.sids;
-        server.clients = this.clients;
+        server.clientMap = this.clientMap;
         server.joinRoom = this.joinRoom;
         server.leaveRoom = this.leaveRoom;
         server.to = this.to;
@@ -39,7 +39,7 @@ export class ExtensionWebSocketServer {
                 if (this.rooms.has(roomName)) {
                     const room = this.rooms.get(roomName);
                     room.forEach((clientId) => {
-                        this.clients[clientId].send(JSON.stringify({ event, message }));
+                        this.clientMap[clientId].send(JSON.stringify({ event, message }));
                     });
                 }
             },
