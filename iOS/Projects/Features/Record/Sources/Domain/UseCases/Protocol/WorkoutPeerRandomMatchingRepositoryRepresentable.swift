@@ -12,7 +12,7 @@ import Foundation
 // MARK: - WorkoutPeerRandomMatchingRepositoryRepresentable
 
 protocol WorkoutPeerRandomMatchingRepositoryRepresentable {
-  func matcheStart(workoutTypeCode: Int) -> AnyPublisher<Result<Void, Error>, Never>
+  func matchStart(workoutTypeCode: Int) -> AnyPublisher<Result<Void, Error>, Never>
   func matchCancel()
   func isMatchedRandomPeer(workoutTypeCode: Int) -> AnyPublisher<Result<PeerMatchResponseDTO?, Error>, Never>
 }

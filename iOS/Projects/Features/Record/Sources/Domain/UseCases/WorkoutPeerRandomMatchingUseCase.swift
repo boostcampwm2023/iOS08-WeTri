@@ -30,7 +30,7 @@ struct WorkoutPeerRandomMatchingUseCase {
 
 extension WorkoutPeerRandomMatchingUseCase: WorkoutPeerRandomMatchingUseCaseRepresentable {
   func matcheStart(workoutSetting: WorkoutSetting) -> AnyPublisher<Result<Void, Error>, Never> {
-    return repository.matcheStart(workoutTypeCode: workoutSetting.workoutType.typeCode)
+    return repository.matchStart(workoutTypeCode: workoutSetting.workoutType.typeCode)
   }
 
   func matchCancel() {
