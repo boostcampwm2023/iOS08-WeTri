@@ -27,11 +27,20 @@ public struct TNProvider<T: TNEndPoint>: TNProvidable {
 
   public func request(_ service: T) async throws -> Data {
     // TODO: URLResponse에 대응하는 코드 작성(backend 내려주는 API 문서 활용)
-    let (data, urlResponse) = try await session.data(for: service.request(), delegate: nil)
+    let (data, _) = try await session.data(for: service.request(), delegate: nil)
     return data
   }
 
-  public func request(_ service: T, completion: @escaping (Data?, URLResponse?, Error?) -> Void) throws {
+  public func request(_ service: T, completion: @Sendable @escaping (Data?, URLResponse?, Error?) -> Void) throws {
     try session.dataTask(with: service.request(), completionHandler: completion).resume()
+  }
+}
+
+public extension TNProvider {
+  func request(_ service: T) async throws -> (Data, HTTPURLResponse?) {
+    // TODO: URLResponse에 대응하는 코드 작성(backend 내려주는 API 문서 활용)
+    let (data, urlResponse) = try await session.data(for: service.request(), delegate: nil)
+    let httpResponse = urlResponse as? HTTPURLResponse
+    return (data, httpResponse)
   }
 }
