@@ -34,14 +34,14 @@ public struct TNProvider<T: TNEndPoint>: TNProvidable {
     guard let httpResponse = (response as? HTTPURLResponse) else {
       throw TNError.httpResponseDwonCastingError
     }
-    try parsingStatusCodeToError(httpResponse.statusCode, successStatusCodeRange: range)
+    try checkStatusCode(httpResponse.statusCode, successStatusCodeRange: range)
 
     return data
   }
 }
 
 private extension TNProvider {
-  func parsingStatusCodeToError(_ statusCode: Int, successStatusCodeRange: Range<Int>) throws {
+  func checkStatusCode(_ statusCode: Int, successStatusCodeRange: Range<Int>) throws {
     switch statusCode {
     case successStatusCodeRange:
       return

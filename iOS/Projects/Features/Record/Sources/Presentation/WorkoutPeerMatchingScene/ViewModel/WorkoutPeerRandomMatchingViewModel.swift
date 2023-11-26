@@ -127,7 +127,7 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
     useCase.matchCancel()
     coordinating?.popPeerRandomMatchingViewController()
   }
-  
+
   private enum Constants {
     static let pollingPeroid: Double = 2
     static let maximumCouldWaitTime: Double = 150
