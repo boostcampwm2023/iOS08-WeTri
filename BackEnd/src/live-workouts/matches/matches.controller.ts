@@ -4,7 +4,11 @@ import { CreateMatchDto } from './dto/create-match.dto';
 import { AccessTokenGuard } from '../../auth/guard/bearerToken.guard';
 import { ProfileDeco } from '../../profiles/decorator/profile.decorator';
 import { Profile } from '../../profiles/entities/profiles.entity';
-import { RandomMatchDto, RandomMatchResponseDto } from './dto/random-match.dto';
+import {
+  RandomMatchDto,
+  RandomMatchResDto,
+  randomNoMatchingResDto,
+} from './dto/random-match.dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('매칭 API')
@@ -35,8 +39,17 @@ export class MatchesController {
   }
 
   @ApiOperation({ summary: '매칭이 되었니?' })
-  @ApiBody({ type: CreateMatchDto })
-  @ApiResponse({ type: RandomMatchResponseDto })
+  @ApiBody({ type: RandomMatchDto })
+  @ApiResponse({
+    status: 200,
+    description: '매칭이 되었을 경우',
+    type: RandomMatchResDto,
+  })
+  @ApiResponse({
+    status: 201,
+    description: '매칭이 안되었을 경우',
+    schema: randomNoMatchingResDto(),
+  })
   @Get('random')
   isRandomMatched(
     @ProfileDeco() profile: Profile,

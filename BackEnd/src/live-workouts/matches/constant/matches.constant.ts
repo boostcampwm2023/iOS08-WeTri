@@ -7,3 +7,5 @@ export const USER_WAITED_40_MIN_USERS = 3;
 export const USER_WAITED_20_MIN_USERS = 4;
 export const ALONE_USER = 1;
 export const WAITING_20_TIME = 20;
+export const MATCHING_DELAY = 15;
+export const UTC_REMOVE_TIME = 600;

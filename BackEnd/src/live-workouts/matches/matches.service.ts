@@ -4,7 +4,7 @@ import { Redis } from 'ioredis';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { Profile } from '../../profiles/entities/profiles.entity';
 import { v4 as uuidv4 } from 'uuid';
-import { RandomMatchDto, RandomMatchResponseDto } from './dto/random-match.dto';
+import { RandomMatchDto, RandomMatch } from './dto/random-match.dto';
 import {
   MAX_USERS,
   WAITING_60_TIME,
@@ -15,6 +15,8 @@ import {
   MIN_USERS,
   WAITING_20_TIME,
   ALONE_USER,
+  MATCHING_DELAY,
+  UTC_REMOVE_TIME,
 } from './constant/matches.constant';
 
 @Injectable()
@@ -48,7 +50,7 @@ export class MatchesService {
   async isRandomMatched(
     profile: Profile,
     randomMatchDto: RandomMatchDto,
-  ): Promise<RandomMatchResponseDto> {
+  ): Promise<RandomMatch> {
     const { nickname } = profile;
     const { workoutId, waitingTime } = randomMatchDto;
     this.logger.log(`isRandomMatched: ${nickname} ${workoutId}`);
@@ -81,7 +83,7 @@ export class MatchesService {
   private async makeWebSocketRoom(
     workoutId: number,
     waitingUsers: number,
-  ): Promise<RandomMatchResponseDto> {
+  ): Promise<RandomMatch> {
     const roomId: string = `match:${workoutId}:${uuidv4()}`;
 
     const serializedUsers: string[] = await this.redis.lrange(
@@ -94,7 +96,9 @@ export class MatchesService {
     );
 
     const liveWorkoutStartTime = new Date();
-    liveWorkoutStartTime.setMinutes(liveWorkoutStartTime.getSeconds() + 15);
+    liveWorkoutStartTime.setMinutes(
+      liveWorkoutStartTime.getSeconds() + MATCHING_DELAY,
+    );
     const liveWorkoutStartTimeUTC = liveWorkoutStartTime.toISOString();
 
     const multi = this.redis.multi();
@@ -107,7 +111,7 @@ export class MatchesService {
       `matchStartTime:${roomId}`,
       JSON.stringify(liveWorkoutStartTimeUTC),
     );
-    multi.expire(`matchStartTime:${roomId}`, 3600);
+    multi.expire(`matchStartTime:${roomId}`, UTC_REMOVE_TIME);
     multi.ltrim(`matching:${workoutId}`, waitingUsers, -1);
     await multi.exec();
 
