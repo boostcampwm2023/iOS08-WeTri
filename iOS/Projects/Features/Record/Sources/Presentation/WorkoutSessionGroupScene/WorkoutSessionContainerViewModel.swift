@@ -59,12 +59,10 @@ extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepr
 
     // == Input Output Binding ==
 
-    let recordPublisher = input.locationPublisher
-      .map {
-        $0.map { LocationDTO(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
-      }
-      .combineLatest(input.healthPublisher, input.endWorkoutPublisher) { location, health, _ in
-        return (location, health)
+    let recordPublisher = input.endWorkoutPublisher
+      .combineLatest(input.locationPublisher, input.healthPublisher) { _, rawLocations, health in
+        let locations = rawLocations.map { LocationDTO(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
+        return (locations, health)
       }
       .flatMap(workoutRecordUseCase.record)
 
