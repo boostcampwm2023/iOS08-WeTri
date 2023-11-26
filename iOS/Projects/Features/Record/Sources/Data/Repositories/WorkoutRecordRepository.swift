@@ -7,14 +7,12 @@
 //
 
 import Combine
-import Trinet
 import Foundation
+import Trinet
 
-
-// MARK: - WorkoutSummaryRepository
+// MARK: - WorkoutRecordRepository
 
 public struct WorkoutRecordRepository: WorkoutRecordRepositoryRepresentable {
-
   private let provider: TNProvider<WorkoutRecordEndPoint>
   private let jsonDecoder: JSONDecoder = .init()
 
@@ -45,7 +43,7 @@ public struct WorkoutRecordRepository: WorkoutRecordRepositoryRepresentable {
   }
 }
 
-// MARK: WorkoutSummaryRepository.WorkoutSummaryEndPoint
+// MARK: WorkoutRecordRepository.WorkoutRecordEndPoint
 
 extension WorkoutRecordRepository {
   // TODO: 서버 값으로 세팅
@@ -60,7 +58,7 @@ extension WorkoutRecordRepository {
 
     var headers: TNHeaders = .init(headers: [])
 
-    init(locationList: [LocationDTO], health: WorkoutHealth) {
+    init(locationList _: [LocationDTO], health _: WorkoutHealth) {
       // TODO: 요청 모델 설정 필요
     }
   }

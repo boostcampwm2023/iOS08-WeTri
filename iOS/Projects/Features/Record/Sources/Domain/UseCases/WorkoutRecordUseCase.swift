@@ -8,13 +8,14 @@
 
 import Combine
 import Foundation
-// MARK: - WorkoutSummaryUseCaseRepresentable
+
+// MARK: - WorkoutRecordUseCaseRepresentable
 
 protocol WorkoutRecordUseCaseRepresentable {
   func record(locations: [LocationDTO], healthData: WorkoutHealth) -> AnyPublisher<Int, Error>
 }
 
-// MARK: - WorkoutSummaryUseCase
+// MARK: - WorkoutRecordUseCase
 
 struct WorkoutRecordUseCase {
   private let repository: WorkoutRecordRepositoryRepresentable
@@ -24,7 +25,7 @@ struct WorkoutRecordUseCase {
   }
 }
 
-// MARK: WorkoutSummaryUseCaseRepresentable
+// MARK: WorkoutRecordUseCaseRepresentable
 
 extension WorkoutRecordUseCase: WorkoutRecordUseCaseRepresentable {
   func record(locations: [LocationDTO], healthData: WorkoutHealth) -> AnyPublisher<Int, Error> {
