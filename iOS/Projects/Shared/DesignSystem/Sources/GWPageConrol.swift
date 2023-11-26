@@ -12,20 +12,31 @@ import UIKit
 // MARK: - GWPageControl
 
 public final class GWPageControl: UIView {
-  let numberOfPage: Int
-  var currentPageIndex: Int = 0
-  let spacing: CGFloat = 8
-  var pages: [UIView] = []
-  var pageswidthConstraint: [NSLayoutConstraint] = []
+  /// proeprty
+  private let numberOfPage: Int
+  private var currentPageIndex: Int = 0
+  private let spacing: CGFloat = 8
+  private var pages: [UIView] = []
+  private var pageswidthConstraint: [NSLayoutConstraint] = []
+
+  private var pageControllerWidth: CGFloat {
+    return .init(58 * numberOfPage - 58)
+  }
+
+  private var pageControllerHeight: CGFloat {
+    return .init(8)
+  }
+
+  override public var intrinsicContentSize: CGSize {
+    return .init(width: pageControllerWidth, height: pageControllerHeight)
+  }
 
   // MARK: - 과연 UIVIew를 optional로 만드는게 맞을까?
 
   /// init에서 만약 5보다 큰 수나 2보다 작은 수가 입력되는 경우
   /// page 갯수가 2개로 설정 됩니다.
   public init(count: Int) {
-    numberOfPage = (UIPageControlDefaultProperty.range).contains(count) ?
-      count :
-      UIPageControlDefaultProperty.numOfMinPage
+    numberOfPage = (UIPageControlDefaultProperty.range).contains(count) ? count : UIPageControlDefaultProperty.numOfMinPage
 
     super.init(frame: .zero)
 
@@ -81,7 +92,7 @@ private extension GWPageControl {
 
 public extension GWPageControl {
   func select(at pageIndex: Int) {
-    if pageIndex >= pages.count || currentPageIndex <= 0 {
+    if pageIndex >= pages.count || currentPageIndex < 0 {
       return
     }
     updateDeselectPage(at: currentPageIndex)
@@ -92,7 +103,7 @@ public extension GWPageControl {
   }
 
   func next() {
-    if currentPageIndex >= pages.count || currentPageIndex < 0 {
+    if currentPageIndex >= pages.count - 1 || currentPageIndex < 0 {
       return
     }
     updateDeselectPage(at: currentPageIndex)
