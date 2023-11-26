@@ -8,6 +8,8 @@
 
 import Foundation
 
+// MARK: - TNHeaders
+
 public struct TNHeaders: Hashable {
   private var headers: [TNHeader]
 
@@ -21,8 +23,46 @@ public struct TNHeaders: Hashable {
   }
 }
 
+// MARK: CustomStringConvertible
+
 extension TNHeaders: CustomStringConvertible {
   public var description: String {
     return headers.map(\.description).joined(separator: "\n")
+  }
+}
+
+// MARK: ExpressibleByArrayLiteral
+
+extension TNHeaders: ExpressibleByArrayLiteral {
+  public init(arrayLiteral elements: TNHeader...) {
+    self.init(headers: elements)
+  }
+}
+
+// MARK: ExpressibleByDictionaryLiteral
+
+extension TNHeaders: ExpressibleByDictionaryLiteral {
+  public init(dictionaryLiteral elements: (String, String)...) {
+    self.init(headers: elements.map(TNHeader.init))
+  }
+}
+
+// MARK: Collection
+
+extension TNHeaders: Collection {
+  public var startIndex: Int {
+    headers.startIndex
+  }
+
+  public var endIndex: Int {
+    headers.endIndex
+  }
+
+  public subscript(position: Int) -> TNHeader {
+    headers[position]
+  }
+
+  public func index(after i: Int) -> Int {
+    headers.index(after: i)
   }
 }
