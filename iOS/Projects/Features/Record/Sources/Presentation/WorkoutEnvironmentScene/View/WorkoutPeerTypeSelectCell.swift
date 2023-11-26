@@ -197,11 +197,6 @@ extension WorkoutPeerTypeSelectCell {
   }
 
   func info() -> PeerType {
-    let descriptionTitle = descriptionTitleText
-    let descriptionIconSystemmName = descriptionIconSystemName
-    let descriptionSubtitleText = descriptionSubTitleText
-    let typeCode = typeCode
-
     return .init(
       icon: descriptionIconSystemName,
       title: descriptionTitleText,

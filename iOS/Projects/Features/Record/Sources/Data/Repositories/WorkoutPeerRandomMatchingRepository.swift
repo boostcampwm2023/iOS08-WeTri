@@ -28,10 +28,9 @@ extension WorkoutPeerRandomMatchingRepository: WorkoutPeerRandomMatchingReposito
       Task {
         do {
           let data = try await provider.request(.matchStart(workoutTypeCode: workoutTypeCode))
-          // TODO: 어차피 Nil인데, optional로해야할지 아니면 그냥 할지 고민
-          // GWResponse<NullDTO>.self, GWResponse<NullDTO?>.self
           let response = try decoder.decode(GWResponse<NullDTO>.self, from: data)
-          if 200 ... 300 ~= (response.code ?? 404) { // 200번대 REsponse인지 확인, 보통 서버에서 코드를 보내주지만, 안보내줄 경우 자동적으로 동작 안하게 작성)
+          // 200번대 REsponse인지 확인, 보통 서버에서 코드를 보내주지만, 안보내줄 경우 자동적으로 동작 안하게 작성)
+          if 200 ... 300 ~= (response.code ?? 404) {
             promise(.success(.success(())))
           } else {
             // TODO: ERROR Handling
