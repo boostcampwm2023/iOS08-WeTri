@@ -24,6 +24,7 @@ public typealias WorkoutSessionContainerViewModelOutput = AnyPublisher<WorkoutSe
 
 public enum WorkoutSessionContainerState {
   case idle
+  case alert(Error)
 }
 
 // MARK: - WorkoutSessionContainerViewModelRepresentable
@@ -38,24 +39,50 @@ final class WorkoutSessionContainerViewModel {
   // MARK: - Properties
 
   private var subscriptions: Set<AnyCancellable> = []
+
+  private let workoutRecordUseCase: WorkoutRecordUseCaseRepresentable
+
+  init(workoutRecordUseCase: WorkoutRecordUseCaseRepresentable) {
+    self.workoutRecordUseCase = workoutRecordUseCase
+  }
 }
 
 // MARK: WorkoutSessionContainerViewModelRepresentable
 
 extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepresentable {
   public func transform(input: WorkoutSessionContainerViewModelInput) -> WorkoutSessionContainerViewModelOutput {
+    // == Disposing of All Subscriptions ==
     subscriptions.removeAll()
 
-    input.locationPublisher
+    // == Input Output Binding ==
+
+    let recordPublisher = input.locationPublisher
+      .map {
+        $0.map { LocationDTO(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
+      }
       .combineLatest(input.healthPublisher, input.endWorkoutPublisher) { location, health, _ in
         return (location, health)
       }
+      .flatMap(workoutRecordUseCase.record)
+
+    recordPublisher
       .sink { _ in
+        // 다른 Publisher에서 이미 처리합니다.
+      } receiveValue: { _ in
+        // TODO: Coordinator를 이용해서 화면 전환 필요
       }
       .store(in: &subscriptions)
 
+    let recordErrorPublisher = recordPublisher
+      .map { _ in
+        // viewModel의 Coordinator에서 처리하므로 `idle` 설정
+        return WorkoutSessionContainerState.idle
+      }
+      .catch { return Just(.alert($0)) }
+      .eraseToAnyPublisher()
+
     let initialState: WorkoutSessionContainerViewModelOutput = Just(.idle).eraseToAnyPublisher()
 
-    return initialState
+    return initialState.merge(with: recordErrorPublisher).eraseToAnyPublisher()
   }
 }

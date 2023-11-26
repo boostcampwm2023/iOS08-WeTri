@@ -140,13 +140,24 @@ final class WorkoutSessionContainerViewController: UIViewController {
       )
     )
 
-    output.sink { state in
+    output.sink { [weak self] state in
       switch state {
       case .idle:
         break
+      case let .alert(error):
+        self?.showAlert(with: error)
       }
     }
     .store(in: &subscriptions)
+  }
+
+  // MARK: - Custom Methods
+
+  /// 에러 알림 문구를 보여줍니다.
+  private func showAlert(with error: Error) {
+    let alertController = UIAlertController(title: "알림", message: error.localizedDescription, preferredStyle: .alert)
+    alertController.addAction(UIAlertAction(title: "확인", style: .default))
+    present(alertController, animated: true)
   }
 }
 
@@ -209,5 +220,5 @@ private extension WorkoutSessionContainerViewController {
 
 @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, xrOS 1.0, *)
 #Preview {
-  WorkoutSessionContainerViewController(viewModel: WorkoutSessionContainerViewModel())
+  WorkoutSessionContainerViewController(viewModel: WorkoutSessionContainerViewModel(workoutRecordUseCase: WorkoutRecordUseCase(repository: WorkoutRecordRepository(session: URLSession.shared))))
 }
