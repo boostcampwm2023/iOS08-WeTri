@@ -14,7 +14,7 @@ import Foundation
 // TODO: 옮겨야 할 Protocol
 
 protocol WorkoutPeerRandomMatchingRepositoryRepresentable {
-  func matcheStart(workoutSetting: WorkoutSetting) -> AnyPublisher<Result<Void, Error>, Never>
+  func matcheStart(workoutType: String) -> AnyPublisher<Result<Void, Error>, Never>
   func matchCancel() -> AnyPublisher<Result<Void, Error>, Never>
   func isMatchedRandomPeer() -> AnyPublisher<Result<Void, Error>, Never>
 }
@@ -40,7 +40,7 @@ struct WorkoutPeerRandomMatchingUseCase {
 
 extension WorkoutPeerRandomMatchingUseCase: WorkoutPeerRandomMatchingUseCaseRepresentable {
   func matcheStart(workoutSetting: WorkoutSetting) -> AnyPublisher<Result<Void, Error>, Never> {
-    return repository.matcheStart(workoutSetting: workoutSetting)
+    return repository.matcheStart(workoutType: workoutSetting.workoutType.description)
   }
 
   func matchCancel() -> AnyPublisher<Result<Void, Error>, Never> {

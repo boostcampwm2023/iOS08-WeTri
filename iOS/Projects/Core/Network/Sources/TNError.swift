@@ -16,7 +16,7 @@ public enum TNError: LocalizedError {
     switch self {
     case .invalidURL:
       return "URL이 잘못되었습니다."
-    case .ResponseError :
+    case .ResponseError:
       return "URLResponse 에서 HTTPResponse로 바꿀 수 없습니다."
     }
   }

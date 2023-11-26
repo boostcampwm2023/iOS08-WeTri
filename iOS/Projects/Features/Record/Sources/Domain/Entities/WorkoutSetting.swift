@@ -11,8 +11,8 @@ import Foundation
 // MARK: - WorkoutSetting
 
 struct WorkoutSetting {
-  let mode: WorkoutMode
-  let environment: WorkoutEnvironment
+  let workoutType: WorkoutMode
+  let workoutPeerType: WorkoutEnvironment
   let opponents: [Opponent]
 }
 

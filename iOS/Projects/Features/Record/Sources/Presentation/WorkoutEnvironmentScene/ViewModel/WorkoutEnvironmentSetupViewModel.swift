@@ -148,7 +148,7 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
   }
 
   func didTapStartButton() {
-    let workoutSettiong: WorkoutSetting = .init(mode: .run, environment: .multi, opponents: [])
+    let workoutSettiong: WorkoutSetting = .init(workoutType: .run, workoutPeerType: .multi, opponents: [])
     coordinator?.pushPeerRandomMatchingViewController(workoutSetting: workoutSettiong)
   }
 }

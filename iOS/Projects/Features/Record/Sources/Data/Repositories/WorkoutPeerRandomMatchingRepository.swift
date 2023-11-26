@@ -13,7 +13,8 @@ import Trinet
 // MARK: - WorkoutPeerRandomMatchingRepository
 
 struct WorkoutPeerRandomMatchingRepository {
-  let provider: TNProvider<WorkoutPeerRandomMatchingRepositoryEndPoint>
+  private let provider: TNProvider<WorkoutPeerRandomMatchingRepositoryEndPoint>
+  private let decoder = JSONDecoder()
   init(session: URLSessionProtocol) {
     provider = .init(session: session)
   }
@@ -22,14 +23,21 @@ struct WorkoutPeerRandomMatchingRepository {
 // MARK: WorkoutPeerRandomMatchingRepositoryRepresentable
 
 extension WorkoutPeerRandomMatchingRepository: WorkoutPeerRandomMatchingRepositoryRepresentable {
-  func matcheStart(workoutSetting _: WorkoutSetting) -> AnyPublisher<Result<Void, Error>, Never> {
+  func matcheStart(workoutType: String) -> AnyPublisher<Result<Void, Error>, Never> {
     return Future<Result<Void, Error>, Never> { promise in
       Task {
         do {
-          let value = try await provider.request(.isMatchedRandomPeer)
-          
+          let data = try await provider.request(.matchStart(workout: workoutType))
+          // TODO: 어차피 Nil인데, optional로해야할지 아니면 그냥 할지 고민
+          // GWResponse<NullDTO>.self, GWResponse<NullDTO?>.self
+          let response = try decoder.decode(GWResponse<NullDTO>.self, from: data)
+          if response.code == 200 {
+            promise(.success(.success(())))
+          } else if response.errorMessage != nil {
+            promise(.success(.failure(RepositoryError.serverError)))
+          }
         } catch {
-          promise(.success(.failure(WorkoutRecordsRepositoryError.decodeError)))
+          promise(.success(.failure(error)))
         }
       }
     }.eraseToAnyPublisher()
@@ -46,7 +54,14 @@ extension WorkoutPeerRandomMatchingRepository: WorkoutPeerRandomMatchingReposito
   }
 }
 
-// MARK: WorkoutPeerRandomMatchingRepository.WorkoutPeerRandomMatchingRepositoryEndPoint
+// MARK: - RepositoryError
+
+enum RepositoryError: LocalizedError {
+  case serverError
+  case unkwonError
+}
+
+// MARK: - WorkoutPeerRandomMatchingRepository.WorkoutPeerRandomMatchingRepositoryEndPoint
 
 extension WorkoutPeerRandomMatchingRepository {
   enum WorkoutPeerRandomMatchingRepositoryEndPoint: TNEndPoint {
