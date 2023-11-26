@@ -55,6 +55,6 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
     let useCase = WorkoutSummaryUseCase(repository: repository, workoutRecordID: recordID)
     let viewModel = WorkoutSummaryViewModel(workoutSummaryUseCase: useCase)
     let workoutSummaryViewController = WorkoutSummaryViewController(viewModel: viewModel)
-    navigationController.pushViewController(workoutSummaryViewController, animated: true)
+    navigationController.setViewControllers([workoutSummaryViewController], animated: true)
   }
 }
