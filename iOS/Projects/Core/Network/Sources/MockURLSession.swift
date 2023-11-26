@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Log
 
 // MARK: - MockURLSession
 
@@ -19,7 +18,7 @@ public struct MockURLSession: URLSessionProtocol {
 
   public init(
     mockData: Data = Data(),
-    mockResponse: URLResponse = URLResponse(),
+    mockResponse: URLResponse = HTTPURLResponse(),
     mockError: Error? = nil,
     mockDataByURLString: [String: Data] = [:]
   ) {
