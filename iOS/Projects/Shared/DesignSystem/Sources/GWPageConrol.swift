@@ -31,8 +31,6 @@ public final class GWPageControl: UIView {
     return .init(width: pageControllerWidth, height: pageControllerHeight)
   }
 
-  // MARK: - 과연 UIVIew를 optional로 만드는게 맞을까?
-
   /// init에서 만약 5보다 큰 수나 2보다 작은 수가 입력되는 경우
   /// page 갯수가 2개로 설정 됩니다.
   public init(count: Int) {
