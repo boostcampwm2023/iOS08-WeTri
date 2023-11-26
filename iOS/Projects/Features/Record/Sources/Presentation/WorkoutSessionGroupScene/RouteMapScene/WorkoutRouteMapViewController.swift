@@ -33,11 +33,7 @@ final class WorkoutRouteMapViewController: UIViewController {
 
   private var subscriptions: Set<AnyCancellable> = []
 
-  private lazy var locationManager: CLLocationManager = {
-    let locationManager = CLLocationManager()
-    locationManager.delegate = self
-    return locationManager
-  }()
+  private let locationManager: CLLocationManager = .init()
 
   // MARK: UI Components
 
@@ -112,6 +108,7 @@ final class WorkoutRouteMapViewController: UIViewController {
   }
 
   private func setupLocationManager() {
+    locationManager.delegate = self
     locationManager.requestWhenInUseAuthorization()
     locationManager.startUpdatingLocation()
   }
