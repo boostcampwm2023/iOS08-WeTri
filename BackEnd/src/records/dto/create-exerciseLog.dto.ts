@@ -2,7 +2,7 @@ import { PickType } from '@nestjs/swagger';
 import { Record } from '../entities/records.entity';
 
 export class CreateExerciseLogDto extends PickType(Record, [
-  'workout',
+  'id',
   'workoutTime',
   'calorie',
   'distance',
