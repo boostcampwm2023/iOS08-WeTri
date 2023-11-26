@@ -1,12 +1,12 @@
 import {
   IsBoolean,
-  IsDate,
   IsNotEmpty,
   IsNumber,
   IsString,
 } from 'class-validator';
 import { Profile } from '../../../profiles/entities/profiles.entity';
-import { ApiOperation, ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
+import { SuccessResDto } from '../../../common/dto/SuccessRes.dto';
 
 export class RandomMatchDto {
   @IsNumber()
@@ -20,7 +20,7 @@ export class RandomMatchDto {
   waitingTime: number;
 }
 
-export class RandomMatchResponseDto {
+export class RandomMatch {
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({ example: true })
@@ -50,3 +50,20 @@ export class RandomMatchResponseDto {
   })
   peers?: Profile[];
 }
+
+export class RandomMatchResDto extends SuccessResDto {
+  @ApiProperty({ type: () => RandomMatch })
+  data: RandomMatch;
+}
+
+export const randomNoMatchingResDto = () => {
+  return {
+    example: {
+      code: null,
+      errorMessage: null,
+      data: {
+        matched: false,
+      },
+    },
+  };
+};
