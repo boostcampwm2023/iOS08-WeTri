@@ -80,8 +80,8 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
         case .failure:
           self?.cancelPeerRandomMatching()
         case .success:
-          self?.startIsMatchedRandomPeer(every: 2)
-          self?.cancelPeerRandomMatching(after: 150)
+          self?.startIsMatchedRandomPeer(every: Constants.pollingPeroid)
+          self?.cancelPeerRandomMatching(after: Constants.maximumCouldWaitTime)
         }
       }
       .store(in: &subscriptions)
@@ -126,5 +126,10 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
   private func cancelPeerRandomMatching() {
     useCase.matchCancel()
     coordinating?.popPeerRandomMatchingViewController()
+  }
+  
+  private enum Constants {
+    static let pollingPeroid: Double = 2
+    static let maximumCouldWaitTime: Double = 150
   }
 }

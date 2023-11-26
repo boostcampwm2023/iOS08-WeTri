@@ -12,7 +12,7 @@ import Foundation
 
 public protocol TNProvidable {
   associatedtype EndPoint = TNEndPoint
-  func request(_ service: EndPoint, statusCodeRange: Range<Int>) async throws -> Data
+  func request(_ service: EndPoint, successStatusCodeRange: Range<Int>) async throws -> Data
   func request(_ service: EndPoint, completion: @Sendable @escaping (Data?, URLResponse?, Error?) -> Void) throws
 }
 
@@ -29,16 +29,30 @@ public struct TNProvider<T: TNEndPoint>: TNProvidable {
     try session.dataTask(with: service.request(), completionHandler: completion).resume()
   }
 
-  public func request(_ service: T, statusCodeRange: Range<Int> = 200 ..< 300) async throws -> Data {
-    // TODO: URLResponse에 대응하는 코드 작성(backend 내려주는 API 문서 활용)
-
+  public func request(_ service: T, successStatusCodeRange range: Range<Int> = 200 ..< 300) async throws -> Data {
     let (data, response) = try await session.data(for: service.request(), delegate: nil)
-    guard let statusCode = (response as? HTTPURLResponse)?.statusCode,
-          statusCodeRange ~= statusCode
-    else {
-      throw TNError.invalidURL
+    guard let httpResponse = (response as? HTTPURLResponse) else {
+      throw TNError.httpResponseDwonCastingError
     }
+    try parsingStatusCodeToError(httpResponse.statusCode, successStatusCodeRange: range)
 
     return data
+  }
+}
+
+private extension TNProvider {
+  func parsingStatusCodeToError(_ statusCode: Int, successStatusCodeRange: Range<Int>) throws {
+    switch statusCode {
+    case successStatusCodeRange:
+      return
+    case 300 ..< 400:
+      throw TNError.redirectError
+    case 400 ..< 500:
+      throw TNError.clinetError
+    case 500 ..< 600:
+      throw TNError.serverError
+    default:
+      throw TNError.unknownError
+    }
   }
 }
