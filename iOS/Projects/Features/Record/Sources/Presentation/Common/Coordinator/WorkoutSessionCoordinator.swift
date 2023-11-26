@@ -27,7 +27,14 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
 
   func start() {
     // TODO: Mock Data 연결 필요
-    let session = URLSession.shared
+    guard let jsonPath = Bundle(for: Self.self).path(forResource: "WorkoutSession", ofType: "json"),
+          let jsonData = try? Data(contentsOf: .init(filePath: jsonPath))
+    else {
+      Log.make().error("WorkoutSession Mock Data를 생성할 수 없습니다.")
+      return
+    }
+
+    let session: URLSessionProtocol = isMockEnvironment ? MockURLSession(mockData: jsonData) : URLSession.shared
     let repository = WorkoutRecordRepository(session: session)
     let useCase = WorkoutRecordUseCase(repository: repository)
     let viewModel = WorkoutSessionContainerViewModel(workoutRecordUseCase: useCase, coordinating: self)
