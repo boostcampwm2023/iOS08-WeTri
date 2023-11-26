@@ -32,7 +32,7 @@ public struct TNProvider<T: TNEndPoint>: TNProvidable {
   public func request(_ service: T, successStatusCodeRange range: Range<Int> = 200 ..< 300) async throws -> Data {
     let (data, response) = try await session.data(for: service.request(), delegate: nil)
     guard let httpResponse = (response as? HTTPURLResponse) else {
-      throw TNError.httpResponseDwonCastingError
+      throw TNError.httpResponseDownCastingError
     }
     try checkStatusCode(httpResponse.statusCode, successStatusCodeRange: range)
 
@@ -48,7 +48,7 @@ private extension TNProvider {
     case 300 ..< 400:
       throw TNError.redirectError
     case 400 ..< 500:
-      throw TNError.clinetError
+      throw TNError.clientError
     case 500 ..< 600:
       throw TNError.serverError
     default:
