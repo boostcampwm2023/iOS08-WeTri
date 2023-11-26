@@ -19,4 +19,16 @@ export class ExtensionWebSocketServer {
             this.rooms.get(roomName).delete(client);
         }
     }
+
+    to(roomName: string) {
+        return {
+            emit: (event: string, message: string) => {
+                if(this.rooms.has(roomName)) {
+                    this.rooms.get(roomName).forEach(client => {
+                        client.send(JSON.stringify({ event, message }));
+                    }) 
+                }
+            }
+        }
+    }
 }
