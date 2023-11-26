@@ -8,6 +8,7 @@
 
 import Combine
 import DesignSystem
+import Log
 import UIKit
 
 // MARK: - HealthDataProtocol
@@ -59,6 +60,10 @@ public final class WorkoutSessionViewController: UIViewController {
   @available(*, unavailable)
   required init?(coder _: NSCoder) {
     fatalError("init(coder:) has not been implemented")
+  }
+
+  deinit {
+    Log.make().debug("\(Self.self) deinitialized")
   }
 
   // MARK: Life Cycles

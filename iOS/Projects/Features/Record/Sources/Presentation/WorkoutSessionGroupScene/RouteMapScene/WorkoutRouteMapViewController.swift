@@ -59,6 +59,7 @@ final class WorkoutRouteMapViewController: UIViewController {
 
   deinit {
     locationManager.stopUpdatingLocation()
+    Log.make().debug("\(Self.self) deinitialized")
   }
 
   // MARK: Life Cycles
