@@ -42,8 +42,11 @@ final class WorkoutSessionContainerViewModel {
 
   private let workoutRecordUseCase: WorkoutRecordUseCaseRepresentable
 
-  init(workoutRecordUseCase: WorkoutRecordUseCaseRepresentable) {
+  private weak var coordinating: WorkoutSessionCoordinating?
+
+  init(workoutRecordUseCase: WorkoutRecordUseCaseRepresentable, coordinating: WorkoutSessionCoordinating) {
     self.workoutRecordUseCase = workoutRecordUseCase
+    self.coordinating = coordinating
   }
 }
 
