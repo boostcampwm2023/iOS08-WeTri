@@ -23,11 +23,11 @@ struct WorkoutPeerRandomMatchingRepository {
 // MARK: WorkoutPeerRandomMatchingRepositoryRepresentable
 
 extension WorkoutPeerRandomMatchingRepository: WorkoutPeerRandomMatchingRepositoryRepresentable {
-  func matcheStart(workoutType: String) -> AnyPublisher<Result<Void, Error>, Never> {
+  func matcheStart(workoutTypeCode: Int) -> AnyPublisher<Result<Void, Error>, Never> {
     return Future<Result<Void, Error>, Never> { promise in
       Task {
         do {
-          let data = try await provider.request(.matchStart(workout: workoutType))
+          let data = try await provider.request(.matchStart(workoutTypeCode: workoutTypeCode))
           // TODO: 어차피 Nil인데, optional로해야할지 아니면 그냥 할지 고민
           // GWResponse<NullDTO>.self, GWResponse<NullDTO?>.self
           let response = try decoder.decode(GWResponse<NullDTO>.self, from: data)
@@ -98,7 +98,7 @@ enum RepositoryError: LocalizedError {
 extension WorkoutPeerRandomMatchingRepository {
   enum WorkoutPeerRandomMatchingRepositoryEndPoint: TNEndPoint {
     /// Proeprty
-    case matchStart(workout: String)
+    case matchStart(workoutTypeCode: Int)
     case matchCancel
     case isMatchedRandomPeer
 

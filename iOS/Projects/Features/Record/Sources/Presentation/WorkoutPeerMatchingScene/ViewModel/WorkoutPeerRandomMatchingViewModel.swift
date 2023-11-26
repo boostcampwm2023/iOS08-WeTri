@@ -35,8 +35,10 @@ final class WorkoutPeerRandomMatchingViewModel {
   // MARK: - Properties
 
   private weak var coordinating: WorkoutSettingCoordinating?
-  init(coordinating: WorkoutSettingCoordinating) {
+  private var useCase: WorkoutPeerRandomMatchingUseCaseRepresentable
+  init(coordinating: WorkoutSettingCoordinating, useCase: WorkoutPeerRandomMatchingUseCaseRepresentable) {
     self.coordinating = coordinating
+    self.useCase = useCase
   }
 
   private var subscriptions: Set<AnyCancellable> = []

@@ -11,12 +11,10 @@ import Foundation
 // MARK: - PeerMatchResponseDTO
 
 struct PeerMatchResponseDTO: Codable {
-  let initDate: Date
   let roomURLString: String
   let peersDTO: [PeerDTO]
 
   enum CodingKeys: String, CodingKey {
-    case initDate = "liveWorkoutStartTime"
     case roomURLString = "url"
     case peersDTO = "peers"
   }
