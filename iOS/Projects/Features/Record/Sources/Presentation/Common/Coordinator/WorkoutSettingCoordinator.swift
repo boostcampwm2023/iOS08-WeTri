@@ -37,15 +37,26 @@ final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
 
     let useCase = WorkoutEnvironmentSetupUseCase(repository: repository)
 
-    let viewModel = WorkoutEnvironmentSetupViewModel(useCase: useCase)
+    let viewModel = WorkoutEnvironmentSetupViewModel(useCase: useCase, coordinator: self)
 
     let viewController = WorkoutEnvironmentSetupViewController(viewModel: viewModel)
 
     navigationController.pushViewController(viewController, animated: false)
   }
 
-  func pushOpponentSearchViewController(workoutSetting _: WorkoutSetting) {
+  func pushPeerRandomMatchingViewController(workoutSetting _: WorkoutSetting) {
+    let viewModel = WorkoutPeerRandomMatchingViewModel(coordinating: self)
+
+    let viewController = WorkoutPeerRandomMatchingViewController(viewModel: viewModel)
+
+    viewController.modalPresentationStyle = .overFullScreen
+    viewController.modalTransitionStyle = .crossDissolve
+    navigationController.present(viewController, animated: true)
     // TODO: 뷰 컨트롤러 시작 로직 작성
+  }
+
+  func popPeerRandomMatchingViewController() {
+    navigationController.dismiss(animated: true)
   }
 
   func pushCountdownViewController(workoutSetting _: WorkoutSetting) {
