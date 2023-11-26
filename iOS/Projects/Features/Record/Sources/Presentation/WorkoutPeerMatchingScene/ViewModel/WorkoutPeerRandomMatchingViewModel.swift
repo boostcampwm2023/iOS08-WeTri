@@ -36,9 +36,17 @@ final class WorkoutPeerRandomMatchingViewModel {
 
   private weak var coordinating: WorkoutSettingCoordinating?
   private var useCase: WorkoutPeerRandomMatchingUseCaseRepresentable
-  init(coordinating: WorkoutSettingCoordinating, useCase: WorkoutPeerRandomMatchingUseCaseRepresentable) {
+  private let workoutSetting: WorkoutSetting
+  private var timerInitDate: Date?
+
+  init(
+    workoutSetting: WorkoutSetting,
+    coordinating: WorkoutSettingCoordinating,
+    useCase: WorkoutPeerRandomMatchingUseCaseRepresentable
+  ) {
     self.coordinating = coordinating
     self.useCase = useCase
+    self.workoutSetting = workoutSetting
   }
 
   private var subscriptions: Set<AnyCancellable> = []
@@ -50,14 +58,54 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
   public func transform(input: WorkoutPeerRandomMatchingViewModelInput) -> WorkoutPeerRandomMatchingViewModelOutput {
     subscriptions.removeAll()
 
+    bindUseCase()
+
     input
       .cancelPublisher
       .sink { [weak self] _ in
+        self?.useCase.matchCancel()
         self?.coordinating?.popPeerRandomMatchingViewController()
       }.store(in: &subscriptions)
 
     let initialState: WorkoutPeerRandomMatchingViewModelOutput = Just(.idle).eraseToAnyPublisher()
 
     return initialState
+  }
+
+  func bindUseCase() {
+    useCase.matcheStart(workoutSetting: workoutSetting)
+      .receive(on: RunLoop.main)
+      .sink { [weak self] results in
+        switch results {
+        case .failure:
+          self?.coordinating?.popPeerRandomMatchingViewController()
+        case .success:
+          self?.startIsMatchedRandomPeer(every: 2)
+        }
+      }
+      .store(in: &subscriptions)
+  }
+
+  func startIsMatchedRandomPeer(every time: Double) {
+    Timer.publish(every: time, on: .main, in: .common)
+      .autoconnect()
+      .sink { [weak self] _ in
+        self?.sendIsMatchedRandomPeer()
+      }
+      .store(in: &subscriptions)
+  }
+
+  func sendIsMatchedRandomPeer() {
+    useCase
+      .isMatchedRandomPeer()
+      .sink { [weak self] result in
+        switch result {
+        case let .success(success):
+          break
+        case .failure:
+          self?.coordinating?.popPeerRandomMatchingViewController()
+        }
+      }
+      .store(in: &subscriptions)
   }
 }

@@ -44,12 +44,12 @@ final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
     navigationController.pushViewController(viewController, animated: false)
   }
 
-  func pushPeerRandomMatchingViewController(workoutSetting _: WorkoutSetting) {
+  func pushPeerRandomMatchingViewController(workoutSetting: WorkoutSetting) {
     let repository = WorkoutPeerRandomMatchingRepository(session: URLSession.shared)
 
     let useCase = WorkoutPeerRandomMatchingUseCase(repository: repository)
 
-    let viewModel = WorkoutPeerRandomMatchingViewModel(coordinating: self, useCase: useCase)
+    let viewModel = WorkoutPeerRandomMatchingViewModel(workoutSetting: workoutSetting, coordinating: self, useCase: useCase)
 
     let viewController = WorkoutPeerRandomMatchingViewController(viewModel: viewModel)
 
@@ -79,25 +79,23 @@ private extension WorkoutSettingCoordinator {
 
   func makeMockDataFromRnaomMatchingDataByURLString() -> [String: Data] {
     let serverURL = Bundle.main.infoDictionary?["BaseURL"] as? String ?? ""
-    let mockDatByURLString = [
-      "\(serverURL)/\(PersistencyProperty.matchStart)" : mockDataMatchStart(),
-      "\(serverURL)/\(PersistencyProperty.matchCancel)" : mockDataMatchStart()
+    return [
+      "\(serverURL)/\(PersistencyProperty.matchStart)": mockDataMatchStart(),
+      "\(serverURL)/\(PersistencyProperty.matchCancel)": mockDataMatchStart(),
     ]
-    
-    return [:]
   }
-  
+
   func mockDataMatchStart() -> Data {
     guard
       let bundle = Bundle(identifier: PersistencyProperty.bundleIdentifier),
       let path = bundle.path(forResource: PersistencyProperty.matchStart, ofType: PersistencyProperty.peerTypesFileNameOfType),
-      let data = try? Data(contentsOf: URL(filePath: path)) 
+      let data = try? Data(contentsOf: URL(filePath: path))
     else {
       return Data()
     }
     return data
   }
-  
+
   func mockDataMatchCancel() -> Data {
     guard
       let bundle = Bundle(identifier: PersistencyProperty.bundleIdentifier),
@@ -108,11 +106,11 @@ private extension WorkoutSettingCoordinator {
     }
     return data
   }
-  
+
   var serverURL: String {
     Bundle.main.infoDictionary?["BaseURL"] as? String ?? ""
   }
-  
+
   private enum PersistencyProperty {
     static let bundleIdentifier = "kr.codesquad.boostcamp8.RecordFeature"
     static let matchStart = "MatchesStart"
