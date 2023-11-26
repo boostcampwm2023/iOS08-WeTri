@@ -37,8 +37,15 @@ public struct WorkoutRecordRepository: WorkoutRecordRepositoryRepresentable {
         }
       }
     }
-    .decode(type: [String: Int].self, decoder: jsonDecoder)
-    .compactMap(\.["recordId"])
+    .decode(type: GWResponse<[String: Int]>.self, decoder: jsonDecoder)
+    .tryMap {
+      guard let dictionary = $0.data,
+            let recordID = dictionary["recordId"]
+      else {
+        throw DataLayerError.noData
+      }
+      return recordID
+    }
     .eraseToAnyPublisher()
   }
 }
