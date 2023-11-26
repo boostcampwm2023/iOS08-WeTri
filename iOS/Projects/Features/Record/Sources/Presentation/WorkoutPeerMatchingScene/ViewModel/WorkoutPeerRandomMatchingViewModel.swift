@@ -81,7 +81,7 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
         case .failure:
           self?.coordinating?.popPeerRandomMatchingViewController()
         case .success:
-          self?.startIsMatchedRandomPeer(every: 2)
+          self?.sendIsMatchedRandomPeer()
         }
       }
       .store(in: &subscriptions)

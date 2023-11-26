@@ -83,6 +83,7 @@ private extension WorkoutSettingCoordinator {
     let res = [
       "\(serverURL)/\(PersistencyProperty.matchStartPath)": mockDataMatchStart(),
       "\(serverURL)/\(PersistencyProperty.matchCancellPath)": mockDataMatchStart(),
+      "\(serverURL)/\(PersistencyProperty.matchesRandomPath)": mockDataRandomMatching(),
     ]
     return res
   }
@@ -108,11 +109,11 @@ private extension WorkoutSettingCoordinator {
     }
     return data
   }
-  
+
   func mockDataRandomMatching() -> Data {
     guard
       let bundle = Bundle(identifier: PersistencyProperty.bundleIdentifier),
-      let path = bundle.path(forResource: PersistencyProperty.matchCancel, ofType: PersistencyProperty.peerTypesFileNameOfType),
+      let path = bundle.path(forResource: PersistencyProperty.matchesRandom, ofType: PersistencyProperty.peerTypesFileNameOfType),
       let data = try? Data(contentsOf: URL(filePath: path))
     else {
       return Data()
@@ -126,16 +127,16 @@ private extension WorkoutSettingCoordinator {
 
   private enum PersistencyProperty {
     static let bundleIdentifier = "kr.codesquad.boostcamp8.RecordFeature"
-    
+
     static let matchStart = "MatchesStart"
     static let matchStartPath = "matches/start"
-    
+
     static let matchCancel = "matchesCancel"
     static let matchCancellPath = "matches/cancle"
-    
+
     static let matchesRandom = "MatchesRandom"
     static let matchesRandomPath = "matches/random"
-    
+
     static let peerTypesFileNameOfType = "json"
   }
 }

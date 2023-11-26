@@ -65,7 +65,7 @@ extension WorkoutPeerRandomMatchingRepository: WorkoutPeerRandomMatchingReposito
         do {
           let data = try await provider.request(.isMatchedRandomPeer)
           let response = try decoder.decode(GWResponse<PeerMatchResponseDTO>.self, from: data)
-
+          Log.make().debug("\(response.code ?? 0)")
           if response.code == 201 {
             promise(.success(.success(nil)))
           } else if response.code == 200 {
@@ -74,6 +74,7 @@ extension WorkoutPeerRandomMatchingRepository: WorkoutPeerRandomMatchingReposito
             promise(.success(.failure(RepositoryError.serverError)))
           }
         } catch {
+          Log.make().fault("\(error.localizedDescription)")
           // TODO: ERROR Handling
           promise(.success(.failure(error)))
         }
