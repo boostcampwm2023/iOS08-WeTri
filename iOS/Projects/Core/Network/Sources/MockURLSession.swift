@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Log
 
 // MARK: - MockURLSession
 
@@ -31,7 +32,6 @@ public struct MockURLSession: URLSessionProtocol {
   public func data(for request: URLRequest, delegate _: URLSessionTaskDelegate?) async throws -> (Data, URLResponse) {
     let urlString = request.url?.absoluteString ?? ""
     let mockData = mockDataByURLString[urlString] ?? mockData
-
     return (mockData, mockResponse)
   }
 

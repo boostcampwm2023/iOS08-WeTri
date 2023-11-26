@@ -62,6 +62,7 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
 
     input
       .cancelPublisher
+      .receive(on: RunLoop.main)
       .sink { [weak self] _ in
         self?.useCase.matchCancel()
         self?.coordinating?.popPeerRandomMatchingViewController()
@@ -98,6 +99,7 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
   func sendIsMatchedRandomPeer() {
     useCase
       .isMatchedRandomPeer()
+      .receive(on: RunLoop.main)
       .sink { [weak self] result in
         switch result {
         case let .success(success):

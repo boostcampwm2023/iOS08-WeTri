@@ -7,6 +7,7 @@
 //
 
 import Coordinator
+import Log
 import Trinet
 import UIKit
 
@@ -45,7 +46,7 @@ final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
   }
 
   func pushPeerRandomMatchingViewController(workoutSetting: WorkoutSetting) {
-    let repository = WorkoutPeerRandomMatchingRepository(session: URLSession.shared)
+    let repository = WorkoutPeerRandomMatchingRepository(session: makeMockDataFromRnaomMatching())
 
     let useCase = WorkoutPeerRandomMatchingUseCase(repository: repository)
 
@@ -79,10 +80,11 @@ private extension WorkoutSettingCoordinator {
 
   func makeMockDataFromRnaomMatchingDataByURLString() -> [String: Data] {
     let serverURL = Bundle.main.infoDictionary?["BaseURL"] as? String ?? ""
-    return [
-      "\(serverURL)/\(PersistencyProperty.matchStart)": mockDataMatchStart(),
-      "\(serverURL)/\(PersistencyProperty.matchCancel)": mockDataMatchStart(),
+    let res = [
+      "\(serverURL)/\(PersistencyProperty.matchStartPath)": mockDataMatchStart(),
+      "\(serverURL)/\(PersistencyProperty.matchCancellPath)": mockDataMatchStart(),
     ]
+    return res
   }
 
   func mockDataMatchStart() -> Data {
@@ -106,6 +108,17 @@ private extension WorkoutSettingCoordinator {
     }
     return data
   }
+  
+  func mockDataRandomMatching() -> Data {
+    guard
+      let bundle = Bundle(identifier: PersistencyProperty.bundleIdentifier),
+      let path = bundle.path(forResource: PersistencyProperty.matchCancel, ofType: PersistencyProperty.peerTypesFileNameOfType),
+      let data = try? Data(contentsOf: URL(filePath: path))
+    else {
+      return Data()
+    }
+    return data
+  }
 
   var serverURL: String {
     Bundle.main.infoDictionary?["BaseURL"] as? String ?? ""
@@ -113,11 +126,16 @@ private extension WorkoutSettingCoordinator {
 
   private enum PersistencyProperty {
     static let bundleIdentifier = "kr.codesquad.boostcamp8.RecordFeature"
+    
     static let matchStart = "MatchesStart"
     static let matchStartPath = "matches/start"
+    
     static let matchCancel = "matchesCancel"
-    static let matchCacnelPath = "matches/cancle"
-    static let workoutTypesFileName = "WorkoutTypes"
+    static let matchCancellPath = "matches/cancle"
+    
+    static let matchesRandom = "MatchesRandom"
+    static let matchesRandomPath = "matches/random"
+    
     static let peerTypesFileNameOfType = "json"
   }
 }
