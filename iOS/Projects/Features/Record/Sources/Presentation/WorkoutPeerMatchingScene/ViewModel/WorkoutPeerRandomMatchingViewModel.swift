@@ -64,8 +64,7 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
       .cancelPublisher
       .receive(on: RunLoop.main)
       .sink { [weak self] _ in
-        self?.useCase.matchCancel()
-        self?.coordinating?.popPeerRandomMatchingViewController()
+        self?.cancelPeerRandomMatching()
       }.store(in: &subscriptions)
 
     let initialState: WorkoutPeerRandomMatchingViewModelOutput = Just(.idle).eraseToAnyPublisher()
@@ -79,21 +78,22 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
       .sink { [weak self] results in
         switch results {
         case .failure:
-          self?.coordinating?.popPeerRandomMatchingViewController()
+          self?.cancelPeerRandomMatching()
         case .success:
           self?.startIsMatchedRandomPeer(every: 2)
-          self?.popViewController(after: 10)
+          self?.cancelPeerRandomMatching(after: 10)
         }
       }
       .store(in: &subscriptions)
   }
 
-  private func popViewController(after: Double) {
+  private func cancelPeerRandomMatching(after: Double) {
     let afterStride = RunLoop.SchedulerTimeType.Stride(after)
+    
     Just(())
       .delay(for: afterStride, scheduler: RunLoop.main)
       .sink { [weak self] _ in
-        self?.coordinating?.popPeerRandomMatchingViewController()
+        self?.cancelPeerRandomMatching()
       }.store(in: &subscriptions)
   }
 
@@ -121,5 +121,10 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
         }
       }
       .store(in: &subscriptions)
+  }
+  
+  private func cancelPeerRandomMatching() {
+    useCase.matchCancel()
+    coordinating?.popPeerRandomMatchingViewController()
   }
 }

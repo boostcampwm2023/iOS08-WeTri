@@ -34,9 +34,7 @@ extension WorkoutPeerRandomMatchingRepository: WorkoutPeerRandomMatchingReposito
           let response = try decoder.decode(GWResponse<NullDTO>.self, from: data)
           if 200 ... 300 ~= (response.code ?? 404) { // 200번대 REsponse인지 확인, 보통 서버에서 코드를 보내주지만, 안보내줄 경우 자동적으로 동작 안하게 작성)
             promise(.success(.success(())))
-            Log.make().fault("정상적으로 matcheStart data를 파싱했습니다.")
           } else {
-            Log.make().fault("정상적으로 matcheStart data를 파싱하지 못했습니다.")
             // TODO: ERROR Handling
             promise(.success(.failure(RepositoryError.serverError)))
           }
@@ -51,9 +49,7 @@ extension WorkoutPeerRandomMatchingRepository: WorkoutPeerRandomMatchingReposito
     Task {
       do {
         let _ = try await provider.request(.matchCancel)
-        Log.make().fault("정상적으로 matchCancel을 실행했습니다.")
       } catch {
-        Log.make().fault("비정상적으로 matchCancel이 실행되었습니다.")
         // TODO: ERROR Handling
       }
     }
@@ -65,7 +61,6 @@ extension WorkoutPeerRandomMatchingRepository: WorkoutPeerRandomMatchingReposito
         do {
           let data = try await provider.request(.isMatchedRandomPeer)
           let response = try decoder.decode(GWResponse<PeerMatchResponseDTO>.self, from: data)
-          Log.make().debug("\(response.code ?? 0)")
           if response.code == 201 {
             promise(.success(.success(nil)))
           } else if response.code == 200 {
@@ -74,7 +69,6 @@ extension WorkoutPeerRandomMatchingRepository: WorkoutPeerRandomMatchingReposito
             promise(.success(.failure(RepositoryError.serverError)))
           }
         } catch {
-          Log.make().fault("\(error.localizedDescription)")
           // TODO: ERROR Handling
           promise(.success(.failure(error)))
         }
