@@ -8,7 +8,6 @@
 
 import Combine
 import DesignSystem
-import OSLog
 import UIKit
 
 // MARK: - WorkoutEnvironmentSetupViewController
@@ -278,8 +277,7 @@ extension WorkoutEnvironmentSetupViewController: UICollectionViewDelegate {
 
   func workoutTypesCollectionViewDidSelectItemAt(_ indexPath: IndexPath) {
     guard
-      let cell = workoutTypesCollectionView?.dequeueReusableCell(withReuseIdentifier: WorkoutSelectTypeCell.identifier, for: indexPath)
-      as? WorkoutSelectTypeCell
+      let cell = workoutTypesCollectionView?.cellForItem(at: indexPath) as? WorkoutSelectTypeCell
     else {
       return
     }
@@ -288,8 +286,7 @@ extension WorkoutEnvironmentSetupViewController: UICollectionViewDelegate {
 
   func workoutPeerTypesCollectionViewDidSelectItemAt(_ indexPath: IndexPath) {
     guard
-      let cell = workoutPeerTypesCollectionView?.dequeueReusableCell(withReuseIdentifier: WorkoutPeerTypeSelectCell.identifier, for: indexPath)
-      as? WorkoutPeerTypeSelectCell
+      let cell = workoutPeerTypesCollectionView?.cellForItem(at: indexPath) as? WorkoutPeerTypeSelectCell
     else {
       return
     }

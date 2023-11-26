@@ -25,6 +25,7 @@ final class WorkoutPeerTypeSelectCell: UICollectionViewCell {
   }
 
   static let identifier = "WorkoutPeerSelectCell"
+
   private var descriptionIconSystemName: String = ""
   private var descriptionTitleText: String = ""
   private var descriptionSubTitleText: String = ""
@@ -196,6 +197,11 @@ extension WorkoutPeerTypeSelectCell {
   }
 
   func info() -> PeerType {
+    let descriptionTitle = descriptionTitleText
+    let descriptionIconSystemmName = descriptionIconSystemName
+    let descriptionSubtitleText = descriptionSubTitleText
+    let typeCode = typeCode
+
     return .init(
       icon: descriptionIconSystemName,
       title: descriptionTitleText,

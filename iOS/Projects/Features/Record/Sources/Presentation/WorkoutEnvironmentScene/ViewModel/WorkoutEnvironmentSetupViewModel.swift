@@ -147,9 +147,28 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
     return Publishers.MergeMany(workoutTypes, idle, workoutPeerType, didSelectWorkoutType, didSelectWorkoutPeerType).eraseToAnyPublisher()
   }
 
-  func didTapStartButton() {
-    let workoutSettiong: WorkoutSetting = .init(workoutType: .run, workoutPeerType: .multi, opponents: [])
-    coordinator?.pushPeerRandomMatchingViewController(workoutSetting: workoutSettiong)
+  private func didTapStartButton() {
+    guard
+      let didSelectWorkoutType,
+      let didSelectWorkoutPeerType,
+      let mode = WorkoutPeerTypeCodeToModeString(rawValue: didSelectWorkoutPeerType.typeCode)
+    else {
+      return
+    }
+
+    let workoutSettiong = WorkoutSetting(workoutType: didSelectWorkoutType, workoutPeerType: didSelectWorkoutPeerType)
+
+    switch mode {
+    case .solo:
+      break
+    case .random:
+      coordinator?.pushPeerRandomMatchingViewController(workoutSetting: workoutSettiong)
+    }
+  }
+
+  private enum WorkoutPeerTypeCodeToModeString: Int {
+    case solo = 1
+    case random = 2
   }
 }
 

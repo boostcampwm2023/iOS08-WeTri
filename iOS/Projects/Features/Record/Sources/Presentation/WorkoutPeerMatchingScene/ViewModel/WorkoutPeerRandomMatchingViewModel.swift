@@ -108,7 +108,7 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
 
   private func sendIsMatchedRandomPeer() {
     useCase
-      .isMatchedRandomPeer()
+      .isMatchedRandomPeer(workoutTypeCode: workoutSetting.workoutType.typeCode)
       .receive(on: RunLoop.main)
       .sink { [weak self] result in
         switch result {

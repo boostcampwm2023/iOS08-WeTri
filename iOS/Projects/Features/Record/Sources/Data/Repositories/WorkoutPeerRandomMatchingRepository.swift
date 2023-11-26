@@ -8,7 +8,6 @@
 
 import Combine
 import Foundation
-import Log
 import Trinet
 
 // MARK: - WorkoutPeerRandomMatchingRepository
@@ -55,11 +54,11 @@ extension WorkoutPeerRandomMatchingRepository: WorkoutPeerRandomMatchingReposito
     }
   }
 
-  func isMatchedRandomPeer() -> AnyPublisher<Result<PeerMatchResponseDTO?, Error>, Never> {
+  func isMatchedRandomPeer(workoutTypeCode: Int) -> AnyPublisher<Result<PeerMatchResponseDTO?, Error>, Never> {
     return Future<Result<PeerMatchResponseDTO?, Error>, Never> { promise in
       Task {
         do {
-          let data = try await provider.request(.isMatchedRandomPeer)
+          let data = try await provider.request(.isMatchedRandomPeer(workoutTypeCode: workoutTypeCode))
           let response = try decoder.decode(GWResponse<PeerMatchResponseDTO>.self, from: data)
           if response.code == 201 {
             promise(.success(.success(nil)))
@@ -91,7 +90,7 @@ extension WorkoutPeerRandomMatchingRepository {
     /// Proeprty
     case matchStart(workoutTypeCode: Int)
     case matchCancel
-    case isMatchedRandomPeer
+    case isMatchedRandomPeer(workoutTypeCode: Int)
 
     /// TNEndPoint
     var path: String {
@@ -107,11 +106,10 @@ extension WorkoutPeerRandomMatchingRepository {
 
     var method: TNMethod {
       switch self {
-      case .matchStart:
+      case .isMatchedRandomPeer,
+           .matchStart:
         return .post
       case .matchCancel:
-        return .get
-      case .isMatchedRandomPeer:
         return .get
       }
     }
@@ -122,10 +120,11 @@ extension WorkoutPeerRandomMatchingRepository {
 
     var body: Encodable? {
       switch self {
-      case let .matchStart(workout):
-        return workout
-      case .isMatchedRandomPeer,
-           .matchCancel:
+      case let .matchStart(workoutTypeCode):
+        return workoutTypeCode
+      case let .isMatchedRandomPeer(workoutTypeCode):
+        return workoutTypeCode
+      case .matchCancel:
         return nil
       }
     }
