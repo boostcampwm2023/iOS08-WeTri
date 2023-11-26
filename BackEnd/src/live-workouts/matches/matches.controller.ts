@@ -1,42 +1,68 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Delete, UseGuards } from '@nestjs/common';
 import { MatchesService } from './matches.service';
 import { CreateMatchDto } from './dto/create-match.dto';
-import { UpdateMatchDto } from './dto/update-match.dto';
+import { AccessTokenGuard } from '../../auth/guard/bearerToken.guard';
+import { ProfileDeco } from '../../profiles/decorator/profile.decorator';
+import { Profile } from '../../profiles/entities/profiles.entity';
+import { RandomMatchDto, RandomMatchResponseDto } from './dto/random-match.dto';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-@Controller('matches')
+@ApiTags('매칭 API')
+@Controller('api/v1/matches')
+@UseGuards(AccessTokenGuard)
 export class MatchesController {
   constructor(private readonly matchesService: MatchesService) {}
 
-  @Post()
-  create(@Body() createMatchDto: CreateMatchDto) {
-    return this.matchesService.create(createMatchDto);
+  @ApiOperation({ summary: '매칭 시작' })
+  @ApiBody({ type: CreateMatchDto })
+  @ApiResponse({
+    status: 200,
+    description: '매칭이 시작이 성공 했을 경우',
+    schema: {
+      example: {
+        code: null,
+        errorMessage: null,
+        data: null,
+      },
+    },
+  })
+  @Post('start')
+  startMatch(
+    @ProfileDeco() profile: Profile,
+    @Body() createMatchDto: CreateMatchDto,
+  ) {
+    return this.matchesService.startMatch(profile, createMatchDto);
   }
 
-  @Get()
-  findAll() {
-    return this.matchesService.findAll();
+  @ApiOperation({ summary: '매칭이 되었니?' })
+  @ApiBody({ type: CreateMatchDto })
+  @ApiResponse({ type: RandomMatchResponseDto })
+  @Get('random')
+  isRandomMatched(
+    @ProfileDeco() profile: Profile,
+    @Body() randomMatchDto: RandomMatchDto,
+  ) {
+    return this.matchesService.isRandomMatched(profile, randomMatchDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.matchesService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMatchDto: UpdateMatchDto) {
-    return this.matchesService.update(+id, updateMatchDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.matchesService.remove(+id);
+  @ApiOperation({ summary: '매칭 취소' })
+  @ApiBody({ type: CreateMatchDto })
+  @ApiResponse({
+    status: 200,
+    description: '매칭이 취소가 성공했을 경우',
+    schema: {
+      example: {
+        code: null,
+        errorMessage: null,
+        data: null,
+      },
+    },
+  })
+  @Delete('cancel')
+  cancelMatch(
+    @ProfileDeco() profile: Profile,
+    @Body() createMatchDto: CreateMatchDto,
+  ) {
+    return this.matchesService.cancelMatch(profile, createMatchDto);
   }
 }

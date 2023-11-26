@@ -1,26 +1,150 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { InjectRedis } from '@songkeys/nestjs-redis';
+import { Redis } from 'ioredis';
 import { CreateMatchDto } from './dto/create-match.dto';
-import { UpdateMatchDto } from './dto/update-match.dto';
+import { Profile } from '../../profiles/entities/profiles.entity';
+import { v4 as uuidv4 } from 'uuid';
+import { RandomMatchDto, RandomMatchResponseDto } from './dto/random-match.dto';
+import {
+  MAX_USERS,
+  WAITING_60_TIME,
+  WAITING_40_TIME,
+  USER_WAITED_20_MIN_USERS,
+  USER_WAITED_40_MIN_USERS,
+  USER_WAITED_60_MIN_USERS,
+  MIN_USERS,
+  WAITING_20_TIME,
+  ALONE_USER,
+} from './constant/matches.constant';
 
 @Injectable()
 export class MatchesService {
-  create(createMatchDto: CreateMatchDto) {
-    return 'This action adds a new match';
+  private readonly logger: Logger = new Logger(MatchesService.name);
+
+  constructor(@InjectRedis() private readonly redis: Redis) {}
+  async startMatch(
+    profile: Profile,
+    createMatchDto: CreateMatchDto,
+  ): Promise<void> {
+    const { nickname } = profile;
+    const { workoutId } = createMatchDto;
+    this.logger.log(`startMatch: ${nickname} ${workoutId}`);
+
+    await this.initMatch(nickname, workoutId);
+    await this.redis.rpush(`matching:${workoutId}`, JSON.stringify(profile));
   }
 
-  findAll() {
-    return `This action returns all matches`;
+  async cancelMatch(
+    profile: Profile,
+    createMatchDto: CreateMatchDto,
+  ): Promise<void> {
+    const { nickname } = profile;
+    const { workoutId } = createMatchDto;
+    this.logger.log(`cancelMatch: ${nickname} ${workoutId}`);
+
+    await this.initMatch(nickname, workoutId);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} match`;
+  async isRandomMatched(
+    profile: Profile,
+    randomMatchDto: RandomMatchDto,
+  ): Promise<RandomMatchResponseDto> {
+    const { nickname } = profile;
+    const { workoutId, waitingTime } = randomMatchDto;
+    this.logger.log(`isRandomMatched: ${nickname} ${workoutId}`);
+
+    const roomId: string = await this.redis.get(`userMatch:${nickname}`);
+    if (roomId) {
+      const serializedProfiles: string = await this.redis.get(
+        `matchProfiles:${roomId}`,
+      );
+      const profiles: Profile[] = JSON.parse(serializedProfiles);
+      const liveWorkoutStartTimeUTC: string = await this.redis.get(
+        `matchStartTime:${roomId}`,
+      );
+      return {
+        matched: true,
+        matchId: roomId,
+        liveWorkoutStartTime: liveWorkoutStartTimeUTC,
+        peers: profiles,
+      };
+    }
+
+    const waitingLength = await this.redis.llen(`matching:${workoutId}`);
+    const waitingUsers = this.matchingAlgorithm(waitingLength, waitingTime);
+
+    if (waitingUsers >= MIN_USERS) {
+      return await this.makeWebSocketRoom(workoutId, waitingUsers);
+    }
   }
 
-  update(id: number, updateMatchDto: UpdateMatchDto) {
-    return `This action updates a #${id} match`;
+  private async makeWebSocketRoom(
+    workoutId: number,
+    waitingUsers: number,
+  ): Promise<RandomMatchResponseDto> {
+    const roomId: string = `match:${workoutId}:${uuidv4()}`;
+
+    const serializedUsers: string[] = await this.redis.lrange(
+      `matching:${workoutId}`,
+      0,
+      waitingUsers - 1,
+    );
+    const profiles: Profile[] = serializedUsers.map((serializedUser) =>
+      JSON.parse(serializedUser),
+    );
+
+    const liveWorkoutStartTime = new Date();
+    liveWorkoutStartTime.setMinutes(liveWorkoutStartTime.getSeconds() + 15);
+    const liveWorkoutStartTimeUTC = liveWorkoutStartTime.toISOString();
+
+    const multi = this.redis.multi();
+    for (const { nickname } of profiles) {
+      multi.set(`userMatch:${nickname}`, roomId);
+    }
+
+    multi.set(`matchProfiles:${roomId}`, JSON.stringify(profiles));
+    multi.set(
+      `matchStartTime:${roomId}`,
+      JSON.stringify(liveWorkoutStartTimeUTC),
+    );
+    multi.expire(`matchStartTime:${roomId}`, 3600);
+    multi.ltrim(`matching:${workoutId}`, waitingUsers, -1);
+    await multi.exec();
+
+    return {
+      matched: true,
+      matchId: roomId,
+      liveWorkoutStartTime: liveWorkoutStartTimeUTC,
+      peers: profiles,
+    };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} match`;
+  private matchingAlgorithm(queueLength: number, waitingTime: number) {
+    if (queueLength >= MAX_USERS) {
+      return MAX_USERS;
+    } else if (
+      waitingTime <= WAITING_20_TIME &&
+      queueLength >= USER_WAITED_20_MIN_USERS
+    ) {
+      return USER_WAITED_20_MIN_USERS;
+    } else if (
+      waitingTime >= WAITING_40_TIME &&
+      queueLength >= USER_WAITED_40_MIN_USERS
+    ) {
+      return USER_WAITED_40_MIN_USERS;
+    } else if (
+      waitingTime >= WAITING_60_TIME &&
+      queueLength >= USER_WAITED_60_MIN_USERS
+    ) {
+      return USER_WAITED_60_MIN_USERS;
+    }
+    return ALONE_USER;
+  }
+
+  private async initMatch(nickname: string, workoutId: number) {
+    return Promise.all([
+      this.redis.lrem(`matching:${workoutId}`, 0, nickname),
+      this.redis.del(`userMatch:${nickname}`),
+    ]);
   }
 }
