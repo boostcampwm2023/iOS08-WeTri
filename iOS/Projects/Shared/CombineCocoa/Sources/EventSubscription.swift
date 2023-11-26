@@ -9,28 +9,28 @@
 import Combine
 import UIKit
 
-class EventSubscription<EventSubscriber: Subscriber>:
+final class EventSubscription<EventSubscriber: Subscriber>:
   Subscription where EventSubscriber.Input == UIControl, EventSubscriber.Failure == Never {
   func request(_: Subscribers.Demand) {}
 
   func cancel() {
     subscriber = nil
-    control.removeTarget(self, action: #selector(eventDidOccur), for: event)
+    control.removeAction(action, for: event)
   }
 
-  @objc func eventDidOccur() {
-    _ = subscriber?.receive(control)
-  }
-
-  let control: UIControl
-  let event: UIControl.Event
-  var subscriber: EventSubscriber?
+  private let control: UIControl
+  private let event: UIControl.Event
+  private var subscriber: EventSubscriber?
+  private let action: UIAction
 
   init(control: UIControl, event: UIControl.Event, subscriber: EventSubscriber) {
     self.control = control
     self.event = event
     self.subscriber = subscriber
+    action = .init { _ in
+      _ = subscriber.receive(control)
+    }
 
-    control.addTarget(self, action: #selector(eventDidOccur), for: event)
+    control.addAction(action, for: event)
   }
 }
