@@ -73,7 +73,7 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
     return initialState
   }
 
-  func bindUseCase() {
+  private func bindUseCase() {
     useCase.matcheStart(workoutSetting: workoutSetting)
       .receive(on: RunLoop.main)
       .sink { [weak self] results in
@@ -81,13 +81,23 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
         case .failure:
           self?.coordinating?.popPeerRandomMatchingViewController()
         case .success:
-          self?.sendIsMatchedRandomPeer()
+          self?.startIsMatchedRandomPeer(every: 2)
+          self?.popViewController(after: 10)
         }
       }
       .store(in: &subscriptions)
   }
 
-  func startIsMatchedRandomPeer(every time: Double) {
+  private func popViewController(after: Double) {
+    let afterStride = RunLoop.SchedulerTimeType.Stride(after)
+    Just(())
+      .delay(for: afterStride, scheduler: RunLoop.main)
+      .sink { [weak self] _ in
+        self?.coordinating?.popPeerRandomMatchingViewController()
+      }.store(in: &subscriptions)
+  }
+
+  private func startIsMatchedRandomPeer(every time: Double) {
     Timer.publish(every: time, on: .main, in: .common)
       .autoconnect()
       .sink { [weak self] _ in
@@ -96,14 +106,16 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
       .store(in: &subscriptions)
   }
 
-  func sendIsMatchedRandomPeer() {
+  private func sendIsMatchedRandomPeer() {
     useCase
       .isMatchedRandomPeer()
       .receive(on: RunLoop.main)
       .sink { [weak self] result in
         switch result {
-        case let .success(success):
-          break
+        case let .success(dto):
+          if dto == nil {
+            break
+          }
         case .failure:
           self?.coordinating?.popPeerRandomMatchingViewController()
         }
