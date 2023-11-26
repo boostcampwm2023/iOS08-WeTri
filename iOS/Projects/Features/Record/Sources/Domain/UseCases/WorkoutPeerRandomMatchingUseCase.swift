@@ -9,22 +9,12 @@
 import Combine
 import Foundation
 
-// MARK: - WorkoutPeerRandomMatchingRepositoryRepresentable
-
-// TODO: 옮겨야 할 Protocol
-
-protocol WorkoutPeerRandomMatchingRepositoryRepresentable {
-  func matcheStart(workoutType: String) -> AnyPublisher<Result<Void, Error>, Never>
-  func matchCancel() -> AnyPublisher<Result<Void, Error>, Never>
-  func isMatchedRandomPeer() -> AnyPublisher<Result<Void, Error>, Never>
-}
-
 // MARK: - WorkoutPeerRandomMatchingUseCaseRepresentable
 
 protocol WorkoutPeerRandomMatchingUseCaseRepresentable {
   func matcheStart(workoutSetting: WorkoutSetting) -> AnyPublisher<Result<Void, Error>, Never>
   func matchCancel() -> AnyPublisher<Result<Void, Error>, Never>
-  func isMatchedRandomPeer() -> AnyPublisher<Result<Void, Error>, Never>
+  func isMatchedRandomPeer() -> AnyPublisher<Result<PeerMatchResponseDTO?, Error>, Never>
 }
 
 // MARK: - WorkoutPeerRandomMatchingUseCase
@@ -47,7 +37,8 @@ extension WorkoutPeerRandomMatchingUseCase: WorkoutPeerRandomMatchingUseCaseRepr
     return repository.matchCancel()
   }
 
-  func isMatchedRandomPeer() -> AnyPublisher<Result<Void, Error>, Never> {
+  func isMatchedRandomPeer() -> AnyPublisher<Result<PeerMatchResponseDTO?, Error>, Never> {
+    // TODO: DTO to Entity 변환 작업 필요
     return repository.isMatchedRandomPeer()
   }
 }

@@ -31,9 +31,10 @@ extension WorkoutPeerRandomMatchingRepository: WorkoutPeerRandomMatchingReposito
           // TODO: 어차피 Nil인데, optional로해야할지 아니면 그냥 할지 고민
           // GWResponse<NullDTO>.self, GWResponse<NullDTO?>.self
           let response = try decoder.decode(GWResponse<NullDTO>.self, from: data)
-          if response.code == 200 {
+          if 200 ... 300 ~= (response.code ?? 404) { // 200번대 REsponse인지 확인, 보통 서버에서 코드를 보내주지만, 안보내줄 경우 자동적으로 동작 안하게 작성)
             promise(.success(.success(())))
-          } else if response.errorMessage != nil {
+          } else {
+            // TODO: ERROR Handling
             promise(.success(.failure(RepositoryError.serverError)))
           }
         } catch {
@@ -44,12 +45,43 @@ extension WorkoutPeerRandomMatchingRepository: WorkoutPeerRandomMatchingReposito
   }
 
   func matchCancel() -> AnyPublisher<Result<Void, Error>, Never> {
-    return Future<Result<Void, Error>, Never> { _ in
+    return Future<Result<Void, Error>, Never> { promise in
+      Task {
+        do {
+          let data = try await provider.request(.matchCancel)
+          let response = try decoder.decode(GWResponse<NullDTO>.self, from: data)
+          if 200 ... 300 ~= (response.code ?? 404) {
+            promise(.success(.success(())))
+          } else {
+            promise(.success(.failure(RepositoryError.serverError)))
+          }
+        } catch {
+          // TODO: ERROR Handling
+          promise(.success(.failure(error)))
+        }
+      }
     }.eraseToAnyPublisher()
   }
 
-  func isMatchedRandomPeer() -> AnyPublisher<Result<Void, Error>, Never> {
-    return Future<Result<Void, Error>, Never> { _ in
+  func isMatchedRandomPeer() -> AnyPublisher<Result<PeerMatchResponseDTO?, Error>, Never> {
+    return Future<Result<PeerMatchResponseDTO?, Error>, Never> { promise in
+      Task {
+        do {
+          let data = try await provider.request(.isMatchedRandomPeer)
+          let response = try decoder.decode(GWResponse<PeerMatchResponseDTO>.self, from: data)
+
+          if response.code == 201 {
+            promise(.success(.success(nil)))
+          } else if response.code == 200 {
+            promise(.success(.success(response.data)))
+          } else {
+            promise(.success(.failure(RepositoryError.serverError)))
+          }
+        } catch {
+          // TODO: ERROR Handling
+          promise(.success(.failure(error)))
+        }
+      }
     }.eraseToAnyPublisher()
   }
 }
