@@ -70,3 +70,9 @@ final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
     settingDidFinishedDelegate?.workoutSettingCoordinatorDidFinished(workoutSetting: workoutSetting)
   }
 }
+
+extension WorkoutSettingCoordinator {
+  func makeMockDataFromRnaomMatching() -> URLProtocol{
+    let mockSession = MockURLSession(mockData: <#T##Data#>)
+  }
+}
