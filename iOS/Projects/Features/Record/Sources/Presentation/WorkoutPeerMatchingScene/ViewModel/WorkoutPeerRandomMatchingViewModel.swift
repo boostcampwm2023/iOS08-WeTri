@@ -81,7 +81,7 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
           self?.cancelPeerRandomMatching()
         case .success:
           self?.startIsMatchedRandomPeer(every: 2)
-          self?.cancelPeerRandomMatching(after: 10)
+          self?.cancelPeerRandomMatching(after: 150)
         }
       }
       .store(in: &subscriptions)
