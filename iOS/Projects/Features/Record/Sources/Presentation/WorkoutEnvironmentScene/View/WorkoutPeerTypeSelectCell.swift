@@ -25,6 +25,7 @@ final class WorkoutPeerTypeSelectCell: UICollectionViewCell {
   }
 
   static let identifier = "WorkoutPeerSelectCell"
+
   private var descriptionIconSystemName: String = ""
   private var descriptionTitleText: String = ""
   private var descriptionSubTitleText: String = ""
