@@ -20,7 +20,7 @@ export class EventsGateway implements OnGatewayInit {
   constructor(private readonly eventsService: EventsService) {}
 
   afterInit(server: any) {
-      new ExtensionWebSocketServer(server);
+    new ExtensionWebSocketServer(server);
   }
 
   @SubscribeMessage('events')
@@ -35,8 +35,6 @@ export class EventsGateway implements OnGatewayInit {
 
   handleConnection(client: WebSocket): void {
     new ExtensionWebSocket(client, this.server);
-    client.join('room1');
-    this.server.to('room1').emit('event_name', "새로운 유저가 room1에 참가하셨습니다.");
     console.log(`클라이언트 연결`);
   }
 
