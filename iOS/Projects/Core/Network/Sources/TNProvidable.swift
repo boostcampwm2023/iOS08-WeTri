@@ -31,7 +31,7 @@ public struct TNProvider<T: TNEndPoint>: TNProvidable {
     return data
   }
 
-  public func request(_ service: T, completion: @Sendable @escaping (Data?, URLResponse?, Error?) -> Void) throws {
+  public func request(_ service: T, completion: @escaping (Data?, URLResponse?, Error?) -> Void) throws {
     try session.dataTask(with: service.request(), completionHandler: completion).resume()
   }
 }

@@ -111,7 +111,7 @@ final class Test: XCTestCase {
     let expectation = XCTestExpectation(description: "API호출 완료 Expectaion")
     var providedData = Data()
     try provider.request(targetSut) { data, _, _ in
-      providedData = data ?? providedData
+      providedData = data ?? Data()
       expectation.fulfill()
     }
     wait(for: [expectation], timeout: 3)

@@ -10,7 +10,7 @@
 import Combine
 import XCTest
 
-final class Publisher_bindTests: XCTestCase {
+final class PublisherBindTests: XCTestCase {
   private var subscriptions: Set<AnyCancellable> = []
   private let publisher: PassthroughSubject<Void, Never> = .init()
   private var sut: AnyPublisher<Void, Never>?
