@@ -5,6 +5,9 @@ export class ExtensionWebSocketServer {
 
     constructor(server: Server) {
         server.rooms = this.rooms;
+        server.joinRoom = this.joinRoom;
+        server.leaveRoom = this.leaveRoom;
+        server.to = this.to;
     }
 
     joinRoom(client: WebSocket, roomName: string) {
@@ -24,7 +27,8 @@ export class ExtensionWebSocketServer {
         return {
             emit: (event: string, message: string) => {
                 if(this.rooms.has(roomName)) {
-                    this.rooms.get(roomName).forEach(client => {
+                    const room = this.rooms.get(roomName);
+                    room.forEach(client => {
                         client.send(JSON.stringify({ event, message }));
                     }) 
                 }
