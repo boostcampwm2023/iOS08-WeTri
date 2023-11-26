@@ -24,10 +24,11 @@ final class UIControlPublisherTests: XCTestCase {
     let event: UIControl.Event = .touchUpInside
     var eventFired = false
 
-    let cancellable = control.publisher(event)
+    control.publisher(event)
       .sink { _ in
         eventFired = true
       }
+      .store(in: &subscriptions)
 
     control.sendActions(for: event)
 
@@ -39,16 +40,14 @@ final class UIControlPublisherTests: XCTestCase {
     let event: UIControl.Event = .touchUpInside
     var eventFired = false
 
-    var cancellable: AnyCancellable? = control.publisher(event)
+    let cancellable: AnyCancellable = control.publisher(event)
       .sink { _ in
         eventFired = true
       }
 
-    cancellable?.cancel()
+    cancellable.cancel()
     control.sendActions(for: event)
 
     XCTAssertFalse(eventFired, "Event should not be received after the subscription is canceled")
   }
-
-
 }
