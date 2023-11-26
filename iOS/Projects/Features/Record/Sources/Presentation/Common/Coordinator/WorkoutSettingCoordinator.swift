@@ -71,8 +71,55 @@ final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
   }
 }
 
-extension WorkoutSettingCoordinator {
-  func makeMockDataFromRnaomMatching() -> URLProtocol{
-    let mockSession = MockURLSession(mockData: <#T##Data#>)
+private extension WorkoutSettingCoordinator {
+  func makeMockDataFromRnaomMatching() -> URLSessionProtocol {
+    let mockSession = MockURLSession(mockDataByURLString: makeMockDataFromRnaomMatchingDataByURLString())
+    return mockSession
+  }
+
+  func makeMockDataFromRnaomMatchingDataByURLString() -> [String: Data] {
+    let serverURL = Bundle.main.infoDictionary?["BaseURL"] as? String ?? ""
+    let mockDatByURLString = [
+      "\(serverURL)/\(PersistencyProperty.matchStart)" : mockDataMatchStart(),
+      "\(serverURL)/\(PersistencyProperty.matchCancel)" : mockDataMatchStart()
+    ]
+    
+    return [:]
+  }
+  
+  func mockDataMatchStart() -> Data {
+    guard
+      let bundle = Bundle(identifier: PersistencyProperty.bundleIdentifier),
+      let path = bundle.path(forResource: PersistencyProperty.matchStart, ofType: PersistencyProperty.peerTypesFileNameOfType),
+      let data = try? Data(contentsOf: URL(filePath: path)) 
+    else {
+      return Data()
+    }
+    return data
+  }
+  
+  func mockDataMatchCancel() -> Data {
+    guard
+      let bundle = Bundle(identifier: PersistencyProperty.bundleIdentifier),
+      let path = bundle.path(forResource: PersistencyProperty.matchCancel, ofType: PersistencyProperty.peerTypesFileNameOfType),
+      let data = try? Data(contentsOf: URL(filePath: path))
+    else {
+      return Data()
+    }
+    return data
+  }
+  
+  var serverURL: String {
+    Bundle.main.infoDictionary?["BaseURL"] as? String ?? ""
+  }
+  
+  private enum PersistencyProperty {
+    static let bundleIdentifier = "kr.codesquad.boostcamp8.RecordFeature"
+    static let matchStart = "MatchesStart"
+    static let matchStartPath = "matches/start"
+    static let matchCancel = "matchesCancel"
+    static let matchCacnelPath = "matches/cancle"
+    static let workoutTypesFileName = "WorkoutTypes"
+    static let peerTypesFileNameOfType = "json"
   }
 }
