@@ -13,4 +13,10 @@ export class ExtensionWebSocketServer {
         }
         this.rooms.get(roomName).add(client);
     }
+
+    leaveRoom(client: WebSocket, roomName: string) {
+        if(this.rooms.has(roomName)) {
+            this.rooms.get(roomName).delete(client);
+        }
+    }
 }
