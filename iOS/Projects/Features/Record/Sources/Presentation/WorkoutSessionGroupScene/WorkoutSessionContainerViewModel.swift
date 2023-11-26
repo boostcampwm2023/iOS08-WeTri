@@ -69,6 +69,7 @@ extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepr
       .flatMap(workoutRecordUseCase.record)
 
     recordPublisher
+      .receive(on: RunLoop.main)
       .sink { _ in
         // 다른 Publisher에서 이미 처리합니다.
       } receiveValue: { [weak self] recordID in

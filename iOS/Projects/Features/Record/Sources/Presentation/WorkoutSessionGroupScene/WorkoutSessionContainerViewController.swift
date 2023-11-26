@@ -140,15 +140,17 @@ final class WorkoutSessionContainerViewController: UIViewController {
       )
     )
 
-    output.sink { [weak self] state in
-      switch state {
-      case .idle:
-        break
-      case let .alert(error):
-        self?.showAlert(with: error)
+    output
+      .receive(on: RunLoop.main)
+      .sink { [weak self] state in
+        switch state {
+        case .idle:
+          break
+        case let .alert(error):
+          self?.showAlert(with: error)
+        }
       }
-    }
-    .store(in: &subscriptions)
+      .store(in: &subscriptions)
   }
 
   // MARK: - Custom Methods
