@@ -71,8 +71,8 @@ extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepr
     recordPublisher
       .sink { _ in
         // 다른 Publisher에서 이미 처리합니다.
-      } receiveValue: { _ in
-        // TODO: Coordinator를 이용해서 화면 전환 필요
+      } receiveValue: { [weak self] recordID in
+        self?.coordinating?.pushWorkoutSummaryViewController(recordID: recordID)
       }
       .store(in: &subscriptions)
 
