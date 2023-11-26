@@ -132,6 +132,11 @@ final class WorkoutSessionContainerViewController: UIViewController {
   }
 
   private func bind() {
+    endWorkoutButton.publisher(.touchUpInside)
+      .map { _ in }
+      .bind(to: endWorkoutSubject)
+      .store(in: &subscriptions)
+
     let output = viewModel.transform(
       input: .init(
         endWorkoutPublisher: endWorkoutSubject.eraseToAnyPublisher(),
