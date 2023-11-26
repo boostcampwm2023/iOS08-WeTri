@@ -20,3 +20,9 @@ public struct TNHeaders: Hashable {
     return Dictionary(uniqueKeysWithValues: headersTuple)
   }
 }
+
+extension TNHeaders: CustomStringConvertible {
+  public var description: String {
+    return headers.map(\.description).joined(separator: "\n")
+  }
+}

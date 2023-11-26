@@ -18,3 +18,9 @@ public struct TNHeader: Hashable {
     self.value = value
   }
 }
+
+extension TNHeader: CustomStringConvertible {
+  public var description: String {
+    return "\(key): \(value)"
+  }
+}
