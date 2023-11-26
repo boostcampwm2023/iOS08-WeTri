@@ -1,0 +1,9 @@
+export const MAX_USERS = 5;
+export const MIN_USERS = 2;
+export const WAITING_60_TIME = 60;
+export const WAITING_40_TIME = 40;
+export const USER_WAITED_60_MIN_USERS = 2;
+export const USER_WAITED_40_MIN_USERS = 3;
+export const USER_WAITED_20_MIN_USERS = 4;
+export const ALONE_USER = 1;
+export const WAITING_20_TIME = 20;
