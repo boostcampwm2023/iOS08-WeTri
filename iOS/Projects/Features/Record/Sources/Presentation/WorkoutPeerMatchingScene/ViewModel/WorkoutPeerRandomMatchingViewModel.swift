@@ -89,7 +89,7 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
 
   private func cancelPeerRandomMatching(after: Double) {
     let afterStride = RunLoop.SchedulerTimeType.Stride(after)
-    
+
     Just(())
       .delay(for: afterStride, scheduler: RunLoop.main)
       .sink { [weak self] _ in
@@ -122,7 +122,7 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
       }
       .store(in: &subscriptions)
   }
-  
+
   private func cancelPeerRandomMatching() {
     useCase.matchCancel()
     coordinating?.popPeerRandomMatchingViewController()
