@@ -11,12 +11,12 @@ export class ExtensionWebSocket {
     client.to = this.to;
     client.server.clientMap[client.id] = client;
     client.on('close', () => {
-        if(client.server.sids.has(client.id)) {
-            client.server.sids.get(client.id).forEach(roomName => {
-                client.leave(roomName);
-            })
-        }
-    })
+      if (client.server.sids.has(client.id)) {
+        client.server.sids.get(client.id).forEach((roomName) => {
+          client.leave(roomName);
+        });
+      }
+    });
   }
 
   join(roomName: string) {
@@ -37,7 +37,9 @@ export class ExtensionWebSocket {
           const room = this.server.rooms.get(roomName);
           room.forEach((clientId) => {
             if (clientId !== this.id) {
-              this.server.clientMap[clientId].send(JSON.stringify({ event, message }));
+              this.server.clientMap[clientId].send(
+                JSON.stringify({ event, message }),
+              );
             }
           });
         }
