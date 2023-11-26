@@ -19,14 +19,18 @@ public final class GWPageControl: UIView {
   private var pages: [UIView] = []
   private var pageswidthConstraint: [NSLayoutConstraint] = []
 
+  
+  
+  // itrinsicContentSize
+  
+  /// pageController width value
+  /// numOfPage = n, PageSpacing = 8
+  /// selectedPageWidth = 40, unSelectedPageWidth = 10
+  /// pageControlWidth = 40 + 10(n - 1) + 8(n - 1) = 18n + 22
   private var pageControllerWidth: CGFloat {
-    return .init(58 * numberOfPage - 58)
+    return .init(18 * numberOfPage + 22)
   }
-
-  private var pageControllerHeight: CGFloat {
-    return .init(8)
-  }
-
+  private var pageControllerHeight: CGFloat = 8
   override public var intrinsicContentSize: CGSize {
     return .init(width: pageControllerWidth, height: pageControllerHeight)
   }
