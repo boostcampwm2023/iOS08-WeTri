@@ -37,7 +37,7 @@ final class CountDownBeforeWorkoutViewModel {
   // MARK: - Properties
 
   weak var coordinator: WorkoutEnvironmentSetUpCoordinator?
-  //TODO: 차후 생성 시점에서 시작 시간을 넘길 예정
+  // TODO: 차후 생성 시점에서 시작 시간을 넘길 예정
   private let workoutInitTime: Date = .now + 8
   private var subscriptions: Set<AnyCancellable> = []
   private var beforeWorkoutTimerSubject: CurrentValueSubject<String, Never> = .init("")
@@ -93,7 +93,7 @@ private extension CountDownBeforeWorkoutViewModel {
     return workoutInitTime.timeIntervalSince(.now)
   }
 
-  //뷰컨트롤러의 던져줄 타이머에 관해서 세팅합니다.
+  /// 뷰컨트롤러의 던져줄 타이머에 관해서 세팅합니다.
   func setTimer() {
     Timer.publish(every: 0.1, on: RunLoop.main, in: .common)
       .autoconnect()
@@ -103,7 +103,7 @@ private extension CountDownBeforeWorkoutViewModel {
         let firstMumberMilisecondsFromNow = String(format: "%.1f", beforeStartingWorkoutTime()).suffix(1)
         if firstMumberMilisecondsFromNow == "0" {
           let message = Int(beforeTime).description
-          //중요 만약 던지는 뷰에 전달해야 할 타이머 숫자가 0 이라면, timerSubject의 complet시킨다.
+          // 중요 만약 던지는 뷰에 전달해야 할 타이머 숫자가 0 이라면, timerSubject의 complet시킨다.
           message != "0" ? beforeWorkoutTimerSubject.send(message) : beforeWorkoutTimerSubject.send(completion: .finished)
         }
       }
