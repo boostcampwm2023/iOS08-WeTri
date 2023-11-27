@@ -72,16 +72,18 @@ private extension RecordCalendarViewController {
       calendarCellReuse: cellReuseSubject.eraseToAnyPublisher()
     )
     let output = viewModel.transform(input: input)
-    output.sink { completion in
-      switch completion {
-      case .finished: break
-      case let .failure(error):
-        Logger().debug("\(error)")
+    output
+      .receive(on: DispatchQueue.main)
+      .sink { completion in
+        switch completion {
+        case .finished: break
+        case let .failure(error):
+          Logger().debug("\(error)")
+        }
+      } receiveValue: { [weak self] state in
+        self?.render(output: state)
       }
-    } receiveValue: { [weak self] state in
-      self?.render(output: state)
-    }
-    .store(in: &subscriptions)
+      .store(in: &subscriptions)
   }
 
   func render(output: RecordCalendarState) {

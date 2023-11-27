@@ -93,24 +93,26 @@ private extension RecordListViewController {
       selectedDate: selectedDateSubject.eraseToAnyPublisher()
     )
     let output = viewModel.transform(input: input)
-    output.sink(
-      receiveCompletion: { [weak self] completion in
-        switch completion {
-        case .finished:
-          Logger().debug("finished")
-        case let .failure(error as RecordUpdateUseCaseError) where error == .noRecord:
-          self?.workoutInformationCollectionView.isHidden = true
-          self?.noRecordsView.isHidden = false
-          Logger().debug("\(error)")
-        case let .failure(error):
-          Logger().debug("\(error)")
+    output
+      .receive(on: DispatchQueue.main)
+      .sink(
+        receiveCompletion: { [weak self] completion in
+          switch completion {
+          case .finished:
+            Logger().debug("finished")
+          case let .failure(error as RecordUpdateUseCaseError) where error == .noRecord:
+            self?.workoutInformationCollectionView.isHidden = true
+            self?.noRecordsView.isHidden = false
+            Logger().debug("\(error)")
+          case let .failure(error):
+            Logger().debug("\(error)")
+          }
+        },
+        receiveValue: { [weak self] state in
+          self?.render(output: state)
         }
-      },
-      receiveValue: { [weak self] state in
-        self?.render(output: state)
-      }
-    )
-    .store(in: &subscriptions)
+      )
+      .store(in: &subscriptions)
   }
 
   func render(output: RecordListState) {
