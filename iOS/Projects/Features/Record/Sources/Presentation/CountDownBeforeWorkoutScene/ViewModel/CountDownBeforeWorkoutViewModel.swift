@@ -40,7 +40,7 @@ final class CountDownBeforeWorkoutViewModel {
   //TODO: 차후 생성 시점에서 시작 시간을 넘길 예정
   private let workoutInitTime: Date = .now + 8
   private var subscriptions: Set<AnyCancellable> = []
-  private var timerSubject: CurrentValueSubject<String, Never> = .init("")
+  private var beforeWorkoutTimerSubject: CurrentValueSubject<String, Never> = .init("")
   init(coordinator: WorkoutEnvironmentSetUpCoordinator) {
     self.coordinator = coordinator
   }
@@ -59,7 +59,7 @@ extension CountDownBeforeWorkoutViewModel: CountDownBeforeWorkoutViewModelRepres
       }
       .store(in: &subscriptions)
 
-    let timerMessagePublisher = timerSubject
+    let timerMessagePublisher = beforeWorkoutTimerSubject
       .map { message -> CountDownBeforeWorkoutState in
         return .updateMessage(message: message)
       }
@@ -73,7 +73,7 @@ extension CountDownBeforeWorkoutViewModel: CountDownBeforeWorkoutViewModelRepres
 
 private extension CountDownBeforeWorkoutViewModel {
   func bindTimerSubject() {
-    timerSubject
+    beforeWorkoutTimerSubject
       .receive(on: RunLoop.main)
       .sink(receiveCompletion: { [weak self] result in
         switch result {
@@ -84,7 +84,7 @@ private extension CountDownBeforeWorkoutViewModel {
         }
       }, receiveValue: { [weak self] text in
         Log.make().debug("timerSubject: \(text)")
-        self?.timerSubject.send(text)
+        self?.beforeWorkoutTimerSubject.send(text)
       })
       .store(in: &subscriptions)
   }
@@ -93,6 +93,7 @@ private extension CountDownBeforeWorkoutViewModel {
     return workoutInitTime.timeIntervalSince(.now)
   }
 
+  //뷰컨트롤러의 던져줄 타이머에 관해서 세팅합니다.
   func setTimer() {
     Timer.publish(every: 0.1, on: RunLoop.main, in: .common)
       .autoconnect()
@@ -102,8 +103,8 @@ private extension CountDownBeforeWorkoutViewModel {
         let firstMumberMilisecondsFromNow = String(format: "%.1f", beforeStartingWorkoutTime()).suffix(1)
         if firstMumberMilisecondsFromNow == "0" {
           let message = Int(beforeTime).description
-          //중요 만약 던지는 뷰에 전달해야 할 타이머 숫자가 0 이라면, timerSubject의 구독을 완료한다.
-          message != "0" ? timerSubject.send(message) : timerSubject.send(completion: .finished)
+          //중요 만약 던지는 뷰에 전달해야 할 타이머 숫자가 0 이라면, timerSubject의 complet시킨다.
+          message != "0" ? beforeWorkoutTimerSubject.send(message) : beforeWorkoutTimerSubject.send(completion: .finished)
         }
       }
       .store(in: &subscriptions)
