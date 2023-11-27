@@ -59,7 +59,8 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
   }
 
   func pushCountDownBeforeWokroutViewController() {
-    let viewModel = CountDownBeforeWorkoutViewModel()
-    let viewController = CountDownBeforeWorkoutViewController(viewModel: viewModel)
+    // TODO: CountDown 관련 ViewController 생성
+//    let viewModel = CountDownBeforeWorkoutViewModel(coordinator: self)
+//    let viewController = CountDownBeforeWorkoutViewController(viewModel: viewModel)
   }
 }

@@ -68,7 +68,7 @@ final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
   }
 
   func finish(workoutSetting _: WorkoutSetting) {
-    let vm = CountDownBeforeWorkoutViewModel()
+    let vm = CountDownBeforeWorkoutViewModel(coordinator: self)
     let vc = CountDownBeforeWorkoutViewController(viewModel: vm)
     navigationController.pushViewController(vc, animated: true)
 

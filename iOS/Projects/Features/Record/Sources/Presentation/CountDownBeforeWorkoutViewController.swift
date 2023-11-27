@@ -20,7 +20,7 @@ final class CountDownBeforeWorkoutViewController: UIViewController {
 
   private var subscriptions: Set<AnyCancellable> = []
 
-  var timerSubject: PassthroughSubject<String, Never> = .init()
+  var finishSubject: PassthroughSubject<Void, Never> = .init()
 
   // MARK: UI Components
 
@@ -89,38 +89,24 @@ private extension CountDownBeforeWorkoutViewController {
     view.backgroundColor = DesignSystemColor.primaryBackground
   }
 
-  /// if let을 활용한 이유는 Subject를 guard로 검사하게 된다면
-  /// 시간이 지났을 때 현재 내가 가르키고 있는 subject가 nil이 될수도 있는 위험이 입니다.
-  /// 따라서 subject에 send를 보낼 때 마다 검사를 하고 보내기 위함입니다.
-  func sendTimerTextEverySeconds(messageStack: [String], subject: PassthroughSubject<String, Never>?) async {
-    var messageStack = messageStack
-    guard let message = messageStack.popLast() else {
-      return
-    }
-    if let subject {
-      subject.send(message)
-    }
-    while messageStack.isEmpty {
-      let message = messageStack.popLast()
-      if let subject, let message {
-        sleep(1)
-        subject.send(message)
+  func bindViewModel() {
+    let input = CountDownBeforeWorkoutViewModelInput()
+
+    viewModel
+      .transform(input: input)
+      .sink { [weak self] state in
+        switch state {
+        case let .updateMessage(message): self?.makeLabelAnimation(labelText: message)
+        case .idle: break
+        }
       }
-    }
+      .store(in: &subscriptions)
   }
 
   func bind() {
-    Task { [weak self] in
-      let messageStack: [String] = (1 ... 3).map(\.description).reversed()
-      await self?.sendTimerTextEverySeconds(messageStack: messageStack, subject: self?.timerSubject)
-    }
+    subscriptions.removeAll()
 
-    timerSubject
-      .receive(on: RunLoop.main)
-      .sink { [weak self] text in
-        self?.makeLabelAnimation(labelText: text)
-      }
-      .store(in: &subscriptions)
+    bindViewModel()
   }
 
   func makeLabelAnimation(labelText: String) {
@@ -131,7 +117,6 @@ private extension CountDownBeforeWorkoutViewController {
       guard let self else { return }
       let scale = Metrics.minFontTransormScale
       countDownLabel.transform = CGAffineTransform(scaleX: scale, y: scale)
-    } completion: { _ in
     }
   }
 
@@ -140,7 +125,5 @@ private extension CountDownBeforeWorkoutViewController {
 
     static let maxFontSizeOfAnimation: UIFont = .systemFont(ofSize: 120, weight: .bold)
     static let minFontTransormScale: CGFloat = 0.6
-
-    static let timerValue = 3
   }
 }
