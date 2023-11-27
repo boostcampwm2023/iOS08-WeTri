@@ -10,6 +10,7 @@ import { RecordsModule } from './records/records.module';
 import { WorkoutsModule } from './workouts/workouts.module';
 import { EventsModule } from './live-workouts/events/events.module';
 import { MatchesModule } from './live-workouts/matches/matches.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { MatchesModule } from './live-workouts/matches/matches.module';
     WorkoutsModule,
     MatchesModule,
     EventsModule,
+    AdminModule,
   ],
   controllers: [AppController],
 })
