@@ -5,7 +5,7 @@ on:
     branches: 'feature/BE/*'
   pull_request:
     branches: 'develop'
-    types: [opened, synchronize, reopened, edited]
+    types: [opened, synchronize, reopened, labeled]
 
 jobs:
   test:
