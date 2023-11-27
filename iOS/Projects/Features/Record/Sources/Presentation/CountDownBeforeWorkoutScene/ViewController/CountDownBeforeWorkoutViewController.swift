@@ -38,6 +38,9 @@ final class CountDownBeforeWorkoutViewController: UIViewController {
     let view = UIView()
     view.backgroundColor = DesignSystemColor.main03
 
+    view.layer.cornerRadius = Metrics.coverWidthAndHeight / 2
+    view.clipsToBounds = true
+
     view.translatesAutoresizingMaskIntoConstraints = false
     return view
   }()
@@ -72,17 +75,16 @@ private extension CountDownBeforeWorkoutViewController {
   }
 
   func setupHierarchyAndConstraints() {
-    let safeArea = view.safeAreaLayoutGuide
 
     view.addSubview(countDownLabelCover)
-    countDownLabelCover.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor).isActive = true
-    countDownLabelCover.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor).isActive = true
+    countDownLabelCover.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+    countDownLabelCover.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
     countDownLabelCover.widthAnchor.constraint(equalToConstant: Metrics.coverWidthAndHeight).isActive = true
     countDownLabelCover.heightAnchor.constraint(equalToConstant: Metrics.coverWidthAndHeight).isActive = true
 
     view.addSubview(countDownLabel)
-    countDownLabel.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor).isActive = true
-    countDownLabel.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor).isActive = true
+    countDownLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+    countDownLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
   }
 
   func setupStyles() {
