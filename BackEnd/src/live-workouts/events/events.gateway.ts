@@ -5,23 +5,20 @@ import {
   WebSocketServer,
   OnGatewayConnection,
   OnGatewayDisconnect,
-  OnGatewayInit,
 } from '@nestjs/websockets';
-import { Server, WebSocket } from 'ws';
+import * as WebSocket from 'ws';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
-import { ExtensionWebSocketServer } from './Extensions/ExtensionServer';
-import { ExtensionWebSocket } from './Extensions/ExtensionWebSocket';
 
 @WebSocketGateway(3003)
-export class EventsGateway implements OnGatewayInit {
-  @WebSocketServer() server: Server;
+export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  @WebSocketServer() server: WebSocket.Server;
   constructor(private readonly eventsService: EventsService) {}
 
-  afterInit(server: any) {
-    new ExtensionWebSocketServer(server);
-  }
+  handleDisconnect(client: any) {
+        throw new Error('Method not implemented.');
+    }
 
   @SubscribeMessage('events')
   onEvent(client: WebSocket, data: any): void {
@@ -31,15 +28,6 @@ export class EventsGateway implements OnGatewayInit {
         others.send(data);
       }
     });
-  }
-
-  handleConnection(client: WebSocket): void {
-    new ExtensionWebSocket(client, this.server);
-    console.log(`클라이언트 연결`);
-  }
-
-  handleDisconnect(client: WebSocket): void {
-    console.log(`클라이언트 연결 종료`);
   }
 
   @SubscribeMessage('createEvent')
@@ -65,5 +53,8 @@ export class EventsGateway implements OnGatewayInit {
   @SubscribeMessage('removeEvent')
   remove(@MessageBody() id: number) {
     return this.eventsService.remove(id);
+  }
+
+  handleConnection(client: any, ...args: any[]): any {
   }
 }
