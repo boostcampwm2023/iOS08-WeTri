@@ -8,10 +8,13 @@
 
 import Combine
 import Foundation
+import Log
 
 // MARK: - CountDownBeforeWorkoutViewModelInput
 
-public struct CountDownBeforeWorkoutViewModelInput {}
+public struct CountDownBeforeWorkoutViewModelInput {
+  let viewDidApperPubilsehr: AnyPublisher<Void, Never>
+}
 
 public typealias CountDownBeforeWorkoutViewModelOutput = AnyPublisher<CountDownBeforeWorkoutState, Never>
 
@@ -34,8 +37,9 @@ final class CountDownBeforeWorkoutViewModel {
   // MARK: - Properties
 
   weak var coordinator: WorkoutEnvironmentSetUpCoordinator?
+  let workoutInitTime: Date = .now + 8
   private var subscriptions: Set<AnyCancellable> = []
-  private var timerSubject: PassthroughSubject<String, Never> = .init()
+  private var timerSubject: CurrentValueSubject<String, Never> = .init("")
   init(coordinator: WorkoutEnvironmentSetUpCoordinator) {
     self.coordinator = coordinator
   }
@@ -44,10 +48,16 @@ final class CountDownBeforeWorkoutViewModel {
 // MARK: CountDownBeforeWorkoutViewModelRepresentable
 
 extension CountDownBeforeWorkoutViewModel: CountDownBeforeWorkoutViewModelRepresentable {
-  public func transform(input _: CountDownBeforeWorkoutViewModelInput) -> CountDownBeforeWorkoutViewModelOutput {
+  public func transform(input: CountDownBeforeWorkoutViewModelInput) -> CountDownBeforeWorkoutViewModelOutput {
     subscriptions.removeAll()
 
-    reserveMessage()
+    input
+      .viewDidApperPubilsehr
+      .sink { [weak self] _ in
+        self?.setTimer()
+      }
+      .store(in: &subscriptions)
+
     let timerMessagePublisher = timerSubject
       .map { message -> CountDownBeforeWorkoutState in
         return .updateMessage(message: message)
@@ -72,32 +82,30 @@ private extension CountDownBeforeWorkoutViewModel {
           self?.coordinator?.finishDelegate
         }
       }, receiveValue: { [weak self] text in
+        Log.make().debug("timerSubject: \(text)")
         self?.timerSubject.send(text)
       })
       .store(in: &subscriptions)
   }
 
-  func reserveMessage() {
-    if Consts.timerInitValue >= Consts.timerEndValue { return }
-    (Consts.timerInitValue ... Consts.timerEndValue)
-      .reversed()
-      .forEach { sendSubjectMessage(after: messageWatingTime(at: $0), message: $0.description) }
-    sendSubjectMessage(after: messageWatingTime(at: 0), message: "Over", finish: true)
+  func timerValueValueBeforeWorkoutStart() -> String {
+    let message = Int(workoutInitTime.timeIntervalSince(.now)).description
+    return message
   }
 
-  func messageWatingTime(at time: Int) -> Double {
-    return Double(Consts.timerEndValue - time)
-  }
-
-  func sendSubjectMessage(after: Double, message: String, finish: Bool = false) {
-    DispatchQueue.main.asyncAfter(deadline: .now() + after) { [weak self] in
-      if finish {
-        self?.timerSubject.send(completion: .finished)
-      } else {
-        self?.timerSubject.send(message)
+  func setTimer() {
+    timerSubject.send(timerValueValueBeforeWorkoutStart())
+    Timer.publish(every: 1, on: RunLoop.main, in: .common)
+      .autoconnect()
+      .sink { [weak self] _ in
+        guard let self else { return }
+        let message = timerValueValueBeforeWorkoutStart()
+        message != "0" ? timerSubject.send(message) : timerSubject.send(completion: .finished)
       }
-    }
+      .store(in: &subscriptions)
   }
+
+  func sendSubjectMessage() {}
 
   enum Consts {
     static let timerInitValue = 1

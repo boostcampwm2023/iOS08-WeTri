@@ -21,6 +21,7 @@ final class CountDownBeforeWorkoutViewController: UIViewController {
   private var subscriptions: Set<AnyCancellable> = []
 
   var finishSubject: PassthroughSubject<Void, Never> = .init()
+  var viewDidAppearSubject: PassthroughSubject<Void, Never> = .init()
 
   // MARK: UI Components
 
@@ -63,6 +64,11 @@ final class CountDownBeforeWorkoutViewController: UIViewController {
     super.viewDidLoad()
     setup()
   }
+
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    viewDidAppearSubject.send(())
+  }
 }
 
 private extension CountDownBeforeWorkoutViewController {
@@ -75,7 +81,6 @@ private extension CountDownBeforeWorkoutViewController {
   }
 
   func setupHierarchyAndConstraints() {
-
     view.addSubview(countDownLabelCover)
     countDownLabelCover.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     countDownLabelCover.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
@@ -92,7 +97,9 @@ private extension CountDownBeforeWorkoutViewController {
   }
 
   func bindViewModel() {
-    let input = CountDownBeforeWorkoutViewModelInput()
+    let input = CountDownBeforeWorkoutViewModelInput(
+      viewDidApperPubilsehr: viewDidAppearSubject.eraseToAnyPublisher()
+    )
 
     viewModel
       .transform(input: input)
@@ -112,8 +119,10 @@ private extension CountDownBeforeWorkoutViewController {
   }
 
   func makeLabelAnimation(labelText: String) {
+    Log.make().debug("viewController makeLabelAnimation: \(labelText)")
     countDownLabel.text = labelText
     countDownLabel.transform = CGAffineTransform(scaleX: 1, y: 1)
+    view.layoutIfNeeded()
 
     UIView.animate(withDuration: 0.4, delay: 0, options: .curveEaseOut) { [weak self] in
       guard let self else { return }
