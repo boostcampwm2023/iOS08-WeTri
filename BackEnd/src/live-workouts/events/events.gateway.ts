@@ -5,16 +5,23 @@ import {
   WebSocketServer,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  OnGatewayInit,
 } from '@nestjs/websockets';
 import { Server, WebSocket } from 'ws';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
+import { ExtensionWebSocketServer } from './Extensions/ExtensionServer';
+import { ExtensionWebSocket } from './Extensions/ExtensionWebSocket';
 
 @WebSocketGateway(3003)
-export class EventsGateway {
+export class EventsGateway implements OnGatewayInit {
   @WebSocketServer() server: Server;
   constructor(private readonly eventsService: EventsService) {}
+
+  afterInit(server: any) {
+    new ExtensionWebSocketServer(server);
+  }
 
   @SubscribeMessage('events')
   onEvent(client: WebSocket, data: any): void {
@@ -27,6 +34,7 @@ export class EventsGateway {
   }
 
   handleConnection(client: WebSocket): void {
+    new ExtensionWebSocket(client, this.server);
     console.log(`클라이언트 연결`);
   }
 

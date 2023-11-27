@@ -10,15 +10,16 @@ import Foundation
 
 // MARK: - WorkoutMode
 
-enum WorkoutMode {
-  case run
-  case swim
-  case cycle
+enum WorkoutMode: Int {
+  case run = 1
+  case swim = 2
+  case cycle = 3
 }
 
 // MARK: CustomStringConvertible
 
 extension WorkoutMode: CustomStringConvertible {
+  var code: Int { rawValue }
   var description: String {
     switch self {
     case .run:

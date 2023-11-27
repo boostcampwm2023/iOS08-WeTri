@@ -90,23 +90,25 @@ private extension RecordListViewController {
       goRecordButtonDidTapped: moveWorkoutEnvironmentSceneSubject.eraseToAnyPublisher()
     )
     let output = viewModel.transform(input: input)
-    output.sink(
-      receiveCompletion: { [weak self] completion in
-        switch completion {
-        case .finished:
-          break
-        case let .failure(error as RecordUpdateUseCaseError) where error == .noRecord:
-          self?.workoutInformationCollectionView.isHidden = true
-          self?.noRecordsView.isHidden = false
-        default:
-          break
+    output
+      .receive(on: RunLoop.main)
+      .sink(
+        receiveCompletion: { [weak self] completion in
+          switch completion {
+          case .finished:
+            break
+          case let .failure(error as RecordUpdateUseCaseError) where error == .noRecord:
+            self?.workoutInformationCollectionView.isHidden = true
+            self?.noRecordsView.isHidden = false
+          default:
+            break
+          }
+        },
+        receiveValue: { [weak self] state in
+          self?.render(output: state)
         }
-      },
-      receiveValue: { [weak self] state in
-        self?.render(output: state)
-      }
-    )
-    .store(in: &subscriptions)
+      )
+      .store(in: &subscriptions)
   }
 
   func render(output: RecordListState) {

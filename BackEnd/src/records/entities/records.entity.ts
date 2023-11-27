@@ -16,6 +16,10 @@ import { Workout } from '../../workouts/entities/workout.entity';
 @Entity()
 export class Record {
   @PrimaryGeneratedColumn()
+  @ApiProperty({
+    example: 1,
+    description: 'Record id',
+  })
   id: number;
 
   @ApiProperty({
