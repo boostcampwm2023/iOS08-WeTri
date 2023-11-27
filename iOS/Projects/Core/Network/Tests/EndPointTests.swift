@@ -1,5 +1,5 @@
 //
-//  Test.swift
+//  EndPointTests.swift
 //  ProjectDescriptionHelpers
 //
 //  Created by MaraMincho on 11/14/23.
@@ -8,7 +8,7 @@
 @testable import Trinet
 import XCTest
 
-final class Test: XCTestCase {
+final class EndPointTests: XCTestCase {
   struct TestEndPoint: TNEndPoint {
     var baseURL: String = "base"
     var path: String = "path"
@@ -92,10 +92,10 @@ final class Test: XCTestCase {
   }
 
   func test_HTTPHeader에값을넣고_request을생성하면_넣은Header값과똑같다() throws {
-    let headers: TNHeaders = .init(headers: [
-      .init(key: "Header", value: "1"),
-      .init(key: "Headerable", value: "2"),
-    ])
+    let headers: TNHeaders = [
+      "Header": "1",
+      "Headerable": "2"
+    ]
 
     sut = TestEndPoint(headers: headers)
     let requestHeader = try sut.request().allHTTPHeaderFields
