@@ -32,7 +32,7 @@ export class MatchesService {
     const { workoutId } = createMatchDto;
     this.logger.log(`startMatch: ${nickname} ${workoutId}`);
 
-    await this.initMatch(nickname, workoutId);
+    await this.initMatch(profile, workoutId);
     await this.redis.rpush(`matching:${workoutId}`, JSON.stringify(profile));
   }
 
@@ -44,7 +44,7 @@ export class MatchesService {
     const { workoutId } = createMatchDto;
     this.logger.log(`cancelMatch: ${nickname} ${workoutId}`);
 
-    await this.initMatch(nickname, workoutId);
+    await this.initMatch(profile, workoutId);
   }
 
   async isRandomMatched(
@@ -145,10 +145,10 @@ export class MatchesService {
     return ALONE_USER;
   }
 
-  private async initMatch(nickname: string, workoutId: number) {
+  private async initMatch(profile: Profile, workoutId: number) {
     return Promise.all([
-      this.redis.lrem(`matching:${workoutId}`, 0, nickname),
-      this.redis.del(`userMatch:${nickname}`),
+      this.redis.lrem(`matching:${workoutId}`, 0, JSON.stringify(profile)),
+      this.redis.del(`userMatch:${profile.nickname}`),
     ]);
   }
 }
