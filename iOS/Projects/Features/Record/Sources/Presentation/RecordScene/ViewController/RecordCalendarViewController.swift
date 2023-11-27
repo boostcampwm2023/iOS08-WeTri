@@ -55,7 +55,7 @@ final class RecordCalendarViewController: UIViewController {
     configureDataSource()
     bindViewModel()
     appearSubject.send()
-    appearSectionSubject.send(Section.allCases.count)
+    appearSectionSubject.send(Section.allCases.count - 1)
   }
 }
 
@@ -170,11 +170,17 @@ extension RecordCalendarViewController: UICollectionViewDelegateFlowLayout {
     _ collectionView: UICollectionView,
     didSelectItemAt indexPath: IndexPath
   ) {
-    guard let cell = collectionView.cellForItem(at: indexPath) as? CalendarCollectionViewCell else {
+    guard let previousSelectedIndexPath = viewModel.currentSelectedIndexPath,
+          let previousCell = collectionView.cellForItem(at: previousSelectedIndexPath) as? CalendarCollectionViewCell
+    else {
+      return
+    }
+    previousCell.configureTextColor(isSelected: false)
+    guard let currentCell = collectionView.cellForItem(at: indexPath) as? CalendarCollectionViewCell else {
       return
     }
     selectedDateSubject.send(indexPath)
-    cell.configureTextColor(isSelected: true)
+    currentCell.configureTextColor(isSelected: true)
   }
 
   func collectionView(
