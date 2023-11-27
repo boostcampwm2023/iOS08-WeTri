@@ -17,8 +17,8 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(private readonly eventsService: EventsService) {}
 
   handleDisconnect(client: any) {
-        throw new Error('Method not implemented.');
-    }
+    throw new Error('Method not implemented.');
+  }
 
   @SubscribeMessage('events')
   onEvent(client: WebSocket, data: any): void {
@@ -55,6 +55,5 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     return this.eventsService.remove(id);
   }
 
-  handleConnection(client: any, ...args: any[]): any {
-  }
+  handleConnection(client: any, ...args: any[]): any {}
 }

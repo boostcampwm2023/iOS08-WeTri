@@ -71,7 +71,11 @@ describe('MatchesService', () => {
 
     it('매칭을 취소하면, maching:1에 있는 value는 삭제가 되어야 한다.', async () => {
       await service.cancelMatch(profile, createMatchDto);
-      expect(lrem).toHaveBeenCalledWith(`matching:1`, 0, JSON.stringify(profile));
+      expect(lrem).toHaveBeenCalledWith(
+        `matching:1`,
+        0,
+        JSON.stringify(profile),
+      );
     });
 
     it('랜덤 매칭 2명일 때, 기다린 시간이 60초 그리고 레디스가 잘 작동하는지 테스트한다.', async () => {
@@ -162,7 +166,11 @@ describe('MatchesService', () => {
 
       await service['initMatch'](profile, workoutId);
 
-      expect(lrem).toHaveBeenCalledWith(`matching:${workoutId}`, 0, JSON.stringify(profile));
+      expect(lrem).toHaveBeenCalledWith(
+        `matching:${workoutId}`,
+        0,
+        JSON.stringify(profile),
+      );
       expect(del).toHaveBeenCalledWith(`userMatch:${profile.nickname}`);
     });
   });
