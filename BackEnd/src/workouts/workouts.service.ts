@@ -9,9 +9,7 @@ export class WorkoutsService {
     @InjectRepository(Workout)
     private readonly workoutModelRepository: Repository<Workout>,
   ) {}
-  findAllWorkouts() {
-    return this.workoutModelRepository.find({
-      select: ['name'],
-    });
+  findAllWorkouts(): Promise<Workout[]> {
+    return this.workoutModelRepository.find();
   }
 }
