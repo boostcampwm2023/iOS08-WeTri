@@ -1,5 +1,5 @@
 //
-//  WorkoutSettingCoordinator.swift
+//  WorkoutEnvironmentSetUpCoordinator.swift
 //  RecordFeature
 //
 //  Created by 안종표 on 2023/11/20.
@@ -11,9 +11,9 @@ import Log
 import Trinet
 import UIKit
 
-// MARK: - WorkoutSettingCoordinator
+// MARK: - WorkoutEnvironmentSetUpCoordinator
 
-final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
+final class WorkoutEnvironmentSetUpCoordinator: WorkoutEnvironmentSetUpCoordinating {
   var navigationController: UINavigationController
   var childCoordinators: [Coordinating] = []
   weak var finishDelegate: CoordinatorFinishDelegate?
@@ -78,7 +78,7 @@ final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
   }
 }
 
-private extension WorkoutSettingCoordinator {
+private extension WorkoutEnvironmentSetUpCoordinator {
   func makeMockDataFromRnaomMatching() -> URLSessionProtocol {
     let mockSession = MockURLSession(mockDataByURLString: makeMockDataFromRnaomMatchingDataByURLString())
     return mockSession

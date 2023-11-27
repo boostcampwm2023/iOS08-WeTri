@@ -33,10 +33,10 @@ protocol CountDownBeforeWorkoutViewModelRepresentable {
 final class CountDownBeforeWorkoutViewModel {
   // MARK: - Properties
 
-  weak var coordinator: WorkoutSettingCoordinator?
+  weak var coordinator: WorkoutEnvironmentSetUpCoordinator?
   private var subscriptions: Set<AnyCancellable> = []
   private var timerSubject: PassthroughSubject<String, Never> = .init()
-  init(coordinator: WorkoutSettingCoordinator) {
+  init(coordinator: WorkoutEnvironmentSetUpCoordinator) {
     self.coordinator = coordinator
   }
 }
