@@ -52,8 +52,8 @@ final class RecordListViewModel {
 
 extension RecordListViewModel: RecordListViewModelRepresentable {
   func transform(input: RecordListViewModelInput) -> RecordListViewModelOutput {
-    subscriptions.forEach {
-      $0.cancel()
+    for subscription in subscriptions {
+      subscription.cancel()
     }
     subscriptions.removeAll()
 
@@ -100,7 +100,7 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
         return recordUpdateUsecase.execute(date: date)
       }
       .map { records -> RecordListState in
-        .sucessRecords(records)
+        return .sucessRecords(records)
       }
       .eraseToAnyPublisher()
 

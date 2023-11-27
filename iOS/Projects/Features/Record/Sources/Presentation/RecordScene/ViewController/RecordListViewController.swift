@@ -83,8 +83,8 @@ final class RecordListViewController: UIViewController {
 
 private extension RecordListViewController {
   func bindViewModel() {
-    subscriptions.forEach {
-      $0.cancel()
+    for subscription in subscriptions {
+      subscription.cancel()
     }
     subscriptions.removeAll()
     let input = RecordListViewModelInput(
@@ -177,7 +177,7 @@ private extension RecordListViewController {
 
   func configureDataSource() {
     let cellRegistration = WorkoutInformationCellRegistration { cell, _, item in
-      cell.configure(workoutInformation:
+      return cell.configure(workoutInformation:
         WorkoutInformation(
           sport: item.sport,
           time: item.time,
@@ -189,8 +189,7 @@ private extension RecordListViewController {
     workoutInformationDataSource = WorkoutInformationDataSource(
       collectionView: workoutInformationCollectionView,
       cellProvider: { collectionView, indexPath, itemIdentifier in
-
-        collectionView.dequeueConfiguredReusableCell(
+        return collectionView.dequeueConfiguredReusableCell(
           using: cellRegistration,
           for: indexPath,
           item: itemIdentifier

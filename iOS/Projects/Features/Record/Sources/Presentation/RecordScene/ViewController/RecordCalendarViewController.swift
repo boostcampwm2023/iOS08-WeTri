@@ -25,7 +25,7 @@ final class RecordCalendarViewController: UIViewController {
   private let cellReuseSubject = PassthroughSubject<Void, Never>()
 
   var selectedDatePublisher: AnyPublisher<IndexPath, Never> {
-    selectedDateSubject.eraseToAnyPublisher()
+    return selectedDateSubject.eraseToAnyPublisher()
   }
 
   init(viewModel: RecordCalendarViewModel) {
@@ -61,8 +61,8 @@ final class RecordCalendarViewController: UIViewController {
 
 private extension RecordCalendarViewController {
   func bindViewModel() {
-    subscriptions.forEach {
-      $0.cancel()
+    for subscription in subscriptions {
+      subscription.cancel()
     }
     subscriptions.removeAll()
     let input = RecordCalendarViewModelInput(

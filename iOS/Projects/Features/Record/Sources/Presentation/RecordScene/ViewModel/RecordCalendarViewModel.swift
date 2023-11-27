@@ -45,8 +45,8 @@ final class RecordCalendarViewModel {
 
 extension RecordCalendarViewModel: RecordCalendarViewModelRepresentable {
   func transform(input: RecordCalendarViewModelInput) -> RecordCalendarViewModelOutput {
-    subscriptions.forEach {
-      $0.cancel()
+    for subscription in subscriptions {
+      subscription.cancel()
     }
     subscriptions.removeAll()
 
@@ -98,7 +98,7 @@ extension RecordCalendarViewModel: RecordCalendarViewModelRepresentable {
           .eraseToAnyPublisher()
       }
       .map { indexPath -> RecordCalendarState in
-        .selectedIndexPath(indexPath)
+        return .selectedIndexPath(indexPath)
       }
       .eraseToAnyPublisher()
 
