@@ -15,9 +15,14 @@ class GetRecord extends PickType(Record, [
   'createdAt',
 ]) {}
 
-export class CreateRecordResDto extends SuccessResDto {
+class RecordIdDto {
   @ApiProperty({ example: 1, description: '운동 기록 레코드 ID' })
   recordId: number;
+}
+
+export class CreateRecordResDto extends SuccessResDto {
+  @ApiProperty({ type: () => RecordIdDto })
+  data: Pick<RecordIdDto, 'recordId'>;
 }
 
 export class GetUsersRecordsResDto extends SuccessResDto {
