@@ -23,6 +23,26 @@ public struct TNHeaders: Hashable {
   }
 }
 
+public extension TNHeaders {
+  static var `default`: Self {
+    return .init(headers: [.contentType("application/json")])
+  }
+
+  // TODO: Access Token, Refresh Token 설정 필요
+
+  static var withAccessToken: Self {
+    return .init(headers: Self.default + [.authorization(bearer: "...")])
+  }
+
+  static var withRefreshToken: Self {
+    return .init(headers: Self.default + [.authorization(bearer: "...")])
+  }
+
+  static var formData: Self {
+    return .init(headers: [.contentType("multipart/form-data")])
+  }
+}
+
 // MARK: CustomStringConvertible
 
 extension TNHeaders: CustomStringConvertible {
