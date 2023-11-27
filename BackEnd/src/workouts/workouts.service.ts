@@ -10,8 +10,6 @@ export class WorkoutsService {
     private readonly workoutModelRepository: Repository<Workout>,
   ) {}
   findAllWorkouts() {
-    return this.workoutModelRepository.find({
-      select: ['name'],
-    });
+    return this.workoutModelRepository.find();
   }
 }
