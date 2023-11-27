@@ -14,12 +14,10 @@ export class AdminController {
   @ApiResponse({
     status: 200,
     description: '로그인 성공',
-    type: SignupResDto
+    type: SignupResDto,
   })
   @Post('login')
-  login(
-    @Body() body: LoginDto
-  ) {
+  login(@Body() body: LoginDto) {
     return this.adminService.authenticateWithAdminIdAndPassword(body);
   }
 }
