@@ -109,8 +109,6 @@ private extension CountDownBeforeWorkoutViewModel {
       .store(in: &subscriptions)
   }
 
-  func sendSubjectMessage() {}
-
   enum Consts {
     static let timerInitValue = 1
     static let timerEndValue = 3
