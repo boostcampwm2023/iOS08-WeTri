@@ -8,6 +8,7 @@
 
 import Combine
 import DesignSystem
+import Log
 import UIKit
 
 // MARK: - WorkoutSessionContainerViewController
@@ -21,12 +22,24 @@ final class WorkoutSessionContainerViewController: UIViewController {
 
   private let endWorkoutSubject: PassthroughSubject<Void, Never> = .init()
 
-  // MARK: UI Components
+  // MARK: UI Components - ViewController
 
-  private let viewControllers: [UIViewController] = [
-    WorkoutSessionViewController(viewModel: WorkoutSessionViewModel()),
-    WorkoutRouteMapViewController(viewModel: WorkoutRouteMapViewModel()),
+  private let sessionViewController: HealthDataProtocol = WorkoutSessionViewController(viewModel: WorkoutSessionViewModel())
+
+  private let routeMapViewController: LocationTrackingProtocol = WorkoutRouteMapViewController(viewModel: WorkoutRouteMapViewModel())
+
+  private lazy var viewControllers: [UIViewController] = [
+    sessionViewController,
+    routeMapViewController,
   ]
+
+  private lazy var pageViewController: UIPageViewController = {
+    let pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+    pageViewController.dataSource = self
+    return pageViewController
+  }()
+
+  // MARK: UI Components
 
   private let recordTimerLabel: UILabel = {
     let label = UILabel()
@@ -44,12 +57,6 @@ final class WorkoutSessionContainerViewController: UIViewController {
 
   private lazy var pageControl: GWPageControl = .init(count: viewControllers.count)
 
-  private lazy var pageViewController: UIPageViewController = {
-    let pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
-    pageViewController.dataSource = self
-    return pageViewController
-  }()
-
   // MARK: Initializations
 
   init(viewModel: WorkoutSessionContainerViewModelRepresentable) {
@@ -60,6 +67,10 @@ final class WorkoutSessionContainerViewController: UIViewController {
   @available(*, unavailable)
   required init?(coder _: NSCoder) {
     fatalError("init(coder:) has not been implemented")
+  }
+
+  deinit {
+    Log.make().debug("\(Self.self) deinitialized")
   }
 
   // MARK: Life Cycles
@@ -123,17 +134,43 @@ final class WorkoutSessionContainerViewController: UIViewController {
 
   private func setupStyles() {
     view.backgroundColor = DesignSystemColor.primaryBackground
+    navigationController?.isNavigationBarHidden = true
   }
 
   private func bind() {
-    let output = viewModel.transform(input: .init(endWorkoutPublisher: endWorkoutSubject.eraseToAnyPublisher()))
-    output.sink { state in
-      switch state {
-      case .idle:
-        break
+    endWorkoutButton.publisher(.touchUpInside)
+      .map { _ in }
+      .bind(to: endWorkoutSubject)
+      .store(in: &subscriptions)
+
+    let output = viewModel.transform(
+      input: .init(
+        endWorkoutPublisher: endWorkoutSubject.eraseToAnyPublisher(),
+        locationPublisher: routeMapViewController.locationPublisher,
+        healthPublisher: sessionViewController.healthDataPublisher
+      )
+    )
+
+    output
+      .receive(on: RunLoop.main)
+      .sink { [weak self] state in
+        switch state {
+        case .idle:
+          break
+        case let .alert(error):
+          self?.showAlert(with: error)
+        }
       }
-    }
-    .store(in: &subscriptions)
+      .store(in: &subscriptions)
+  }
+
+  // MARK: - Custom Methods
+
+  /// 에러 알림 문구를 보여줍니다.
+  private func showAlert(with error: Error) {
+    let alertController = UIAlertController(title: "알림", message: error.localizedDescription, preferredStyle: .alert)
+    alertController.addAction(UIAlertAction(title: "확인", style: .default))
+    present(alertController, animated: true)
   }
 }
 
@@ -196,5 +233,12 @@ private extension WorkoutSessionContainerViewController {
 
 @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, xrOS 1.0, *)
 #Preview {
-  WorkoutSessionContainerViewController(viewModel: WorkoutSessionContainerViewModel())
+  WorkoutSessionContainerViewController(
+    viewModel: WorkoutSessionContainerViewModel(
+      workoutRecordUseCase: WorkoutRecordUseCase(
+        repository: WorkoutRecordRepository(session: URLSession.shared)
+      ),
+      coordinating: WorkoutSessionCoordinator(navigationController: .init(), isMockEnvironment: true)
+    )
+  )
 }

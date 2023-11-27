@@ -14,23 +14,39 @@ public struct MockURLSession: URLSessionProtocol {
   let mockData: Data
   let mockResponse: URLResponse
   let mockError: Error?
+  let mockDataByURLString: [String: Data]
 
-  public init(mockData: Data = Data(), mockResponse: URLResponse = URLResponse(), mockError: Error? = nil) {
+  public init(
+    mockData: Data = Data(),
+    mockResponse: URLResponse = HTTPURLResponse(),
+    mockError: Error? = nil,
+    mockDataByURLString: [String: Data] = [:]
+  ) {
     self.mockData = mockData
     self.mockResponse = mockResponse
     self.mockError = mockError
+    self.mockDataByURLString = mockDataByURLString
   }
 
-  public func data(for _: URLRequest, delegate _: URLSessionTaskDelegate?) async throws -> (Data, URLResponse) {
+  public func data(for request: URLRequest, delegate _: URLSessionTaskDelegate?) async throws -> (Data, URLResponse) {
+    if let mockError {
+      throw mockError
+    }
+    let urlString = request.url?.absoluteString ?? ""
+    let mockData = mockDataByURLString[urlString] ?? mockData
     return (mockData, mockResponse)
   }
 
   public func dataTask(
-    with _: URLRequest,
+    with request: URLRequest,
     completionHandler: @escaping @Sendable (Data?, URLResponse?, Error?) -> Void
   ) -> URLSessionDataTask {
     return MockURLSessionData {
-      completionHandler(mockData, mockResponse, mockError)
+      let urlString = request.url?.absoluteString ?? ""
+      let mockData = mockError == nil ? (mockDataByURLString[urlString] ?? mockData) : nil
+      let response = mockError == nil ? mockResponse : nil
+
+      completionHandler(mockData, response, mockError)
     }
   }
 }

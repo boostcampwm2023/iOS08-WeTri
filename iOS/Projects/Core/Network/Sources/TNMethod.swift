@@ -8,8 +8,17 @@
 
 import Foundation
 
+/// HTTP Method를 나타냅니다.
 public enum TNMethod: String {
+  /// The `GET` Method.
   case get = "GET"
+
+  /// The `POST` Method.
   case post = "POST"
+
+  /// The `DELETE` Method.
   case delete = "DELETE"
+
+  /// The `PUT` Method.
+  case put = "PUT"
 }

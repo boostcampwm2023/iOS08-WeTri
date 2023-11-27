@@ -8,7 +8,6 @@
 
 import Combine
 import DesignSystem
-import OSLog
 import UIKit
 
 // MARK: - WorkoutEnvironmentSetupViewController
@@ -41,6 +40,7 @@ public final class WorkoutEnvironmentSetupViewController: UIViewController {
   let selectWorkoutType = PassthroughSubject<WorkoutType?, Never>()
   let selectPeerType = PassthroughSubject<PeerType?, Never>()
   let endWorkoutEnvironment = PassthroughSubject<Void, Never>()
+  let didTapStartButton = PassthroughSubject<Void, Never>()
 
   // MARK: - ConatinerViewController Control Property
 
@@ -60,7 +60,7 @@ public final class WorkoutEnvironmentSetupViewController: UIViewController {
     return pageControl
   }()
 
-  lazy var contentNavigationController = UINavigationController()
+  lazy var contentNavigationController = UINavigationController(rootViewController: workoutSelectViewController)
 }
 
 private extension WorkoutEnvironmentSetupViewController {
@@ -109,6 +109,14 @@ private extension WorkoutEnvironmentSetupViewController {
     workoutSelectViewController.delegate = self
 
     bindViewModel()
+    bindStartButton()
+  }
+
+  func bindStartButton() {
+    workoutPeerSelectViewController
+      .startButtonDidTapPublisher()
+      .bind(to: didTapStartButton)
+      .store(in: &cancellables)
   }
 
   func bindViewModel() {
@@ -120,7 +128,8 @@ private extension WorkoutEnvironmentSetupViewController {
       requestWorkoutPeerTypes: requestWorkoutPeerTypes.eraseToAnyPublisher(),
       endWorkoutEnvironment: endWorkoutEnvironment.eraseToAnyPublisher(),
       selectWorkoutType: selectWorkoutType.eraseToAnyPublisher(),
-      selectPeerType: selectPeerType.eraseToAnyPublisher()
+      selectPeerType: selectPeerType.eraseToAnyPublisher(),
+      didTapStartButton: didTapStartButton.eraseToAnyPublisher()
     )
 
     let output = viewModel.transform(input: input)
@@ -268,8 +277,7 @@ extension WorkoutEnvironmentSetupViewController: UICollectionViewDelegate {
 
   func workoutTypesCollectionViewDidSelectItemAt(_ indexPath: IndexPath) {
     guard
-      let cell = workoutTypesCollectionView?.dequeueReusableCell(withReuseIdentifier: WorkoutSelectTypeCell.identifier, for: indexPath)
-      as? WorkoutSelectTypeCell
+      let cell = workoutTypesCollectionView?.cellForItem(at: indexPath) as? WorkoutSelectTypeCell
     else {
       return
     }
@@ -278,8 +286,7 @@ extension WorkoutEnvironmentSetupViewController: UICollectionViewDelegate {
 
   func workoutPeerTypesCollectionViewDidSelectItemAt(_ indexPath: IndexPath) {
     guard
-      let cell = workoutPeerTypesCollectionView?.dequeueReusableCell(withReuseIdentifier: WorkoutPeerTypeSelectCell.identifier, for: indexPath)
-      as? WorkoutPeerTypeSelectCell
+      let cell = workoutPeerTypesCollectionView?.cellForItem(at: indexPath) as? WorkoutPeerTypeSelectCell
     else {
       return
     }

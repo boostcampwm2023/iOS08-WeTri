@@ -13,6 +13,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
+import { Admin } from 'src/admin/entities/admin.entity';
 
 @Entity()
 export class Profile {
@@ -55,7 +56,7 @@ export class Profile {
 
   @Column({ unique: true })
   @Generated('uuid')
-  publicId: string; //바꿀 예정
+  publicId: string;
 
   @OneToOne(() => User, (user) => user.profile)
   user: User;
@@ -65,4 +66,7 @@ export class Profile {
 
   @OneToMany(() => Post, (post) => post.profile)
   posts: Post[];
+
+  @OneToOne(() => Admin, (admin) => admin.profile)
+  admin: Admin;
 }

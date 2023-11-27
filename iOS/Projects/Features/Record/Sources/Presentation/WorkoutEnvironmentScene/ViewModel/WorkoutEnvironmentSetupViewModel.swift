@@ -17,6 +17,7 @@ struct WorkoutEnvironmentSetupViewModelInput {
   let endWorkoutEnvironment: AnyPublisher<Void, Never>
   let selectWorkoutType: AnyPublisher<WorkoutType?, Never>
   let selectPeerType: AnyPublisher<PeerType?, Never>
+  let didTapStartButton: AnyPublisher<Void, Never>
 }
 
 typealias WorkoutEnvironmentSetupViewModelOutput = AnyPublisher<WorkoutEnvironmentState, Never>
@@ -49,15 +50,21 @@ protocol WorkoutEnvironmentSetupViewModelRepresentable {
 
 final class WorkoutEnvironmentSetupViewModel {
   private var subscriptions = Set<AnyCancellable>()
-  var useCase: WorkoutEnvironmentSetupUseCaseRepresentable
+  private var useCase: WorkoutEnvironmentSetupUseCaseRepresentable
+
+  private weak var coordinator: WorkoutSettingCoordinating?
 
   var didSelectWorkoutType: WorkoutType?
   var didSelectWorkoutPeerType: PeerType?
 
   var workoutTypes: [WorkoutType] = []
 
-  init(useCase: WorkoutEnvironmentSetupUseCaseRepresentable) {
+  init(
+    useCase: WorkoutEnvironmentSetupUseCaseRepresentable,
+    coordinator: WorkoutSettingCoordinator?
+  ) {
     self.useCase = useCase
+    self.coordinator = coordinator
   }
 }
 
@@ -129,9 +136,39 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
         return .didSelectWorkoutType(false)
       }.eraseToAnyPublisher()
 
+    input
+      .didTapStartButton
+      .sink { [weak self] _ in
+        self?.didTapStartButton()
+      }.store(in: &subscriptions)
+
     let idle: WorkoutEnvironmentSetupViewModelOutput = Just(WorkoutEnvironmentState.idle).eraseToAnyPublisher()
 
     return Publishers.MergeMany(workoutTypes, idle, workoutPeerType, didSelectWorkoutType, didSelectWorkoutPeerType).eraseToAnyPublisher()
+  }
+
+  private func didTapStartButton() {
+    guard
+      let didSelectWorkoutType,
+      let didSelectWorkoutPeerType,
+      let mode = WorkoutPeerTypeCodeToModeString(rawValue: didSelectWorkoutPeerType.typeCode)
+    else {
+      return
+    }
+
+    let workoutSettiong = WorkoutSetting(workoutType: didSelectWorkoutType, workoutPeerType: didSelectWorkoutPeerType)
+
+    switch mode {
+    case .solo:
+      break
+    case .random:
+      coordinator?.pushPeerRandomMatchingViewController(workoutSetting: workoutSettiong)
+    }
+  }
+
+  private enum WorkoutPeerTypeCodeToModeString: Int {
+    case solo = 1
+    case random = 2
   }
 }
 

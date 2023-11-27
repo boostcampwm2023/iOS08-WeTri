@@ -12,6 +12,7 @@ import { EventsModule } from './live-workouts/events/events.module';
 import { MatchesModule } from './live-workouts/matches/matches.module';
 import { RedisModule } from '@songkeys/nestjs-redis';
 import { RedisConfigService } from './config/redis.config';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { RedisConfigService } from './config/redis.config';
     WorkoutsModule,
     MatchesModule,
     EventsModule,
+    AdminModule,
   ],
   controllers: [AppController],
 })

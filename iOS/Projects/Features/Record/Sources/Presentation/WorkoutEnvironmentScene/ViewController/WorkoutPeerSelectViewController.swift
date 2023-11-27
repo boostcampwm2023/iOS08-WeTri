@@ -6,6 +6,8 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import Combine
+import CombineCocoa
 import DesignSystem
 import UIKit
 
@@ -77,12 +79,6 @@ private extension WorkoutPeerSelectViewController {
     workoutSelectDescriptionLabel.trailingAnchor
       .constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
 
-    view.addSubview(startButton)
-    startButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -50).isActive = true
-    startButton.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor).isActive = true
-    startButton.widthAnchor.constraint(equalToConstant: Metrics.buttonHeight).isActive = true
-    startButton.heightAnchor.constraint(equalToConstant: Metrics.buttonHeight).isActive = true
-
     view.addSubview(pearTypeSelectCollectionView)
     pearTypeSelectCollectionView.topAnchor
       .constraint(equalTo: workoutSelectDescriptionLabel.bottomAnchor, constant: 15).isActive = true
@@ -91,6 +87,12 @@ private extension WorkoutPeerSelectViewController {
     pearTypeSelectCollectionView.trailingAnchor
       .constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.secondaryValue).isActive = true
     pearTypeSelectCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+
+    view.addSubview(startButton)
+    startButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -50).isActive = true
+    startButton.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor).isActive = true
+    startButton.widthAnchor.constraint(equalToConstant: Metrics.buttonHeight).isActive = true
+    startButton.heightAnchor.constraint(equalToConstant: Metrics.buttonHeight).isActive = true
   }
 
   enum Metrics {
@@ -104,5 +106,12 @@ private extension WorkoutPeerSelectViewController {
 extension WorkoutPeerSelectViewController {
   func startButtonEnable(_ bool: Bool) {
     startButton.isEnabled = bool
+  }
+
+  func startButtonDidTapPublisher() -> AnyPublisher<Void, Never> {
+    return startButton
+      .publisher(.touchUpInside)
+      .map { _ in () }
+      .eraseToAnyPublisher()
   }
 }
