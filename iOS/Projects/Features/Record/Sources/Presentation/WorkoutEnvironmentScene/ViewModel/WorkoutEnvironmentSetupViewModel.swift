@@ -160,7 +160,7 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
 
     switch mode {
     case .solo:
-      break
+      coordinator?.finish(workoutSetting: workoutSettiong)
     case .random:
       coordinator?.pushPeerRandomMatchingViewController(workoutSetting: workoutSettiong)
     }

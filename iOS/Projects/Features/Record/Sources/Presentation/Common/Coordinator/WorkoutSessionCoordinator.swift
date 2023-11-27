@@ -57,4 +57,9 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
     let workoutSummaryViewController = WorkoutSummaryViewController(viewModel: viewModel)
     navigationController.setViewControllers([workoutSummaryViewController], animated: true)
   }
+
+  func pushCountDownBeforeWokroutViewController() {
+    let viewModel = CountDownBeforeWorkoutViewModel()
+    let viewController = CountDownBeforeWorkoutViewController(viewModel: viewModel)
+  }
 }
