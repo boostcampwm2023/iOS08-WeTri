@@ -1,9 +1,4 @@
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-} from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { Profile } from '../../../profiles/entities/profiles.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { SuccessResDto } from '../../../common/dto/SuccessRes.dto';

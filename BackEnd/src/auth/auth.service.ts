@@ -1,4 +1,4 @@
-import {Inject, Injectable, Logger} from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ProfilesService } from '../profiles/profiles.service';
 import { User } from '../users/entities/users.entity';
@@ -9,7 +9,7 @@ import {
   NicknameDuplicateException,
   NotRefreshTokenException,
 } from './exceptions/auth.exception';
-import * as process from "process";
+import * as process from 'process';
 
 @Injectable()
 export class AuthService {
@@ -28,9 +28,9 @@ export class AuthService {
 
     return this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
-      expiresIn: isRefreshToken ?
-          parseInt(process.env.JWT_REFRESH_CYCLE)
-          : parseInt(process.env.JWT_ACCESS_CYCLE)
+      expiresIn: isRefreshToken
+        ? parseInt(process.env.JWT_REFRESH_CYCLE)
+        : parseInt(process.env.JWT_ACCESS_CYCLE),
     });
   }
 

@@ -13,7 +13,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { Admin } from 'src/admin/entities/admin.entity';
+import { Admin } from '../../admin/entities/admin.entity';
 
 @Entity()
 export class Profile {
