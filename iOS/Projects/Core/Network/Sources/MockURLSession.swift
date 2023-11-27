@@ -29,6 +29,9 @@ public struct MockURLSession: URLSessionProtocol {
   }
 
   public func data(for request: URLRequest, delegate _: URLSessionTaskDelegate?) async throws -> (Data, URLResponse) {
+    if let mockError {
+      throw mockError
+    }
     let urlString = request.url?.absoluteString ?? ""
     let mockData = mockDataByURLString[urlString] ?? mockData
     return (mockData, mockResponse)
@@ -40,9 +43,10 @@ public struct MockURLSession: URLSessionProtocol {
   ) -> URLSessionDataTask {
     return MockURLSessionData {
       let urlString = request.url?.absoluteString ?? ""
-      let mockData = mockDataByURLString[urlString] ?? mockData
+      let mockData = mockError == nil ? (mockDataByURLString[urlString] ?? mockData) : nil
+      let response = mockError == nil ? mockResponse : nil
 
-      completionHandler(mockData, mockResponse, mockError)
+      completionHandler(mockData, response, mockError)
     }
   }
 }
