@@ -33,18 +33,17 @@ final class WorkoutSessionUseCase {
   }
 
   private func bind() {
-    let distancePublisher = repository.getDistanceWalkingRunningSample(startDate: date)
-    let caloriesPublisher = repository.getCaloriesSample(startDate: date)
-    let heartRatePublisher = repository.getHeartRateSample(startDate: date)
-
-    let combinedHealthDataPublisher = distancePublisher.combineLatest(caloriesPublisher, heartRatePublisher) {
-      (distance: $0, calories: $1, heartRate: $2)
-    }
-
     Timer.publish(every: 2, on: .main, in: .common)
       .autoconnect()
-      .flatMap { _ in
-        combinedHealthDataPublisher
+      .flatMap { [weak self] _ in
+        guard let self
+        else {
+          return Just(([0.0], [0.0], [0.0])).setFailureType(to: Error.self).eraseToAnyPublisher()
+        }
+        return repository.getDistanceWalkingRunningSample(startDate: date).combineLatest(repository.getCaloriesSample(startDate: date), repository.getHeartRateSample(startDate: date)) {
+          (distance: $0, calories: $1, heartRate: $2)
+        }
+        .eraseToAnyPublisher()
       }
       .compactMap { [weak self] distance, calories, heartRate in
         guard let self else { return nil }
