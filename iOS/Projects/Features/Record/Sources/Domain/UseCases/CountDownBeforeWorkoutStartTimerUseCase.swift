@@ -1,5 +1,5 @@
 //
-//  CountDownBeforeWorkoutStartTimerUsecase.swift
+//  CountDownBeforeWorkoutStartTimerUseCase.swift
 //  RecordFeature
 //
 //  Created by MaraMincho on 11/28/23.
@@ -9,15 +9,15 @@
 import Combine
 import Foundation
 
-// MARK: - CountDownBeforeWorkoutStartTimerUsecaseRepresentable
+// MARK: - CountDownBeforeWorkoutStartTimerUseCaseRepresentable
 
-protocol CountDownBeforeWorkoutStartTimerUsecaseRepresentable: TimerUsecaseRepresentable {
+protocol CountDownBeforeWorkoutStartTimerUseCaseRepresentable: TimerUsecaseRepresentable {
   func beforeWorkoutTimerTextPublisher() -> AnyPublisher<String, Never>
 }
 
-// MARK: - CountDownBeforeWorkoutStartTimerUsecase
+// MARK: - CountDownBeforeWorkoutStartTimerUseCase
 
-final class CountDownBeforeWorkoutStartTimerUsecase: TimerUsecase {
+final class CountDownBeforeWorkoutStartTimerUseCase: TimerUsecase {
   var subscriptions = Set<AnyCancellable>()
   var countDwonBeforeWorkoutStartSubject: PassthroughSubject<Int, Never> = .init()
 
@@ -29,9 +29,9 @@ final class CountDownBeforeWorkoutStartTimerUsecase: TimerUsecase {
   }
 }
 
-// MARK: CountDownBeforeWorkoutStartTimerUsecaseRepresentable
+// MARK: CountDownBeforeWorkoutStartTimerUseCaseRepresentable
 
-extension CountDownBeforeWorkoutStartTimerUsecase: CountDownBeforeWorkoutStartTimerUsecaseRepresentable {
+extension CountDownBeforeWorkoutStartTimerUseCase: CountDownBeforeWorkoutStartTimerUseCaseRepresentable {
   func beforeWorkoutTimerTextPublisher() -> AnyPublisher<String, Never> {
     intervalCurrentAndInitEverySecondsPublisher()
       .sink { [weak self] value in

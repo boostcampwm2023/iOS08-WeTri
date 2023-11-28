@@ -12,7 +12,7 @@ final class TimerTest: XCTestCase {
 
   func test_countDownTimer가_6점9초_동안_654321값을_방출하며_complete_되는지_확인한다() {
     // assign
-    let timer = CountDownBeforeWorkoutStartTimerUsecase(initDate: .now + 6.9)
+    let timer = CountDownBeforeWorkoutStartTimerUseCase(initDate: .now + 6.9)
     let expectaionValue = (1 ... 6).reversed().map(\.description)
     var receivedValue: [String] = []
     let expectation = XCTestExpectation(description: "Received Timer value \(receivedValue),\n expecation \(expectaionValue)")

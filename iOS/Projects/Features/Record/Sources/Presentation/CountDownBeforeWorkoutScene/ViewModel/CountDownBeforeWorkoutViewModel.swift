@@ -38,11 +38,11 @@ final class CountDownBeforeWorkoutViewModel {
   // MARK: - Properties
 
   weak var coordinator: WorkoutEnvironmentSetUpCoordinator?
-  var useCase: CountDownBeforeWorkoutStartTimerUsecaseRepresentable
+  var useCase: CountDownBeforeWorkoutStartTimerUseCaseRepresentable
   // TODO: 차후 생성 시점에서 시작 시간을 넘길 예정
   private var subscriptions: Set<AnyCancellable> = []
   private var beforeWorkoutTimerSubject: CurrentValueSubject<String, Never> = .init("")
-  init(coordinator: WorkoutEnvironmentSetUpCoordinator, useCase: CountDownBeforeWorkoutStartTimerUsecaseRepresentable) {
+  init(coordinator: WorkoutEnvironmentSetUpCoordinator, useCase: CountDownBeforeWorkoutStartTimerUseCaseRepresentable) {
     self.coordinator = coordinator
     self.useCase = useCase
   }
