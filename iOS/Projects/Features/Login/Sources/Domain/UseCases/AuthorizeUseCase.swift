@@ -6,6 +6,12 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import Combine
 import Foundation
 
-final class AuthorizeUseCase: AuthorizeUseCaseRepresentable {}
+public final class AuthorizeUseCase: AuthorizeUseCaseRepresentable {
+  public func authorize(authorization _: AuthorizationInfo) -> AnyPublisher<Token, Never> {
+    return Just(Token(accesToken: Data(count: 10), refreshToken: Data(count: 10)))
+      .eraseToAnyPublisher()
+  }
+}

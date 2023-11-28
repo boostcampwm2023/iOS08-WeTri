@@ -7,13 +7,17 @@
 //
 
 import AuthenticationServices
+import Combine
 import OSLog
 import UIKit
 
 // MARK: - LoginViewController
 
-public final class LoginViewController: UIViewController {
+final class LoginViewController: UIViewController {
+  private var subscriptions: Set<AnyCancellable> = []
+
   private let viewModel: LoginViewModelRepresentable
+  private let credentialSubject = PassthroughSubject<AuthorizationInfo, Never>()
 
   private lazy var appleLoginButton: ASAuthorizationAppleIDButton = {
     let button = ASAuthorizationAppleIDButton(type: .signIn, style: .black)
@@ -22,7 +26,7 @@ public final class LoginViewController: UIViewController {
     return button
   }()
 
-  public init(viewModel: LoginViewModelRepresentable) {
+  init(viewModel: LoginViewModelRepresentable) {
     self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
   }
@@ -66,6 +70,28 @@ private extension LoginViewController {
   }
 }
 
+private extension LoginViewController {
+  func bindViewModel() {
+    let input = LoginViewModelInput(appleLoginButtonDidTap: credentialSubject.eraseToAnyPublisher())
+
+    let output = viewModel.transform(input: input)
+
+    output
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] state in
+        self?.render(state: state)
+      }
+      .store(in: &subscriptions)
+  }
+
+  func render(state: LoginState) {
+    switch state {
+    case .idle:
+      break
+    }
+  }
+}
+
 // MARK: - Metrics
 
 private enum Metrics {
@@ -80,10 +106,14 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
     controller _: ASAuthorizationController,
     didCompleteWithAuthorization authorization: ASAuthorization
   ) {
-    guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential else {
+    guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential,
+          let identityToken = credential.identityToken,
+          let authorizationCode = credential.authorizationCode
+    else {
       return
     }
-    Logger().debug("\(credential)")
+    let authoriztionInfo = AuthorizationInfo(identityToken: identityToken, authorizationCode: authorizationCode)
+    credentialSubject.send(authoriztionInfo)
   }
 }
 
