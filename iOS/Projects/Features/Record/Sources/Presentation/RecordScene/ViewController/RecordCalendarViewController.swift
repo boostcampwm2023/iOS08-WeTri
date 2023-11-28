@@ -141,13 +141,6 @@ private extension RecordCalendarViewController {
     snapShot.appendItems(items)
     dataSource?.apply(snapShot)
   }
-
-  func selectCell(at indexPath: IndexPath) {
-    guard let cell = calendarCollectionView.cellForItem(at: indexPath) as? CalendarCollectionViewCell else {
-      return
-    }
-    cell.configureTextColor(isSelected: true)
-  }
 }
 
 // MARK: UICollectionViewDelegateFlowLayout
