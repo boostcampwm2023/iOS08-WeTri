@@ -17,9 +17,9 @@ protocol CountDownBeforeWorkoutStartTimerUseCaseRepresentable: TimerUsecaseRepre
 
 // MARK: - CountDownBeforeWorkoutStartTimerUseCase
 
-final class CountDownBeforeWorkoutStartTimerUseCase: TimerUsecase {
-  var subscriptions = Set<AnyCancellable>()
-  var countDownBeforeWorkoutStartSubject: PassthroughSubject<Int, Never> = .init()
+final class CountDownBeforeWorkoutStartTimerUseCase: TimerUseCase {
+  private var subscriptions = Set<AnyCancellable>()
+  private var countDwonBeforeWorkoutStartSubject: PassthroughSubject<Int, Never> = .init()
 
   /// initDate는 현재 시간보다 미래여야 합니다.
   /// 안그러면 작동하지 않습니다.

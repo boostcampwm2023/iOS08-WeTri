@@ -17,7 +17,7 @@ protocol OneSecondsTimerUsecaseRepresentable: TimerUsecaseRepresentable {
 
 // MARK: - OneSecondsTimerUsecase
 
-final class OneSecondsTimerUsecase: TimerUsecase {
+final class OneSecondsTimerUsecase: TimerUseCase {
   override init(initDate: Date) {
     super.init(initDate: initDate)
     startTimer()

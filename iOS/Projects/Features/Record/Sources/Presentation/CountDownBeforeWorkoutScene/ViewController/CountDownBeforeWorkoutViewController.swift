@@ -20,8 +20,8 @@ final class CountDownBeforeWorkoutViewController: UIViewController {
 
   private var subscriptions: Set<AnyCancellable> = []
 
-  var didFinishTimerTextSubscriptionSubject: PassthroughSubject<Void, Never> = .init()
-  var viewDidAppearSubject: PassthroughSubject<Void, Never> = .init()
+  private let didFinishTimerTextSubscriptionSubject: PassthroughSubject<Void, Never> = .init()
+  private let viewDidAppearSubject: PassthroughSubject<Void, Never> = .init()
 
   // MARK: UI Components
 

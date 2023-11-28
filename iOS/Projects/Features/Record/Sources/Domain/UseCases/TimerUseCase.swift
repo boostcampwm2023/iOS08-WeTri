@@ -1,5 +1,5 @@
 //
-//  TimerUsecase.swift
+//  TimerUseCase.swift
 //  RecordFeature
 //
 //  Created by MaraMincho on 11/28/23.
@@ -19,9 +19,9 @@ protocol TimerUsecaseRepresentable: AnyObject {
   func stopTimer()
 }
 
-// MARK: - TimerUsecase
+// MARK: - TimerUseCase
 
-class TimerUsecase: TimerUsecaseRepresentable {
+class TimerUseCase: TimerUsecaseRepresentable {
   let initDate: Date
   private var miliSecondsTimer: AnyCancellable? = nil
   private var secondsTimer: AnyCancellable? = nil
@@ -49,7 +49,7 @@ class TimerUsecase: TimerUsecaseRepresentable {
   }
 }
 
-private extension TimerUsecase {
+private extension TimerUseCase {
   private func startMiliSecondsTimer() {
     miliSecondsTimer = Timer.publish(every: 0.001, on: .main, in: .common)
       .autoconnect()
