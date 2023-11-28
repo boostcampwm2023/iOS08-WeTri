@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Keychain
 
 final class MockKeychain: Keychaining {
   var keyChain: [String: Data] = [:]
