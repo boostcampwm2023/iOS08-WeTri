@@ -40,7 +40,10 @@ final class WorkoutSessionUseCase {
         else {
           return Just(([0.0], [0.0], [0.0])).setFailureType(to: Error.self).eraseToAnyPublisher()
         }
-        return repository.getDistanceWalkingRunningSample(startDate: date).combineLatest(repository.getCaloriesSample(startDate: date), repository.getHeartRateSample(startDate: date)) {
+        return repository.getDistanceWalkingRunningSample(startDate: date).combineLatest(
+          repository.getCaloriesSample(startDate: date),
+          repository.getHeartRateSample(startDate: date)
+        ) {
           (distance: $0, calories: $1, heartRate: $2)
         }
         .eraseToAnyPublisher()
