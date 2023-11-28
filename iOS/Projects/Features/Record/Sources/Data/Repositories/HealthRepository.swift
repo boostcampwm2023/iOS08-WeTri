@@ -109,6 +109,104 @@ public final class HealthRepository {
   }
 }
 
+// MARK: HealthRepositoryRepresentable
+
+extension HealthRepository: HealthRepositoryRepresentable {
+  func getHeartRateSample(startDate: Date) -> AnyPublisher<[Double], Error> {
+    Future<[Double], Error> { promise in
+      Task { [weak self] in
+        guard let self else {
+          promise(.failure(HealthError.repositoryDeinitialized))
+          return
+        }
+        do {
+          // 1. Query요청으로 샘플 데이터 수신
+          let (samples, newAnchor) = try await query(startDate: startDate, identifier: .heartRate, anchor: heartRateAnchor)
+
+          // 2. QuantitySample로 형변환
+          let quantitySamples = try parseToQuantitySample(samples: samples)
+
+          // 3. 알맞는 단위에 맞춰 값 변환
+          let heartRate = sampleToDoubleValue(with: quantitySamples, unit: .init(from: "count/min"))
+
+          // 4. promise에 전달
+          promise(.success(heartRate))
+
+          // 5. 중복 데이터를 방지하기 위해 anchor 설정
+          heartRateAnchor = newAnchor
+
+        } catch {
+          promise(.failure(error))
+        }
+      }
+    }
+    .eraseToAnyPublisher()
+  }
+
+  func getDistanceWalkingRunningSample(startDate: Date) -> AnyPublisher<[Double], Error> {
+    Future<[Double], Error> { promise in
+      Task { [weak self] in
+        guard let self else {
+          promise(.failure(HealthError.repositoryDeinitialized))
+          return
+        }
+        do {
+          // 1. Query요청으로 샘플 데이터 수신
+          let (samples, newAnchor) = try await query(startDate: startDate, identifier: .distanceWalkingRunning, anchor: distanceAnchor)
+
+          // 2. QuantitySample로 형변환
+          let quantitySamples = try parseToQuantitySample(samples: samples)
+
+          // 3. 알맞는 단위에 맞춰 값 변환
+          let distance = sampleToDoubleValue(with: quantitySamples, unit: .meter())
+
+          // 4. promise에 전달
+          promise(.success(distance))
+
+          // 5. 중복 데이터를 방지하기 위해 anchor 설정
+          distanceAnchor = newAnchor
+
+        } catch {
+          promise(.failure(error))
+        }
+      }
+    }
+    .eraseToAnyPublisher()
+  }
+
+  func getCaloriesSample(startDate: Date) -> AnyPublisher<[Double], Error> {
+    Future<[Double], Error> { promise in
+      Task { [weak self] in
+        guard let self else {
+          promise(.failure(HealthError.repositoryDeinitialized))
+          return
+        }
+
+        do {
+          // 1. Query요청으로 샘플 데이터 수신
+          let (samples, newAnchor) = try await query(startDate: startDate, identifier: .activeEnergyBurned, anchor: caloriesAnchor)
+
+          // 2. QuantitySample로 형변환
+          let quantitySamples = try parseToQuantitySample(samples: samples)
+
+          // 3. 알맞는 단위에 맞춰 값 변환
+          let calories = sampleToDoubleValue(with: quantitySamples, unit: .init(from: "kcal"))
+
+          // 4. promise에 전달
+          promise(.success(calories))
+
+          // 5. 중복 데이터를 방지하기 위해 anchor 설정
+          caloriesAnchor = newAnchor
+
+        } catch {
+          promise(.failure(error))
+        }
+      }
+    }
+    .eraseToAnyPublisher()
+  }
+}
+
 // MARK: HealthRepository.HealthError
 
 extension HealthRepository {
