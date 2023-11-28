@@ -61,6 +61,18 @@ extension CountDownBeforeWorkoutViewModel: CountDownBeforeWorkoutViewModelRepres
       }
       .store(in: &subscriptions)
 
+    input
+      .didFinsihTimerSubscrion
+      .sink { result in
+        switch result {
+        case .failure(_),
+             .finished:
+          // TODO: coordinator를 통해서 빠져 나오는 로직 작성
+          break
+        }
+      } receiveValue: { _ in }
+      .store(in: &subscriptions)
+
     let timerMessagePublisher = useCase
       .beforeWorkoutTimerTextPublisher()
       .map { message -> CountDownBeforeWorkoutState in
