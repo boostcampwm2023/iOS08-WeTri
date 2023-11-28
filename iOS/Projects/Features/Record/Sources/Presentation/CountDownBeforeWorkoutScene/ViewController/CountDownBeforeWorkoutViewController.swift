@@ -140,7 +140,7 @@ private extension CountDownBeforeWorkoutViewController {
   enum Metrics {
     static let coverWidthAndHeight: CGFloat = 240
   }
-  
+
   enum UIConsts {
     static let contDownFontSize: UIFont = .systemFont(ofSize: 120, weight: .bold)
     static let minFontTransormScale: CGFloat = 0.6
