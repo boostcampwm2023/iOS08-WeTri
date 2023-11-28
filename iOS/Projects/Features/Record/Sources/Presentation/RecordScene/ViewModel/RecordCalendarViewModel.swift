@@ -54,7 +54,7 @@ extension RecordCalendarViewModel: RecordCalendarViewModelRepresentable {
     let appearTotalDateInfo = input.appear
       .flatMap { [weak self] _ -> AnyPublisher<RecordCalendarState, Never> in
         guard let self else {
-          return Just(.customError(BindingError.viewModelDeinitialized))
+          return Just(.customError(RecordCalendarViewModelError.viewModelDeinitialized))
             .eraseToAnyPublisher()
         }
         let allDates = dateProvideUseCase.fetchAllDatesThisMonth()
@@ -66,7 +66,7 @@ extension RecordCalendarViewModel: RecordCalendarViewModelRepresentable {
     let appearTodayIndex = input.appearSection
       .flatMap { [weak self] sectionCount -> AnyPublisher<RecordCalendarState, Never> in
         guard let self else {
-          return Just(.customError(BindingError.viewModelDeinitialized))
+          return Just(.customError(RecordCalendarViewModelError.viewModelDeinitialized))
             .eraseToAnyPublisher()
         }
         let todayIndex = dateProvideUseCase.todayIndex(sectionCount: sectionCount)
@@ -85,7 +85,7 @@ extension RecordCalendarViewModel: RecordCalendarViewModelRepresentable {
     let reuse = input.calendarCellReuse
       .flatMap { [weak self] _ -> AnyPublisher<RecordCalendarState, Never> in
         guard let currentSelectedIndexPath = self?.currentSelectedIndexPath else {
-          return Just(.customError(BindingError.invalidCurrentSelectedIndexPath))
+          return Just(.customError(RecordCalendarViewModelError.invalidCurrentSelectedIndexPath))
             .eraseToAnyPublisher()
         }
         return Just(.selectedIndexPath(currentSelectedIndexPath))
@@ -107,16 +107,16 @@ protocol RecordCalendarViewModelRepresentable {
   func transform(input: RecordCalendarViewModelInput) -> RecordCalendarViewModelOutput
 }
 
-// MARK: - BindingError
+// MARK: - RecordCalendarViewModelError
 
-private enum BindingError: Error {
+private enum RecordCalendarViewModelError: Error {
   case viewModelDeinitialized
   case invalidCurrentSelectedIndexPath
 }
 
 // MARK: LocalizedError
 
-extension BindingError: LocalizedError {
+extension RecordCalendarViewModelError: LocalizedError {
   var errorDescription: String? {
     switch self {
     case .viewModelDeinitialized:

@@ -62,7 +62,7 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
     let appearRecords = input.appear
       .flatMap { [weak self] _ -> AnyPublisher<RecordListState, Never> in
         guard let self else {
-          return Just(.customError(BindingError.viewModelDeinitialized))
+          return Just(.customError(RecordListViewModelError.viewModelDeinitialized))
             .eraseToAnyPublisher()
         }
         return recordUpdateUsecase.execute(date: Date.now)
@@ -70,7 +70,7 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
             .sucessRecords(records)
           }
           .catch { _ -> AnyPublisher<RecordListState, Never> in
-            return Just(.customError(BindingError.dateNotFound))
+            return Just(.customError(RecordListViewModelError.dateNotFound))
               .eraseToAnyPublisher()
           }
           .eraseToAnyPublisher()
@@ -80,7 +80,7 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
     let appearDate = input.appear
       .flatMap { [weak self] _ -> AnyPublisher<RecordListState, Never> in
         guard let self else {
-          return Just(.customError(BindingError.viewModelDeinitialized))
+          return Just(.customError(RecordListViewModelError.viewModelDeinitialized))
             .eraseToAnyPublisher()
         }
         let dateInfo = dateProvideUsecase.transform(date: Date.now)
@@ -92,14 +92,14 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
     let selectedRecords = input.selectedDate
       .flatMap { [weak self] indexPath -> AnyPublisher<RecordListState, Never> in
         guard let self else {
-          return Just(.customError(BindingError.viewModelDeinitialized))
+          return Just(.customError(RecordListViewModelError.viewModelDeinitialized))
             .eraseToAnyPublisher()
         }
         guard
           let dateInfo = dateProvideUsecase.selectedDateInfo(index: indexPath.item),
           let date = dateProvideUsecase.transform(dateInfo: dateInfo)
         else {
-          return Just(.customError(BindingError.dateNotFound))
+          return Just(.customError(RecordListViewModelError.dateNotFound))
             .eraseToAnyPublisher()
         }
         return recordUpdateUsecase.execute(date: date)
@@ -107,7 +107,7 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
             return .sucessRecords(records)
           }
           .catch { _ -> AnyPublisher<RecordListState, Never> in
-            return Just(.customError(BindingError.dateNotFound))
+            return Just(.customError(RecordListViewModelError.recordUpdateFail))
               .eraseToAnyPublisher()
           }
           .eraseToAnyPublisher()
@@ -117,11 +117,11 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
     let selectedDate = input.selectedDate
       .flatMap { [weak self] indexPath -> AnyPublisher<RecordListState, Never> in
         guard let self else {
-          return Just(.customError(BindingError.viewModelDeinitialized))
+          return Just(.customError(RecordListViewModelError.viewModelDeinitialized))
             .eraseToAnyPublisher()
         }
         guard let dateInfo = dateProvideUsecase.selectedDateInfo(index: indexPath.item) else {
-          return Just(.customError(BindingError.dateNotFound))
+          return Just(.customError(RecordListViewModelError.dateNotFound))
             .eraseToAnyPublisher()
         }
         return Just(.sucessDateInfo(dateInfo))
@@ -150,17 +150,18 @@ protocol RecordListViewModelRepresentable {
   func transform(input: RecordListViewModelInput) -> RecordListViewModelOutput
 }
 
-// MARK: - BindingError
+// MARK: - RecordListViewModelError
 
-private enum BindingError: Error {
+private enum RecordListViewModelError: Error {
   case viewModelDeinitialized
   case dateNotFound
   case dateInfoNotTransformed
+  case recordUpdateFail
 }
 
 // MARK: LocalizedError
 
-extension BindingError: LocalizedError {
+extension RecordListViewModelError: LocalizedError {
   var errorDescription: String? {
     switch self {
     case .viewModelDeinitialized:
@@ -169,6 +170,8 @@ extension BindingError: LocalizedError {
       return "DateProvideUseCase에서 index에 해당하는 날짜를 찾지 못했습니다."
     case .dateInfoNotTransformed:
       return "dateInfo를 Date로 변환하지 못했습니다."
+    case .recordUpdateFail:
+      return "record 정보를 불러오는데 실패하였습니다."
     }
   }
 }
