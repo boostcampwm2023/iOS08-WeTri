@@ -202,8 +202,3 @@ private extension WorkoutSessionViewController {
     case main
   }
 }
-
-@available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, xrOS 1.0, *)
-#Preview {
-  WorkoutSessionViewController(viewModel: WorkoutSessionViewModel())
-}

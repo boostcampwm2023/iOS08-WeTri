@@ -31,11 +31,15 @@ public protocol WorkoutSessionViewModelRepresentable {
 public final class WorkoutSessionViewModel {
   // MARK: Properties
 
+  private let useCase: WorkoutSessionUseCaseRepresentable
+
   private var subscriptions: Set<AnyCancellable> = []
 
   // MARK: Initializations
 
-  public init() {}
+  init(useCase: WorkoutSessionUseCaseRepresentable) {
+    self.useCase = useCase
+  }
 }
 
 // MARK: WorkoutSessionViewModelRepresentable
