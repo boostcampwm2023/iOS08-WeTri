@@ -45,6 +45,7 @@ class TimerUsecase: TimerUsecaseRepresentable {
     miliSecondsTimer = nil
     secondsTimer = nil
     oneSecondsTimerIsValid = nil
+    timeIntervalEveryOneSecondsSubject.send(completion: .finished)
   }
 }
 
