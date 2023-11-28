@@ -8,6 +8,6 @@
 
 import Foundation
 
-final class LoginViewModel: LoginViewModelRepresentable {
-  
+public final class LoginViewModel: LoginViewModelRepresentable {
+  public init() {}
 }

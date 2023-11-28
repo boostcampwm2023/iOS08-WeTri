@@ -8,6 +8,4 @@
 
 import Foundation
 
-public protocol LoginViewModelRepresentable {
-  
-}
+public protocol LoginViewModelRepresentable {}
