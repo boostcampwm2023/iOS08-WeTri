@@ -1,5 +1,5 @@
 //
-//  WorkoutSettingCoordinator.swift
+//  WorkoutEnvironmentSetUpCoordinator.swift
 //  RecordFeature
 //
 //  Created by 안종표 on 2023/11/20.
@@ -11,9 +11,9 @@ import Log
 import Trinet
 import UIKit
 
-// MARK: - WorkoutSettingCoordinator
+// MARK: - WorkoutEnvironmentSetUpCoordinator
 
-final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
+final class WorkoutEnvironmentSetUpCoordinator: WorkoutEnvironmentSetUpCoordinating {
   var navigationController: UINavigationController
   var childCoordinators: [Coordinating] = []
   weak var finishDelegate: CoordinatorFinishDelegate?
@@ -67,12 +67,21 @@ final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
     // TODO: 뷰 컨트롤러 시작 로직 작성
   }
 
-  func finish(workoutSetting: WorkoutSetting) {
-    settingDidFinishedDelegate?.workoutSettingCoordinatorDidFinished(workoutSetting: workoutSetting)
+  func finish(workoutSetting _: WorkoutSetting) {
+    let useCase = CountDownBeforeWorkoutStartTimerUsecase(initDate: .now + 8)
+
+    let vm = CountDownBeforeWorkoutViewModel(coordinator: self, useCase: useCase)
+
+    let vc = CountDownBeforeWorkoutViewController(viewModel: vm)
+    navigationController.pushViewController(vc, animated: true)
+
+    // TODO: 주석 풀고 코디네이팅 연결 하는 작업 필요
+    // 현재는 타이머 뷰컨 실험할려고 잠깐 죽인 코드
+//    settingDidFinishedDelegate?.workoutSettingCoordinatorDidFinished(workoutSetting: workoutSetting)
   }
 }
 
-private extension WorkoutSettingCoordinator {
+private extension WorkoutEnvironmentSetUpCoordinator {
   func makeMockDataFromRnaomMatching() -> URLSessionProtocol {
     let mockSession = MockURLSession(mockDataByURLString: makeMockDataFromRnaomMatchingDataByURLString())
     return mockSession
