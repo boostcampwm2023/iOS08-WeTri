@@ -1,9 +1,7 @@
-import * as WebSocket from 'ws';
 import { v4 as uuidv4 } from 'uuid';
 import { WetriServer, WetriWebSocket } from '../types/custom-websocket.type';
-import { Injectable } from '@nestjs/common';
 
-@Injectable()
+
 export class ExtensionWebSocket {
   server: WetriServer;
   id: string;
