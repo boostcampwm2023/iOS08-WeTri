@@ -9,7 +9,8 @@ import Foundation
 import Security
 
 public final class Keychain {
-  ///
+  
+  /// 키체인에 키-data로 데이터를 저장합니다.
   public func save(key: String, data: Data) {
     let query: [CFString: Any] = [
       kSecClass: kSecClassGenericPassword,
@@ -21,7 +22,7 @@ public final class Keychain {
     SecItemAdd(query as CFDictionary, nil)
   }
 
-  ///
+  /// 키체인에서 키를 통해 data 값을 얻어옵니다.
   public func load(key: String) -> Data? {
     let query: [CFString: Any] = [
       kSecClass: kSecClassGenericPassword,
