@@ -11,21 +11,20 @@ import Foundation
 
 // MARK: - CountDownBeforeWorkoutStartTimerUsecaseRepresentable
 
-protocol CountDownBeforeWorkoutStartTimerUsecaseRepresentable {
+protocol CountDownBeforeWorkoutStartTimerUsecaseRepresentable: TimerUsecaseRepresentable {
   func beforeWorkoutTimerTextPublisher() -> AnyPublisher<String, Never>
-  mutating func startTimer()
-  mutating func stopTimer()
 }
 
 // MARK: - CountDownBeforeWorkoutStartTimerUsecase
 
-struct CountDownBeforeWorkoutStartTimerUsecase {
-  let initDate: Date
-  var timerCancellable: AnyCancellable?
-  let beforeWorkoutTimerTextSubject: CurrentValueSubject<String, Never> = .init("")
-  init(initDate: Date) {
-    self.initDate = initDate
-    timerCancellable = nil
+final class CountDownBeforeWorkoutStartTimerUsecase: TimerUsecase {
+  var subscriptions = Set<AnyCancellable>()
+  var countDwonBeforeWorkoutStartSubject: PassthroughSubject<Int, Never> = .init()
+
+  /// initDate는 현재 시간보다 미래여야 합니다.
+  /// 안그러면 작동하지 않습니다.
+  override init(initDate: Date) {
+    super.init(initDate: initDate)
   }
 }
 
@@ -33,31 +32,20 @@ struct CountDownBeforeWorkoutStartTimerUsecase {
 
 extension CountDownBeforeWorkoutStartTimerUsecase: CountDownBeforeWorkoutStartTimerUsecaseRepresentable {
   func beforeWorkoutTimerTextPublisher() -> AnyPublisher<String, Never> {
-    return beforeWorkoutTimerTextSubject.eraseToAnyPublisher()
+    intervalCurrentAndInitEverySecondsPublisher()
+      .sink { [weak self] value in
+        value <= 0
+          ? self?.countDwonBeforeWorkoutStartSubject.send(completion: .finished)
+          : self?.countDwonBeforeWorkoutStartSubject.send(value)
+      }
+      .store(in: &subscriptions)
+
+    return countDwonBeforeWorkoutStartSubject
+      .map(\.description)
+      .eraseToAnyPublisher()
   }
 
   func beforeStartingWorkoutTime() -> Double {
     return initDate.timeIntervalSince(.now)
-  }
-
-  /// 뷰컨트롤러의 던져줄 타이머에 관해서 세팅합니다.
-  mutating func startTimer() {
-    timerCancellable = Timer.publish(every: 0.1, on: RunLoop.main, in: .common)
-      .autoconnect()
-      .sink { [self] _ in
-        let beforeTime = beforeStartingWorkoutTime()
-        let firstMumberMilisecondsFromNow = String(format: "%.1f", beforeStartingWorkoutTime()).suffix(1)
-        if firstMumberMilisecondsFromNow == "0" {
-          let message = Int(beforeTime)
-          // 중요 만약 던지는 뷰에 전달해야 할 타이머 숫자가 0 이라면, timerSubject의 complet시킨다.
-          message != 0
-            ? beforeWorkoutTimerTextSubject.send(message.description)
-            : beforeWorkoutTimerTextSubject.send(completion: .finished)
-        }
-      }
-  }
-
-  mutating func stopTimer() {
-    timerCancellable = nil
   }
 }
