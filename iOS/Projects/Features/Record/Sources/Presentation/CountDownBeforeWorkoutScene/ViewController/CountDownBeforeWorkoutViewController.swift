@@ -20,15 +20,14 @@ final class CountDownBeforeWorkoutViewController: UIViewController {
 
   private var subscriptions: Set<AnyCancellable> = []
 
-  var didFinishTimerTextSubscriptionSubject: PassthroughSubject<Void, Never> = .init()
-  var viewDidAppearSubject: PassthroughSubject<Void, Never> = .init()
+  private var didFinishTimerTextSubscriptionSubject: PassthroughSubject<Void, Never> = .init()
+  private var viewDidAppearSubject: PassthroughSubject<Void, Never> = .init()
 
   // MARK: UI Components
 
   private let countDownLabel: UILabel = {
     let label = UILabel()
-    label.font = .systemFont(ofSize: 120, weight: .bold)
-    label.text = "10"
+    label.font = UIConsts.contDownFontSize
     label.textColor = DesignSystemColor.primaryBackground
 
     label.translatesAutoresizingMaskIntoConstraints = false
@@ -133,15 +132,17 @@ private extension CountDownBeforeWorkoutViewController {
 
     UIView.animate(withDuration: 0.4, delay: 0, options: .curveEaseOut) { [weak self] in
       guard let self else { return }
-      let scale = Metrics.minFontTransormScale
+      let scale = UIConsts.minFontTransormScale
       countDownLabel.transform = CGAffineTransform(scaleX: scale, y: scale)
     }
   }
 
   enum Metrics {
     static let coverWidthAndHeight: CGFloat = 240
-
-    static let maxFontSizeOfAnimation: UIFont = .systemFont(ofSize: 120, weight: .bold)
+  }
+  
+  enum UIConsts {
+    static let contDownFontSize: UIFont = .systemFont(ofSize: 120, weight: .bold)
     static let minFontTransormScale: CGFloat = 0.6
   }
 }
