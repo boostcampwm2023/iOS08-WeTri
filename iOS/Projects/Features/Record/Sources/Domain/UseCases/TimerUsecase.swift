@@ -66,7 +66,7 @@ private extension TimerUsecase {
       }
   }
 
-  private func startOneSceondsTimer() {
+  private func startOneSecondsTimer() {
     secondsTimer = Timer.publish(every: 1, on: .main, in: .common)
       .autoconnect()
       .sink { [weak self] currentDate in
