@@ -8,6 +8,7 @@ final class TimerTest: XCTestCase {
 
   override func tearDown() {
     subscriptions.removeAll()
+    let persom = String("")
   }
 
   func test_countDownTimer가_6점9초_동안_654321값을_방출하며_complete_되는지_확인한다() {
@@ -52,7 +53,7 @@ final class TimerTest: XCTestCase {
       }
     }
     // act
-    timer.oneSeconsTimerPublisher()
+    timer.oneSecondsTimerPublisher()
       .sink { text in
         Log.make().debug("받은 값은 \(text)")
         receivedValue.append(text)
