@@ -9,9 +9,9 @@ import Foundation
 import Security
 
 public final class Keychain {
-  
   /// 키체인에 키-data로 데이터를 저장합니다.
-  public func save(key: String, data: Data) {
+  @discardableResult
+  public func save(key: String, data: Data) -> OSStatus {
     let query: [CFString: Any] = [
       kSecClass: kSecClassGenericPassword,
       kSecAttrAccount: key,
@@ -19,7 +19,7 @@ public final class Keychain {
     ]
 
     SecItemDelete(query as CFDictionary)
-    SecItemAdd(query as CFDictionary, nil)
+    return SecItemAdd(query as CFDictionary, nil)
   }
 
   /// 키체인에서 키를 통해 data 값을 얻어옵니다.
@@ -36,7 +36,17 @@ public final class Keychain {
     guard status == noErr else {
       return nil
     }
-    
+
     return item as? Data
+  }
+
+  @discardableResult
+  public func delete(key: String) -> OSStatus {
+    let query: [CFString: Any] = [
+      kSecClass: kSecClassGenericPassword,
+      kSecAttrAccount: key,
+    ]
+
+    return SecItemDelete(query as CFDictionary)
   }
 }

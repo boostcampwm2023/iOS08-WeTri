@@ -10,5 +10,5 @@ import ProjectDescriptionHelpers
 
 let project = Project.makeModule(
   name: "Keychain",
-  targets: .custom(name: "Keychain", product: .framework)
+  targets: .custom(name: "Keychain", product: .framework, testingOptions: [.unitTest])
 )
