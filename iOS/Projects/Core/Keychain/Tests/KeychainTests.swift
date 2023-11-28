@@ -52,7 +52,7 @@ final class KeychainTests: XCTestCase {
     let loadedData = sut.load(key: key)
 
     // Assert
-    XCTAssertEqual(loadedData, nil)
+    XCTAssertNil(loadedData)
   }
 
   func test_keychain에_데이터저장후에_삭제_성공() throws {
