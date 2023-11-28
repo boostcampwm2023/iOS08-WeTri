@@ -1,4 +1,5 @@
 import * as WebSocket from 'ws';
+import { Profile } from '../../../profiles/entities/profiles.entity';
 
 export interface WetriServer extends WebSocket.Server {
   clientMap: Map<string, WetriWebSocket>;
@@ -15,4 +16,8 @@ export interface WetriWebSocket extends WebSocket {
   join: (roomName: string) => void;
   leave: (roomName: string) => void;
   to: (roomName: string) => { emit: (event: string, message: string) => void };
+  authorization?: string;
+  profile?: Profile;
+  token?: string;
+  tokenType?: string;
 }
