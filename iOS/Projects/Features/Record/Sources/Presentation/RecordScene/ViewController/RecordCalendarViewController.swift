@@ -111,6 +111,7 @@ private extension RecordCalendarViewController {
 
   func configureDataSource() {
     let cellRegistration = RecordCalendarCellRegistration { [weak self] cell, indexPath, itemIdentifier in
+      self?.cellReuseSubject.send()
       if indexPath.item == self?.viewModel.currentSelectedIndexPath?.item {
         cell.configureTextColor(isSelected: true)
       }
@@ -125,7 +126,6 @@ private extension RecordCalendarViewController {
     dataSource = RecordCalendarDiffableDataSource(
       collectionView: calendarCollectionView,
       cellProvider: { [weak self] collectionView, indexPath, itemIdentifier in
-        self?.cellReuseSubject.send()
         return collectionView.dequeueConfiguredReusableCell(
           using: cellRegistration,
           for: indexPath,
@@ -158,12 +158,10 @@ extension RecordCalendarViewController: UICollectionViewDelegateFlowLayout {
     _ collectionView: UICollectionView,
     didSelectItemAt indexPath: IndexPath
   ) {
-    guard let previousSelectedIndexPath = viewModel.currentSelectedIndexPath,
-          let previousCell = collectionView.cellForItem(at: previousSelectedIndexPath) as? CalendarCollectionViewCell
-    else {
-      return
+    if let previousSelectedIndexPath = viewModel.currentSelectedIndexPath,
+       let previousCell = collectionView.cellForItem(at: previousSelectedIndexPath) as? CalendarCollectionViewCell {
+      previousCell.configureTextColor(isSelected: false)
     }
-    previousCell.configureTextColor(isSelected: false)
     guard let currentCell = collectionView.cellForItem(at: indexPath) as? CalendarCollectionViewCell else {
       return
     }
