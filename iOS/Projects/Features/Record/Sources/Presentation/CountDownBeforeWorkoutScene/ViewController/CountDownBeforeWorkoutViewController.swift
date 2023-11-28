@@ -20,7 +20,7 @@ final class CountDownBeforeWorkoutViewController: UIViewController {
 
   private var subscriptions: Set<AnyCancellable> = []
 
-  var finishSubject: PassthroughSubject<Void, Never> = .init()
+  var didFinishTimerTextSubscriptionSubject: PassthroughSubject<Void, Never> = .init()
   var viewDidAppearSubject: PassthroughSubject<Void, Never> = .init()
 
   // MARK: UI Components
@@ -98,17 +98,24 @@ private extension CountDownBeforeWorkoutViewController {
 
   func bindViewModel() {
     let input = CountDownBeforeWorkoutViewModelInput(
-      viewDidApperPubilsehr: viewDidAppearSubject.eraseToAnyPublisher()
+      viewDidApperPubilsehr: viewDidAppearSubject.eraseToAnyPublisher(),
+      didFinsihTimerSubscrion: didFinishTimerTextSubscriptionSubject.eraseToAnyPublisher()
     )
 
     viewModel
       .transform(input: input)
-      .sink { [weak self] state in
+      .sink(receiveCompletion: { [weak self] stateResults in
+        switch stateResults {
+        case .failure(_),
+             .finished:
+          self?.didFinishTimerTextSubscriptionSubject.send(())
+        }
+      }, receiveValue: { [weak self] state in
         switch state {
         case let .updateMessage(message): self?.makeLabelAnimation(labelText: message)
         case .idle: break
         }
-      }
+      })
       .store(in: &subscriptions)
   }
 

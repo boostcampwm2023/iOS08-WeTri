@@ -68,7 +68,10 @@ final class WorkoutEnvironmentSetUpCoordinator: WorkoutEnvironmentSetUpCoordinat
   }
 
   func finish(workoutSetting _: WorkoutSetting) {
-    let vm = CountDownBeforeWorkoutViewModel(coordinator: self)
+    let useCase = CountDownBeforeWorkoutStartTimerUsecase(initDate: .now + 8)
+
+    let vm = CountDownBeforeWorkoutViewModel(coordinator: self, useCase: useCase)
+
     let vc = CountDownBeforeWorkoutViewController(viewModel: vm)
     navigationController.pushViewController(vc, animated: true)
 

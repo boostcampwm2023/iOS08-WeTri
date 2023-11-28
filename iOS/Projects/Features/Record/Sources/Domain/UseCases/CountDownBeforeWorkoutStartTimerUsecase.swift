@@ -13,7 +13,7 @@ import Foundation
 
 protocol CountDownBeforeWorkoutStartTimerUsecaseRepresentable {
   func beforeWorkoutTimerTextPublisher() -> AnyPublisher<String, Never>
-  mutating func setTimer()
+  mutating func startTimer()
   mutating func stopTimer()
 }
 
@@ -41,7 +41,7 @@ extension CountDownBeforeWorkoutStartTimerUsecase: CountDownBeforeWorkoutStartTi
   }
 
   /// 뷰컨트롤러의 던져줄 타이머에 관해서 세팅합니다.
-  mutating func setTimer() {
+  mutating func startTimer() {
     timerCancellable = Timer.publish(every: 0.1, on: RunLoop.main, in: .common)
       .autoconnect()
       .sink { [self] _ in
