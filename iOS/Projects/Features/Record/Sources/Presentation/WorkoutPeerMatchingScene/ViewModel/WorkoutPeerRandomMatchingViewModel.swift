@@ -34,14 +34,14 @@ protocol WorkoutPeerRandomMatchingViewModelRepresentable {
 final class WorkoutPeerRandomMatchingViewModel {
   // MARK: - Properties
 
-  private weak var coordinating: WorkoutSettingCoordinating?
+  private weak var coordinating: WorkoutEnvironmentSetUpCoordinating?
   private var useCase: WorkoutPeerRandomMatchingUseCaseRepresentable
   private let workoutSetting: WorkoutSetting
   private var timerInitDate: Date?
 
   init(
     workoutSetting: WorkoutSetting,
-    coordinating: WorkoutSettingCoordinating,
+    coordinating: WorkoutEnvironmentSetUpCoordinating,
     useCase: WorkoutPeerRandomMatchingUseCaseRepresentable
   ) {
     self.coordinating = coordinating
