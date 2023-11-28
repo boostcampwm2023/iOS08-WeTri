@@ -67,12 +67,7 @@ public final class HealthRepository {
   private func query(startDate: Date, identifier: HKQuantityTypeIdentifier, anchor: HKQueryAnchor?) async throws -> ([HKSample]?, HKQueryAnchor?) {
     return try await withCheckedThrowingContinuation { continuation in
 
-      let query = HKAnchoredObjectQuery(
-        type: HKQuantityType(identifier),
-        predicate: HKQuery.predicateForSamples(withStart: startDate, end: nil),
-        anchor: anchor,
-        limit: HKObjectQueryNoLimit
-      ) { _, samples, _, newAnchor, error in
+      let handler: (HKAnchoredObjectQuery, [HKSample]?, [HKDeletedObject]?, HKQueryAnchor?, Error?) -> Void = { _, samples, _, newAnchor, error in
         if let error {
           continuation.resume(throwing: error)
         } else {
@@ -84,6 +79,27 @@ public final class HealthRepository {
           Log.make().notice("\(identifier.rawValue) Samples are empty.")
           return
         }
+      }
+
+      let query = HKAnchoredObjectQuery(
+        type: HKQuantityType(identifier),
+        predicate: HKQuery.predicateForSamples(withStart: startDate, end: nil),
+        anchor: anchor,
+        limit: HKObjectQueryNoLimit,
+        resultsHandler: handler
+      )
+
+      query.updateHandler = handler
+
+      switch identifier {
+      case .activeEnergyBurned:
+        caloriesBurnedQuery = query
+      case .distanceWalkingRunning:
+        distanceQuery = query
+      case .heartRate:
+        heartRateQuery = query
+      default:
+        break
       }
 
       healthStore.execute(query)
@@ -120,6 +136,11 @@ extension HealthRepository: HealthRepositoryRepresentable {
           return
         }
         do {
+          // 0. healthStore에게 query 중단 요청
+          if let heartRateQuery {
+            healthStore.stop(heartRateQuery)
+          }
+
           // 1. Query요청으로 샘플 데이터 수신
           let (samples, newAnchor) = try await query(startDate: startDate, identifier: .heartRate, anchor: heartRateAnchor)
 
@@ -151,6 +172,11 @@ extension HealthRepository: HealthRepositoryRepresentable {
           return
         }
         do {
+          // 0. healthStore에게 query 중단 요청
+          if let distanceQuery {
+            healthStore.stop(distanceQuery)
+          }
+
           // 1. Query요청으로 샘플 데이터 수신
           let (samples, newAnchor) = try await query(startDate: startDate, identifier: .distanceWalkingRunning, anchor: distanceAnchor)
 
@@ -183,6 +209,11 @@ extension HealthRepository: HealthRepositoryRepresentable {
         }
 
         do {
+          // 0. healthStore에게 query 중단 요청
+          if let caloriesBurnedQuery {
+            healthStore.stop(caloriesBurnedQuery)
+          }
+
           // 1. Query요청으로 샘플 데이터 수신
           let (samples, newAnchor) = try await query(startDate: startDate, identifier: .activeEnergyBurned, anchor: caloriesAnchor)
 
