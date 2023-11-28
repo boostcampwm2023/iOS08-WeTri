@@ -1,5 +1,4 @@
 import Combine
-import Log
 @testable import RecordFeature
 import XCTest
 
@@ -26,12 +25,9 @@ final class TimerTest: XCTestCase {
              .finished:
           if receivedValue == expectaionValue {
             expectation.fulfill()
-          } else {
-            Log.make().debug("받은 값들은 \(receivedValue)")
           }
         }
       } receiveValue: { text in
-        Log.make().debug("받은 값은 \(text)")
         receivedValue.append(text)
       }
       .store(in: &subscriptions)
@@ -55,7 +51,6 @@ final class TimerTest: XCTestCase {
     // act
     timer.oneSecondsTimerPublisher()
       .sink { text in
-        Log.make().debug("받은 값은 \(text)")
         receivedValue.append(text)
       }
       .store(in: &subscriptions)
