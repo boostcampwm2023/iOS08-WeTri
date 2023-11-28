@@ -4,9 +4,10 @@
   "data": {
     [
       {
-        "mode": "run",
-        "timeToTime": "09:00-10:00",
-        "distance": 11.9
+        "workout": "run",
+        "startTime": "09:00",
+        "endTime": "10:00",
+        "distance":
       },
       {
         "mode": "swim",

@@ -16,3 +16,19 @@ struct DateInfo {
   let date: String
   let dayOfWeek: String?
 }
+
+// MARK: Equatable
+
+extension DateInfo: Equatable {
+  static func == (lhs: DateInfo, rhs: DateInfo) -> Bool {
+    return (lhs.year == rhs.year) && (lhs.month == rhs.month) && (lhs.date == rhs.date)
+  }
+}
+
+// MARK: CustomStringConvertible
+
+extension DateInfo: CustomStringConvertible {
+  var description: String {
+    return "\(year) \(month) \(date) \(dayOfWeek)"
+  }
+}

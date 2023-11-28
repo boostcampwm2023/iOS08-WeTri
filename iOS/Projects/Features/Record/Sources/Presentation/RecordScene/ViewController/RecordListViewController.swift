@@ -8,6 +8,7 @@
 import Combine
 import CombineCocoa
 import DesignSystem
+import OSLog
 import UIKit
 
 // MARK: - RecordListViewController
@@ -17,6 +18,7 @@ final class RecordListViewController: UIViewController {
 
   private let appearSubject = PassthroughSubject<Void, Never>()
   private let moveWorkoutEnvironmentSceneSubject = PassthroughSubject<Void, Never>()
+  let selectedDateSubject = PassthroughSubject<IndexPath, Never>()
 
   private let viewModel: RecordListViewModel
   private var workoutInformationDataSource: WorkoutInformationDataSource?
@@ -81,27 +83,29 @@ final class RecordListViewController: UIViewController {
 
 private extension RecordListViewController {
   func bindViewModel() {
-    subscriptions.forEach {
-      $0.cancel()
+    for subscription in subscriptions {
+      subscription.cancel()
     }
     subscriptions.removeAll()
     let input = RecordListViewModelInput(
       appear: appearSubject.eraseToAnyPublisher(),
-      goRecordButtonDidTapped: moveWorkoutEnvironmentSceneSubject.eraseToAnyPublisher()
+      goRecordButtonDidTapped: moveWorkoutEnvironmentSceneSubject.eraseToAnyPublisher(),
+      selectedDate: selectedDateSubject.eraseToAnyPublisher()
     )
     let output = viewModel.transform(input: input)
     output
-      .receive(on: RunLoop.main)
+      .receive(on: DispatchQueue.main)
       .sink(
         receiveCompletion: { [weak self] completion in
           switch completion {
           case .finished:
-            break
+            Logger().debug("finished")
           case let .failure(error as RecordUpdateUseCaseError) where error == .noRecord:
             self?.workoutInformationCollectionView.isHidden = true
             self?.noRecordsView.isHidden = false
-          default:
-            break
+            Logger().error("\(error)")
+          case let .failure(error):
+            Logger().error("\(error)")
           }
         },
         receiveValue: { [weak self] state in
@@ -124,10 +128,9 @@ private extension RecordListViewController {
       noRecordsView.isHidden = true
     case let .sucessDateInfo(dateInfo):
       guard let dayOfWeek = dateInfo.dayOfWeek else { return }
-      todayLabel.text = "오늘\n \(dateInfo.month)월 \(dateInfo.date)일 \(dayOfWeek)"
-    case .moveScene:
-      let viewController = UIViewController()
-      navigationController?.pushViewController(viewController, animated: false)
+      todayLabel.text = "지금\n \(dateInfo.month)월 \(dateInfo.date)일 \(dayOfWeek)요일"
+    case let .customError(error):
+      Logger().error("\(error)")
     }
   }
 
@@ -188,8 +191,7 @@ private extension RecordListViewController {
     workoutInformationDataSource = WorkoutInformationDataSource(
       collectionView: workoutInformationCollectionView,
       cellProvider: { collectionView, indexPath, itemIdentifier in
-
-        collectionView.dequeueConfiguredReusableCell(
+        return collectionView.dequeueConfiguredReusableCell(
           using: cellRegistration,
           for: indexPath,
           item: itemIdentifier

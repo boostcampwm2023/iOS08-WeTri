@@ -6,13 +6,38 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import Combine
 import DesignSystem
+import OSLog
 import UIKit
 
 // MARK: - RecordCalendarViewController
 
 final class RecordCalendarViewController: UIViewController {
+  private var subscriptions: Set<AnyCancellable> = []
+
+  private let viewModel: RecordCalendarViewModel
   private var dataSource: RecordCalendarDiffableDataSource?
+
+  private let appearSubject = PassthroughSubject<Void, Never>()
+  private let appearSectionSubject = PassthroughSubject<Int, Never>()
+  private let selectedDateSubject = PassthroughSubject<IndexPath, Never>()
+  private let cellReuseSubject = PassthroughSubject<Void, Never>()
+
+  var selectedDatePublisher: AnyPublisher<IndexPath, Never> {
+    return selectedDateSubject.eraseToAnyPublisher()
+  }
+
+  init(viewModel: RecordCalendarViewModel) {
+    self.viewModel = viewModel
+    super.init(nibName: nil, bundle: nil)
+  }
+
+  @available(*, unavailable)
+  required init?(coder _: NSCoder) {
+    fatalError("No Xib")
+  }
+
   private lazy var calendarCollectionView: UICollectionView = {
     let flowLayout = UICollectionViewFlowLayout()
     flowLayout.scrollDirection = .horizontal
@@ -28,21 +53,48 @@ final class RecordCalendarViewController: UIViewController {
     super.viewDidLoad()
     configureUI()
     configureDataSource()
-    let items = [
-      CalendarInforamtionItem(dayOfWeek: "화", date: "17"),
-      CalendarInforamtionItem(dayOfWeek: "화", date: "18"),
-      CalendarInforamtionItem(dayOfWeek: "화", date: "19"),
-      CalendarInforamtionItem(dayOfWeek: "화", date: "20"),
-      CalendarInforamtionItem(dayOfWeek: "화", date: "21"),
-      CalendarInforamtionItem(dayOfWeek: "화", date: "21"),
-      CalendarInforamtionItem(dayOfWeek: "화", date: "21"),
-      CalendarInforamtionItem(dayOfWeek: "화", date: "21"),
-      CalendarInforamtionItem(dayOfWeek: "화", date: "21"),
-      CalendarInforamtionItem(dayOfWeek: "화", date: "21"),
-      CalendarInforamtionItem(dayOfWeek: "화", date: "21"),
-      CalendarInforamtionItem(dayOfWeek: "화", date: "21"),
-    ]
-    configureSnapshot(items: items)
+    bindViewModel()
+    appearSubject.send()
+    appearSectionSubject.send(Section.allCases.count - 1)
+  }
+}
+
+private extension RecordCalendarViewController {
+  func bindViewModel() {
+    for subscription in subscriptions {
+      subscription.cancel()
+    }
+    subscriptions.removeAll()
+    let input = RecordCalendarViewModelInput(
+      appear: appearSubject.eraseToAnyPublisher(),
+      appearSection: appearSectionSubject.eraseToAnyPublisher(),
+      calendarDateDidTapped: selectedDateSubject.eraseToAnyPublisher(),
+      calendarCellReuse: cellReuseSubject.eraseToAnyPublisher()
+    )
+    let output = viewModel.transform(input: input)
+    output
+      .receive(on: DispatchQueue.main)
+      .sink(receiveValue: { [weak self] state in
+        self?.render(output: state)
+      })
+      .store(in: &subscriptions)
+  }
+
+  func render(output: RecordCalendarState) {
+    switch output {
+    case let .date(dateInfos):
+      let calendarInformationItems = dateInfos.map { dateInfo in
+        return CalendarInforamtionItem(dayOfWeek: dateInfo.dayOfWeek!, date: dateInfo.date)
+      }
+      configureSnapshot(items: calendarInformationItems)
+    case let .selectedIndexPath(indexPath):
+      guard let cell = calendarCollectionView.cellForItem(at: indexPath) as? CalendarCollectionViewCell else {
+        return
+      }
+      cell.configureTextColor(isSelected: true)
+    case let .customError(error):
+      Logger().error("\(error)")
+    }
   }
 }
 
@@ -58,7 +110,11 @@ private extension RecordCalendarViewController {
   }
 
   func configureDataSource() {
-    let cellRegistration = RecordCalendarCellRegistration { cell, _, itemIdentifier in
+    let cellRegistration = RecordCalendarCellRegistration { [weak self] cell, indexPath, itemIdentifier in
+      self?.cellReuseSubject.send()
+      if indexPath.item == self?.viewModel.currentSelectedIndexPath?.item {
+        cell.configureTextColor(isSelected: true)
+      }
       cell.configure(
         calendarInformation: CalendarInforamtion(
           dayOfWeek: itemIdentifier.dayOfWeek,
@@ -70,7 +126,7 @@ private extension RecordCalendarViewController {
     dataSource = RecordCalendarDiffableDataSource(
       collectionView: calendarCollectionView,
       cellProvider: { collectionView, indexPath, itemIdentifier in
-        collectionView.dequeueConfiguredReusableCell(
+        return collectionView.dequeueConfiguredReusableCell(
           using: cellRegistration,
           for: indexPath,
           item: itemIdentifier
@@ -102,11 +158,15 @@ extension RecordCalendarViewController: UICollectionViewDelegateFlowLayout {
     _ collectionView: UICollectionView,
     didSelectItemAt indexPath: IndexPath
   ) {
-    guard let cell = collectionView.cellForItem(at: indexPath) as? CalendarCollectionViewCell else {
+    if let previousSelectedIndexPath = viewModel.currentSelectedIndexPath,
+       let previousCell = collectionView.cellForItem(at: previousSelectedIndexPath) as? CalendarCollectionViewCell {
+      previousCell.configureTextColor(isSelected: false)
+    }
+    guard let currentCell = collectionView.cellForItem(at: indexPath) as? CalendarCollectionViewCell else {
       return
     }
-    cell.dayOfWeekLabel.textColor = DesignSystemColor.primaryText
-    cell.dateLabel.textColor = DesignSystemColor.primaryText
+    selectedDateSubject.send(indexPath)
+    currentCell.configureTextColor(isSelected: true)
   }
 
   func collectionView(
@@ -116,8 +176,7 @@ extension RecordCalendarViewController: UICollectionViewDelegateFlowLayout {
     guard let cell = collectionView.cellForItem(at: indexPath) as? CalendarCollectionViewCell else {
       return
     }
-    cell.dayOfWeekLabel.textColor = DesignSystemColor.gray03
-    cell.dateLabel.textColor = DesignSystemColor.gray03
+    cell.configureTextColor(isSelected: false)
   }
 }
 
@@ -132,6 +191,10 @@ private extension RecordCalendarViewController {
 private enum Section {
   case calendar
 }
+
+// MARK: CaseIterable
+
+extension Section: CaseIterable {}
 
 // MARK: - CalendarInforamtionItem
 

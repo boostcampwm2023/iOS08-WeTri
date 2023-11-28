@@ -24,7 +24,8 @@ final class RecordUpdateUseCase: RecordUpdateUseCaseRepresentable {
             .setFailureType(to: Error.self)
             .eraseToAnyPublisher()
         }
-        return Fail(outputType: [Record].self, failure: RecordUpdateUseCaseError.noRecord).eraseToAnyPublisher()
+        return Fail(error: RecordUpdateUseCaseError.noRecord)
+          .eraseToAnyPublisher()
       }
       .eraseToAnyPublisher()
   }
