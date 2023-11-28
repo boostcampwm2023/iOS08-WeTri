@@ -25,6 +25,7 @@ final class CountDownBeforeWorkoutStartTimerUsecase: TimerUsecase {
   /// 안그러면 작동하지 않습니다.
   override init(initDate: Date) {
     super.init(initDate: initDate)
+    startTimer()
   }
 }
 
