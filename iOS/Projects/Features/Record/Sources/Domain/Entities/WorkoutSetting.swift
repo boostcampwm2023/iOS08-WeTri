@@ -11,21 +11,12 @@ import Foundation
 // MARK: - WorkoutSetting
 
 struct WorkoutSetting {
-  let mode: WorkoutMode
-  let environment: WorkoutEnvironment
-  let opponents: [Opponent]
-}
-
-// MARK: - WorkoutEnvironment
-
-enum WorkoutEnvironment {
-  case single
-  case multi
-}
-
-// MARK: - Opponent
-
-struct Opponent {
-  let name: String
-  let distance: Int
+  let workoutType: WorkoutType
+  let workoutPeerType: PeerType
+  let isWorkoutAlone: Bool
+  init(workoutType: WorkoutType, workoutPeerType: PeerType, isWorkoutAlone: Bool = true) {
+    self.workoutType = workoutType
+    self.workoutPeerType = workoutPeerType
+    self.isWorkoutAlone = isWorkoutAlone
+  }
 }

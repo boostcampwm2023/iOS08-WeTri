@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ProfilesService } from '../profiles/profiles.service';
-import { UserModel } from '../users/entities/users.entity';
+import { User } from '../users/entities/users.entity';
 import { UsersService } from '../users/users.service';
 import { SignupDto } from './dto/signup.dto';
 import {
@@ -9,6 +9,7 @@ import {
   NicknameDuplicateException,
   NotRefreshTokenException,
 } from './exceptions/auth.exception';
+import * as process from 'process';
 
 @Injectable()
 export class AuthService {
@@ -27,7 +28,9 @@ export class AuthService {
 
     return this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
-      expiresIn: isRefreshToken ? 86400 : 3600,
+      expiresIn: isRefreshToken
+        ? parseInt(process.env.JWT_REFRESH_CYCLE)
+        : parseInt(process.env.JWT_ACCESS_CYCLE),
     });
   }
 
@@ -39,7 +42,7 @@ export class AuthService {
   }
 
   async authenticateWithUserIdAndProvider(
-    user: Pick<UserModel, 'userId' | 'provider'>,
+    user: Pick<User, 'userId' | 'provider'>,
   ) {
     const existingUser =
       await this.usersService.getUserByUserIdAndProvider(user);

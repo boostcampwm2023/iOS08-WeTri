@@ -39,9 +39,6 @@ final class WorkoutRouteMapViewModel {
 
 extension WorkoutRouteMapViewModel: WorkoutRouteMapViewModelRepresentable {
   public func transform(input _: WorkoutRouteMapViewModelInput) -> WorkoutRouteMapViewModelOutput {
-    for subscription in subscriptions {
-      subscription.cancel()
-    }
     subscriptions.removeAll()
 
     let initialState: WorkoutRouteMapViewModelOutput = Just(.idle).eraseToAnyPublisher()

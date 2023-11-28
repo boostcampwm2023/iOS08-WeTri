@@ -32,7 +32,8 @@ public extension [Target] {
     infoPlist: [String: Plist.Value] = [:]
   ) -> [Target] {
 
-    var defaultInfoPlist: [String: Plist.Value] = [
+    let mergedInfoPlist: [String: Plist.Value] = [
+      "BaseURL": "$(BASE_URL)",
       "UILaunchStoryboardName": "LaunchScreen",
       "UIApplicationSceneManifest": [
         "UIApplicationSupportsMultipleScenes": false,
@@ -45,9 +46,7 @@ public extension [Target] {
           ],
         ],
       ],
-    ]
-
-    defaultInfoPlist.merge(infoPlist) { _, new in
+    ].merging(infoPlist) { _, new in
       new
     }
 
@@ -58,7 +57,7 @@ public extension [Target] {
         product: .app,
         bundleId: "\(ProjectEnvironment.default.prefixBundleID).\(name.lowercased())",
         deploymentTarget: ProjectEnvironment.default.deploymentTarget,
-        infoPlist: .extendingDefault(with: defaultInfoPlist),
+        infoPlist: .extendingDefault(with: mergedInfoPlist),
         sources: "Sources/**",
         resources: "Resources/**",
         scripts: [.swiftFormat, .swiftLint],
@@ -113,6 +112,11 @@ public extension [Target] {
     infoPlist: [String: Plist.Value] = [:],
     resources: ResourceFileElements? = nil
   ) -> [Target] {
+
+    let mergedInfoPlist: [String: Plist.Value] = ["BaseURL": "$(BASE_URL)"].merging(infoPlist) { _, new in
+      new
+    }
+
     // 에셋 리소스를 코드로 자동완성 해주는 옵션 활성화
     let settings: Settings = .settings(
       base: ["ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES"],
@@ -129,7 +133,7 @@ public extension [Target] {
         product: .framework,
         bundleId: "\(ProjectEnvironment.default.prefixBundleID).\(feature.targetName)Feature",
         deploymentTarget: ProjectEnvironment.default.deploymentTarget,
-        infoPlist: .extendingDefault(with: infoPlist),
+        infoPlist: .extendingDefault(with: mergedInfoPlist),
         sources: "Sources/**",
         resources: resources,
         scripts: [.swiftFormat, .swiftLint],
@@ -189,6 +193,11 @@ public extension [Target] {
     resources: ResourceFileElements? = nil,
     settings: Settings? = nil
   ) -> [Target] {
+    
+    let mergedInfoPlist: [String: Plist.Value] = ["BaseURL": "$(BASE_URL)"].merging(infoPlist) { _, new in
+      new
+    }
+
     var targets: [Target] = [
       Target(
         name: "\(name)",
@@ -196,7 +205,7 @@ public extension [Target] {
         product: product,
         bundleId: "\(ProjectEnvironment.default.prefixBundleID).\(name)",
         deploymentTarget: ProjectEnvironment.default.deploymentTarget,
-        infoPlist: .extendingDefault(with: infoPlist),
+        infoPlist: .extendingDefault(with: mergedInfoPlist),
         sources: "Sources/**",
         resources: resources,
         scripts: [.swiftFormat, .swiftLint],

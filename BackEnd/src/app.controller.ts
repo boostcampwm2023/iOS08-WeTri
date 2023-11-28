@@ -1,7 +1,9 @@
 import { Controller, Get, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { join } from 'path';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('메인 페이지')
 @Controller()
 export class AppController {
   @Get()

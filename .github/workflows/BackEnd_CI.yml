@@ -5,11 +5,12 @@ on:
     branches: 'feature/BE/*'
   pull_request:
     branches: 'develop'
-    types: [opened, synchronize, reopened, edited]
+    types: [opened, synchronize, reopened, labeled]
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.labels.*.name, '💻백엔드')
+    runs-on: self-hosted
     steps:
       - name: 코드 체크아웃
         uses: actions/checkout@v3
@@ -20,7 +21,7 @@ jobs:
           node-version: '18'
 
       - name: 의존성 설치
-        run: npm ci
+        run: npm install
         working-directory: ./BackEnd
 
       - name: 테스트 진행

@@ -114,6 +114,7 @@ final class WorkoutSummaryViewController: UIViewController {
 
   private func setupStyles() {
     view.backgroundColor = DesignSystemColor.primaryBackground
+    navigationController?.isNavigationBarHidden = true
   }
 
   private func bind() {

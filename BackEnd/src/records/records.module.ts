@@ -4,14 +4,10 @@ import { RecordsController } from './records.controller';
 import { AuthModule } from 'src/auth/auth.module';
 import { ProfilesModule } from 'src/profiles/profiles.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RecordModel } from './entities/records.entity';
+import { Record } from './entities/records.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([RecordModel]),
-    AuthModule,
-    ProfilesModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Record]), AuthModule, ProfilesModule],
   controllers: [RecordsController],
   providers: [RecordsService],
 })

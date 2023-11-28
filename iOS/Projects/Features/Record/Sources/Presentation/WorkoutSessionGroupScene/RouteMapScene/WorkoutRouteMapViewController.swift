@@ -9,9 +9,17 @@
 import Combine
 import CoreLocation
 import DesignSystem
+import Log
 import MapKit
-import OSLog
 import UIKit
+
+// MARK: - LocationTrackingProtocol
+
+/// 위치 정보를 제공받기 위해 사용합니다.
+protocol LocationTrackingProtocol: UIViewController {
+  /// 위치 정보를 제공하는 Publisher
+  var locationPublisher: AnyPublisher<[CLLocation], Never> { get }
+}
 
 // MARK: - WorkoutRouteMapViewController
 
@@ -21,15 +29,11 @@ final class WorkoutRouteMapViewController: UIViewController {
   private let viewModel: WorkoutRouteMapViewModelRepresentable
 
   /// 사용자 위치 추적 배열
-  private var locations: [CLLocation] = []
+  @Published private var locations: [CLLocation] = []
 
   private var subscriptions: Set<AnyCancellable> = []
 
-  private lazy var locationManager: CLLocationManager = {
-    let locationManager = CLLocationManager()
-    locationManager.delegate = self
-    return locationManager
-  }()
+  private let locationManager: CLLocationManager = .init()
 
   // MARK: UI Components
 
@@ -55,6 +59,7 @@ final class WorkoutRouteMapViewController: UIViewController {
 
   deinit {
     locationManager.stopUpdatingLocation()
+    Log.make().debug("\(Self.self) deinitialized")
   }
 
   // MARK: Life Cycles
@@ -104,8 +109,17 @@ final class WorkoutRouteMapViewController: UIViewController {
   }
 
   private func setupLocationManager() {
+    locationManager.delegate = self
     locationManager.requestWhenInUseAuthorization()
     locationManager.startUpdatingLocation()
+  }
+}
+
+// MARK: LocationTrackingProtocol
+
+extension WorkoutRouteMapViewController: LocationTrackingProtocol {
+  var locationPublisher: AnyPublisher<[CLLocation], Never> {
+    $locations.eraseToAnyPublisher()
   }
 }
 
@@ -117,7 +131,7 @@ extension WorkoutRouteMapViewController: CLLocationManagerDelegate {
       manager.authorizationStatus == .authorizedWhenInUse
       || manager.authorizationStatus == .authorizedAlways
     else {
-      Logger().error("유저의 위치를 받아올 수 없습니다.")
+      Log.make().error("유저의 위치를 받아올 수 없습니다.")
       return
     }
     locationManager.startUpdatingLocation()
@@ -126,7 +140,7 @@ extension WorkoutRouteMapViewController: CLLocationManagerDelegate {
   func locationManager(_: CLLocationManager, didUpdateLocations newLocations: [CLLocation]) {
     guard let newLocation = newLocations.last
     else {
-      Logger().error("location 값이 존재하지 않습니다.")
+      Log.make().error("location 값이 존재하지 않습니다.")
       return
     }
 
@@ -145,7 +159,7 @@ extension WorkoutRouteMapViewController: CLLocationManagerDelegate {
   }
 
   func locationManager(_: CLLocationManager, didFailWithError error: Error) {
-    Logger().error("\(error)")
+    Log.make().error("\(error)")
   }
 }
 

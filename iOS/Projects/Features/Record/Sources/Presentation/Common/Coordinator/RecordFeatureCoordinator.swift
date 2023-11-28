@@ -43,7 +43,7 @@ public final class RecordFeatureCoordinator: RecordFeatureCoordinating {
   }
 
   func showSettingFlow() {
-    let workoutSettingCoordinator = WorkoutSettingCoordinator(navigationController: navigationController)
+    let workoutSettingCoordinator = WorkoutEnvironmentSetUpCoordinator(navigationController: navigationController)
     childCoordinators.append(workoutSettingCoordinator)
     workoutSettingCoordinator.finishDelegate = self
     workoutSettingCoordinator.settingDidFinishedDelegate = self
