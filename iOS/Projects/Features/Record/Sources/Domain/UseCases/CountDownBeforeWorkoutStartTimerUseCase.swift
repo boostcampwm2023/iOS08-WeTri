@@ -1,5 +1,5 @@
 //
-//  CountDownBeforeWorkoutStartTimerUsecase.swift
+//  CountDownBeforeWorkoutStartTimerUseCase.swift
 //  RecordFeature
 //
 //  Created by MaraMincho on 11/28/23.
@@ -9,17 +9,17 @@
 import Combine
 import Foundation
 
-// MARK: - CountDownBeforeWorkoutStartTimerUsecaseRepresentable
+// MARK: - CountDownBeforeWorkoutStartTimerUseCaseRepresentable
 
-protocol CountDownBeforeWorkoutStartTimerUsecaseRepresentable {
+protocol CountDownBeforeWorkoutStartTimerUseCaseRepresentable {
   func beforeWorkoutTimerTextPublisher() -> AnyPublisher<String, Never>
   mutating func startTimer()
   mutating func stopTimer()
 }
 
-// MARK: - CountDownBeforeWorkoutStartTimerUsecase
+// MARK: - CountDownBeforeWorkoutStartTimerUseCase
 
-struct CountDownBeforeWorkoutStartTimerUsecase {
+struct CountDownBeforeWorkoutStartTimerUseCase {
   let initDate: Date
   var timerCancellable: AnyCancellable?
   let beforeWorkoutTimerTextSubject: CurrentValueSubject<String, Never> = .init("")
@@ -29,9 +29,9 @@ struct CountDownBeforeWorkoutStartTimerUsecase {
   }
 }
 
-// MARK: CountDownBeforeWorkoutStartTimerUsecaseRepresentable
+// MARK: CountDownBeforeWorkoutStartTimerUseCaseRepresentable
 
-extension CountDownBeforeWorkoutStartTimerUsecase: CountDownBeforeWorkoutStartTimerUsecaseRepresentable {
+extension CountDownBeforeWorkoutStartTimerUseCase: CountDownBeforeWorkoutStartTimerUseCaseRepresentable {
   func beforeWorkoutTimerTextPublisher() -> AnyPublisher<String, Never> {
     return beforeWorkoutTimerTextSubject.eraseToAnyPublisher()
   }
