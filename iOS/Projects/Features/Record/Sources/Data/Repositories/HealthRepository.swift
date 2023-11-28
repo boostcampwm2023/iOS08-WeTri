@@ -40,17 +40,20 @@ public final class HealthRepository {
 
   /// 사용자의 건강 데이터를 사용할 수 없는 경우 생성에 실패합니다.
   /// - Parameter startDate: 건강 데이터를 가져오기 위한 시작 시간
-  init?() {
-    if HKHealthStore.isHealthDataAvailable() == false {
-      return nil
-    }
+  init() {
     healthStore = .init()
     requestAuthorization()
   }
 
   /// 사용자에게 HealthKit 사용 인가를 요청합니다.
   private func requestAuthorization() {
+    if HKHealthStore.isHealthDataAvailable() == false {
+      Log.make().error("Not available HealthKit.")
+      return
+    }
+
     Log.make().notice("Requesting HealthKit authorization...")
+    
     healthStore.requestAuthorization(toShare: nil, read: healthDataTypeValues) { _, error in
       if let error {
         Log.make().error("Received an HealthKit error type: \(error)")
