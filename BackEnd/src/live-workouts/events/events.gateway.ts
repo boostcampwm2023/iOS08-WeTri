@@ -5,19 +5,28 @@ import {
   WebSocketServer,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  OnGatewayInit,
 } from '@nestjs/websockets';
 import * as WebSocket from 'ws';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
+import { ExtensionWebSocketService } from './extensionWebSocket.service';
 
 @WebSocketGateway(3003)
-export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
   @WebSocketServer() server: WebSocket.Server;
-  constructor(private readonly eventsService: EventsService) {}
+  constructor(
+    private readonly eventsService: EventsService,
+    private readonly extensionWebSocketService: ExtensionWebSocketService) { }
 
-  handleDisconnect(client: any) {
-    throw new Error('Method not implemented.');
+  afterInit(server: WebSocket.Server) {
+    this.extensionWebSocketService.webSocketServer(server);
+  }
+
+  handleConnection(client: WebSocket, ...args: any[]): any {
+    this.extensionWebSocketService.webSocket(client, this.server);
+    
   }
 
   @SubscribeMessage('events')
@@ -55,5 +64,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     return this.eventsService.remove(id);
   }
 
-  handleConnection(client: any, ...args: any[]): any {}
+  handleDisconnect(client: any) {
+    throw new Error('Method not implemented.');
+  }
 }
