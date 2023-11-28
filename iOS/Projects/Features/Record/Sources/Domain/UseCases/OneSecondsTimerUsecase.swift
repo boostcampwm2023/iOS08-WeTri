@@ -12,7 +12,7 @@ import Foundation
 // MARK: - OneSecondsTimerUsecaseRepresentable
 
 protocol OneSecondsTimerUsecaseRepresentable: TimerUsecaseRepresentable {
-  func oneSeconsTimerPublisher() -> AnyPublisher<Int, Never>
+  func oneSecondsTimerPublisher() -> AnyPublisher<Int, Never>
 }
 
 // MARK: - OneSecondsTimerUsecase
