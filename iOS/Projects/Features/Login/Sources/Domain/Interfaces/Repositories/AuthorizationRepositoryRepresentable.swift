@@ -6,6 +6,9 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import Combine
 import Foundation
 
-protocol AuthorizationRepositoryRepresentable {}
+protocol AuthorizationRepositoryRepresentable {
+  func fetch(authorizationInfo: AuthorizationInfo) -> AnyPublisher<Token, Never>
+}

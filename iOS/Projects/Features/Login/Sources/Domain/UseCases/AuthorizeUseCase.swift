@@ -9,8 +9,8 @@
 import Combine
 import Foundation
 
-public final class AuthorizeUseCase: AuthorizeUseCaseRepresentable {
-  public func authorize(authorization _: AuthorizationInfo) -> AnyPublisher<Token, Never> {
+final class AuthorizeUseCase: AuthorizeUseCaseRepresentable {
+  func authorize(authorization _: AuthorizationInfo) -> AnyPublisher<Token, Never> {
     return Just(Token(accesToken: Data(count: 10), refreshToken: Data(count: 10)))
       .eraseToAnyPublisher()
   }

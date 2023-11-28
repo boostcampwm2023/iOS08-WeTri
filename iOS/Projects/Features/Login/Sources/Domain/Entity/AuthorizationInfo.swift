@@ -8,6 +8,8 @@
 
 import Foundation
 
+// MARK: - AuthorizationInfo
+
 /// 애플로그인을 통해 받아온 데이터 entity
 public struct AuthorizationInfo {
   /// identityToken
@@ -16,3 +18,7 @@ public struct AuthorizationInfo {
   /// authorizationCode
   let authorizationCode: Data
 }
+
+// MARK: Codable
+
+extension AuthorizationInfo: Codable {}
