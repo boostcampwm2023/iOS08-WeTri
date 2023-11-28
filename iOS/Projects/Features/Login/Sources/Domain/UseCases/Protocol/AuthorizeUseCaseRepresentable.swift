@@ -10,5 +10,5 @@ import Combine
 import Foundation
 
 protocol AuthorizeUseCaseRepresentable {
-  func authorize(authorization: AuthorizationInfo) -> AnyPublisher<Token, Never>
+  func authorize(authorizationInfo: AuthorizationInfo) -> AnyPublisher<Token, Never>
 }

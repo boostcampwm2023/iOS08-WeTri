@@ -10,8 +10,14 @@ import Combine
 import Foundation
 
 final class AuthorizeUseCase: AuthorizeUseCaseRepresentable {
-  func authorize(authorization _: AuthorizationInfo) -> AnyPublisher<Token, Never> {
-    return Just(Token(accesToken: Data(count: 10), refreshToken: Data(count: 10)))
+  private let authorizationRepository: AuthorizationRepositoryRepresentable
+
+  init(authorizationRepository: AuthorizationRepositoryRepresentable) {
+    self.authorizationRepository = authorizationRepository
+  }
+
+  func authorize(authorizationInfo: AuthorizationInfo) -> AnyPublisher<Token, Never> {
+    return authorizationRepository.fetch(authorizationInfo: authorizationInfo)
       .eraseToAnyPublisher()
   }
 }
