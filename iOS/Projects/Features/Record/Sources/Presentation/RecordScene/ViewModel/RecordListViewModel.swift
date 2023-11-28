@@ -9,6 +9,7 @@
 import Combine
 import Coordinator
 import Foundation
+import OSLog
 
 // MARK: - RecordListViewModelInput
 
@@ -18,7 +19,7 @@ struct RecordListViewModelInput {
   let selectedDate: AnyPublisher<IndexPath, Never>
 }
 
-typealias RecordListViewModelOutput = AnyPublisher<RecordListState, Error>
+typealias RecordListViewModelOutput = AnyPublisher<RecordListState, Never>
 
 // MARK: - RecordListState
 
@@ -26,6 +27,7 @@ enum RecordListState {
   case idle
   case sucessRecords([Record])
   case sucessDateInfo(DateInfo)
+  case customError(Error)
 }
 
 // MARK: - RecordListViewModel
@@ -58,66 +60,72 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
     subscriptions.removeAll()
 
     let appearRecords = input.appear
-      .flatMap { [weak self] _ -> AnyPublisher<[Record], Error> in
+      .flatMap { [weak self] _ -> AnyPublisher<RecordListState, Never> in
         guard let self else {
-          return Fail(error: BindingError.viewModelDeinitialized).eraseToAnyPublisher()
+          return Just(.customError(BindingError.viewModelDeinitialized))
+            .eraseToAnyPublisher()
         }
-        let todayDate = dateProvideUsecase.today()
-        return recordUpdateUsecase.execute(date: todayDate)
-      }
-      .map { records -> RecordListState in
-        .sucessRecords(records)
+        return recordUpdateUsecase.execute(date: Date.now)
+          .map { records -> RecordListState in
+            .sucessRecords(records)
+          }
+          .catch { _ -> AnyPublisher<RecordListState, Never> in
+            return Just(.customError(BindingError.dateNotFound))
+              .eraseToAnyPublisher()
+          }
+          .eraseToAnyPublisher()
       }
       .eraseToAnyPublisher()
 
     let appearDate = input.appear
-      .flatMap { [weak self] _ -> AnyPublisher<DateInfo, Error> in
+      .flatMap { [weak self] _ -> AnyPublisher<RecordListState, Never> in
         guard let self else {
-          return Fail(error: BindingError.viewModelDeinitialized).eraseToAnyPublisher()
+          return Just(.customError(BindingError.viewModelDeinitialized))
+            .eraseToAnyPublisher()
         }
-        let todayDate = dateProvideUsecase.today()
-        let dateInfo = dateProvideUsecase.transform(date: todayDate)
-        return Just(dateInfo)
-          .setFailureType(to: Error.self)
+        let dateInfo = dateProvideUsecase.transform(date: Date.now)
+        return Just(.sucessDateInfo(dateInfo))
           .eraseToAnyPublisher()
-      }
-      .map { dateInfo -> RecordListState in
-        .sucessDateInfo(dateInfo)
       }
       .eraseToAnyPublisher()
 
     let selectedRecords = input.selectedDate
-      .flatMap { [weak self] indexPath -> AnyPublisher<[Record], Error> in
+      .flatMap { [weak self] indexPath -> AnyPublisher<RecordListState, Never> in
         guard let self else {
-          return Fail(error: BindingError.viewModelDeinitialized).eraseToAnyPublisher()
+          return Just(.customError(BindingError.viewModelDeinitialized))
+            .eraseToAnyPublisher()
         }
-        guard let dateInfo = dateProvideUsecase.selectedDateInfo(index: indexPath.item) else {
-          return Fail(error: BindingError.dateNotFound).eraseToAnyPublisher()
-        }
-        guard let date = dateProvideUsecase.transform(dateInfo: dateInfo) else {
-          return Fail(error: BindingError.dateNotFound).eraseToAnyPublisher()
+        guard
+          let dateInfo = dateProvideUsecase.selectedDateInfo(index: indexPath.item),
+          let date = dateProvideUsecase.transform(dateInfo: dateInfo)
+        else {
+          return Just(.customError(BindingError.dateNotFound))
+            .eraseToAnyPublisher()
         }
         return recordUpdateUsecase.execute(date: date)
-      }
-      .map { records -> RecordListState in
-        return .sucessRecords(records)
+          .map { records -> RecordListState in
+            return .sucessRecords(records)
+          }
+          .catch { _ -> AnyPublisher<RecordListState, Never> in
+            return Just(.customError(BindingError.dateNotFound))
+              .eraseToAnyPublisher()
+          }
+          .eraseToAnyPublisher()
       }
       .eraseToAnyPublisher()
 
     let selectedDate = input.selectedDate
-      .flatMap { [weak self] indexPath -> AnyPublisher<DateInfo, Error> in
+      .flatMap { [weak self] indexPath -> AnyPublisher<RecordListState, Never> in
         guard let self else {
-          return Fail(error: BindingError.viewModelDeinitialized).eraseToAnyPublisher()
+          return Just(.customError(BindingError.viewModelDeinitialized))
+            .eraseToAnyPublisher()
         }
         guard let dateInfo = dateProvideUsecase.selectedDateInfo(index: indexPath.item) else {
-          return Fail(error: BindingError.dateNotFound).eraseToAnyPublisher()
+          return Just(.customError(BindingError.dateNotFound))
+            .eraseToAnyPublisher()
         }
-        return Just(dateInfo)
-          .setFailureType(to: Error.self)
+        return Just(.sucessDateInfo(dateInfo))
           .eraseToAnyPublisher()
-      }
-      .map { dateInfo -> RecordListState in
-        .sucessDateInfo(dateInfo)
       }
       .eraseToAnyPublisher()
 
@@ -128,7 +136,6 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
       .store(in: &subscriptions)
 
     let initialState: RecordListViewModelOutput = Just(.idle)
-      .setFailureType(to: Error.self)
       .eraseToAnyPublisher()
 
     return Publishers

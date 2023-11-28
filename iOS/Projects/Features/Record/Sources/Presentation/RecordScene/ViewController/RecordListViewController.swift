@@ -103,9 +103,9 @@ private extension RecordListViewController {
           case let .failure(error as RecordUpdateUseCaseError) where error == .noRecord:
             self?.workoutInformationCollectionView.isHidden = true
             self?.noRecordsView.isHidden = false
-            Logger().debug("\(error)")
+            Logger().error("\(error)")
           case let .failure(error):
-            Logger().debug("\(error)")
+            Logger().error("\(error)")
           }
         },
         receiveValue: { [weak self] state in
@@ -129,6 +129,8 @@ private extension RecordListViewController {
     case let .sucessDateInfo(dateInfo):
       guard let dayOfWeek = dateInfo.dayOfWeek else { return }
       todayLabel.text = "지금\n \(dateInfo.month)월 \(dateInfo.date)일 \(dayOfWeek)요일"
+    case let .customError(error):
+      Logger().error("\(error)")
     }
   }
 

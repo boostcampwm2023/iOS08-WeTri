@@ -16,13 +16,8 @@ final class DateProvideUseCase: DateProvideUseCaseRepresentable {
   private var dateInfos: [DateInfo] = []
   private let calendar = Calendar.current
 
-  func today() -> Date {
-    let currentDate = Date()
-    return currentDate
-  }
-
   func todayIndex(sectionCount: Int) -> IndexPath {
-    let date: Date = today()
+    let date = Date.now
     let todayDateInfo = transform(date: date)
     for (index, dateInfo) in dateInfos.enumerated() {
       guard dateInfo == todayDateInfo else { continue }
@@ -64,7 +59,7 @@ final class DateProvideUseCase: DateProvideUseCaseRepresentable {
   }
 
   func fetchAllDatesThisMonth() -> [DateInfo] {
-    let today = today()
+    let today = Date.now
     let todayDateInfo = transform(date: today)
 
     guard let thisYear = Int(todayDateInfo.year),

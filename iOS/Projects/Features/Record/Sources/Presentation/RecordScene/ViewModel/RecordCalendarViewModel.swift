@@ -19,13 +19,14 @@ struct RecordCalendarViewModelInput {
   let calendarCellReuse: AnyPublisher<Void, Never>
 }
 
-typealias RecordCalendarViewModelOutput = AnyPublisher<RecordCalendarState, Error>
+typealias RecordCalendarViewModelOutput = AnyPublisher<RecordCalendarState, Never>
 
 // MARK: - RecordCalendarState
 
 enum RecordCalendarState {
   case date([DateInfo])
   case selectedIndexPath(IndexPath)
+  case customError(Error)
 }
 
 // MARK: - RecordCalendarViewModel
@@ -51,34 +52,27 @@ extension RecordCalendarViewModel: RecordCalendarViewModelRepresentable {
     subscriptions.removeAll()
 
     let appearTotalDateInfo = input.appear
-      .flatMap { [weak self] _ -> AnyPublisher<[DateInfo], Error> in
+      .flatMap { [weak self] _ -> AnyPublisher<RecordCalendarState, Never> in
         guard let self else {
-          return Fail(error: BindingError.viewModelDeinitialized)
+          return Just(.customError(BindingError.viewModelDeinitialized))
             .eraseToAnyPublisher()
         }
         let allDates = dateProvideUseCase.fetchAllDatesThisMonth()
-        return Just(allDates)
-          .setFailureType(to: Error.self)
+        return Just(.date(allDates))
           .eraseToAnyPublisher()
-      }
-      .map { dateInfos -> RecordCalendarState in
-        .date(dateInfos)
       }
       .eraseToAnyPublisher()
 
     let appearTodayIndex = input.appearSection
-      .flatMap { [weak self] sectionCount -> AnyPublisher<IndexPath, Error> in
+      .flatMap { [weak self] sectionCount -> AnyPublisher<RecordCalendarState, Never> in
         guard let self else {
-          return Fail(error: BindingError.viewModelDeinitialized)
+          return Just(.customError(BindingError.viewModelDeinitialized))
             .eraseToAnyPublisher()
         }
-        return Just(dateProvideUseCase.todayIndex(sectionCount: sectionCount))
-          .setFailureType(to: Error.self)
+        let todayIndex = dateProvideUseCase.todayIndex(sectionCount: sectionCount)
+        currentSelectedIndexPath = todayIndex
+        return Just(.selectedIndexPath(todayIndex))
           .eraseToAnyPublisher()
-      }
-      .map { [weak self] indexPath -> RecordCalendarState in
-        self?.currentSelectedIndexPath = indexPath
-        return .selectedIndexPath(indexPath)
       }
       .eraseToAnyPublisher()
 
@@ -89,16 +83,13 @@ extension RecordCalendarViewModel: RecordCalendarViewModelRepresentable {
       .store(in: &subscriptions)
 
     let reuse = input.calendarCellReuse
-      .flatMap { [weak self] _ -> AnyPublisher<IndexPath, Error> in
+      .flatMap { [weak self] _ -> AnyPublisher<RecordCalendarState, Never> in
         guard let currentSelectedIndexPath = self?.currentSelectedIndexPath else {
-          return Fail(error: BindingError.invalidCurrentSelectedIndexPath).eraseToAnyPublisher()
+          return Just(.customError(BindingError.invalidCurrentSelectedIndexPath))
+            .eraseToAnyPublisher()
         }
-        return Just(currentSelectedIndexPath)
-          .setFailureType(to: Error.self)
+        return Just(.selectedIndexPath(currentSelectedIndexPath))
           .eraseToAnyPublisher()
-      }
-      .map { indexPath -> RecordCalendarState in
-        return .selectedIndexPath(indexPath)
       }
       .eraseToAnyPublisher()
 

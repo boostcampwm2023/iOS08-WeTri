@@ -9,7 +9,6 @@
 import Foundation
 
 protocol DateProvideUseCaseRepresentable {
-  func today() -> Date
   func todayIndex(sectionCount: Int) -> IndexPath
   func transform(date: Date) -> DateInfo
   func transform(dateInfo: DateInfo) -> Date?

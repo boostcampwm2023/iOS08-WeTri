@@ -74,15 +74,9 @@ private extension RecordCalendarViewController {
     let output = viewModel.transform(input: input)
     output
       .receive(on: DispatchQueue.main)
-      .sink { completion in
-        switch completion {
-        case .finished: break
-        case let .failure(error):
-          Logger().debug("\(error)")
-        }
-      } receiveValue: { [weak self] state in
+      .sink(receiveValue: { [weak self] state in
         self?.render(output: state)
-      }
+      })
       .store(in: &subscriptions)
   }
 
@@ -97,8 +91,9 @@ private extension RecordCalendarViewController {
       guard let cell = calendarCollectionView.cellForItem(at: indexPath) as? CalendarCollectionViewCell else {
         return
       }
-
       cell.configureTextColor(isSelected: true)
+    case let .customError(error):
+      Logger().error("\(error)")
     }
   }
 }
