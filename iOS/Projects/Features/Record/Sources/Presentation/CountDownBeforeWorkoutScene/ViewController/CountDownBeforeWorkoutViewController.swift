@@ -97,8 +97,8 @@ private extension CountDownBeforeWorkoutViewController {
 
   func bindViewModel() {
     let input = CountDownBeforeWorkoutViewModelInput(
-      viewDidApperPubilsehr: viewDidAppearSubject.eraseToAnyPublisher(),
-      didFinsihTimerSubscrion: didFinishTimerTextSubscriptionSubject.eraseToAnyPublisher()
+      viewDidAppearPublisher: viewDidAppearSubject.eraseToAnyPublisher(),
+      didFinishTimerSubscription: didFinishTimerTextSubscriptionSubject.eraseToAnyPublisher()
     )
 
     viewModel

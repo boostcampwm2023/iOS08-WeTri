@@ -46,7 +46,7 @@ final class WorkoutEnvironmentSetUpCoordinator: WorkoutEnvironmentSetUpCoordinat
   }
 
   func pushPeerRandomMatchingViewController(workoutSetting: WorkoutSetting) {
-    let repository = WorkoutPeerRandomMatchingRepository(session: makeMockDataFromRnaomMatching())
+    let repository = WorkoutPeerRandomMatchingRepository(session: makeMockDataFromRandomMatching())
 
     let useCase = WorkoutPeerRandomMatchingUseCase(repository: repository)
 
@@ -67,27 +67,20 @@ final class WorkoutEnvironmentSetUpCoordinator: WorkoutEnvironmentSetUpCoordinat
     // TODO: 뷰 컨트롤러 시작 로직 작성
   }
 
-  func finish(workoutSetting _: WorkoutSetting) {
-    let useCase = CountDownBeforeWorkoutStartTimerUseCase(initDate: .now + 8)
-
-    let vm = CountDownBeforeWorkoutViewModel(coordinator: self, useCase: useCase)
-
-    let vc = CountDownBeforeWorkoutViewController(viewModel: vm)
-    navigationController.pushViewController(vc, animated: true)
-
+  func finish(workoutSetting: WorkoutSetting) {
     // TODO: 주석 풀고 코디네이팅 연결 하는 작업 필요
     // 현재는 타이머 뷰컨 실험할려고 잠깐 죽인 코드
-//    settingDidFinishedDelegate?.workoutSettingCoordinatorDidFinished(workoutSetting: workoutSetting)
+    settingDidFinishedDelegate?.workoutSettingCoordinatorDidFinished(workoutSetting: workoutSetting)
   }
 }
 
 private extension WorkoutEnvironmentSetUpCoordinator {
-  func makeMockDataFromRnaomMatching() -> URLSessionProtocol {
-    let mockSession = MockURLSession(mockDataByURLString: makeMockDataFromRnaomMatchingDataByURLString())
+  func makeMockDataFromRandomMatching() -> URLSessionProtocol {
+    let mockSession = MockURLSession(mockDataByURLString: makeMockDataFromRandomMatchingDataByURLString())
     return mockSession
   }
 
-  func makeMockDataFromRnaomMatchingDataByURLString() -> [String: Data] {
+  func makeMockDataFromRandomMatchingDataByURLString() -> [String: Data] {
     let serverURL = Bundle.main.infoDictionary?["BaseURL"] as? String ?? ""
     let res = [
       "\(serverURL)/\(PersistencyProperty.matchStartPath)": mockDataMatchStart(),

@@ -13,5 +13,6 @@ protocol WorkoutSessionCoordinating: Coordinating {
   /// 운동 요약 화면으로 이동합니다.
   /// - Parameter recordID: 요약 화면을 보여주기 위한 기록 Identifier
   func pushWorkoutSummaryViewController(recordID: Int)
-  func pushCountDownBeforeWokroutViewController()
+  func pushWorkoutSession()
+  func pushCountDownBeforeWorkout()
 }

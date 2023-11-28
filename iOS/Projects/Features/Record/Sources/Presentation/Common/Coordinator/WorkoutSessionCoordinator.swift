@@ -26,6 +26,10 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
   }
 
   func start() {
+    pushCountDownBeforeWorkout()
+  }
+
+  func pushWorkoutSession() {
     // TODO: Mock Data 연결 필요
     guard let jsonPath = Bundle(for: Self.self).path(forResource: "WorkoutSession", ofType: "json"),
           let jsonData = try? Data(contentsOf: .init(filePath: jsonPath))
@@ -58,9 +62,13 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
     navigationController.setViewControllers([workoutSummaryViewController], animated: true)
   }
 
-  func pushCountDownBeforeWokroutViewController() {
+  func pushCountDownBeforeWorkout() {
     // TODO: CountDown 관련 ViewController 생성
-//    let viewModel = CountDownBeforeWorkoutViewModel(coordinator: self)
-//    let viewController = CountDownBeforeWorkoutViewController(viewModel: viewModel)
+    let useCase = CountDownBeforeWorkoutStartTimerUseCase(initDate: .now + 8)
+
+    let vm = CountDownBeforeWorkoutViewModel(coordinator: self, useCase: useCase)
+
+    let vc = CountDownBeforeWorkoutViewController(viewModel: vm)
+    navigationController.pushViewController(vc, animated: true)
   }
 }
