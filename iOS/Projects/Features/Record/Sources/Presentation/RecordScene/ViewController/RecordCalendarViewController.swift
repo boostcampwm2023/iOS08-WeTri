@@ -115,7 +115,7 @@ private extension RecordCalendarViewController {
       if indexPath.item == self?.viewModel.currentSelectedIndexPath?.item {
         cell.configureTextColor(isSelected: true)
       }
-      return cell.configure(
+      cell.configure(
         calendarInformation: CalendarInforamtion(
           dayOfWeek: itemIdentifier.dayOfWeek,
           date: itemIdentifier.date
@@ -125,7 +125,7 @@ private extension RecordCalendarViewController {
 
     dataSource = RecordCalendarDiffableDataSource(
       collectionView: calendarCollectionView,
-      cellProvider: { [weak self] collectionView, indexPath, itemIdentifier in
+      cellProvider: { collectionView, indexPath, itemIdentifier in
         return collectionView.dequeueConfiguredReusableCell(
           using: cellRegistration,
           for: indexPath,

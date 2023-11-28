@@ -179,7 +179,7 @@ private extension RecordListViewController {
 
   func configureDataSource() {
     let cellRegistration = WorkoutInformationCellRegistration { cell, _, item in
-      return cell.configure(workoutInformation:
+      cell.configure(workoutInformation:
         WorkoutInformation(
           sport: item.sport,
           time: item.time,
