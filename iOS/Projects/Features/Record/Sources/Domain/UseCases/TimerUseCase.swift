@@ -37,7 +37,7 @@ class TimerUseCase: TimerUsecaseRepresentable {
   }
 
   func startTimer() {
-    subscribeOneScondsTimerIsValid()
+    subscribeOneSecondsTimerIsValid()
     startMiliSecondsTimer()
   }
 
@@ -61,7 +61,7 @@ private extension TimerUseCase {
         let currentMilisecondsString = String(format: "%.2f", timeInterval).suffix(2)
         if Int(currentMilisecondsString) == 0 {
           timeIntervalEveryOneSecondsSubject.send(lroundl(timeInterval))
-          startOneSceondsTimer()
+          startOneSecondsTimer()
         }
       }
   }
@@ -77,7 +77,7 @@ private extension TimerUseCase {
       }
   }
 
-  private func subscribeOneScondsTimerIsValid() {
+  private func subscribeOneSecondsTimerIsValid() {
     oneSecondsTimerIsValid = timeIntervalEveryOneSecondsSubject
       .sink { [weak self] _ in
         self?.miliSecondsTimer = nil

@@ -27,7 +27,7 @@ final class OneSecondsTimerUsecase: TimerUseCase {
 // MARK: OneSecondsTimerUsecaseRepresentable
 
 extension OneSecondsTimerUsecase: OneSecondsTimerUsecaseRepresentable {
-  func oneSeconsTimerPublisher() -> AnyPublisher<Int, Never> {
+  func oneSecondsTimerPublisher() -> AnyPublisher<Int, Never> {
     return intervalCurrentAndInitEverySecondsPublisher()
       .map { abs($0) }
       .eraseToAnyPublisher()
