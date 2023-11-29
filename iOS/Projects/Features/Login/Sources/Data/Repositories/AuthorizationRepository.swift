@@ -30,7 +30,7 @@ final class AuthorizationRepository: AuthorizationRepositoryRepresentable {
   }
 
   func fetch(authorizationInfo: AuthorizationInfo) -> AnyPublisher<Token, Never> {
-    return Future<Token, Error> { [weak self] promise in
+    return Future<Data, Error> { [weak self] promise in
       guard let self else {
         return promise(.failure(AuthorizationRepositoryError.deinitializedRepository))
       }
@@ -40,15 +40,23 @@ final class AuthorizationRepository: AuthorizationRepositoryRepresentable {
         let authorizationInfoRequestDTO = AuthorizationInfoRequestDTO(identityToken: identityToken, authorizationCode: authorizationCode)
 
         let data = try await self.provider.request(.signIn(authorizationInfoRequestDTO))
-        let response = try self.decoder.decode(GWResponse<Token>.self, from: data)
-
-        if response.code == 200 {
-          guard let token = response.data else {
-            return promise(.failure(AuthorizationRepositoryError.invalidData))
-          }
-          promise(.success(token))
+        promise(.success(data))
+      }
+    }
+    .decode(type: GWResponse<Token>.self, decoder: decoder)
+    .flatMap{ response -> AnyPublisher<Token, Error> in
+      if response.code == 200 {
+        guard let token = response.data else {
+          return Fail(error: AuthorizationRepositoryError.invalidData)
+            .eraseToAnyPublisher()
         }
+        return Just(token)
+          .setFailureType(to: Error.self)
+          .eraseToAnyPublisher()
+      } else {
         // TODO: 백엔드와 상의 후 에러코드 처리
+        return Fail(error: AuthorizationRepositoryError.invalidData)
+          .eraseToAnyPublisher()
       }
     }
     .catch { error -> AnyPublisher<Token, Never> in

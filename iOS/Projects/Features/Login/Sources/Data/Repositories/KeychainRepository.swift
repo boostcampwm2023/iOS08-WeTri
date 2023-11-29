@@ -9,6 +9,7 @@
 import Combine
 import Foundation
 import Keychain
+import Log
 
 // MARK: - KeychainRepositoryError
 
@@ -30,7 +31,9 @@ final class KeychainRepository: KeychainRepositoryRepresentable {
       let encoder = JSONEncoder()
       let data = try encoder.encode(value)
       keychain.save(key: key, data: data)
-    } catch {}
+    } catch (let error) {
+      Log.make().error("\(error)")
+    }
   }
 
   func load(key: String) -> AnyPublisher<Data, Error> {
