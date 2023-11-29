@@ -28,12 +28,12 @@ final class AuthorizeUseCase: AuthorizeUseCaseRepresentable {
       .eraseToAnyPublisher()
   }
 
-  func accessTokenSave(_ token: Data) {
-    keychainRepository.save(key: Keys.accessToken, data: token)
+  func accessTokenSave(_ token: String) {
+    keychainRepository.save(key: Keys.accessToken, value: token)
   }
 
-  func refreshTokenSave(_ token: Data) {
-    keychainRepository.save(key: Keys.refreshToken, data: token)
+  func refreshTokenSave(_ token: String) {
+    keychainRepository.save(key: Keys.refreshToken, value: token)
   }
 }
 

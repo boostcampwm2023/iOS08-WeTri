@@ -11,6 +11,6 @@ import Foundation
 
 protocol AuthorizeUseCaseRepresentable {
   func authorize(authorizationInfo: AuthorizationInfo) -> AnyPublisher<Token, Never>
-  func accessTokenSave(_ token: Data)
-  func refreshTokenSave(_ token: Data)
+  func accessTokenSave(_ token: String)
+  func refreshTokenSave(_ token: String)
 }

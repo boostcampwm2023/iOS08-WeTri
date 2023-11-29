@@ -42,8 +42,13 @@ extension LoginViewModel: LoginViewModelRepresentable {
     input.appleLoginButtonDidTap
       .flatMap(authorizeUseCase.authorize(authorizationInfo:))
       .sink(receiveValue: { [weak self] token in
-        self?.authorizeUseCase.accessTokenSave(token.accesToken)
-        self?.authorizeUseCase.refreshTokenSave(token.refreshToken)
+        guard let accessToken = token.accesToken,
+              let refreshToken = token.refreshToken
+        else {
+          return
+        }
+        self?.authorizeUseCase.accessTokenSave(accessToken)
+        self?.authorizeUseCase.refreshTokenSave(refreshToken)
       })
       .store(in: &subscriptions)
 

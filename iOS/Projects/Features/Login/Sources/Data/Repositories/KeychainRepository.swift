@@ -25,8 +25,12 @@ final class KeychainRepository: KeychainRepositoryRepresentable {
     self.keychain = keychain
   }
 
-  func save(key: String, data: Data) {
-    keychain.save(key: key, data: data)
+  func save(key: String, value: String) {
+    do {
+      let encoder = JSONEncoder()
+      let data = try encoder.encode(value)
+      keychain.save(key: key, data: data)
+    } catch {}
   }
 
   func load(key: String) -> AnyPublisher<Data, Error> {
