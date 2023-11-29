@@ -71,7 +71,7 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
     let vc = CountDownBeforeWorkoutViewController(viewModel: vm)
     navigationController.pushViewController(vc, animated: true)
   }
-  
+
   func pushTapBarViewController() {
     // TODO: 코디네이팅 종료에 관한 로직 생성
     finishDelegate?.flowDidFinished(childCoordinator: self)
