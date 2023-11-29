@@ -38,10 +38,7 @@ export class EventsGateway
       client.close();
       return;
     }
-
     this.extensionWebSocketService.webSocket(client, this.server);
-    client.join('room1');
-    this.server.to('room1').emit('event', 'message');
   }
 
   private async jwtVerify(authorization: string, client: WetriWebSocket) {
@@ -79,30 +76,5 @@ export class EventsGateway
     });
   }
 
-  @SubscribeMessage('createEvent')
-  create(@MessageBody() createEventDto: CreateEventDto) {
-    return this.eventsService.create(createEventDto);
-  }
-
-  @SubscribeMessage('findAllEvents')
-  findAll() {
-    return this.eventsService.findAll();
-  }
-
-  @SubscribeMessage('findOneEvent')
-  findOne(@MessageBody() id: number) {
-    return this.eventsService.findOne(id);
-  }
-
-  @SubscribeMessage('updateEvent')
-  update(@MessageBody() updateEventDto: UpdateEventDto) {
-    return this.eventsService.update(updateEventDto.id, updateEventDto);
-  }
-
-  @SubscribeMessage('removeEvent')
-  remove(@MessageBody() id: number) {
-    return this.eventsService.remove(id);
-  }
-  
   handleDisconnect(client: any) {}
 }

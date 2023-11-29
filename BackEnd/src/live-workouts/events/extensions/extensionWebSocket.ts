@@ -1,11 +1,10 @@
-import { v4 as uuidv4 } from 'uuid';
 import { WetriServer, WetriWebSocket } from '../types/custom-websocket.type';
 
 export class ExtensionWebSocket {
   server: WetriServer;
   id: string;
   constructor(client: WetriWebSocket, server: WetriServer) {
-    client.id = uuidv4();
+    client.id = client.profile.publicId;
     client.server = server;
     client.join = this.join;
     client.leave = this.leave;
