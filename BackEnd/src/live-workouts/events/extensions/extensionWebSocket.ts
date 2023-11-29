@@ -1,7 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { WetriServer, WetriWebSocket } from '../types/custom-websocket.type';
 
-
 export class ExtensionWebSocket {
   server: WetriServer;
   id: string;

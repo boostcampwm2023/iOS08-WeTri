@@ -7,20 +7,16 @@ import { ExtensionWebSocketServer } from './extensions/extensionWebSocketServer'
 
 @Injectable()
 export class ExtensionWebSocketService {
-    constructor(
-        @Inject('DATA_REDIS') private readonly redisData: Redis,
-        @Inject('SUBSCRIBE_REDIS') private readonly redisSubscribe: Redis,
-    ) { }
+  constructor(
+    @Inject('DATA_REDIS') private readonly redisData: Redis,
+    @Inject('SUBSCRIBE_REDIS') private readonly redisSubscribe: Redis,
+  ) {}
 
-    webSocketServer(server: WetriServer) {
-        new ExtensionWebSocketServer(
-            server, 
-            this.redisData,
-            this.redisSubscribe
-        );
-    }
+  webSocketServer(server: WetriServer) {
+    new ExtensionWebSocketServer(server, this.redisData, this.redisSubscribe);
+  }
 
-    webSocket(client: WetriWebSocket, server: WetriServer) {
-        new ExtensionWebSocket(client, server);
-    }
+  webSocket(client: WetriWebSocket, server: WetriServer) {
+    new ExtensionWebSocket(client, server);
+  }
 }

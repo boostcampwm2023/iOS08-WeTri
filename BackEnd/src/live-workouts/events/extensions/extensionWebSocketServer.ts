@@ -19,16 +19,16 @@ export class ExtensionWebSocketServer {
     server.to = this.to;
     server.subscribe = this.subscribe;
     server.unSubscribe = this.unSubscribe;
-    server.handlePublishMessage = this.handlePublishMessage
+    server.handlePublishMessage = this.handlePublishMessage;
     server.handlePublishMessage();
     process.on('SIGINT', () => {
       server.sids.forEach((value, key) => {
-        value.forEach(value => {
+        value.forEach((value) => {
           redisData.srem(value, key);
-        })
-      })
+        });
+      });
       process.exit();
-    })
+    });
   }
 
   async joinRoom(clientId: string, roomId: string) {
@@ -64,7 +64,10 @@ export class ExtensionWebSocketServer {
     return {
       emit: (event: string, message: string) => {
         if (this.rooms.has(roomId)) {
-          this.redisData.publish(`room:${roomId}`, JSON.stringify({ event, message }));
+          this.redisData.publish(
+            `room:${roomId}`,
+            JSON.stringify({ event, message }),
+          );
         }
       },
     };
@@ -73,10 +76,10 @@ export class ExtensionWebSocketServer {
   async subscribe(channel: string) {
     await this.redisSubscribe.subscribe(channel, (error, count) => {
       if (error) {
-        Logger.log('구독 오류')
+        Logger.log('구독 오류');
       }
-      Logger.log(`구독 성공: ${channel}, 현재 구독 중인 채널 수: ${count}`)
-    })
+      Logger.log(`구독 성공: ${channel}, 현재 구독 중인 채널 수: ${count}`);
+    });
   }
 
   handlePublishMessage() {
@@ -87,13 +90,11 @@ export class ExtensionWebSocketServer {
         if (this.rooms.has(roomId)) {
           const room = this.rooms.get(roomId);
           room.forEach((clientId) => {
-            this.clientMap
-              .get(clientId)
-              .send(JSON.stringify(message));
+            this.clientMap.get(clientId).send(JSON.stringify(message));
           });
         }
       }
-    })
+    });
   }
 
   async unSubscribe(channel: string) {

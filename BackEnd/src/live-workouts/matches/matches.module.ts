@@ -7,11 +7,7 @@ import { ProfilesModule } from '../../profiles/profiles.module';
 import { AuthService } from '../../auth/auth.service';
 
 @Module({
-  imports: [
-    JwtModule.register({}),
-    UsersModule,
-    ProfilesModule,
-  ],
+  imports: [JwtModule.register({}), UsersModule, ProfilesModule],
   controllers: [MatchesController],
   providers: [MatchesService, AuthService],
 })

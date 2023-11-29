@@ -13,7 +13,7 @@ export const redisConfig: object = {
   port: parseInt(process.env.REDIS_PORT),
   enableReadyCheck: true,
   enableOfflineQueue: true,
-}
+};
 
 // @Injectable()
 // export class RedisConfigService implements RedisOptionsFactory {
