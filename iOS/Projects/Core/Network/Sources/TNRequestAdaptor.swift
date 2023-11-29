@@ -12,7 +12,7 @@ import Foundation
 
 /// Request전에 특정 작업을 하고싶은 경우 사용합니다.
 public protocol TNRequestAdaptor {
-  func adapt(_ request: URLRequest, session: URLSessionProtocol) -> URLRequest?
+  func adapt(_ request: URLRequest, session: URLSessionProtocol) -> URLRequest
 }
 
 // MARK: - TNRequestRetrier
@@ -21,9 +21,10 @@ public protocol TNRequestRetrier {
   func retry(
     _ request: URLRequest,
     session: URLSessionProtocol,
-    successStatusCodeRange: Range<Int>,
+    data: Data,
+    response: URLResponse,
     delegate: URLSessionDelegate?
-  ) async throws -> Data
+  ) async throws -> (Data, URLResponse)
 }
 
 public typealias TNRequestInterceptor = TNRequestAdaptor & TNRequestRetrier
