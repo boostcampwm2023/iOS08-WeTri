@@ -31,7 +31,7 @@ final class KeychainRepository: KeychainRepositoryRepresentable {
       let encoder = JSONEncoder()
       let data = try encoder.encode(value)
       keychain.save(key: key, data: data)
-    } catch (let error) {
+    } catch {
       Log.make().error("\(error)")
     }
   }
