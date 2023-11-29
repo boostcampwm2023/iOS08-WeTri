@@ -8,7 +8,8 @@
 
 import AuthenticationServices
 import Combine
-import OSLog
+import CombineCocoa
+import Log
 import UIKit
 
 // MARK: - LoginViewController
@@ -18,11 +19,11 @@ final class LoginViewController: UIViewController {
 
   private let viewModel: LoginViewModelRepresentable
   private let credentialSubject = PassthroughSubject<AuthorizationInfo, Never>()
+  private let loginSubject = PassthroughSubject<Void, Never>()
 
   private lazy var appleLoginButton: ASAuthorizationAppleIDButton = {
     let button = ASAuthorizationAppleIDButton(type: .signIn, style: .black)
     button.translatesAutoresizingMaskIntoConstraints = false
-    button.addTarget(self, action: #selector(appleSignInButtonDidTapped), for: .touchUpInside)
     return button
   }()
 
@@ -39,17 +40,8 @@ final class LoginViewController: UIViewController {
   override public func viewDidLoad() {
     super.viewDidLoad()
     configureUI()
-  }
-
-  @objc private func appleSignInButtonDidTapped() {
-    let provider = ASAuthorizationAppleIDProvider()
-    let request = provider.createRequest()
-    request.requestedScopes = []
-
-    let authorizationController = ASAuthorizationController(authorizationRequests: [request])
-    authorizationController.delegate = self
-    authorizationController.presentationContextProvider = self
-    authorizationController.performRequests()
+    bindViewModel()
+    bindUI()
   }
 }
 
@@ -72,7 +64,10 @@ private extension LoginViewController {
 
 private extension LoginViewController {
   func bindViewModel() {
-    let input = LoginViewModelInput(appleLoginButtonDidTap: credentialSubject.eraseToAnyPublisher())
+    let input = LoginViewModelInput(
+      credential: credentialSubject.eraseToAnyPublisher(),
+      appleLoginButtonDidTap: loginSubject.eraseToAnyPublisher()
+    )
 
     let output = viewModel.transform(input: input)
 
@@ -84,11 +79,34 @@ private extension LoginViewController {
       .store(in: &subscriptions)
   }
 
+  func bindUI() {
+    appleLoginButton.publisher(.touchUpInside)
+      .sink { [weak self] _ in
+        self?.loginSubject.send()
+      }
+      .store(in: &subscriptions)
+  }
+
   func render(state: LoginState) {
     switch state {
     case .idle:
       break
+    case .success:
+      appleLogin()
+    case let .customError(error):
+      Log.make().error("\(error)")
     }
+  }
+
+  func appleLogin() {
+    let provider = ASAuthorizationAppleIDProvider()
+    let request = provider.createRequest()
+    request.requestedScopes = []
+
+    let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+    authorizationController.delegate = self
+    authorizationController.presentationContextProvider = self
+    authorizationController.performRequests()
   }
 }
 
