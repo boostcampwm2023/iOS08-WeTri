@@ -14,6 +14,7 @@ let projects = Project.makeModule(
   name: ProjectEnvironment.default.appName,
   targets: .app(
     name: ProjectEnvironment.default.targetName,
+    entitlements: .file(path: .relativeToApp("WeTri/WeTri.entitlements")),
     dependencies: [
       .coordinator,
       .feature(.record),
@@ -23,6 +24,8 @@ let projects = Project.makeModule(
       "NSLocationAlwaysUsageDescription": "운동 경로를 보여줄 때 사용합니다",
       "NSLocationAlwaysAndWhenInUseUsageDescription": "운동 경로를 보여줄 때 사용합니다",
       "NSLocationWhenInUseUsageDescription": "운동 경로를 보여줄 때 사용합니다",
+      "NSHealthShareUsageDescription": "운동 시 건강 데이터를 공유합니다",
+      "NSHealthUpdateUsageDescription": "운동 시 건강 데이터를 업데이트합니다",
     ]
   )
 )
