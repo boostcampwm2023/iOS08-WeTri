@@ -11,7 +11,7 @@ import Foundation
 
 // MARK: - CountDownBeforeWorkoutStartTimerUseCaseRepresentable
 
-protocol CountDownBeforeWorkoutStartTimerUseCaseRepresentable: TimerUsecaseRepresentable {
+protocol CountDownBeforeWorkoutStartTimerUseCaseRepresentable: TimerUseCaseRepresentable {
   func beforeWorkoutTimerTextPublisher() -> AnyPublisher<String, Never>
 }
 

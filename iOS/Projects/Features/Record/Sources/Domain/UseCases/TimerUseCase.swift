@@ -9,9 +9,9 @@ import Combine
 import Foundation
 import Log
 
-// MARK: - TimerUsecaseRepresentable
+// MARK: - TimerUseCaseRepresentable
 
-protocol TimerUsecaseRepresentable: AnyObject {
+protocol TimerUseCaseRepresentable: AnyObject {
   var initDate: Date { get }
   func intervalCurrentAndInitEverySecondsPublisher() -> AnyPublisher<Int, Never>
   func startTimer()
@@ -20,7 +20,7 @@ protocol TimerUsecaseRepresentable: AnyObject {
 
 // MARK: - TimerUseCase
 
-class TimerUseCase: TimerUsecaseRepresentable {
+class TimerUseCase: TimerUseCaseRepresentable {
   let initDate: Date
   private var miliSecondsTimer: AnyCancellable? = nil
   private var secondsTimer: AnyCancellable? = nil
