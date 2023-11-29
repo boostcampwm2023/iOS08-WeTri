@@ -14,6 +14,8 @@ public protocol WebSocketTaskProtocol {
   func send(_ message: URLSessionWebSocketTask.Message) async throws
 
   func receive() async throws -> URLSessionWebSocketTask.Message
+
+  func resume()
 }
 
 // MARK: - URLSessionWebSocketTask + WebSocketTaskProtocol
