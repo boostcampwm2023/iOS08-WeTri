@@ -31,10 +31,21 @@ public struct TNSocketProvider<EndPoint: TNEndPoint>: TNSocketProvidable {
   }
 
   public func send(model: some Codable) async throws {
-    try await task?.send(.data(jsonEncoder.encode(model)))
+    let frame = WebSocketFrame(data: model)
+    try await task?.send(.data(jsonEncoder.encode(frame)))
   }
 
   public func receive() async throws -> URLSessionWebSocketTask.Message? {
     return try await task?.receive()
+  }
+}
+
+private struct WebSocketFrame<T: Codable>: Codable {
+  let event: String
+  let data: T
+
+  init(event: String = "events", data: T) {
+    self.event = event
+    self.data = data
   }
 }
