@@ -27,7 +27,6 @@ export class ExtensionWebSocketServer {
           await redisData.srem(value, key);
         });
       });
-      process.exit();
     });
     process.on('SIGINT', () => process.exit());
     process.on('SIGTERM', () => process.exit());
