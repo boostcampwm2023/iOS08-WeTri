@@ -38,7 +38,7 @@ final class AuthorizationRepository: AuthorizationRepositoryRepresentable {
         let identityToken = try self.decoder.decode(String.self, from: authorizationInfo.identityToken)
         let authorizationCode = try self.decoder.decode(String.self, from: authorizationInfo.authorizationCode)
         let authorizationInfoRequestDTO = AuthorizationInfoRequestDTO(identityToken: identityToken, authorizationCode: authorizationCode)
-        
+
         let data = try await self.provider.request(.signIn(authorizationInfoRequestDTO))
         let response = try self.decoder.decode(GWResponse<Token>.self, from: data)
 
