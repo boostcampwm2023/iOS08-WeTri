@@ -21,7 +21,7 @@ export class ExtensionWebSocketServer {
     server.unSubscribe = this.unSubscribe;
     server.handlePublishMessage = this.handlePublishMessage;
     server.handlePublishMessage();
-    process.on('SIGINT', () => {
+    process.on('exit', () => {
       server.sids.forEach((value, key) => {
         value.forEach(async (value) => {
           await redisData.srem(value, key);
@@ -29,6 +29,9 @@ export class ExtensionWebSocketServer {
       });
       process.exit();
     });
+    process.on('SIGINT', () => process.exit());
+    process.on('SIGTERM', () => process.exit());
+    process.on('uncaughtException', () => process.exit());
   }
 
   async joinRoom(clientId: string, roomId: string) {
