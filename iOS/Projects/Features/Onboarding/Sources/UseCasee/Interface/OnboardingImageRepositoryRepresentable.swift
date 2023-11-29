@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - OnboardingImageRepositoryRepresentable
 
-protocol OnboardingImageRepositoryRepresentable {
+public protocol OnboardingImageRepositoryRepresentable {
   func mapOnboardingImage() -> Data?
   func healthOnboardingImage() -> Data?
 }

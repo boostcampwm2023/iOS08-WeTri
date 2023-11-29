@@ -10,18 +10,18 @@ import Foundation
 
 // MARK: - OnboardingImageRepository
 
-struct OnboardingImageRepository {
+public struct OnboardingImageRepository {
   init() {}
 }
 
 // MARK: OnboardingImageRepositoryRepresentable
 
 extension OnboardingImageRepository: OnboardingImageRepositoryRepresentable {
-  func mapOnboardingImage() -> Data? {
+  public func mapOnboardingImage() -> Data? {
     return Bundle(identifier: Constants.bundleName)?.path(forResource: Constants.mapImageResourceFileName, ofType: Constants.ofType) as? Data
   }
 
-  func healthOnboardingImage() -> Data? {
+  public func healthOnboardingImage() -> Data? {
     return Bundle(identifier: Constants.bundleName)?.path(forResource: Constants.healthOnboardingImageFileName, ofType: Constants.ofType) as? Data
   }
 

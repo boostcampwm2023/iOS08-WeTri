@@ -29,9 +29,13 @@ protocol OnboardingViewModelRepresentable {
 
 // MARK: - OnboardingViewModel
 
-final class OnboardingViewModel {
+public final class OnboardingViewModel {
   // MARK: - Properties
 
+  private var useCase: OnboardingImageLoadUseCaseRepresentable
+  public init(useCase: OnboardingImageLoadUseCaseRepresentable) {
+    self.useCase = useCase
+  }
   private var subscriptions: Set<AnyCancellable> = []
 }
 
