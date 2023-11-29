@@ -21,7 +21,7 @@ enum AuthorizationRepositoryError: Error {
 
 // MARK: - AuthorizationRepository
 
-final class AuthorizationRepository: AuthorizationRepositoryRepresentable {
+struct AuthorizationRepository: AuthorizationRepositoryRepresentable {
   private let provider: TNProvider<AuthorizationRepositoryEndPoint>
   private let decoder = JSONDecoder()
 
@@ -30,33 +30,26 @@ final class AuthorizationRepository: AuthorizationRepositoryRepresentable {
   }
 
   func fetch(authorizationInfo: AuthorizationInfo) -> AnyPublisher<Token, Never> {
-    return Future<Data, Error> { [weak self] promise in
-      guard let self else {
-        return promise(.failure(AuthorizationRepositoryError.deinitializedRepository))
-      }
+    return Future<Data, Never> { promise in
       Task {
-        let identityToken = try self.decoder.decode(String.self, from: authorizationInfo.identityToken)
-        let authorizationCode = try self.decoder.decode(String.self, from: authorizationInfo.authorizationCode)
+        let identityToken = try decoder.decode(String.self, from: authorizationInfo.identityToken)
+        let authorizationCode = try decoder.decode(String.self, from: authorizationInfo.authorizationCode)
         let authorizationInfoRequestDTO = AuthorizationInfoRequestDTO(identityToken: identityToken, authorizationCode: authorizationCode)
 
-        let data = try await self.provider.request(.signIn(authorizationInfoRequestDTO))
+        let data = try await provider.request(.signIn(authorizationInfoRequestDTO))
         promise(.success(data))
       }
     }
     .decode(type: GWResponse<Token>.self, decoder: decoder)
-    .flatMap { response -> AnyPublisher<Token, Error> in
+    .tryMap { response in
       if response.code == 200 {
         guard let token = response.data else {
-          return Fail(error: AuthorizationRepositoryError.invalidData)
-            .eraseToAnyPublisher()
+          throw AuthorizationRepositoryError.invalidData
         }
-        return Just(token)
-          .setFailureType(to: Error.self)
-          .eraseToAnyPublisher()
+        return token
       } else {
         // TODO: 백엔드와 상의 후 에러코드 처리
-        return Fail(error: AuthorizationRepositoryError.invalidData)
-          .eraseToAnyPublisher()
+        throw AuthorizationRepositoryError.invalidData
       }
     }
     .catch { error -> AnyPublisher<Token, Never> in
