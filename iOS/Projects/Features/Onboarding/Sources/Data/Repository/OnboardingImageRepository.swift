@@ -11,6 +11,7 @@ import Foundation
 // MARK: - OnboardingImageRepository
 
 public struct OnboardingImageRepository {
+  let decoder = JSONDecoder()
   public init() {}
 }
 
@@ -18,19 +19,35 @@ public struct OnboardingImageRepository {
 
 extension OnboardingImageRepository: OnboardingImageRepositoryRepresentable {
   public func mapOnboardingProperty() -> OnboardingScenePropertyDTO? {
-    let imageData = Bundle(identifier: Constants.bundleName)?.path(forResource: Constants.mapImageResourceFileName, ofType: Constants.imageOfType) as? Data
+    guard
+      let imagePath = Bundle(identifier: Constants.bundleName)?
+      .path(forResource: Constants.mapImageResourceFileName, ofType: Constants.imageOfType),
+      let imageData = try? Data(contentsOf: URL(filePath: imagePath)),
 
-    let onboardingTextDTO = Bundle(identifier: Constants.bundleName)?.path(forResource: Constants.mapPropertyJsonFileName, ofType: Constants.textOfType) as? OnboardingScenePropertyTextDTO
-
-    return onboardingTextDTO?.toOnboardingScenePropertyDTO(imageData: imageData)
+      let jsonPath = Bundle(identifier: Constants.bundleName)?
+      .path(forResource: Constants.mapPropertyJsonFileName, ofType: Constants.textOfType),
+      let jsonData = try? Data(contentsOf: URL(filePath: jsonPath))
+    else {
+      return nil
+    }
+    let dto = try? JSONDecoder().decode(GWResponse<OnboardingScenePropertyTextDTO>.self, from: jsonData).data
+    return dto?.toOnboardingScenePropertyDTO(imageData: imageData)
   }
 
   public func healthOnboardingImage() -> OnboardingScenePropertyDTO? {
-    let imageData = Bundle(identifier: Constants.bundleName)?.path(forResource: Constants.healthOnboardingImageFileName, ofType: Constants.imageOfType) as? Data
+    guard
+      let imagePath = Bundle(identifier: Constants.bundleName)?
+      .path(forResource: Constants.healthOnboardingImageFileName, ofType: Constants.imageOfType),
+      let imageData = try? Data(contentsOf: URL(filePath: imagePath)),
 
-    let onboardingTextDTO = Bundle(identifier: Constants.bundleName)?.path(forResource: Constants.healthPropertyJsonFileName, ofType: Constants.textOfType) as? OnboardingScenePropertyTextDTO
-
-    return onboardingTextDTO?.toOnboardingScenePropertyDTO(imageData: imageData)
+      let jsonPath = Bundle(identifier: Constants.bundleName)?
+      .path(forResource: Constants.healthPropertyJsonFileName, ofType: Constants.textOfType),
+      let jsonData = try? Data(contentsOf: URL(filePath: jsonPath))
+    else {
+      return nil
+    }
+    let dto = try? JSONDecoder().decode(GWResponse<OnboardingScenePropertyTextDTO>.self, from: jsonData).data
+    return dto?.toOnboardingScenePropertyDTO(imageData: imageData)
   }
 
   enum Constants {

@@ -28,11 +28,11 @@ public struct OnboardingImageLoadUseCase: OnboardingImageLoadUseCaseRepresentabl
   }
 
   public func mapOnboardingImage() -> OnboardingScenePropertyDTO? {
-    return onboardingImageDataByType[.health]
+    return onboardingImageDataByType[.map]
   }
 
   public func healthOnboardingImage() -> OnboardingScenePropertyDTO? {
-    return onboardingImageDataByType[.map]
+    return onboardingImageDataByType[.health]
   }
 
   private mutating func loadOnboardingImage() {

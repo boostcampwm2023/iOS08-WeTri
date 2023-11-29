@@ -7,7 +7,9 @@
 //
 
 import Combine
+import CombineCocoa
 import DesignSystem
+import Log
 import UIKit
 
 // MARK: - OnboardingViewController
@@ -28,7 +30,6 @@ public final class OnboardingViewController: UIViewController {
     let image = UIImageView()
     image.contentMode = .scaleAspectFit
 
-    image.backgroundColor = .red
     image.translatesAutoresizingMaskIntoConstraints = false
     return image
   }()
@@ -39,6 +40,8 @@ public final class OnboardingViewController: UIViewController {
     label.textColor = DesignSystemColor.primaryText
     label.textAlignment = .center
     label.text = "라벨 타이틀 텍스트"
+    label.numberOfLines = 1
+    label.adjustsFontSizeToFitWidth = true
 
     label.translatesAutoresizingMaskIntoConstraints = false
     return label
@@ -46,8 +49,9 @@ public final class OnboardingViewController: UIViewController {
 
   private let descriptionTextLabel: UILabel = {
     let label = UILabel()
-    label.font = .preferredFont(forTextStyle: .title1)
+    label.font = .preferredFont(forTextStyle: .title3)
     label.textColor = DesignSystemColor.primaryText
+    label.numberOfLines = 2
     label.textAlignment = .center
     label.text = "라벨 타이틀 텍스트"
 
@@ -134,24 +138,38 @@ private extension OnboardingViewController {
   }
 
   func setupStyles() {
-    view.backgroundColor = DesignSystemColor.primaryBackground
+    view.backgroundColor = .white
   }
 
   func bind() {
+    bindViewModel()
+    bindNextButtonDidTap()
+  }
+
+  func bindViewModel() {
     let input = OnboardingViewModelInput(
       shouldPresentMapAuthorizationPublisher: shouldPresentMapAuthorizationSubject.eraseToAnyPublisher(),
       shouldPresentHealthAuthorizationPublisher: shouldPresentHealthAuthorizationSubject.eraseToAnyPublisher()
     )
     viewModel.transform(input: input)
-      .sink { _ in
+      .sink { [weak self] state in
+        self?.applyState(state: state)
       }
+      .store(in: &subscriptions)
+  }
+
+  func bindNextButtonDidTap() {
+    nextButton.publisher(.touchUpInside)
+      .map { _ in () }
+      .bind(to: shouldPresentHealthAuthorizationSubject)
       .store(in: &subscriptions)
   }
 
   func applyState(state: OnboardingState) {
     switch state {
-    case .errorState,
-         .finish,
+    case let .errorState(error):
+      Log.make().debug("\(error)")
+    case .finish,
          .idle:
       break
     case let .shouldPresentMapAuthorization(onboardingScenePropertyDTO): updateViewProperty(by: onboardingScenePropertyDTO)
@@ -160,11 +178,11 @@ private extension OnboardingViewController {
   }
 
   func updateViewProperty(by dtoProperty: OnboardingScenePropertyDTO) {
-    titleTextLabel.text = dtoProperty.titleText
-    descriptionTextLabel.text = dtoProperty.descriptionText
     guard let imageData = dtoProperty.imageData else {
       return
     }
+    titleTextLabel.text = dtoProperty.titleText
+    descriptionTextLabel.text = dtoProperty.descriptionText
     onboardingImage.image = UIImage(data: imageData)
   }
 

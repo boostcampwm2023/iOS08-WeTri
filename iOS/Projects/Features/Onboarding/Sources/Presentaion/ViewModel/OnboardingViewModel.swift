@@ -61,12 +61,12 @@ extension OnboardingViewModel: OnboardingViewModelRepresentable {
         guard let dto = useCase.mapOnboardingImage() else {
           return .errorState(OnboardingViewModelError.nilValue)
         }
-        return .shouldPresentHealthAuthorization(dto)
+        return .shouldPresentMapAuthorization(dto)
       }
       .catch { error in return Just(OnboardingState.errorState(error)) }
       .eraseToAnyPublisher()
 
-    let presentHealthAuth: OnboardingViewModelOutput = input.shouldPresentMapAuthorizationPublisher
+    let presentHealthAuth: OnboardingViewModelOutput = input.shouldPresentHealthAuthorizationPublisher
       .tryMap { [weak self] _ -> OnboardingState in
         guard let self else {
           return .errorState(OnboardingViewModelError.didNotInitViewModel)
