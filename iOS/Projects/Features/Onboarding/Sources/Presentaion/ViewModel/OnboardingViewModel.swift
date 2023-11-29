@@ -52,7 +52,7 @@ public final class OnboardingViewModel {
 extension OnboardingViewModel: OnboardingViewModelRepresentable {
   public func transform(input: OnboardingViewModelInput) -> OnboardingViewModelOutput {
     subscriptions.removeAll()
-    
+
     let presentMapAuth: OnboardingViewModelOutput = input.shouldPresentMapAuthorizationPublisher
       .tryMap { [weak self] _ -> OnboardingState in
         guard let self else {
@@ -63,9 +63,9 @@ extension OnboardingViewModel: OnboardingViewModelRepresentable {
         }
         return .shouldPresentHealthAuthorization(dto)
       }
-      .catch { error in return Just(OnboardingState.errorState(error))}
+      .catch { error in return Just(OnboardingState.errorState(error)) }
       .eraseToAnyPublisher()
-    
+
     let presentHealthAuth: OnboardingViewModelOutput = input.shouldPresentMapAuthorizationPublisher
       .tryMap { [weak self] _ -> OnboardingState in
         guard let self else {
@@ -76,11 +76,11 @@ extension OnboardingViewModel: OnboardingViewModelRepresentable {
         }
         return .shouldPresentHealthAuthorization(dto)
       }
-      .catch { error in return Just(OnboardingState.errorState(error))}
+      .catch { error in return Just(OnboardingState.errorState(error)) }
       .eraseToAnyPublisher()
-    
+
     let initialState: OnboardingViewModelOutput = Just(.idle).eraseToAnyPublisher()
-      
+
     return initialState.merge(with: presentHealthAuth, presentMapAuth).eraseToAnyPublisher()
   }
 }

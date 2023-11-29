@@ -143,12 +143,30 @@ private extension OnboardingViewController {
       shouldPresentHealthAuthorizationPublisher: shouldPresentHealthAuthorizationSubject.eraseToAnyPublisher()
     )
     viewModel.transform(input: input)
-      .sink { state in
-        
-    }
-    .store(in: &subscriptions)
+      .sink { _ in
+      }
+      .store(in: &subscriptions)
   }
-  
+
+  func applyState(state: OnboardingState) {
+    switch state {
+    case .errorState,
+         .finish,
+         .idle:
+      break
+    case let .shouldPresentMapAuthorization(onboardingScenePropertyDTO): updateViewProperty(by: onboardingScenePropertyDTO)
+    case let .shouldPresentHealthAuthorization(onboardingScenePropertyDTO): updateViewProperty(by: onboardingScenePropertyDTO)
+    }
+  }
+
+  func updateViewProperty(by dtoProperty: OnboardingScenePropertyDTO) {
+    titleTextLabel.text = dtoProperty.titleText
+    descriptionTextLabel.text = dtoProperty.descriptionText
+    guard let imageData = dtoProperty.imageData else {
+      return
+    }
+    onboardingImage.image = UIImage(data: imageData)
+  }
 
   enum Metrics {
     static let imageHeight: CGFloat = 250
