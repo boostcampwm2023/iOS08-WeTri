@@ -66,10 +66,10 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
     // TODO: CountDown 관련 ViewController 생성
     let useCase = CountDownBeforeWorkoutStartTimerUseCase(initDate: .now + 8)
 
-    let vm = CountDownBeforeWorkoutViewModel(coordinator: self, useCase: useCase)
+    let viewModel = CountDownBeforeWorkoutViewModel(coordinator: self, useCase: useCase)
 
-    let vc = CountDownBeforeWorkoutViewController(viewModel: vm)
-    navigationController.pushViewController(vc, animated: true)
+    let viewController = CountDownBeforeWorkoutViewController(viewModel: viewModel)
+    navigationController.pushViewController(viewController, animated: true)
   }
 
   func pushTapBarViewController() {
