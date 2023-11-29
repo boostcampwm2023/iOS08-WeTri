@@ -12,13 +12,13 @@ export class EventsService {
     ) {}
 
   async checkMatching(matchInfo: CheckMatchingDto) {
-    const resultUserExist = await this.redisData.exists(matchInfo.clientId);
-    if(!resultUserExist) {
+    // await this.redisData.set(matchInfo.clientId, matchInfo.roomId); //테스트 로직
+    const resultUserId = await this.redisData.get(matchInfo.clientId);
+    if(!resultUserId) {
       return false;
     }
-    const resultRoomExist = await this.redisData.get(matchInfo.roomId);
-    if(!resultRoomExist) {
-      return false;
+    if(resultUserId !== matchInfo.roomId) {
+      return false
     }
     return true;
   }

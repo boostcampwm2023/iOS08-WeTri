@@ -104,9 +104,7 @@ export class ExtensionWebSocketServer {
       room.forEach((clientId) => {
         if(clientId !== issuedClientId) {
           const client = this.clientMap.get(clientId);
-          if(client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify({event: jsonMessage.event, message: jsonMessage.message}));
-          }
+            client.send(JSON.stringify({event: jsonMessage.event, data: jsonMessage.message}));
         }
       });
     });

@@ -14,7 +14,7 @@ import { WetriWebSocket, WetriServer } from './types/custom-websocket.type';
 import { AuthService } from '../../auth/auth.service';
 import { ProfilesService } from '../../profiles/profiles.service';
 import { CheckMatchingDto } from './dto/checkMatching.dto';
-import { Logger } from '@nestjs/common';
+import { Logger, Headers } from '@nestjs/common';
 
 @WebSocketGateway(3003)
 export class EventsGateway
@@ -32,23 +32,24 @@ export class EventsGateway
   }
 
   async handleConnection(client: WetriWebSocket, ...args: any[]) {
-    const { authorization, roomId } = args[0].headers;
+    const { authorization, roomid } = args[0].headers;
     if (!(await this.authService.verifyWs(authorization, client))) {
       client.close();
       return;
     }
-    const matchInfo: CheckMatchingDto = {clientId: client.id, roomId };
+    const matchInfo: CheckMatchingDto = {clientId: client.id, roomId: roomid };
     const resultCheckMatching = await this.eventsService.checkMatching(matchInfo);
     if(!resultCheckMatching) {
       client.close();
       return;
     }
     this.extensionWebSocketService.webSocket(client, this.server);
+    client.join(roomid);
   }
 
   @SubscribeMessage('workout_session')
   onWorkoutSession(client: WetriWebSocket, data: any,): void {
-    Logger.log(`전송받은 데이터: ${data}`);
+    this.server.to(data.roomId).emit("workout_session", JSON.stringify(data));
   }
 
   handleDisconnect(client: any) {}

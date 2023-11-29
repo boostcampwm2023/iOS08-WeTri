@@ -8,9 +8,9 @@ export interface WetriServer extends WebSocket.Server {
   sids: Map<string, Set<string>>;
   redisData: Redis;
   redisSubscribe: Redis;
-  joinRoom: (clientId: string, roomName: string) => void;
-  leaveRoom: (clientId: string, roomName: string) => void;
-  to: (roomName: string) => { emit: (event: string, message: string, issuedClientId?: string) => void };
+  joinRoom: (clientId: string, roomId: string) => void;
+  leaveRoom: (clientId: string, roomId: string) => void;
+  to: (roomId: string) => { emit: (event: string, message: string, issuedClientId?: string) => void };
   subscribe: (channel: string) => void;
   unSubscribe: (channel: string) => void;
   handlePublishMessage: () => void;
@@ -19,9 +19,9 @@ export interface WetriServer extends WebSocket.Server {
 export interface WetriWebSocket extends WebSocket {
   id: string;
   server: WetriServer;
-  join: (roomName: string) => void;
-  leave: (roomName: string) => void;
-  to: (roomName: string) => { emit: (event: string, message: string) => void };
+  join: (roomId: string) => void;
+  leave: (roomId: string) => void;
+  to: (roomId: string) => { emit: (event: string, message: string) => void };
   authorization?: string;
   profile?: Profile;
   token?: string;
