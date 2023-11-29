@@ -14,14 +14,51 @@ import UIKit
 
 final class OnboardingViewController: UIViewController {
   // MARK: Properties
-
+  
   private let viewModel: OnboardingViewModelRepresentable
-
+  
   private var subscriptions: Set<AnyCancellable> = []
-
+  
   // MARK: UI Components
-
-  private let button: UIButton = .init(configuration: .mainEnabled(title: "test button"))
+  
+  private let onboardingImage: UIImageView = {
+    let image = UIImageView()
+    image.contentMode = .scaleAspectFit
+    
+    image.translatesAutoresizingMaskIntoConstraints = false
+    return image
+  }()
+  
+  private let titleTextLabel: UILabel = {
+    let label = UILabel()
+    label.font = .preferredFont(forTextStyle: .title1, weight: .bold)
+    label.textColor = DesignSystemColor.primaryText
+    label.textAlignment = .center
+    label.text = "라벨 타이틀 텍스트"
+    
+    label.translatesAutoresizingMaskIntoConstraints = false
+    return label
+  }()
+  
+  private let descriptionTextLabel: UILabel = {
+    let label = UILabel()
+    label.font = .preferredFont(forTextStyle: .title1)
+    label.textColor = DesignSystemColor.primaryText
+    label.textAlignment = .center
+    label.text = "라벨 타이틀 텍스트"
+    
+    label.translatesAutoresizingMaskIntoConstraints = false
+    return label
+  }()
+  
+  private let nextButton: UIButton = {
+    let button = UIButton(configuration: .plain())
+    button.configurationUpdateHandler = UIButton.Configuration.main(label: "다음")
+    
+    
+    button.translatesAutoresizingMaskIntoConstraints = false
+    return button
+  }()
 
   // MARK: Initializations
 
@@ -52,6 +89,40 @@ private extension OnboardingViewController {
 
   func setupHierarchyAndConstraints() {
     let safeArea = view.safeAreaLayoutGuide
+    
+    view.addSubview(onboardingImage)
+    onboardingImage.topAnchor
+      .constraint(equalTo: safeArea.topAnchor, constant: 100).isActive = true
+    onboardingImage.leadingAnchor
+      .constraint(equalTo: safeArea.leadingAnchor, constant: ConstraintsGuideLine.value).isActive = true
+    onboardingImage.trailingAnchor
+      .constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
+    onboardingImage.heightAnchor.constraint(equalToConstant: Metrics.imageHeight).isActive = true
+    
+    view.addSubview(titleTextLabel)
+    titleTextLabel.topAnchor
+      .constraint(equalTo: onboardingImage.bottomAnchor, constant: Metrics.ImageAndTitleSpacing).isActive = true
+    titleTextLabel.leadingAnchor
+      .constraint(equalTo: safeArea.leadingAnchor, constant: ConstraintsGuideLine.value).isActive = true
+    titleTextLabel.trailingAnchor
+      .constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
+    
+    view.addSubview(descriptionTextLabel)
+    descriptionTextLabel.topAnchor
+      .constraint(equalTo: titleTextLabel.bottomAnchor, constant: Metrics.titleAndSubtitleSpacing).isActive = true
+    descriptionTextLabel.leadingAnchor
+      .constraint(equalTo: safeArea.leadingAnchor, constant: ConstraintsGuideLine.value).isActive = true
+    descriptionTextLabel.trailingAnchor
+      .constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
+    
+    
+    view.addSubview(nextButton)
+    nextButton.bottomAnchor
+      .constraint(equalTo: safeArea.bottomAnchor, constant: Metrics.nextButtonBottomToSafeAreaBottomSpacing).isActive = true
+    nextButton.leadingAnchor
+      .constraint(equalTo: safeArea.leadingAnchor, constant: ConstraintsGuideLine.value).isActive = true
+    nextButton.trailingAnchor
+      .constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
   }
 
   func setupStyles() {
@@ -69,5 +140,10 @@ private extension OnboardingViewController {
     .store(in: &subscriptions)
   }
 
-  enum Metrics {}
+  enum Metrics {
+    static let imageHeight: CGFloat = 150
+    static let ImageAndTitleSpacing: CGFloat = 45
+    static let titleAndSubtitleSpacing: CGFloat = 15
+    static let nextButtonBottomToSafeAreaBottomSpacing: CGFloat = 23
+  }
 }

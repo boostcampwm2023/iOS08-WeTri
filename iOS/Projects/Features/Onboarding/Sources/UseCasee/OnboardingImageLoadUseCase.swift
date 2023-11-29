@@ -15,13 +15,6 @@ protocol OnboardingImageLoadUseCaseRepresentable {
   func healthOnboardingImage() -> Data?
 }
 
-// MARK: - OnboardingImageRepositoryRepresentable
-
-protocol OnboardingImageRepositoryRepresentable {
-  func mapOnboardingImage() -> Data?
-  func healthOnboardingImage() -> Data?
-}
-
 // MARK: - OnboardingImageLoadUseCase
 
 struct OnboardingImageLoadUseCase: OnboardingImageLoadUseCaseRepresentable {
@@ -35,11 +28,11 @@ struct OnboardingImageLoadUseCase: OnboardingImageLoadUseCaseRepresentable {
   }
 
   func mapOnboardingImage() -> Data? {
-    return nil
+    return onboardingImageDataByType[.health]
   }
 
   func healthOnboardingImage() -> Data? {
-    return nil
+    return onboardingImageDataByType[.map]
   }
 
   private mutating func loadOnboardingImage() {
