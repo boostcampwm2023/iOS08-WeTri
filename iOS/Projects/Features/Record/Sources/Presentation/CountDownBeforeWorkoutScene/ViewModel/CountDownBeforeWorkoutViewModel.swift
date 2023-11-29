@@ -13,8 +13,8 @@ import Log
 // MARK: - CountDownBeforeWorkoutViewModelInput
 
 public struct CountDownBeforeWorkoutViewModelInput {
-  let viewDidApperPubilsehr: AnyPublisher<Void, Never>
-  let didFinsihTimerSubscrion: AnyPublisher<Void, Never>
+  let viewDidAppearPublisher: AnyPublisher<Void, Never>
+  let didFinishTimerSubscription: AnyPublisher<Void, Never>
 }
 
 public typealias CountDownBeforeWorkoutViewModelOutput = AnyPublisher<CountDownBeforeWorkoutState, Never>
@@ -37,12 +37,12 @@ protocol CountDownBeforeWorkoutViewModelRepresentable {
 final class CountDownBeforeWorkoutViewModel {
   // MARK: - Properties
 
-  weak var coordinator: WorkoutEnvironmentSetUpCoordinator?
+  weak var coordinator: WorkoutSessionCoordinating?
   var useCase: CountDownBeforeWorkoutStartTimerUseCaseRepresentable
   // TODO: 차후 생성 시점에서 시작 시간을 넘길 예정
   private var subscriptions: Set<AnyCancellable> = []
   private var beforeWorkoutTimerSubject: CurrentValueSubject<String, Never> = .init("")
-  init(coordinator: WorkoutEnvironmentSetUpCoordinator, useCase: CountDownBeforeWorkoutStartTimerUseCaseRepresentable) {
+  init(coordinator: WorkoutSessionCoordinating, useCase: CountDownBeforeWorkoutStartTimerUseCaseRepresentable) {
     self.coordinator = coordinator
     self.useCase = useCase
   }
@@ -55,22 +55,17 @@ extension CountDownBeforeWorkoutViewModel: CountDownBeforeWorkoutViewModelRepres
     subscriptions.removeAll()
 
     input
-      .viewDidApperPubilsehr
+      .viewDidAppearPublisher
       .sink { [weak self] _ in
         self?.useCase.startTimer()
       }
       .store(in: &subscriptions)
 
     input
-      .didFinsihTimerSubscrion
-      .sink { result in
-        switch result {
-        case .failure(_),
-             .finished:
-          // TODO: coordinator를 통해서 빠져 나오는 로직 작성
-          break
-        }
-      } receiveValue: { _ in }
+      .didFinishTimerSubscription
+      .sink { [weak self] _ in
+        self?.coordinator?.pushWorkoutSession()
+      }
       .store(in: &subscriptions)
 
     let timerMessagePublisher = useCase
