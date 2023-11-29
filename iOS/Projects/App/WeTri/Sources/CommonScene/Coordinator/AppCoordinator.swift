@@ -30,6 +30,15 @@ final class AppCoordinator: AppCoordinating {
     tabBarCoordinator.start()
   }
 
+  func showOnboardingFlow() {
+    let onBoardingCoordinator = OnboardingCoordinator(
+      navigationController: navigationController,
+      finishDelegate: self
+    )
+    childCoordinators.append(onBoardingCoordinator)
+    onBoardingCoordinator.start()
+  }
+
   func showLoginFlow() {
     // (LoginViewController 추가되면 로직 추가) (todo)
   }

@@ -15,4 +15,5 @@ public enum CoordinatorFlow {
   case tabBar
   case workoutSetting
   case workout
+  case onboarding
 }
