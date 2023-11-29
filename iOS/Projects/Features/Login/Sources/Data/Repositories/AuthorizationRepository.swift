@@ -44,7 +44,7 @@ final class AuthorizationRepository: AuthorizationRepositoryRepresentable {
       }
     }
     .decode(type: GWResponse<Token>.self, decoder: decoder)
-    .flatMap{ response -> AnyPublisher<Token, Error> in
+    .flatMap { response -> AnyPublisher<Token, Error> in
       if response.code == 200 {
         guard let token = response.data else {
           return Fail(error: AuthorizationRepositoryError.invalidData)
