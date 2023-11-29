@@ -53,7 +53,7 @@ public final class HealthRepository {
     }
 
     Log.make().notice("Requesting HealthKit authorization...")
-    
+
     healthStore.requestAuthorization(toShare: nil, read: healthDataTypeValues) { _, error in
       if let error {
         Log.make().error("Received an HealthKit error type: \(error)")
