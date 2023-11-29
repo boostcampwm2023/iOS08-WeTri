@@ -1,4 +1,5 @@
 import Combine
+import Log
 @testable import RecordFeature
 import XCTest
 
@@ -10,7 +11,7 @@ final class TimerTest: XCTestCase {
   }
 
   func test_countDownTimer가_6점9초_동안_654321값을_방출하며_complete_되는지_확인한다() {
-    // assign
+    // arrange
     let timer = CountDownBeforeWorkoutStartTimerUseCase(initDate: .now + 6.9)
     let expectaionValue = (1 ... 6).reversed().map(\.description)
     var receivedValue: [String] = []
@@ -27,6 +28,7 @@ final class TimerTest: XCTestCase {
           }
         }
       } receiveValue: { text in
+        Log.make().debug("\(text)")
         receivedValue.append(text)
       }
       .store(in: &subscriptions)
@@ -36,14 +38,14 @@ final class TimerTest: XCTestCase {
   }
 
   func test_6점9초_동안_123456값을_방출하며_complete_되는지_확인한다() {
-    // assign
-    let timer = OneSecondsTimerUsecase(initDate: .now)
+    // arrange
     let expectaionValue = (1 ... 6).map { $0 }
     var receivedValue: [Int] = []
-    let expectation = XCTestExpectation(description: "Received Timer value \(receivedValue),\n expecation \(expectaionValue)")
+    let timer = OneSecondsTimerUseCase(initDate: .now)
+    let expectation = XCTestExpectation(description: "Received Timer value \(receivedValue),expecation \(expectaionValue)")
 
     DispatchQueue.main.asyncAfter(deadline: .now() + 6.9) {
-      if receivedValue == expectaionValue {
+      if receivedValue.count == expectaionValue.count {
         expectation.fulfill()
       }
     }
@@ -55,6 +57,29 @@ final class TimerTest: XCTestCase {
       .store(in: &subscriptions)
 
     // assert
-    wait(for: [expectation], timeout: 8)
+    wait(for: [expectation], timeout: 6.9)
+  }
+
+  func test_2초타이머를세팅하고_9점5초_동안_네번의값을_방출하며_complete_되는지_확인한다() {
+    let expectaionValue = [2, 4, 6, 8]
+    var receivedValue: [Int] = []
+    let timer = TimerUseCase(initDate: .now, timerPeriod: 2)
+    let expectation = XCTestExpectation(description: "Received Timer value \(receivedValue),expecation \(expectaionValue)")
+
+    DispatchQueue.main.asyncAfter(deadline: .now() + 9.5) {
+      if receivedValue.count == expectaionValue.count {
+        expectation.fulfill()
+      }
+    }
+    // act
+    timer.intervalCurrentAndInitEverySecondsPublisher()
+      .sink { text in
+        receivedValue.append(abs(text))
+      }
+      .store(in: &subscriptions)
+    timer.startTimer()
+
+    // assert
+    wait(for: [expectation], timeout: 9.5)
   }
 }

@@ -13,6 +13,7 @@ import Log
 
 protocol TimerUseCaseRepresentable: AnyObject {
   var initDate: Date { get }
+  var timerPeriod: Double { get }
   func intervalCurrentAndInitEverySecondsPublisher() -> AnyPublisher<Int, Never>
   func startTimer()
   func stopTimer()
@@ -22,29 +23,28 @@ protocol TimerUseCaseRepresentable: AnyObject {
 
 class TimerUseCase: TimerUseCaseRepresentable {
   let initDate: Date
+  let timerPeriod: Double
+  private var periodTimer: AnyCancellable? = nil
   private var miliSecondsTimer: AnyCancellable? = nil
-  private var secondsTimer: AnyCancellable? = nil
-  private var oneSecondsTimerIsValid: AnyCancellable? = nil
-  private var timeIntervalEveryOneSecondsSubject: PassthroughSubject<Int, Never> = .init()
+  private var timeIntervalAtEachPeriodPublisher: PassthroughSubject<Int, Never> = .init()
 
-  init(initDate: Date) {
+  init(initDate: Date, timerPeriod: Double = 1) {
     self.initDate = initDate
+    self.timerPeriod = timerPeriod
   }
 
   func intervalCurrentAndInitEverySecondsPublisher() -> AnyPublisher<Int, Never> {
-    return timeIntervalEveryOneSecondsSubject.eraseToAnyPublisher()
+    return timeIntervalAtEachPeriodPublisher.eraseToAnyPublisher()
   }
 
   func startTimer() {
-    subscribeOneSecondsTimerIsValid()
     startMiliSecondsTimer()
   }
 
   func stopTimer() {
     miliSecondsTimer = nil
-    secondsTimer = nil
-    oneSecondsTimerIsValid = nil
-    timeIntervalEveryOneSecondsSubject.send(completion: .finished)
+    periodTimer = nil
+    timeIntervalAtEachPeriodPublisher.send(completion: .finished)
   }
 }
 
@@ -57,30 +57,30 @@ private extension TimerUseCase {
           return
         }
         let timeInterval = initDate.timeIntervalSince(currentDate)
-        let currentMillisecondsString = String(format: "%.2f", timeInterval).suffix(2)
-        if Int(currentMillisecondsString) == 0 {
-          timeIntervalEveryOneSecondsSubject.send(Int(timeInterval.rounded(.towardZero)))
-          startOneSecondsTimer()
+        let currentMillisecondsString = String(format: "%.2f", timeInterval)
+        if Int(currentMillisecondsString.suffix(2)) == 0 {
+          if timeInterval.rounded(.toNearestOrAwayFromZero) >= timerPeriod {
+            timeIntervalAtEachPeriodPublisher.send(Int(timeInterval.rounded(.toNearestOrAwayFromZero)))
+          }
+          startPeriodTimer()
+          stopMillisecondsTimer()
         }
       }
   }
 
-  private func startOneSecondsTimer() {
-    secondsTimer = Timer.publish(every: 1, on: .main, in: .common)
+  private func startPeriodTimer() {
+    periodTimer = Timer.publish(every: timerPeriod, on: RunLoop.main, in: .common)
       .autoconnect()
       .sink { [weak self] currentDate in
-        guard let timeInterval = self?.initDate.timeIntervalSince(currentDate) else {
+        guard let self else {
           return
         }
-        self?.timeIntervalEveryOneSecondsSubject.send(Int(timeInterval.rounded(.towardZero)))
+        let timeInterval = initDate.timeIntervalSince(currentDate)
+        timeIntervalAtEachPeriodPublisher.send(Int(timeInterval.rounded(.toNearestOrAwayFromZero)))
       }
   }
 
-  private func subscribeOneSecondsTimerIsValid() {
-    oneSecondsTimerIsValid = timeIntervalEveryOneSecondsSubject
-      .sink { [weak self] _ in
-        self?.miliSecondsTimer = nil
-        self?.oneSecondsTimerIsValid = nil
-      }
+  private func stopMillisecondsTimer() {
+    miliSecondsTimer = nil
   }
 }

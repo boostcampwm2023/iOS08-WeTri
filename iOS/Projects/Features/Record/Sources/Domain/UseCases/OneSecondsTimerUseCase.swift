@@ -9,25 +9,25 @@
 import Combine
 import Foundation
 
-// MARK: - OneSecondsTimerUsecaseRepresentable
+// MARK: - OneSecondsTimerUseCaseRepresentable
 
-protocol OneSecondsTimerUsecaseRepresentable: TimerUseCaseRepresentable {
+protocol OneSecondsTimerUseCaseRepresentable: TimerUseCaseRepresentable {
   func oneSecondsTimerPublisher() -> AnyPublisher<Int, Never>
 }
 
-// MARK: - OneSecondsTimerUsecase
+// MARK: - OneSecondsTimerUseCase
 
-final class OneSecondsTimerUsecase: TimerUseCase {
-  override init(initDate: Date) {
-    super.init(initDate: initDate)
-    startTimer()
+final class OneSecondsTimerUseCase: TimerUseCase {
+  override init(initDate: Date, timerPeriod: Double = 1) {
+    super.init(initDate: initDate, timerPeriod: timerPeriod)
   }
 }
 
-// MARK: OneSecondsTimerUsecaseRepresentable
+// MARK: OneSecondsTimerUseCaseRepresentable
 
-extension OneSecondsTimerUsecase: OneSecondsTimerUsecaseRepresentable {
+extension OneSecondsTimerUseCase: OneSecondsTimerUseCaseRepresentable {
   func oneSecondsTimerPublisher() -> AnyPublisher<Int, Never> {
+    startTimer()
     return intervalCurrentAndInitEverySecondsPublisher()
       .map { abs($0) }
       .eraseToAnyPublisher()

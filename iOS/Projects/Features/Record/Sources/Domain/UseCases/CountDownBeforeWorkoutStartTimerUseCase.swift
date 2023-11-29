@@ -19,33 +19,29 @@ protocol CountDownBeforeWorkoutStartTimerUseCaseRepresentable: TimerUseCaseRepre
 
 final class CountDownBeforeWorkoutStartTimerUseCase: TimerUseCase {
   private var subscriptions = Set<AnyCancellable>()
-  private var countDwonBeforeWorkoutStartSubject: PassthroughSubject<Int, Never> = .init()
+  private var countDownBeforeWorkoutStartSubject: PassthroughSubject<Int, Never> = .init()
 
   /// initDate는 현재 시간보다 미래여야 합니다.
   /// 안그러면 작동하지 않습니다.
-  override init(initDate: Date) {
+  override init(initDate: Date, timerPeriod _: Double = 1) {
     super.init(initDate: initDate)
-    startTimer()
   }
 }
 
 // MARK: CountDownBeforeWorkoutStartTimerUseCaseRepresentable
 
 extension CountDownBeforeWorkoutStartTimerUseCase: CountDownBeforeWorkoutStartTimerUseCaseRepresentable {
-  func beforeStartingWorkoutTime() -> Double {
-    return initDate.timeIntervalSince(.now)
-  }
-
   func beforeWorkoutTimerTextPublisher() -> AnyPublisher<String, Never> {
+    startTimer()
     intervalCurrentAndInitEverySecondsPublisher()
       .sink { [weak self] value in
         value <= 0
-          ? self?.countDwonBeforeWorkoutStartSubject.send(completion: .finished)
-          : self?.countDwonBeforeWorkoutStartSubject.send(value)
+          ? self?.countDownBeforeWorkoutStartSubject.send(completion: .finished)
+          : self?.countDownBeforeWorkoutStartSubject.send(value)
       }
       .store(in: &subscriptions)
 
-    return countDwonBeforeWorkoutStartSubject
+    return countDownBeforeWorkoutStartSubject
       .map(\.description)
       .eraseToAnyPublisher()
   }
