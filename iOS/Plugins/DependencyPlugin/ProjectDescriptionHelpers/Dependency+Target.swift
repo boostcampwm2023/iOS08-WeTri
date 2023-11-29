@@ -10,6 +10,7 @@ import ProjectDescription
 // MARK: - Feature
 
 public enum Feature: String {
+  case login
   case onboarding
   case record
 

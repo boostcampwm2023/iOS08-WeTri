@@ -1,5 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRedisToken } from '@songkeys/nestjs-redis';
 import { MatchesService } from './matches.service';
 import { Profile } from '../../profiles/entities/profiles.entity';
 import { RandomMatchDto } from './dto/random-match.dto';
@@ -36,7 +35,7 @@ describe('MatchesService', () => {
       providers: [
         MatchesService,
         {
-          provide: getRedisToken('default'),
+          provide: 'DATA_REDIS',
           useValue: {
             rpush,
             lrem,
