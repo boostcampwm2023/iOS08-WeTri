@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
-import { Profile } from 'src/profiles/entities/profiles.entity';
+import { Profile } from '../../profiles/entities/profiles.entity';
 import {
   Column,
   CreateDateColumn,

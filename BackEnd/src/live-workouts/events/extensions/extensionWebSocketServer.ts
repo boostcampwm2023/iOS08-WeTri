@@ -1,13 +1,13 @@
-import { Server, WebSocket } from 'ws';
+import { WetriServer, WetriWebSocket } from '../types/custom-websocket.type';
 
 export class ExtensionWebSocketServer {
-  rooms: Map<string, Set<string>> = new Map();
-  sids: Map<string, Set<string>> = new Map();
-  clientMap: Map<string, WebSocket> = new Map();
-  constructor(server: Server) {
-    server.rooms = this.rooms;
-    server.sids = this.sids;
-    server.clientMap = this.clientMap;
+  rooms: Map<string, Set<string>>;
+  sids: Map<string, Set<string>>;
+  clientMap: Map<string, WetriWebSocket>;
+  constructor(server: WetriServer) {
+    server.rooms = new Map<string, Set<string>>();
+    server.sids = new Map<string, Set<string>>();
+    server.clientMap = new Map<string, WetriWebSocket>();
     server.joinRoom = this.joinRoom;
     server.leaveRoom = this.leaveRoom;
     server.to = this.to;
@@ -39,7 +39,9 @@ export class ExtensionWebSocketServer {
         if (this.rooms.has(roomName)) {
           const room = this.rooms.get(roomName);
           room.forEach((clientId) => {
-            this.clientMap[clientId].send(JSON.stringify({ event, message }));
+            this.clientMap
+              .get(clientId)
+              .send(JSON.stringify({ event, message }));
           });
         }
       },

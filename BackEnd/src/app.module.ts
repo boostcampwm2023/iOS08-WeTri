@@ -10,11 +10,16 @@ import { RecordsModule } from './records/records.module';
 import { WorkoutsModule } from './workouts/workouts.module';
 import { EventsModule } from './live-workouts/events/events.module';
 import { MatchesModule } from './live-workouts/matches/matches.module';
+import { RedisModule } from '@songkeys/nestjs-redis';
+import { RedisConfigService } from './config/redis.config';
 import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeOrmConfig),
+    RedisModule.forRootAsync({
+      useClass: RedisConfigService,
+    }),
     AuthModule,
     UsersModule,
     ProfilesModule,

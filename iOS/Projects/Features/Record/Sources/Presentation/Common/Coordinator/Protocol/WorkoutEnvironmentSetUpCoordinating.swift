@@ -1,5 +1,5 @@
 //
-//  WorkoutSettingCoordinating.swift
+//  WorkoutEnvironmentSetUpCoordinating.swift
 //  RecordFeature
 //
 //  Created by 안종표 on 2023/11/20.
@@ -9,7 +9,7 @@
 import Coordinator
 import Foundation
 
-protocol WorkoutSettingCoordinating: Coordinating {
+protocol WorkoutEnvironmentSetUpCoordinating: Coordinating {
   func pushWorkoutSelectViewController()
   func pushWorkoutEnvironmentSetupViewController()
   func pushPeerRandomMatchingViewController(workoutSetting: WorkoutSetting)

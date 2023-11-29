@@ -18,6 +18,7 @@ let projects = Project.makeModule(
     dependencies: [
       .coordinator,
       .feature(.record),
+      .keychain,
     ],
     infoPlist: [
       "NSLocationAlwaysUsageDescription": "운동 경로를 보여줄 때 사용합니다",

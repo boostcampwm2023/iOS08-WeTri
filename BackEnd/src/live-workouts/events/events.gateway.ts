@@ -7,39 +7,38 @@ import {
   OnGatewayDisconnect,
   OnGatewayInit,
 } from '@nestjs/websockets';
-import { Server, WebSocket } from 'ws';
+import * as WebSocket from 'ws';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
-import { ExtensionWebSocketServer } from './Extensions/ExtensionServer';
-import { ExtensionWebSocket } from './Extensions/ExtensionWebSocket';
-
+import { ExtensionWebSocketService } from './extensionWebSocket.service';
+import { WetriWebSocket, WetriServer } from './types/custom-websocket.type';
 @WebSocketGateway(3003)
-export class EventsGateway implements OnGatewayInit {
-  @WebSocketServer() server: Server;
-  constructor(private readonly eventsService: EventsService) {}
+export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  @WebSocketServer() server: WetriServer;
+  constructor(
+    private readonly eventsService: EventsService,
+    private readonly extensionWebSocketService: ExtensionWebSocketService,
+  ) {}
 
-  afterInit(server: any) {
-    new ExtensionWebSocketServer(server);
+  afterInit(server: WetriServer) {
+    this.extensionWebSocketService.webSocketServer(server);
+  }
+
+  handleConnection(client: WetriWebSocket, ...args: any[]): any {
+    this.extensionWebSocketService.webSocket(client, this.server);
+    client.join('room1');
+    this.server.to('room1').emit('event_name', 'msg');
   }
 
   @SubscribeMessage('events')
-  onEvent(client: WebSocket, data: any): void {
+  onEvent(client: WetriWebSocket, data: any): void {
     console.log(`전송받은 데이터: ${data}`);
     this.server.clients.forEach((others: WebSocket) => {
       if (others.readyState === WebSocket.OPEN) {
         others.send(data);
       }
     });
-  }
-
-  handleConnection(client: WebSocket): void {
-    new ExtensionWebSocket(client, this.server);
-    console.log(`클라이언트 연결`);
-  }
-
-  handleDisconnect(client: WebSocket): void {
-    console.log(`클라이언트 연결 종료`);
   }
 
   @SubscribeMessage('createEvent')
@@ -65,5 +64,9 @@ export class EventsGateway implements OnGatewayInit {
   @SubscribeMessage('removeEvent')
   remove(@MessageBody() id: number) {
     return this.eventsService.remove(id);
+  }
+
+  handleDisconnect(client: any) {
+    throw new Error('Method not implemented.');
   }
 }

@@ -21,7 +21,7 @@ jobs:
           node-version: '18'
 
       - name: 의존성 설치
-        run: npm ci
+        run: npm install
         working-directory: ./BackEnd
 
       - name: 테스트 진행

@@ -52,7 +52,7 @@ final class WorkoutEnvironmentSetupViewModel {
   private var subscriptions = Set<AnyCancellable>()
   private var useCase: WorkoutEnvironmentSetupUseCaseRepresentable
 
-  private weak var coordinator: WorkoutSettingCoordinating?
+  private weak var coordinator: WorkoutEnvironmentSetUpCoordinating?
 
   var didSelectWorkoutType: WorkoutType?
   var didSelectWorkoutPeerType: PeerType?
@@ -61,7 +61,7 @@ final class WorkoutEnvironmentSetupViewModel {
 
   init(
     useCase: WorkoutEnvironmentSetupUseCaseRepresentable,
-    coordinator: WorkoutSettingCoordinator?
+    coordinator: WorkoutEnvironmentSetUpCoordinator?
   ) {
     self.useCase = useCase
     self.coordinator = coordinator
@@ -160,7 +160,7 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
 
     switch mode {
     case .solo:
-      break
+      coordinator?.finish(workoutSetting: workoutSettiong)
     case .random:
       coordinator?.pushPeerRandomMatchingViewController(workoutSetting: workoutSettiong)
     }

@@ -24,12 +24,17 @@ public final class RecordFeatureCoordinator: RecordFeatureCoordinating {
   }
 
   public func start() {
+    let dateProvideUseCase = DateProvideUseCase()
     let recordContainerViewController = RecordContainerViewController(
-      recordCalendarViewController: RecordCalendarViewController(),
+      recordCalendarViewController: RecordCalendarViewController(
+        viewModel: RecordCalendarViewModel(
+          dateProvideUseCase: dateProvideUseCase
+        )
+      ),
       recordListViewController: RecordListViewController(
         viewModel: RecordListViewModel(
           recordUpdateUsecase: RecordUpdateUseCase(workoutRecordsRepository: MockWorkoutRecordsRepository()),
-          dateProvideUsecase: DateProvideUseCase(),
+          dateProvideUsecase: dateProvideUseCase,
           coordinator: self
         )
       )
@@ -38,7 +43,7 @@ public final class RecordFeatureCoordinator: RecordFeatureCoordinating {
   }
 
   func showSettingFlow() {
-    let workoutSettingCoordinator = WorkoutSettingCoordinator(navigationController: navigationController)
+    let workoutSettingCoordinator = WorkoutEnvironmentSetUpCoordinator(navigationController: navigationController)
     childCoordinators.append(workoutSettingCoordinator)
     workoutSettingCoordinator.finishDelegate = self
     workoutSettingCoordinator.settingDidFinishedDelegate = self

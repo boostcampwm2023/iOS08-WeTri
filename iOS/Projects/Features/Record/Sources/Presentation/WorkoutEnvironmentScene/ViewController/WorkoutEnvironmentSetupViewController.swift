@@ -169,7 +169,7 @@ private extension WorkoutEnvironmentSetupViewController {
 
       cell.update(
         systemName: item.workoutIcon,
-        description: item.workoutIconDescription,
+        description: item.workoutTitle,
         typeCode: item.typeCode
       )
       return cell
