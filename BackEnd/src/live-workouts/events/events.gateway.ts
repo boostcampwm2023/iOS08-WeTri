@@ -13,22 +13,60 @@ import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { ExtensionWebSocketService } from './extensionWebSocket.service';
 import { WetriWebSocket, WetriServer } from './types/custom-websocket.type';
+import { AuthService } from '../../auth/auth.service';
+import { ProfilesService } from '../../profiles/profiles.service';
+
 @WebSocketGateway(3003)
-export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class EventsGateway
+  implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit
+{
   @WebSocketServer() server: WetriServer;
   constructor(
+    private readonly authService: AuthService,
+    private readonly profilesService: ProfilesService,
     private readonly eventsService: EventsService,
     private readonly extensionWebSocketService: ExtensionWebSocketService,
   ) {}
 
-  afterInit(server: WetriServer) {
+  afterInit(server: WetriServer): any {
     this.extensionWebSocketService.webSocketServer(server);
   }
 
-  handleConnection(client: WetriWebSocket, ...args: any[]): any {
+  async handleConnection(client: WetriWebSocket, ...args: any[]) {
+    const { authorization } = args[0].headers;
+    if (!(await this.jwtVerify(authorization, client))) {
+      client.close();
+      return;
+    }
+
     this.extensionWebSocketService.webSocket(client, this.server);
     client.join('room1');
     this.server.to('room1').emit('event', 'message');
+  }
+
+  private async jwtVerify(authorization: string, client: WetriWebSocket) {
+    if (!authorization) {
+      return false;
+    }
+
+    const token = this.authService.extractTokenFromHeader(authorization);
+    const decoded = await this.authService.verifyToken(token);
+
+    if (!decoded) {
+      return false;
+    }
+
+    const profile = await this.profilesService.findByPublicId(decoded.sub);
+
+    if (!profile) {
+      return false;
+    }
+
+    client.profile = profile;
+    client.token = token;
+    client.tokenType = decoded.type;
+
+    return true;
   }
 
   @SubscribeMessage('events')
@@ -65,8 +103,6 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   remove(@MessageBody() id: number) {
     return this.eventsService.remove(id);
   }
-
-  handleDisconnect(client: any) {
-    // throw new Error('Method not implemented.');
-  }
+  
+  handleDisconnect(client: any) {}
 }
