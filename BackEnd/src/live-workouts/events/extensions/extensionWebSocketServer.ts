@@ -50,7 +50,7 @@ export class ExtensionWebSocketServer {
     if (this.rooms.has(roomId)) {
       const curRoom = this.rooms.get(roomId);
       curRoom.delete(clientId);
-      this.redisData.srem(roomId, clientId);
+      await this.redisData.srem(roomId, clientId);
       if (curRoom.size === 0) {
         this.unSubscribe(`room:${roomId}`);
       }

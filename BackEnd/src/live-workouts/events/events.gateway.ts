@@ -27,9 +27,6 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   handleConnection(client: WetriWebSocket, ...args: any[]): any {
     this.extensionWebSocketService.webSocket(client, this.server);
-    client.join('room1');
-    client.join('room2');
-    this.server.to('room1').emit('event_name', 'msg');
   }
 
   @SubscribeMessage('events')
