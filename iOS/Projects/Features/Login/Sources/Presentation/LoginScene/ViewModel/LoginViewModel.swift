@@ -41,8 +41,9 @@ extension LoginViewModel: LoginViewModelRepresentable {
   func transform(input: LoginViewModelInput) -> LoginViewModelOutput {
     input.appleLoginButtonDidTap
       .flatMap(authorizeUseCase.authorize(authorizationInfo:))
-      .sink(receiveValue: { _ in
-        // TODO: keychainRepository에 토큰 저장하는 로직
+      .sink(receiveValue: { [weak self] token in
+        self?.authorizeUseCase.accessTokenSave(token.accesToken)
+        self?.authorizeUseCase.refreshTokenSave(token.refreshToken)
       })
       .store(in: &subscriptions)
 
