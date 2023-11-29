@@ -18,6 +18,7 @@ let projects = Project.makeModule(
     dependencies: [
       .coordinator,
       .feature(.record),
+      .feature(.onboarding),
       .keychain,
     ],
     infoPlist: [
