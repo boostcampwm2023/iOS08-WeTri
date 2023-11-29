@@ -22,8 +22,8 @@ public typealias OnboardingViewModelOutput = AnyPublisher<OnboardingState, Never
 
 public enum OnboardingState {
   case idle
-  case shouldPresentHealthAuthorization
-  case shouldPresentMapAuthorization
+  case shouldPresentMapAuthorization(OnboardingScenePropertyDTO)
+  case shouldPresentHealthAuthorization(OnboardingScenePropertyDTO)
   case finish
   case errorState(Error)
 }
@@ -52,19 +52,36 @@ public final class OnboardingViewModel {
 extension OnboardingViewModel: OnboardingViewModelRepresentable {
   public func transform(input: OnboardingViewModelInput) -> OnboardingViewModelOutput {
     subscriptions.removeAll()
-
-    let presentMapAuthorizationState = input.shouldPresentMapAuthorizationPublisher
+    
+    let presentMapAuth: OnboardingViewModelOutput = input.shouldPresentMapAuthorizationPublisher
       .tryMap { [weak self] _ -> OnboardingState in
         guard let self else {
           return .errorState(OnboardingViewModelError.didNotInitViewModel)
         }
-        useCase.healthOnboardingImage()
-        return .shouldPresentHealthAuthorization
-      }.eraseToAnyPublisher()
-
+        guard let dto = useCase.mapOnboardingImage() else {
+          return .errorState(OnboardingViewModelError.nilValue)
+        }
+        return .shouldPresentHealthAuthorization(dto)
+      }
+      .catch { error in return Just(OnboardingState.errorState(error))}
+      .eraseToAnyPublisher()
+    
+    let presentHealthAuth: OnboardingViewModelOutput = input.shouldPresentMapAuthorizationPublisher
+      .tryMap { [weak self] _ -> OnboardingState in
+        guard let self else {
+          return .errorState(OnboardingViewModelError.didNotInitViewModel)
+        }
+        guard let dto = useCase.healthOnboardingImage() else {
+          return .errorState(OnboardingViewModelError.nilValue)
+        }
+        return .shouldPresentHealthAuthorization(dto)
+      }
+      .catch { error in return Just(OnboardingState.errorState(error))}
+      .eraseToAnyPublisher()
+    
     let initialState: OnboardingViewModelOutput = Just(.idle).eraseToAnyPublisher()
-
-    return initialState
+      
+    return initialState.merge(with: presentHealthAuth, presentMapAuth).eraseToAnyPublisher()
   }
 }
 
@@ -72,4 +89,5 @@ extension OnboardingViewModel: OnboardingViewModelRepresentable {
 
 enum OnboardingViewModelError: LocalizedError {
   case didNotInitViewModel
+  case nilValue
 }

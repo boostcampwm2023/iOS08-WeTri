@@ -11,6 +11,6 @@ import Foundation
 // MARK: - OnboardingImageRepositoryRepresentable
 
 public protocol OnboardingImageRepositoryRepresentable {
-  func mapOnboardingProperty() -> OnboardingScenePropertyDTO
-  func healthOnboardingImage() -> OnboardingScenePropertyDTO
+  func mapOnboardingProperty() -> OnboardingScenePropertyDTO?
+  func healthOnboardingImage() -> OnboardingScenePropertyDTO?
 }

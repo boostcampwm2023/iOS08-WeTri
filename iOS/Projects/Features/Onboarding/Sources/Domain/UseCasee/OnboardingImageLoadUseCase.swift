@@ -11,15 +11,15 @@ import Foundation
 // MARK: - OnboardingImageLoadUseCaseRepresentable
 
 public protocol OnboardingImageLoadUseCaseRepresentable {
-  func mapOnboardingImage() -> Data?
-  func healthOnboardingImage() -> Data?
+  func mapOnboardingImage() -> OnboardingScenePropertyDTO?
+  func healthOnboardingImage() -> OnboardingScenePropertyDTO?
 }
 
 // MARK: - OnboardingImageLoadUseCase
 
 public struct OnboardingImageLoadUseCase: OnboardingImageLoadUseCaseRepresentable {
   private let repository: OnboardingImageRepositoryRepresentable
-  private var onboardingImageDataByType: [OnboardingImageType: Data] = [:]
+  private var onboardingImageDataByType: [OnboardingImageType: OnboardingScenePropertyDTO] = [:]
 
   public init(repository: OnboardingImageRepositoryRepresentable) {
     self.repository = repository
@@ -27,11 +27,11 @@ public struct OnboardingImageLoadUseCase: OnboardingImageLoadUseCaseRepresentabl
     loadOnboardingImage()
   }
 
-  public func mapOnboardingImage() -> Data? {
+  public func mapOnboardingImage() -> OnboardingScenePropertyDTO? {
     return onboardingImageDataByType[.health]
   }
 
-  public func healthOnboardingImage() -> Data? {
+  public func healthOnboardingImage() -> OnboardingScenePropertyDTO? {
     return onboardingImageDataByType[.map]
   }
 

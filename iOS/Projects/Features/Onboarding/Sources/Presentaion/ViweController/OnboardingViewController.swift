@@ -138,15 +138,17 @@ private extension OnboardingViewController {
   }
 
   func bind() {
-    let output = viewModel.transform(input: .init())
-    output.sink { state in
-      switch state {
-      case .idle:
-        break
-      }
+    let input = OnboardingViewModelInput(
+      shouldPresentMapAuthorizationPublisher: shouldPresentMapAuthorizationSubject.eraseToAnyPublisher(),
+      shouldPresentHealthAuthorizationPublisher: shouldPresentHealthAuthorizationSubject.eraseToAnyPublisher()
+    )
+    viewModel.transform(input: input)
+      .sink { state in
+        
     }
     .store(in: &subscriptions)
   }
+  
 
   enum Metrics {
     static let imageHeight: CGFloat = 250
