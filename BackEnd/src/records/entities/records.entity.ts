@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { Post } from '../../posts/entities/posts.entity';
 import { Profile } from '../../profiles/entities/profiles.entity';
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Workout } from '../../workouts/entities/workout.entity';
 
