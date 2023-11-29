@@ -52,9 +52,7 @@ final class AuthorizationRepository: AuthorizationRepositoryRepresentable {
       }
     }
     .catch { error -> AnyPublisher<Token, Never> in
-      if let authorizationError = error as? AuthorizationRepositoryError {
-        Log.make().error("\(authorizationError)")
-      }
+      Log.make().error("\(error)")
       return Just(Token())
         .eraseToAnyPublisher()
     }
