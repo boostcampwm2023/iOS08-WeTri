@@ -37,7 +37,7 @@ public struct OnboardingImageLoadUseCase: OnboardingImageLoadUseCaseRepresentabl
 
   private mutating func loadOnboardingImage() {
     onboardingImageDataByType[.health] = repository.healthOnboardingImage()
-    onboardingImageDataByType[.map] = repository.mapOnboardingImage()
+    onboardingImageDataByType[.map] = repository.mapOnboardingProperty()
   }
 
   private enum OnboardingImageType {

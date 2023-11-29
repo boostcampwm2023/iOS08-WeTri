@@ -12,10 +12,13 @@ import UIKit
 
 // MARK: - OnboardingViewController
 
-final class OnboardingViewController: UIViewController {
+public final class OnboardingViewController: UIViewController {
   // MARK: Properties
 
   private let viewModel: OnboardingViewModelRepresentable
+
+  private let shouldPresentMapAuthorizationSubject: PassthroughSubject<Void, Never> = .init()
+  private let shouldPresentHealthAuthorizationSubject: PassthroughSubject<Void, Never> = .init()
 
   private var subscriptions: Set<AnyCancellable> = []
 
@@ -25,6 +28,7 @@ final class OnboardingViewController: UIViewController {
     let image = UIImageView()
     image.contentMode = .scaleAspectFit
 
+    image.backgroundColor = .red
     image.translatesAutoresizingMaskIntoConstraints = false
     return image
   }()
@@ -61,7 +65,7 @@ final class OnboardingViewController: UIViewController {
 
   // MARK: Initializations
 
-  init(viewModel: OnboardingViewModelRepresentable) {
+  public init(viewModel: OnboardingViewModelRepresentable) {
     self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
   }
@@ -73,9 +77,14 @@ final class OnboardingViewController: UIViewController {
 
   // MARK: Life Cycles
 
-  override func viewDidLoad() {
+  override public func viewDidLoad() {
     super.viewDidLoad()
     setup()
+  }
+
+  override public func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    shouldPresentMapAuthorizationSubject.send(())
   }
 }
 
@@ -116,11 +125,12 @@ private extension OnboardingViewController {
 
     view.addSubview(nextButton)
     nextButton.bottomAnchor
-      .constraint(equalTo: safeArea.bottomAnchor, constant: Metrics.nextButtonBottomToSafeAreaBottomSpacing).isActive = true
+      .constraint(equalTo: safeArea.bottomAnchor, constant: -Metrics.nextButtonBottomToSafeAreaBottomSpacing).isActive = true
     nextButton.leadingAnchor
       .constraint(equalTo: safeArea.leadingAnchor, constant: ConstraintsGuideLine.value).isActive = true
     nextButton.trailingAnchor
       .constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
+    nextButton.heightAnchor.constraint(equalToConstant: Metrics.nextButtonHeight).isActive = true
   }
 
   func setupStyles() {
@@ -139,9 +149,10 @@ private extension OnboardingViewController {
   }
 
   enum Metrics {
-    static let imageHeight: CGFloat = 150
+    static let imageHeight: CGFloat = 250
     static let ImageAndTitleSpacing: CGFloat = 45
     static let titleAndSubtitleSpacing: CGFloat = 15
     static let nextButtonBottomToSafeAreaBottomSpacing: CGFloat = 23
+    static let nextButtonHeight: CGFloat = 44
   }
 }

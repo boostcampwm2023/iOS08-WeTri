@@ -11,7 +11,10 @@ import Foundation
 
 // MARK: - OnboardingViewModelInput
 
-public struct OnboardingViewModelInput {}
+public struct OnboardingViewModelInput {
+  let shouldPresentMapAuthorizationPublisher: AnyPublisher<Void, Never>
+  let shouldPresentHealthAuthorizationPublisher: AnyPublisher<Void, Never>
+}
 
 public typealias OnboardingViewModelOutput = AnyPublisher<OnboardingState, Never>
 
@@ -19,11 +22,15 @@ public typealias OnboardingViewModelOutput = AnyPublisher<OnboardingState, Never
 
 public enum OnboardingState {
   case idle
+  case shouldPresentHealthAuthorization
+  case shouldPresentMapAuthorization
+  case finish
+  case errorState(Error)
 }
 
 // MARK: - OnboardingViewModelRepresentable
 
-protocol OnboardingViewModelRepresentable {
+public protocol OnboardingViewModelRepresentable {
   func transform(input: OnboardingViewModelInput) -> OnboardingViewModelOutput
 }
 
@@ -36,17 +43,33 @@ public final class OnboardingViewModel {
   public init(useCase: OnboardingImageLoadUseCaseRepresentable) {
     self.useCase = useCase
   }
+
   private var subscriptions: Set<AnyCancellable> = []
 }
 
 // MARK: OnboardingViewModelRepresentable
 
 extension OnboardingViewModel: OnboardingViewModelRepresentable {
-  public func transform(input _: OnboardingViewModelInput) -> OnboardingViewModelOutput {
+  public func transform(input: OnboardingViewModelInput) -> OnboardingViewModelOutput {
     subscriptions.removeAll()
+
+    let presentMapAuthorizationState = input.shouldPresentMapAuthorizationPublisher
+      .tryMap { [weak self] _ -> OnboardingState in
+        guard let self else {
+          return .errorState(OnboardingViewModelError.didNotInitViewModel)
+        }
+        useCase.healthOnboardingImage()
+        return .shouldPresentHealthAuthorization
+      }.eraseToAnyPublisher()
 
     let initialState: OnboardingViewModelOutput = Just(.idle).eraseToAnyPublisher()
 
     return initialState
   }
+}
+
+// MARK: - OnboardingViewModelError
+
+enum OnboardingViewModelError: LocalizedError {
+  case didNotInitViewModel
 }

@@ -8,8 +8,8 @@
 
 import Coordinator
 import Foundation
-import UIKit
 import OnboardingFeature
+import UIKit
 
 // MARK: - OnboardingCoordinating
 
@@ -34,8 +34,11 @@ final class OnboardingCoordinator: OnboardingCoordinating {
   var flow: CoordinatorFlow = .onboarding
 
   func start() {
-    let useCase = 
-    let viewModel = OnboardingViewModel(useCase: <#T##OnboardingImageLoadUseCaseRepresentable#>)
+    let repository = OnboardingImageRepository()
+    let useCase = OnboardingImageLoadUseCase(repository: repository)
+    let viewModel = OnboardingViewModel(useCase: useCase)
+    let viewController = OnboardingViewController(viewModel: viewModel)
+    navigationController.pushViewController(viewController, animated: false)
   }
 
   init(
