@@ -23,8 +23,8 @@ export class ExtensionWebSocketServer {
     server.handlePublishMessage();
     process.on('SIGINT', () => {
       server.sids.forEach((value, key) => {
-        value.forEach((value) => {
-          redisData.srem(value, key);
+        value.forEach(async (value) => {
+          await redisData.srem(value, key);
         });
       });
       process.exit();
@@ -62,11 +62,15 @@ export class ExtensionWebSocketServer {
 
   to(roomId: string) {
     return {
-      emit: (event: string, message: string) => {
+      emit: (event: string, message: string, issuedClientId?: string) => {
+        const jsonMessage = { event, message };
+        if (issuedClientId !== undefined) {
+          jsonMessage['issuedClientId'] = issuedClientId;
+        }
         if (this.rooms.has(roomId)) {
           this.redisData.publish(
             `room:${roomId}`,
-            JSON.stringify({ event, message }),
+            JSON.stringify(jsonMessage),
           );
         }
       },
@@ -85,15 +89,21 @@ export class ExtensionWebSocketServer {
   handlePublishMessage() {
     this.redisSubscribe.on('message', (channel, message) => {
       const chSplit = channel.split(':');
-      if (chSplit.length === 2) {
-        const roomId = chSplit[1];
-        if (this.rooms.has(roomId)) {
-          const room = this.rooms.get(roomId);
-          room.forEach((clientId) => {
-            this.clientMap.get(clientId).send(JSON.stringify(message));
-          });
-        }
+      if (chSplit.length !== 2) {
+        return;
       }
+      const roomId = chSplit[1];
+      if (!this.rooms.has(roomId)) {
+        return;
+      }
+      const room = this.rooms.get(roomId);
+      const jsonMessage = JSON.parse(message);
+      const issuedClientId: string | undefined = jsonMessage.issuedClientId;
+      room.forEach((clientId) => {
+        if(clientId !== issuedClientId) {
+          this.clientMap.get(clientId).send(JSON.stringify({event: jsonMessage.event, message: jsonMessage.message}));
+        }
+      });
     });
   }
 

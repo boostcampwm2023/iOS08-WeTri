@@ -32,20 +32,8 @@ export class ExtensionWebSocket {
   to(roomId: string) {
     return {
       emit: (event: string, message: string) => {
-        if (
-          this.server.rooms.has(roomId) &&
-          this.server.rooms.get(roomId).has(this.id)
-        ) {
-          const room = this.server.rooms.get(roomId);
-          room.forEach((clientId) => {
-            if (clientId !== this.id) {
-              this.server.clientMap
-                .get(clientId)
-                .send(JSON.stringify({ event, message }));
-            }
-          });
-        }
-      },
+        this.server.to(roomId).emit(event, message, this.id);
+      }
     };
   }
 }
