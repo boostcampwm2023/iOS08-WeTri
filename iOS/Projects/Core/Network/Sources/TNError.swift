@@ -15,7 +15,6 @@ public enum TNError: LocalizedError {
   case clientError
   case serverError
   case httpResponseDownCastingError
-  case adaptorSessionError
   case cantMakeURLSessionWithAdaptor
 
   public var errorDescription: String? {
@@ -32,8 +31,6 @@ public enum TNError: LocalizedError {
       return "UnknownError가 발생하였습니다."
     case .httpResponseDownCastingError:
       return "HTTPResponse를 다운캐스팅 할 수 없습니다. 요청하는 URL주소를 다시 확인하거나, Mock Response를 확인해 주세요"
-    case .adaptorSessionError:
-      return "adaptor함수를 잘못 만들어서 에러가 발생했습니다. adaptor함수를 다시 확인해주세요"
     case .cantMakeURLSessionWithAdaptor:
       return "adaptor함수를 잘못 만들어서 에러가 발생했습니다. adaptor함수를 다시 확인해주세요"
     }
