@@ -5,23 +5,34 @@ import {
   WebSocketServer,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  OnGatewayInit,
 } from '@nestjs/websockets';
 import * as WebSocket from 'ws';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
-
+import { ExtensionWebSocketService } from './extensionWebSocket.service';
+import { WetriWebSocket, WetriServer } from './types/custom-websocket.type';
 @WebSocketGateway(3003)
 export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  @WebSocketServer() server: WebSocket.Server;
-  constructor(private readonly eventsService: EventsService) {}
+  @WebSocketServer() server: WetriServer;
+  constructor(
+    private readonly eventsService: EventsService,
+    private readonly extensionWebSocketService: ExtensionWebSocketService,
+  ) {}
 
-  handleDisconnect(client: any) {
-    throw new Error('Method not implemented.');
+  afterInit(server: WetriServer) {
+    this.extensionWebSocketService.webSocketServer(server);
+  }
+
+  handleConnection(client: WetriWebSocket, ...args: any[]): any {
+    this.extensionWebSocketService.webSocket(client, this.server);
+    client.join('room1');
+    this.server.to('room1').emit('event_name', 'msg');
   }
 
   @SubscribeMessage('events')
-  onEvent(client: WebSocket, data: any): void {
+  onEvent(client: WetriWebSocket, data: any): void {
     console.log(`전송받은 데이터: ${data}`);
     this.server.clients.forEach((others: WebSocket) => {
       if (others.readyState === WebSocket.OPEN) {
@@ -55,5 +66,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     return this.eventsService.remove(id);
   }
 
-  handleConnection(client: any, ...args: any[]): any {}
+  handleDisconnect(client: any) {
+    throw new Error('Method not implemented.');
+  }
 }
