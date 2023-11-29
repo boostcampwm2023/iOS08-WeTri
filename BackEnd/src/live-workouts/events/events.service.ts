@@ -1,26 +1,25 @@
-import { Injectable } from '@nestjs/common';
-import { CreateEventDto } from './dto/create-event.dto';
-import { UpdateEventDto } from './dto/update-event.dto';
+import { Redis } from 'ioredis';
+import { Inject, Injectable } from '@nestjs/common';
+import { WetriWebSocket } from './types/custom-websocket.type';
+import { CheckMatchingDto } from './dto/checkMatching.dto';
+import { AuthService } from 'src/auth/auth.service';
+import { ProfilesService } from 'src/profiles/profiles.service';
 
 @Injectable()
 export class EventsService {
-  create(createEventDto: CreateEventDto) {
-    return 'This action adds a new event';
-  }
+  constructor(
+    @Inject('DATA_REDIS') private readonly redisData: Redis
+    ) {}
 
-  findAll() {
-    return `This action returns all events`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} event`;
-  }
-
-  update(id: number, updateEventDto: UpdateEventDto) {
-    return `This action updates a #${id} event`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} event`;
+  async checkMatching(matchInfo: CheckMatchingDto) {
+    const resultUserExist = await this.redisData.exists(matchInfo.clientId);
+    if(!resultUserExist) {
+      return false;
+    }
+    const resultRoomExist = await this.redisData.get(matchInfo.roomId);
+    if(!resultRoomExist) {
+      return false;
+    }
+    return true;
   }
 }

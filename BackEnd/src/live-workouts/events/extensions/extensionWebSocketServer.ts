@@ -103,7 +103,10 @@ export class ExtensionWebSocketServer {
       const issuedClientId: string | undefined = jsonMessage.issuedClientId;
       room.forEach((clientId) => {
         if(clientId !== issuedClientId) {
-          this.clientMap.get(clientId).send(JSON.stringify({event: jsonMessage.event, message: jsonMessage.message}));
+          const client = this.clientMap.get(clientId);
+          if(client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify({event: jsonMessage.event, message: jsonMessage.message}));
+          }
         }
       });
     });

@@ -10,6 +10,7 @@ import {
   NotRefreshTokenException,
 } from './exceptions/auth.exception';
 import * as process from 'process';
+import { WetriWebSocket } from 'src/live-workouts/events/types/custom-websocket.type';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +18,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
     private readonly profilesService: ProfilesService,
-  ) {}
+  ) { }
 
   signToken(publicId: string, isRefreshToken: boolean) {
     //payload에는 sub -> id가 들어감 (사용자를 고유하게 식별하는데 사용), type (access token, refresh token)
@@ -77,6 +78,32 @@ export class AuthService {
     const token = splitToken[1];
 
     return token;
+  }
+
+  async verifyWs(authorization: string, client: WetriWebSocket) {
+    if (!authorization) {
+      return false;
+    }
+
+    const token = this.extractTokenFromHeader(authorization);
+    const decoded = await this.verifyToken(token);
+
+    if (!decoded) {
+      return false;
+    }
+
+    const profile = await this.profilesService.findByPublicId(decoded.sub);
+
+    if (!profile) {
+      return false;
+    }
+
+    client.id = profile.publicId;
+    client.profile = profile;
+    client.token = token;
+    client.tokenType = decoded.type;
+
+    return true;
   }
 
   verifyToken(token: string) {
