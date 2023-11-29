@@ -16,7 +16,6 @@ import Trinet
 enum AuthorizationRepositoryError: Error {
   case invalidData
   case failureDecode
-  case deinitializedRepository
 }
 
 // MARK: - AuthorizationRepository
