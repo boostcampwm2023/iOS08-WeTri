@@ -5,14 +5,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { UsersModule } from '../../users/users.module';
 import { ProfilesModule } from '../../profiles/profiles.module';
 import { AuthService } from '../../auth/auth.service';
-import { RedisModule } from '@songkeys/nestjs-redis';
-import { RedisConfigService } from '../../config/redis.config';
 
 @Module({
   imports: [
-    RedisModule.forRootAsync({
-      useClass: RedisConfigService,
-    }),
     JwtModule.register({}),
     UsersModule,
     ProfilesModule,

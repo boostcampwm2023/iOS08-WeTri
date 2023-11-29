@@ -4,6 +4,10 @@ import { EventsGateway } from './events.gateway';
 import { ExtensionWebSocketService } from './extensionWebSocket.service';
 
 @Module({
-  providers: [EventsGateway, EventsService, ExtensionWebSocketService],
+  providers: [
+    EventsGateway, 
+    EventsService, 
+    ExtensionWebSocketService
+  ],
 })
 export class EventsModule {}

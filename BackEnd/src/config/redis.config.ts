@@ -8,15 +8,25 @@ import * as process from 'process';
 
 dotenv.config();
 
-@Injectable()
-export class RedisConfigService implements RedisOptionsFactory {
-  createRedisOptions(): RedisModuleOptions {
-    return {
-      readyLog: true,
-      config: {
-        host: process.env.REDIS_HOST,
-        port: parseInt(process.env.REDIS_PORT),
-      },
-    };
-  }
+export const redisConfig: object = {
+  host: process.env.REDIS_HOST,
+  port: parseInt(process.env.REDIS_PORT),
+  enableReadyCheck: true,
+  enableOfflineQueue: true,
 }
+
+// @Injectable()
+// export class RedisConfigService implements RedisOptionsFactory {
+//   createRedisOptions(): RedisModuleOptions {
+//     return {
+//       readyLog: true,
+//       config: [
+//         {
+//           name: 'subscribe',
+//           host: process.env.REDIS_HOST,
+//           port: parseInt(process.env.REDIS_PORT),
+//         }
+//       ],
+//     };
+//   }
+// }
