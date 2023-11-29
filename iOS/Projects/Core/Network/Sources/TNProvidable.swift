@@ -14,6 +14,7 @@ public protocol TNProvidable {
   associatedtype EndPoint = TNEndPoint
   func request(_ service: EndPoint, successStatusCodeRange: Range<Int>) async throws -> Data
   func request(_ service: EndPoint, completion: @Sendable @escaping (Data?, URLResponse?, Error?) -> Void) throws
+  func request(_ service: EndPoint, successStatusCodeRange range: Range<Int>, interceptor: TNRequestInterceptor) async throws -> Data
 }
 
 // MARK: - TNProvider
@@ -37,7 +38,7 @@ public struct TNProvider<T: TNEndPoint>: TNProvidable {
 
   public func request(_ service: T, successStatusCodeRange range: Range<Int> = 200 ..< 300, interceptor: TNRequestInterceptor) async throws -> Data {
     let request = try interceptor.adapt(service.request(), session: session)
-    let (data, response) = try await session.data(for: service.request(), delegate: nil)
+    let (data, response) = try await session.data(for: request, delegate: nil)
     let (retriedData, retriedResponse) = try await interceptor.retry(request, session: session, data: data, response: response, delegate: nil)
     try checkStatusCode(retriedResponse, successStatusCodeRange: range)
 

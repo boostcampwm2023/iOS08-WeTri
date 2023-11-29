@@ -17,7 +17,7 @@ final class InterceptorTest: XCTestCase {
   struct TestInterceptor: TNRequestInterceptor {
     func adapt(_ request: URLRequest, session _: URLSessionProtocol) -> URLRequest {
       var urlrequest = request
-      urlrequest.url = URL(string: "adapt")
+      urlrequest.url = URL(string: "adapt")!
       return urlrequest
     }
 
@@ -45,6 +45,24 @@ final class InterceptorTest: XCTestCase {
   }
 
   func test_request가_adapt를했을때() async throws {
+    // arrange
+    let tokkenDidBeExpierResponse = HTTPURLResponse(url: URL(string: "www.naver.com")!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+    mockSession = MockURLSession(
+      mockData: "나는목이다".data(using: .utf8)!,
+      mockResponse: tokkenDidBeExpierResponse,
+      mockDataByURLString: ["adapt": "아아답트".data(using: .utf8)!]
+    )
+    provider = .init(session: mockSession)
+
+    // act
+    let data = try await provider.request(mockEndPoint, interceptor: interceptor)
+
+    // assert
+    let stringData = String(data: data, encoding: .utf8)
+    XCTAssertEqual(stringData, "아아답트")
+  }
+
+  func test_request가_retry를했을때() async throws {
     // arrange
     let tokkenDidBeExpierResponse = HTTPURLResponse(url: URL(string: "www.naver.com")!, statusCode: 401, httpVersion: nil, headerFields: nil)!
     mockSession = MockURLSession(mockData: "나는목이다".data(using: .utf8)!, mockResponse: tokkenDidBeExpierResponse)
