@@ -20,6 +20,14 @@ export class Workout {
   @IsString()
   name: string;
 
+  @ApiProperty({
+    example: '운동 종류의 아이콘 경로 문자열',
+    description: 'figure.outdoor.workout',
+  })
+  @Column()
+  @IsString()
+  icon: string;
+
   @OneToMany(() => Record, (record) => record.workout)
   records: Record[];
 }
