@@ -1,7 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { WetriServer, WetriWebSocket } from '../types/custom-websocket.type';
 
-
 export class ExtensionWebSocket {
   server: WetriServer;
   id: string;
@@ -12,40 +11,29 @@ export class ExtensionWebSocket {
     client.leave = this.leave;
     client.to = this.to;
     client.server.clientMap.set(client.id, client);
-    // client.on('close', () => {
-    //   if (client.server.sids.has(client.id)) {
-    //     client.server.sids.get(client.id).forEach((roomName) => {
-    //       client.leave(roomName);
-    //     });
-    //   }
-    // });
+    client.on('close', () => {
+      if (client.server.sids.has(client.id)) {
+        client.server.sids.get(client.id).forEach((roomId) => {
+          client.leave(roomId);
+          client.server.clientMap.delete(client.id);
+        });
+      }
+    });
   }
 
-  join(roomName: string) {
-    this.server.joinRoom(this.id, roomName);
+  join(roomId: string) {
+    this.server.joinRoom(this.id, roomId);
   }
 
-  leave(roomName: string) {
-    this.server.leaveRoom(this.id, roomName);
+  leave(roomId: string) {
+    this.server.leaveRoom(this.id, roomId);
   }
 
-  to(roomName: string) {
+  to(roomId: string) {
     return {
       emit: (event: string, message: string) => {
-        if (
-          this.server.rooms.has(roomName) &&
-          this.server.rooms.get(roomName).has(this.id)
-        ) {
-          const room = this.server.rooms.get(roomName);
-          room.forEach((clientId) => {
-            if (clientId !== this.id) {
-              this.server.clientMap
-                .get(clientId)
-                .send(JSON.stringify({ event, message }));
-            }
-          });
-        }
-      },
+        this.server.to(roomId).emit(event, message, this.id);
+      }
     };
   }
 }

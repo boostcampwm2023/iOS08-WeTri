@@ -41,7 +41,7 @@ export class EventsGateway
 
     this.extensionWebSocketService.webSocket(client, this.server);
     client.join('room1');
-    this.server.to('room1').emit('event_name', 'msg');
+    this.server.to('room1').emit('event', 'message');
   }
 
   private async jwtVerify(authorization: string, client: WetriWebSocket) {
@@ -103,6 +103,6 @@ export class EventsGateway
   remove(@MessageBody() id: number) {
     return this.eventsService.remove(id);
   }
-
+  
   handleDisconnect(client: any) {}
 }
