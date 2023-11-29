@@ -40,7 +40,7 @@ public struct TNSocketProvider<EndPoint: TNEndPoint>: TNSocketProvidable {
 
 // MARK: - WebSocketFrame
 
-private struct WebSocketFrame<T: Codable>: Codable {
+struct WebSocketFrame<T: Codable>: Codable {
   let event: String
   let data: T
 
