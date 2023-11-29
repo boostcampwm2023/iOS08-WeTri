@@ -10,9 +10,9 @@ describe('WorkoutsService', () => {
 
   beforeEach(async () => {
     const mockWorkouts: Workout[] = [
-      { id: 1, name: '달리기' } as Workout,
-      { id: 2, name: '수영' } as Workout,
-      { id: 3, name: '사이클' } as Workout,
+      { id: 1, name: '달리기', icon: 'a' } as Workout,
+      { id: 2, name: '수영', icon: 'b' } as Workout,
+      { id: 3, name: '사이클', icon: 'c' } as Workout,
     ];
 
     mockRepository = {
@@ -34,9 +34,9 @@ describe('WorkoutsService', () => {
 
   it('서비스의 findAllworkouts는 목 데이터를 동일하게 리턴해야한다.', async () => {
     expect(await service.findAllWorkouts()).toEqual([
-      { id: 1, name: '달리기' } as Workout,
-      { id: 2, name: '수영' } as Workout,
-      { id: 3, name: '사이클' } as Workout,
+      { id: 1, name: '달리기', icon: 'a' } as Workout,
+      { id: 2, name: '수영', icon: 'b' } as Workout,
+      { id: 3, name: '사이클', icon: 'c' } as Workout,
     ]);
     expect(mockRepository.find).toHaveBeenCalled();
   });
