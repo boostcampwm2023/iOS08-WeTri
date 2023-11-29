@@ -44,7 +44,7 @@ struct WebSocketFrame<T: Codable>: Codable {
   let event: String
   let data: T
 
-  init(event: String = "events", data: T) {
+  init(event: String = "workout_session", data: T) {
     self.event = event
     self.data = data
   }
