@@ -70,10 +70,7 @@ export class ExtensionWebSocketServer {
           jsonMessage['issuedClientId'] = issuedClientId;
         }
         if (this.rooms.has(roomId)) {
-          this.redisData.publish(
-            `room:${roomId}`,
-            JSON.stringify(jsonMessage),
-          );
+          this.redisData.publish(`room:${roomId}`, JSON.stringify(jsonMessage));
         }
       },
     };
@@ -102,9 +99,14 @@ export class ExtensionWebSocketServer {
       const jsonMessage = JSON.parse(message);
       const issuedClientId: string | undefined = jsonMessage.issuedClientId;
       room.forEach((clientId) => {
-        if(clientId !== issuedClientId) {
+        if (clientId !== issuedClientId) {
           const client = this.clientMap.get(clientId);
-            client.send(JSON.stringify({event: jsonMessage.event, data: jsonMessage.message}));
+          client.send(
+            JSON.stringify({
+              event: jsonMessage.event,
+              data: jsonMessage.message,
+            }),
+          );
         }
       });
     });

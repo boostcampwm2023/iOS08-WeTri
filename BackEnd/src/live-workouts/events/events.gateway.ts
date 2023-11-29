@@ -37,9 +37,10 @@ export class EventsGateway
       client.close();
       return;
     }
-    const matchInfo: CheckMatchingDto = {clientId: client.id, roomId: roomid };
-    const resultCheckMatching = await this.eventsService.checkMatching(matchInfo);
-    if(!resultCheckMatching) {
+    const matchInfo: CheckMatchingDto = { clientId: client.id, roomId: roomid };
+    const resultCheckMatching =
+      await this.eventsService.checkMatching(matchInfo);
+    if (!resultCheckMatching) {
       client.close();
       return;
     }
@@ -48,8 +49,8 @@ export class EventsGateway
   }
 
   @SubscribeMessage('workout_session')
-  onWorkoutSession(client: WetriWebSocket, data: any,): void {
-    this.server.to(data.roomId).emit("workout_session", JSON.stringify(data));
+  onWorkoutSession(client: WetriWebSocket, data: any): void {
+    this.server.to(data.roomId).emit('workout_session', JSON.stringify(data));
   }
 
   handleDisconnect(client: any) {}

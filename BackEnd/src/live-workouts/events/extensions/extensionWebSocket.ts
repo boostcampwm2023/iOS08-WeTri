@@ -32,7 +32,7 @@ export class ExtensionWebSocket {
     return {
       emit: (event: string, message: string) => {
         this.server.to(roomId).emit(event, message, this.id);
-      }
+      },
     };
   }
 }

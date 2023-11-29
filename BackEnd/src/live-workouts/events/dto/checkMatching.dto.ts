@@ -1,9 +1,9 @@
-import { IsString } from "class-validator";
+import { IsString } from 'class-validator';
 
 export class CheckMatchingDto {
-    @IsString()
-    clientId: string;
+  @IsString()
+  clientId: string;
 
-    @IsString()
-    roomId: string;
+  @IsString()
+  roomId: string;
 }

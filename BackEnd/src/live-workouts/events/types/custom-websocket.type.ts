@@ -10,7 +10,9 @@ export interface WetriServer extends WebSocket.Server {
   redisSubscribe: Redis;
   joinRoom: (clientId: string, roomId: string) => void;
   leaveRoom: (clientId: string, roomId: string) => void;
-  to: (roomId: string) => { emit: (event: string, message: string, issuedClientId?: string) => void };
+  to: (roomId: string) => {
+    emit: (event: string, message: string, issuedClientId?: string) => void;
+  };
   subscribe: (channel: string) => void;
   unSubscribe: (channel: string) => void;
   handlePublishMessage: () => void;

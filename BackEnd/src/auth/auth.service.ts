@@ -18,7 +18,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
     private readonly profilesService: ProfilesService,
-  ) { }
+  ) {}
 
   signToken(publicId: string, isRefreshToken: boolean) {
     //payload에는 sub -> id가 들어감 (사용자를 고유하게 식별하는데 사용), type (access token, refresh token)
