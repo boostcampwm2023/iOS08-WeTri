@@ -57,9 +57,9 @@ private extension TimerUseCase {
           return
         }
         let timeInterval = initDate.timeIntervalSince(currentDate)
-        let currentMilisecondsString = String(format: "%.2f", timeInterval).suffix(2)
-        if Int(currentMilisecondsString) == 0 {
-          timeIntervalEveryOneSecondsSubject.send(lroundl(timeInterval))
+        let currentMillisecondsString = String(format: "%.2f", timeInterval).suffix(2)
+        if Int(currentMillisecondsString) == 0 {
+          timeIntervalEveryOneSecondsSubject.send(Int(timeInterval.rounded(.towardZero)))
           startOneSecondsTimer()
         }
       }
@@ -72,7 +72,7 @@ private extension TimerUseCase {
         guard let timeInterval = self?.initDate.timeIntervalSince(currentDate) else {
           return
         }
-        self?.timeIntervalEveryOneSecondsSubject.send(lroundl(timeInterval))
+        self?.timeIntervalEveryOneSecondsSubject.send(Int(timeInterval.rounded(.towardZero)))
       }
   }
 
