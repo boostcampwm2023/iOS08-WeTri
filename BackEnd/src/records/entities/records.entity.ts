@@ -26,7 +26,7 @@ export class Record {
     example: '6000000',
     description: '운동을 한 시간 (초로 환산)',
   })
-  @Column()
+  @Column({ nullable: true })
   @IsNumber()
   workoutTime: number;
 
@@ -34,7 +34,7 @@ export class Record {
     example: '100000',
     description: '운동을 한 거리 (미터로 환산)',
   })
-  @Column()
+  @Column({ nullable: true })
   @IsNumber()
   distance: number;
 
@@ -42,7 +42,7 @@ export class Record {
     example: '360',
     description: '운동에 소모한 칼로리 (kcal 기준)',
   })
-  @Column()
+  @Column({ nullable: true })
   @IsNumber()
   calorie: number;
 
