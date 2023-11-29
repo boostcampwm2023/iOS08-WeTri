@@ -8,7 +8,7 @@
 
 import Combine
 import Foundation
-import OSLog
+import Log
 import Trinet
 
 // MARK: - AuthorizationRepositoryError
@@ -53,7 +53,7 @@ final class AuthorizationRepository: AuthorizationRepositoryRepresentable {
     }
     .catch { error -> AnyPublisher<Token, Never> in
       if let authorizationError = error as? AuthorizationRepositoryError {
-        Logger().error("\(authorizationError)")
+        Log.make().error("\(authorizationError)")
       }
       return Just(Token())
         .eraseToAnyPublisher()
