@@ -25,7 +25,6 @@ final class WorkoutPeerSelectViewController: UIViewController {
     let label = UILabel()
     label.font = .preferredFont(forTextStyle: .title1, with: .traitBold)
     label.textAlignment = .left
-
     label.text = "2. 누구랑 할까요?"
 
     label.translatesAutoresizingMaskIntoConstraints = false

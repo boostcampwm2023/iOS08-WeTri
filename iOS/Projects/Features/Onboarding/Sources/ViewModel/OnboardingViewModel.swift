@@ -1,4 +1,4 @@
-// 
+//
 //  OnboardingViewModel.swift
 //  OnboardingFeature
 //
@@ -27,20 +27,19 @@ protocol OnboardingViewModelRepresentable {
   func transform(input: OnboardingViewModelInput) -> OnboardingViewModelOutput
 }
 
-final class OnboardingViewModel {
+// MARK: - OnboardingViewModel
 
+final class OnboardingViewModel {
   // MARK: - Properties
 
   private var subscriptions: Set<AnyCancellable> = []
 }
 
-extension OnboardingViewModel: OnboardingViewModelRepresentable {
-  public func transform(input: OnboardingViewModelInput) -> OnboardingViewModelOutput {
-    for subscription in subscriptions {
-      subscription.cancel()
-    }
-    subscriptions.removeAll()
+// MARK: OnboardingViewModelRepresentable
 
+extension OnboardingViewModel: OnboardingViewModelRepresentable {
+  public func transform(input _: OnboardingViewModelInput) -> OnboardingViewModelOutput {
+    subscriptions.removeAll()
 
     let initialState: OnboardingViewModelOutput = Just(.idle).eraseToAnyPublisher()
 

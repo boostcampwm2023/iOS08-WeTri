@@ -1,4 +1,4 @@
-// 
+//
 //  OnboardingViewController.swift
 //  OnboardingFeature
 //
@@ -10,8 +10,9 @@ import Combine
 import DesignSystem
 import UIKit
 
-final class OnboardingViewController: UIViewController {
+// MARK: - OnboardingViewController
 
+final class OnboardingViewController: UIViewController {
   // MARK: Properties
 
   private let viewModel: OnboardingViewModelRepresentable
@@ -38,34 +39,26 @@ final class OnboardingViewController: UIViewController {
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    setupLayouts()
-    setupConstraints()
+    setup()
+  }
+}
+
+private extension OnboardingViewController {
+  func setup() {
     setupStyles()
+    setupHierarchyAndConstraints()
     bind()
   }
 
-  // MARK: Configuration
-
-  private func setupLayouts() {
-    view.addSubview(button)
+  func setupHierarchyAndConstraints() {
+    let safeArea = view.safeAreaLayoutGuide
   }
 
-  private func setupConstraints() {
-    button.translatesAutoresizingMaskIntoConstraints = false
-
-    NSLayoutConstraint.activate(
-      [
-        button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-        button.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-      ]
-    )
-  }
-
-  private func setupStyles() {
+  func setupStyles() {
     view.backgroundColor = DesignSystemColor.primaryBackground
   }
 
-  private func bind() {
+  func bind() {
     let output = viewModel.transform(input: .init())
     output.sink { state in
       switch state {
@@ -75,4 +68,6 @@ final class OnboardingViewController: UIViewController {
     }
     .store(in: &subscriptions)
   }
+
+  enum Metrics {}
 }
