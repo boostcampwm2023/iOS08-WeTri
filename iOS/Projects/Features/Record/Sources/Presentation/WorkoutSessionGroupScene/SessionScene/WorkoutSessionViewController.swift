@@ -104,13 +104,28 @@ public final class WorkoutSessionViewController: UIViewController {
 
   private func bind() {
     let output = viewModel.transform(input: .init())
-    output.sink { state in
-      switch state {
-      case .idle:
-        break
+    output
+      .receive(on: RunLoop.main)
+      .sink { [weak self] state in
+        switch state {
+        case .idle:
+          break
+
+        // FIXME: 데이터모델을 수정해야합니다.
+        case let .connectHealthData(distance: distance, calories: calories, heartRate: heartRate):
+          self?.healthData = WorkoutHealth(
+            distance: distance,
+            calorie: calories,
+            averageHeartRate: heartRate,
+            minimumHeartRate: nil,
+            maximumHeartRate: nil
+          )
+          self?.updateSnapshot(from: "house")
+        case .alert:
+          break
+        }
       }
-    }
-    .store(in: &subscriptions)
+      .store(in: &subscriptions)
   }
 
   private func createCompositionalLayout() -> UICollectionViewCompositionalLayout {
@@ -142,8 +157,9 @@ public final class WorkoutSessionViewController: UIViewController {
 
   /// DataSource를 생성합니다.
   private func generateDataSources() {
-    let cellRegistration = ParticipantsCellRegistration { cell, _, itemIdentifier in
+    let cellRegistration = ParticipantsCellRegistration { [weak self] cell, _, itemIdentifier in
       cell.configure(with: itemIdentifier)
+      cell.configure(model: self?.healthData)
     }
 
     participantsDataSource = ParticipantsDataSource(
@@ -167,6 +183,13 @@ public final class WorkoutSessionViewController: UIViewController {
       ]
     )
 
+    participantsDataSource.apply(snapshot)
+  }
+
+  private func updateSnapshot(from identifier: String) {
+    guard let participantsDataSource else { return }
+    var snapshot = participantsDataSource.snapshot()
+    snapshot.reconfigureItems([identifier])
     participantsDataSource.apply(snapshot)
   }
 }
@@ -201,9 +224,4 @@ private extension WorkoutSessionViewController {
   enum Section {
     case main
   }
-}
-
-@available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, xrOS 1.0, *)
-#Preview {
-  WorkoutSessionViewController(viewModel: WorkoutSessionViewModel())
 }

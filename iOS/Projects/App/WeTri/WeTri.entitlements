@@ -6,6 +6,12 @@
 	<array>
 		<string>Default</string>
 	</array>
+	<key>com.apple.developer.healthkit</key>
+	<true/>
+	<key>com.apple.developer.healthkit.access</key>
+	<array/>
+	<key>com.apple.developer.healthkit.background-delivery</key>
+	<true/>
 	<key>keychain-access-groups</key>
 	<array/>
 </dict>

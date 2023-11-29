@@ -15,3 +15,13 @@ public extension Publisher where Failure == Never {
     }
   }
 }
+
+public extension Publisher {
+  func bind<S>(to subject: S) -> AnyCancellable where S: Subject, S.Output == Output, S.Failure == Failure {
+    return sink { completion in
+      subject.send(completion: completion)
+    } receiveValue: { value in
+      subject.send(value)
+    }
+  }
+}
