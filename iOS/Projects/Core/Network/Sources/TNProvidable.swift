@@ -38,6 +38,13 @@ public struct TNProvider<T: TNEndPoint>: TNProvidable {
 
     return data
   }
+
+  public func request(_ service: T, successStatusCodeRange range: Range<Int> = 200 ..< 300, interceptor: TNRequestInterceptor) async throws -> Data {
+    guard let request = try interceptor.adapt(service.request(), session: session) else {
+      throw TNError.cantMakeURLSessionWithAdaptor
+    }
+    return try await interceptor.retry(request, session: session, successStatusCodeRange: range, delegate: nil)
+  }
 }
 
 private extension TNProvider {
