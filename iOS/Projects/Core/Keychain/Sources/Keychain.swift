@@ -10,9 +10,9 @@ import Security
 
 public final class Keychain: Keychaining {
   static let shared = Keychain()
-  
+
   private init() {}
-  
+
   @discardableResult
   public func save(key: String, data: Data) -> OSStatus {
     let query: [CFString: Any] = [
