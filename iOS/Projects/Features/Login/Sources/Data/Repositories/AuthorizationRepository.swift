@@ -35,7 +35,11 @@ final class AuthorizationRepository: AuthorizationRepositoryRepresentable {
         return promise(.failure(AuthorizationRepositoryError.deinitializedRepository))
       }
       Task {
-        let data = try await self.provider.request(.signIn(authorizationInfo))
+        let identityToken = try self.decoder.decode(String.self, from: authorizationInfo.identityToken)
+        let authorizationCode = try self.decoder.decode(String.self, from: authorizationInfo.authorizationCode)
+        let authorizationInfoRequestDTO = AuthorizationInfoRequestDTO(identityToken: identityToken, authorizationCode: authorizationCode)
+        
+        let data = try await self.provider.request(.signIn(authorizationInfoRequestDTO))
         let response = try self.decoder.decode(GWResponse<Token>.self, from: data)
 
         if response.code == 200 {
@@ -62,7 +66,7 @@ final class AuthorizationRepository: AuthorizationRepositoryRepresentable {
 
 enum AuthorizationRepositoryEndPoint: TNEndPoint {
   /// Property
-  case signIn(AuthorizationInfo)
+  case signIn(AuthorizationInfoRequestDTO)
 
   var path: String {
     switch self {
