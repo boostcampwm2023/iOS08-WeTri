@@ -7,9 +7,9 @@
 //
 
 import Combine
-import Log
 import CombineCocoa
 import Foundation
+import Log
 
 // MARK: - WorkoutSessionUseCaseDependency
 
@@ -27,7 +27,12 @@ protocol WorkoutSessionUseCaseRepresentable {}
 // MARK: - WorkoutSessionUseCase
 
 final class WorkoutSessionUseCase {
-  private let myHealthFormSubject: CurrentValueSubject<WorkoutHealthForm, Error> = .init(.init(distance: 0, calorie: 0, averageHeartRate: 0, minimumHeartRate: 0, maximumHeartRate: 0))
+  /// 내 운동 정보를 갖습니다.
+  private let myHealthFormSubject: CurrentValueSubject<WorkoutHealthForm, Error> = .init(
+    .init(distance: 0, calorie: 0, averageHeartRate: 0, minimumHeartRate: 0, maximumHeartRate: 0)
+  )
+
+  /// 참여자의 운동 정보를 업데이트해주는 Subject입니다.
   private let participantsStatusSubject: PassthroughSubject<WorkoutRealTimeModel, Error> = .init()
 
   private let healthRepository: HealthRepositoryRepresentable
@@ -47,8 +52,11 @@ final class WorkoutSessionUseCase {
     self.dependency = dependency
     bind()
   }
+}
 
+extension WorkoutSessionUseCase {
   private func bind() {
+    // 2초마다 Health Repository에게 데이터 요청
     let healthDataPublisher = Timer.publish(every: 2, on: .main, in: .common)
       .autoconnect()
       .flatMap { [healthRepository, dependency] _ in
@@ -73,7 +81,13 @@ final class WorkoutSessionUseCase {
           Log.make(with: .network).error("\(error)")
         }
       } receiveValue: { _ in
+        // 정상적으로 전송되면 아무 일도 하지 않습니다.
       }
+      .store(in: &subscriptions)
+
+    // 참여자의 운동 정보를 실시간으로 수신
+    socketRepository.fetchParticipantsRealTime()
+      .bind(to: participantsStatusSubject)
       .store(in: &subscriptions)
   }
 
