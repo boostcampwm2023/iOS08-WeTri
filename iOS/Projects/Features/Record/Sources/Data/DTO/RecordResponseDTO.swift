@@ -47,8 +47,8 @@ extension Record {
     }
     let startSeconds = time.toSeconds()
     let endSeconds = startSeconds + workoutTime
-    let start = timeToHourMinuteSecond(seconds: startSeconds)
-    let end = timeToHourMinuteSecond(seconds: endSeconds)
+    let start = prettyStyle(time: timeToHourMinuteSecond(seconds: startSeconds))
+    let end = prettyStyle(time: timeToHourMinuteSecond(seconds: endSeconds))
     return "\(start)~\(end)"
   }
 
@@ -64,13 +64,35 @@ extension Record {
     return Time(hour: hour, minute: minute, second: second)
   }
 
-  private static func timeToHourMinuteSecond(seconds: Int) -> String {
+  private static func timeToHourMinuteSecond(seconds: Int) -> Time {
     var seconds = seconds
     let hour = seconds / 3600
     seconds %= 3600
     let minute = seconds / 60
     seconds %= 60
-    return "\(hour):\(minute):\(seconds)"
+    return Time(hour: hour, minute: minute, second: seconds)
+  }
+
+  private static func prettyStyle(time: Time) -> String {
+    var timeString = ""
+    if time.hour < 10 {
+      timeString += "0\(time.hour)"
+    } else {
+      timeString += "\(time.hour)"
+    }
+    timeString += ":"
+    if time.minute < 10 {
+      timeString += "0\(time.minute)"
+    } else {
+      timeString += "\(time.minute)"
+    }
+    timeString += ":"
+    if time.second < 10 {
+      timeString += "0\(time.second)"
+    } else {
+      timeString += "\(time.second)"
+    }
+    return timeString
   }
 }
 

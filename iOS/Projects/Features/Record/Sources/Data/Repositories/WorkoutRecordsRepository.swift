@@ -41,10 +41,13 @@ struct WorkoutRecordsRepository: WorkoutRecordsRepositoryRepresentable {
         return promise(.success(data))
       }
     }
-    .decode(type: [RecordResponseDTO].self, decoder: JSONDecoder())
-    .map { recordResposeDTOs -> [Record] in
+    .decode(type: GWResponse<[RecordResponseDTO]>.self, decoder: JSONDecoder())
+    .tryMap { response -> [Record] in
+      guard let recordResponseDTOs = response.data else {
+        throw WorkoutRecordsRepositoryError.bindingError
+      }
       var records: [Record] = []
-      for recordResonseDTO in recordResposeDTOs {
+      for recordResonseDTO in recordResponseDTOs {
         guard let record = Record(dto: recordResonseDTO) else {
           continue
         }
