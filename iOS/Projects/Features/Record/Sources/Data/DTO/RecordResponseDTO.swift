@@ -42,7 +42,7 @@ extension Record {
   }
 
   private static func timeToTime(createdAt: String, workoutTime: Int) -> (startTime: String, endTime: String)? {
-    let startTime = createdAt.components(separatedBy: " ")[1]
+    let startTime = createdAt.components(separatedBy: .whitespaces)[1]
     guard let time = separateTime(startTime: startTime) else {
       return nil
     }
@@ -75,25 +75,10 @@ extension Record {
   }
 
   private static func prettyStyle(time: Time) -> String {
-    var timeString = ""
-    if time.hour < 10 {
-      timeString += "0\(time.hour)"
-    } else {
-      timeString += "\(time.hour)"
-    }
-    timeString += ":"
-    if time.minute < 10 {
-      timeString += "0\(time.minute)"
-    } else {
-      timeString += "\(time.minute)"
-    }
-    timeString += ":"
-    if time.second < 10 {
-      timeString += "0\(time.second)"
-    } else {
-      timeString += "\(time.second)"
-    }
-    return timeString
+    let formattedHour = String(format: "%02d", time.hour)
+    let formattedMinute = String(format: "%02d", time.minute)
+    let formattedSecond = String(format: "%02d", time.second)
+    return "\(formattedHour):\(formattedMinute):\(formattedSecond)"
   }
 }
 
