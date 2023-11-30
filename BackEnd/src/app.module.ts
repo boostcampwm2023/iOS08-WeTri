@@ -13,9 +13,12 @@ import { MatchesModule } from './live-workouts/matches/matches.module';
 import { RedisModule } from '@songkeys/nestjs-redis';
 import { RedisConfigService } from './config/redis.config';
 import { AdminModule } from './admin/admin.module';
+import {ImagesModule} from "./images/images.module";
+import {ConfigModule} from "@nestjs/config";
 
 @Module({
   imports: [
+    ConfigModule.forRoot({isGlobal: true}),
     TypeOrmModule.forRoot(typeOrmConfig),
     RedisModule.forRootAsync({
       useClass: RedisConfigService,
@@ -28,6 +31,7 @@ import { AdminModule } from './admin/admin.module';
     MatchesModule,
     EventsModule,
     AdminModule,
+    ImagesModule,
   ],
   controllers: [AppController],
 })
