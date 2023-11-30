@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct OnboardingScenePropertyDTO: Decodable {
+public struct OnboardingScenePropertyResponseDTO: Decodable {
   let id: Int
   let titleText: String
   let descriptionText: String

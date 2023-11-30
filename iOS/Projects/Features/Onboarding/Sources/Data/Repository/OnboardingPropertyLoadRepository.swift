@@ -10,15 +10,15 @@ import Foundation
 
 // MARK: - OnboardingImageRepository
 
-public struct OnboardingImageRepository {
+public struct OnboardingPropertyLoadRepository {
   let decoder = JSONDecoder()
   public init() {}
 }
 
 // MARK: OnboardingImageRepositoryRepresentable
 
-extension OnboardingImageRepository: OnboardingImageRepositoryRepresentable {
-  public func mapOnboardingProperty() -> OnboardingScenePropertyDTO? {
+extension OnboardingPropertyLoadRepository: OnboardingPropertyLoadRepositoryRepresentable {
+  public func mapOnboardingProperty() -> OnboardingScenePropertyResponseDTO? {
     guard
       let imagePath = Bundle(identifier: Constants.bundleName)?
       .path(forResource: Constants.mapImageResourceFileName, ofType: Constants.imageOfType),
@@ -30,11 +30,11 @@ extension OnboardingImageRepository: OnboardingImageRepositoryRepresentable {
     else {
       return nil
     }
-    let dto = try? JSONDecoder().decode(GWResponse<OnboardingScenePropertyTextDTO>.self, from: jsonData).data
+    let dto = try? JSONDecoder().decode(GWResponse<OnboardingScenePropertyTextResponseDTO>.self, from: jsonData).data
     return dto?.toOnboardingScenePropertyDTO(imageData: imageData)
   }
 
-  public func healthOnboardingImage() -> OnboardingScenePropertyDTO? {
+  public func healthOnboardingImage() -> OnboardingScenePropertyResponseDTO? {
     guard
       let imagePath = Bundle(identifier: Constants.bundleName)?
       .path(forResource: Constants.healthOnboardingImageFileName, ofType: Constants.imageOfType),
@@ -46,7 +46,7 @@ extension OnboardingImageRepository: OnboardingImageRepositoryRepresentable {
     else {
       return nil
     }
-    let dto = try? JSONDecoder().decode(GWResponse<OnboardingScenePropertyTextDTO>.self, from: jsonData).data
+    let dto = try? JSONDecoder().decode(GWResponse<OnboardingScenePropertyTextResponseDTO>.self, from: jsonData).data
     return dto?.toOnboardingScenePropertyDTO(imageData: imageData)
   }
 

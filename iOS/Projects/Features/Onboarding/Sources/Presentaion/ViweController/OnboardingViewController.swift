@@ -177,7 +177,7 @@ private extension OnboardingViewController {
     }
   }
 
-  func updateViewProperty(by dtoProperty: OnboardingScenePropertyDTO) {
+  func updateViewProperty(by dtoProperty: OnboardingScenePropertyResponseDTO) {
     guard let imageData = dtoProperty.imageData else {
       return
     }

@@ -22,8 +22,8 @@ public typealias OnboardingViewModelOutput = AnyPublisher<OnboardingState, Never
 
 public enum OnboardingState {
   case idle
-  case shouldPresentMapAuthorization(OnboardingScenePropertyDTO)
-  case shouldPresentHealthAuthorization(OnboardingScenePropertyDTO)
+  case shouldPresentMapAuthorization(OnboardingScenePropertyResponseDTO)
+  case shouldPresentHealthAuthorization(OnboardingScenePropertyResponseDTO)
   case finish
   case errorState(Error)
 }
@@ -39,8 +39,8 @@ public protocol OnboardingViewModelRepresentable {
 public final class OnboardingViewModel {
   // MARK: - Properties
 
-  private var useCase: OnboardingImageLoadUseCaseRepresentable
-  public init(useCase: OnboardingImageLoadUseCaseRepresentable) {
+  private var useCase: OnboardingPropertyLoadUseCaseRepresentable
+  public init(useCase: OnboardingPropertyLoadUseCaseRepresentable) {
     self.useCase = useCase
   }
 
@@ -58,7 +58,7 @@ extension OnboardingViewModel: OnboardingViewModelRepresentable {
         guard let self else {
           return .errorState(OnboardingViewModelError.didNotInitViewModel)
         }
-        guard let dto = useCase.mapOnboardingImage() else {
+        guard let dto = useCase.loadOnboardingMapAuthProperty() else {
           return .errorState(OnboardingViewModelError.nilValue)
         }
         return .shouldPresentMapAuthorization(dto)
@@ -71,7 +71,7 @@ extension OnboardingViewModel: OnboardingViewModelRepresentable {
         guard let self else {
           return .errorState(OnboardingViewModelError.didNotInitViewModel)
         }
-        guard let dto = useCase.healthOnboardingImage() else {
+        guard let dto = useCase.loadOnboardingHealthAuthProperty() else {
           return .errorState(OnboardingViewModelError.nilValue)
         }
         return .shouldPresentHealthAuthorization(dto)

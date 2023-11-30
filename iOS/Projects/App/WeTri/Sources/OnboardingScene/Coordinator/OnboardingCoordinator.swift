@@ -34,8 +34,8 @@ final class OnboardingCoordinator: OnboardingCoordinating {
   var flow: CoordinatorFlow = .onboarding
 
   func start() {
-    let repository = OnboardingImageRepository()
-    let useCase = OnboardingImageLoadUseCase(repository: repository)
+    let repository = OnboardingPropertyLoadRepository()
+    let useCase = OnboardingPropertyLoadUseCase(repository: repository)
     let viewModel = OnboardingViewModel(useCase: useCase)
     let viewController = OnboardingViewController(viewModel: viewModel)
     navigationController.pushViewController(viewController, animated: false)

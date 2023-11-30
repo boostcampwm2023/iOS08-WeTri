@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct OnboardingScenePropertyTextDTO: Decodable {
+public struct OnboardingScenePropertyTextResponseDTO: Decodable {
   let id: Int
   let titleText: String
   let descriptionText: String
@@ -19,7 +19,7 @@ public struct OnboardingScenePropertyTextDTO: Decodable {
     self.descriptionText = descriptionText
   }
 
-  func toOnboardingScenePropertyDTO(imageData: Data?) -> OnboardingScenePropertyDTO {
+  func toOnboardingScenePropertyDTO(imageData: Data?) -> OnboardingScenePropertyResponseDTO {
     return .init(id: id, titleText: titleText, descriptionText: descriptionText, imageData: imageData)
   }
 }
