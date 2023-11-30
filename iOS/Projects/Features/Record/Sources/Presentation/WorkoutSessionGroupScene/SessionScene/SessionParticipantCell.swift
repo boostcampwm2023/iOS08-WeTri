@@ -12,6 +12,10 @@ import UIKit
 // MARK: - SessionParticipantCell
 
 final class SessionParticipantCell: UICollectionViewCell {
+  // MARK: Properties
+
+  private var isInitiallyConfigured = false
+
   // MARK: UI Components
 
   private let profileImageView: UIImageView = {
@@ -172,7 +176,14 @@ final class SessionParticipantCell: UICollectionViewCell {
 
   // MARK: Internal
 
+  override func prepareForReuse() {
+    super.prepareForReuse()
+    isInitiallyConfigured = false
+  }
+
   func configure(initial model: SessionPeerType) {
+    guard isInitiallyConfigured == false else { return }
+    isInitiallyConfigured = true
     distanceLabel.text = "0"
     profileImageView.image = try? UIImage(data: Data(contentsOf: model.profileImageURL)) ?? .init(systemName: "person")
     nicknameLabel.text = model.nickname
