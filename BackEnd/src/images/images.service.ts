@@ -1,7 +1,10 @@
-import {Injectable} from "@nestjs/common";
+import {Injectable, Logger} from "@nestjs/common";
 import {ConfigService} from "@nestjs/config";
 import {PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
 import { v4 as uuidv4 } from 'uuid';
+import axios from "axios";
+import {audit} from "rxjs";
+import {ADULT_RATIO, PORN_RATIO} from "./constant/images.constant";
 
 @Injectable()
 export class ImagesService {
@@ -20,11 +23,13 @@ export class ImagesService {
         for (const image of images) {
             const imageBuffer = image.buffer;
             const imageExtension = this.getExtension(image.originalname);
-            if (!this.isGreenEye(imageBuffer)) {
+            const imageId = `${uuidv4()}.${imageExtension}`;
+            const result = await this.isGreenEye(imageBuffer, imageId, image.originalname);
 
+            if (!result) {
+                return;
             }
 
-            const imageId = `${uuidv4()}.${imageExtension}`;
             await this.s3Client.send(
                 new PutObjectCommand({
                     Bucket: this.configService.getOrThrow('NCP_BUCKET_NAME'),
@@ -47,7 +52,34 @@ export class ImagesService {
     private getExtension(imageName: string) {
         return imageName.split('.').pop();
     }
-    private isGreenEye(imageBuffer: Buffer) {
-        return false;
+    private async isGreenEye(imageBuffer: Buffer, imageId: string, originalName: string) {
+        const greenEyeURL = this.configService.getOrThrow('NCP_GREEN_EYE_URL');
+        try {
+            const headers = {
+                'X-GREEN-EYE-SECRET': this.configService.getOrThrow('NCP_GREEN_EYE_SECRET_KEY'),
+                'Content-Type': 'application/json',
+            };
+            const body = {
+                'version': 'V1',
+                'requestId': imageId,
+                'timestamp': Math.random(),
+                'images': [
+                    {
+                        'name': originalName,
+                        'data': imageBuffer.toString('base64'),
+                    }
+                ]
+            };
+            const response = await axios.post(greenEyeURL, body, {headers});
+            const { adult, porn } = response.data.images[0].result;
+
+            if ( !response.data || adult >= ADULT_RATIO || porn >= PORN_RATIO ) {
+                return false;
+            }
+        } catch (error) {
+            Logger.log(error);
+            return false;
+        }
+        return true;
     }
 }
