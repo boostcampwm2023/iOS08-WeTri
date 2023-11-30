@@ -37,10 +37,7 @@ export class RecordsController {
     @ProfileDeco() profile: Profile,
     @Body() body: CreateExerciseLogDto,
   ) {
-    const { id } = await this.recordsService.createWorkOutLog(
-      body,
-      profile,
-    );
+    const { id } = await this.recordsService.createWorkOutLog(body, profile);
     return id;
   }
 

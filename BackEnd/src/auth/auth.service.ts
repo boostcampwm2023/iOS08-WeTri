@@ -125,7 +125,10 @@ export class AuthService {
   }
 
   async checkSignUp(userId: string) {
-    const userInfo: GetuserByUserIdAndProViderDto = {userId, provider: 'apple'};
+    const userInfo: GetuserByUserIdAndProViderDto = {
+      userId,
+      provider: 'apple',
+    };
     const user = this.usersService.getUserByUserIdAndProvider(userInfo);
     return user;
   }
@@ -133,12 +136,12 @@ export class AuthService {
   async appleSignIn(token: string) {
     const userId = await this.authAppleService.getAppleUserId(token);
     const user = await this.checkSignUp(userId);
-    if(!user) {
+    if (!user) {
       return {
         redirectUrl: 'api/v1/auth/signup',
         userId,
         provider: 'apple',
-      }
+      };
     } else {
       return this.loginUser(user.profile.publicId);
     }

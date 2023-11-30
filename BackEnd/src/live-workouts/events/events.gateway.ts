@@ -17,13 +17,14 @@ import { Logger } from '@nestjs/common';
 
 @WebSocketGateway(3003)
 export class EventsGateway
-  implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
+  implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit
+{
   @WebSocketServer() server: WetriServer;
   constructor(
     private readonly authService: AuthService,
     private readonly eventsService: EventsService,
     private readonly extensionWebSocketService: ExtensionWebSocketService,
-  ) { }
+  ) {}
 
   afterInit(server: WetriServer): any {
     this.extensionWebSocketService.webSocketServer(server);
@@ -55,10 +56,12 @@ export class EventsGateway
       client.wemit('workout_session', 'data에 roomId를 포함시켜주세요.');
     } else {
       if (this.server.sids.get(client.id).has(data.roomId)) {
-        this.server.to(data.roomId).emit('workout_session', JSON.stringify(data));
+        this.server
+          .to(data.roomId)
+          .emit('workout_session', JSON.stringify(data));
       }
     }
   }
 
-  handleDisconnect(client: any) { }
+  handleDisconnect(client: any) {}
 }

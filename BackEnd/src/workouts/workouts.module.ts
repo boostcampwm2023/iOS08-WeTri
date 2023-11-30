@@ -15,7 +15,7 @@ import { AuthModule } from 'src/auth/auth.module';
     JwtModule.register({}),
     UsersModule,
     ProfilesModule,
-    AuthModule
+    AuthModule,
   ],
   controllers: [WorkoutsController],
   providers: [WorkoutsService],

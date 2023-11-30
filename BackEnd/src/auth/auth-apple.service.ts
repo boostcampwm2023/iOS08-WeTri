@@ -17,15 +17,17 @@ export class AuthAppleService {
   }
 
   async verifyToken(token: string) {
-    const decoded: jwt.JwtPayload = await new Promise<jwt.JwtPayload>((resolve, reject) => {
-      jwt.verify(token, this.getKey, {}, (err, decoded) => {
-        if (err) {
-          reject(new VerificationFailedIdentityToken());
-        } else {
-          resolve(decoded as jwt.JwtPayload);
-        }
-      });
-    });
+    const decoded: jwt.JwtPayload = await new Promise<jwt.JwtPayload>(
+      (resolve, reject) => {
+        jwt.verify(token, this.getKey, {}, (err, decoded) => {
+          if (err) {
+            reject(new VerificationFailedIdentityToken());
+          } else {
+            resolve(decoded as jwt.JwtPayload);
+          }
+        });
+      },
+    );
     return decoded;
   }
 
