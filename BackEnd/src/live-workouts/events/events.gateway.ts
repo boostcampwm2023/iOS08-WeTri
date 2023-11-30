@@ -9,12 +9,11 @@ import {
 } from '@nestjs/websockets';
 import * as WebSocket from 'ws';
 import { EventsService } from './events.service';
-import { CreateEventDto } from './dto/create-event.dto';
-import { UpdateEventDto } from './dto/update-event.dto';
 import { ExtensionWebSocketService } from './extensionWebSocket.service';
 import { WetriWebSocket, WetriServer } from './types/custom-websocket.type';
 import { AuthService } from '../../auth/auth.service';
-import { ProfilesService } from '../../profiles/profiles.service';
+import { CheckMatchingDto } from './dto/checkMatching.dto';
+import { Logger } from '@nestjs/common';
 
 @WebSocketGateway(3003)
 export class EventsGateway
@@ -23,7 +22,6 @@ export class EventsGateway
   @WebSocketServer() server: WetriServer;
   constructor(
     private readonly authService: AuthService,
-    private readonly profilesService: ProfilesService,
     private readonly eventsService: EventsService,
     private readonly extensionWebSocketService: ExtensionWebSocketService,
   ) {}
@@ -33,76 +31,33 @@ export class EventsGateway
   }
 
   async handleConnection(client: WetriWebSocket, ...args: any[]) {
-    const { authorization } = args[0].headers;
-    if (!(await this.jwtVerify(authorization, client))) {
+    const { authorization, roomid } = args[0].headers;
+    if (!(await this.authService.verifyWs(authorization, client))) {
       client.close();
       return;
     }
-
+    const matchInfo: CheckMatchingDto = {
+      matchingKey: `userMatch:${client.id}`,
+      roomId: roomid,
+    };
+    const resultCheckMatching =
+      await this.eventsService.checkMatching(matchInfo);
+    if (!resultCheckMatching) {
+      client.close();
+      return;
+    }
     this.extensionWebSocketService.webSocket(client, this.server);
-    client.join('room1');
-    this.server.to('room1').emit('event', 'message');
+    client.join(roomid);
   }
 
-  private async jwtVerify(authorization: string, client: WetriWebSocket) {
-    if (!authorization) {
-      return false;
+  @SubscribeMessage('workout_session')
+  onWorkoutSession(client: WetriWebSocket, data: any): void {
+    if (!this.eventsService.checkMsgRoomId(data)) {
+      client.wemit('workout_session', 'data에 roomId를 포함시켜주세요.');
+    } else {
+      this.server.to(data.roomId).emit('workout_session', JSON.stringify(data));
     }
-
-    const token = this.authService.extractTokenFromHeader(authorization);
-    const decoded = await this.authService.verifyToken(token);
-
-    if (!decoded) {
-      return false;
-    }
-
-    const profile = await this.profilesService.findByPublicId(decoded.sub);
-
-    if (!profile) {
-      return false;
-    }
-
-    client.profile = profile;
-    client.token = token;
-    client.tokenType = decoded.type;
-
-    return true;
   }
 
-  @SubscribeMessage('events')
-  onEvent(client: WetriWebSocket, data: any): void {
-    console.log(`전송받은 데이터: ${data}`);
-    this.server.clients.forEach((others: WebSocket) => {
-      if (others.readyState === WebSocket.OPEN) {
-        others.send(data);
-      }
-    });
-  }
-
-  @SubscribeMessage('createEvent')
-  create(@MessageBody() createEventDto: CreateEventDto) {
-    return this.eventsService.create(createEventDto);
-  }
-
-  @SubscribeMessage('findAllEvents')
-  findAll() {
-    return this.eventsService.findAll();
-  }
-
-  @SubscribeMessage('findOneEvent')
-  findOne(@MessageBody() id: number) {
-    return this.eventsService.findOne(id);
-  }
-
-  @SubscribeMessage('updateEvent')
-  update(@MessageBody() updateEventDto: UpdateEventDto) {
-    return this.eventsService.update(updateEventDto.id, updateEventDto);
-  }
-
-  @SubscribeMessage('removeEvent')
-  remove(@MessageBody() id: number) {
-    return this.eventsService.remove(id);
-  }
-  
   handleDisconnect(client: any) {}
 }

@@ -38,7 +38,7 @@ export class ExtensionWebSocketServer {
       this.rooms.set(roomId, new Set());
     }
     if (this.rooms.get(roomId).size === 0) {
-      this.subscribe(`room:${roomId}`);
+      this.subscribe(`channel/${roomId}`);
     }
     if (!this.sids.has(clientId)) {
       this.sids.set(clientId, new Set());
@@ -54,7 +54,7 @@ export class ExtensionWebSocketServer {
       curRoom.delete(clientId);
       await this.redisData.srem(roomId, clientId);
       if (curRoom.size === 0) {
-        this.unSubscribe(`room:${roomId}`);
+        this.unSubscribe(`channel/${roomId}`);
       }
     }
     if (this.sids.has(clientId)) {
@@ -71,7 +71,7 @@ export class ExtensionWebSocketServer {
         }
         if (this.rooms.has(roomId)) {
           this.redisData.publish(
-            `room:${roomId}`,
+            `channel/${roomId}`,
             JSON.stringify(jsonMessage),
           );
         }
@@ -90,7 +90,7 @@ export class ExtensionWebSocketServer {
 
   handlePublishMessage() {
     this.redisSubscribe.on('message', (channel, message) => {
-      const chSplit = channel.split(':');
+      const chSplit = channel.split('/');
       if (chSplit.length !== 2) {
         return;
       }
@@ -102,8 +102,14 @@ export class ExtensionWebSocketServer {
       const jsonMessage = JSON.parse(message);
       const issuedClientId: string | undefined = jsonMessage.issuedClientId;
       room.forEach((clientId) => {
-        if(clientId !== issuedClientId) {
-          this.clientMap.get(clientId).send(JSON.stringify({event: jsonMessage.event, message: jsonMessage.message}));
+        if (clientId !== issuedClientId) {
+          const client = this.clientMap.get(clientId);
+          client.send(
+            JSON.stringify({
+              event: jsonMessage.event,
+              data: jsonMessage.message,
+            }),
+          );
         }
       });
     });

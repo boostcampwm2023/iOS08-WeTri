@@ -28,7 +28,7 @@ export const WorkoutResDtoSwagger = () => {
           name: '사이클',
           icon: 'figure.outdoor.c',
         },
-      ]
+      ],
     },
   };
 };

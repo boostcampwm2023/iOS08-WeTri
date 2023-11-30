@@ -10,6 +10,7 @@ import {
   NotRefreshTokenException,
 } from './exceptions/auth.exception';
 import * as process from 'process';
+import { WetriWebSocket } from 'src/live-workouts/events/types/custom-websocket.type';
 
 @Injectable()
 export class AuthService {
@@ -77,6 +78,32 @@ export class AuthService {
     const token = splitToken[1];
 
     return token;
+  }
+
+  async verifyWs(authorization: string, client: WetriWebSocket) {
+    if (!authorization) {
+      return false;
+    }
+
+    const token = this.extractTokenFromHeader(authorization);
+    const decoded = await this.verifyToken(token);
+
+    if (!decoded) {
+      return false;
+    }
+
+    const profile = await this.profilesService.findByPublicId(decoded.sub);
+
+    if (!profile) {
+      return false;
+    }
+
+    client.id = profile.publicId;
+    client.profile = profile;
+    client.token = token;
+    client.tokenType = decoded.type;
+
+    return true;
   }
 
   verifyToken(token: string) {
