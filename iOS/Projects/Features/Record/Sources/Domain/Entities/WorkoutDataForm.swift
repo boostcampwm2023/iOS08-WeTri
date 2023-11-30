@@ -11,22 +11,22 @@ import Foundation
 /// 건강 데이터를 body로 전달하기 위한 요청(request) 모델입니다. 운동 세션이 종료될 때 이 모델을 사용합니다.
 public struct WorkoutDataForm: Encodable {
   /// 운동 누적 시간
-  let workoutTime: Double
+  let workoutTime: Int
 
   /// 총 운동한 거리
-  let distance: Double?
+  let distance: Int?
 
   /// 소모한 칼로리
-  let calorie: Double?
+  let calorie: Int?
 
   /// 평균 심박수
-  let averageHeartRate: Double?
+  let averageHeartRate: Int?
 
   /// 운동 중에 기록한 최소 심박수
-  let minimumHeartRate: Double?
+  let minimumHeartRate: Int?
 
   /// 운동 중에 기록한 최대 심박수
-  let maximumHeartRate: Double?
+  let maximumHeartRate: Int?
 
   enum CodingKeys: String, CodingKey {
     case workoutTime
