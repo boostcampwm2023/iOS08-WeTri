@@ -36,6 +36,9 @@ public final class WorkoutSessionViewController: UIViewController {
     maximumHeartRate: nil
   )
 
+  private var realTimeModelByID: [UserID: WorkoutHealthRealTimeModel] = [:]
+  private var userInfoByID: [UserID: SessionPeerType] = [:]
+
   private var subscriptions: Set<AnyCancellable> = []
 
   // MARK: UI Components
@@ -52,8 +55,13 @@ public final class WorkoutSessionViewController: UIViewController {
 
   // MARK: Initializations
 
-  init(viewModel: WorkoutSessionViewModelRepresentable) {
+  init(viewModel: WorkoutSessionViewModelRepresentable, participants: [SessionPeerType]) {
     self.viewModel = viewModel
+    for participant in participants {
+      userInfoByID[participant.id] = participant
+      realTimeModelByID[participant.id] = .init(distance: 0, calories: 0, heartRate: 0)
+    }
+
     super.init(nibName: nil, bundle: nil)
   }
 
@@ -114,8 +122,10 @@ public final class WorkoutSessionViewController: UIViewController {
           break
         case let .fetchMyHealthForm(myHealthForm):
           self?.healthData = myHealthForm
-        case .fetchParticipantsIncludedMySelf:
-          break
+        case let .fetchParticipantsIncludedMySelf(model):
+          self?.realTimeModelByID[model.id] = model.health
+          var snapshot = self?.participantsDataSource?.snapshot()
+          snapshot?.reconfigureItems([model.id])
         }
       }
       .store(in: &subscriptions)
@@ -151,8 +161,8 @@ public final class WorkoutSessionViewController: UIViewController {
   /// DataSource를 생성합니다.
   private func generateDataSources() {
     let cellRegistration = ParticipantsCellRegistration { [weak self] cell, _, itemIdentifier in
-      cell.configure(with: itemIdentifier)
-      cell.configure(model: self?.healthData)
+      cell.configure(initial: self?.userInfoByID[itemIdentifier] ?? .init(nickname: "Unknown", id: "Unknown", profileImageURL: .init(filePath: "")))
+      cell.configure(with: self?.realTimeModelByID[itemIdentifier])
     }
 
     participantsDataSource = ParticipantsDataSource(
@@ -166,15 +176,7 @@ public final class WorkoutSessionViewController: UIViewController {
     guard let participantsDataSource else { return }
     var snapshot = ParticipantsSnapshot()
     snapshot.appendSections([.main])
-    snapshot.appendItems(
-      [
-        "house",
-        "square.and.arrow.up",
-        "pencil.circle",
-        "pencil.and.outline",
-        "pencil.tip.crop.circle.badge.minus.fill",
-      ]
-    )
+    snapshot.appendItems(Array(userInfoByID.keys))
 
     participantsDataSource.apply(snapshot)
   }
@@ -210,9 +212,9 @@ private extension WorkoutSessionViewController {
   typealias ParticipantsCellRegistration = UICollectionView.CellRegistration<SessionParticipantCell, Item>
   typealias ParticipantsDataSource = UICollectionViewDiffableDataSource<Section, Item>
   typealias ParticipantsSnapshot = NSDiffableDataSourceSnapshot<Section, Item>
+  typealias UserID = String
 
-  // TODO: API가 정해진 뒤 Item 설정 필요
-  typealias Item = String
+  typealias Item = UserID
 
   enum Section {
     case main
