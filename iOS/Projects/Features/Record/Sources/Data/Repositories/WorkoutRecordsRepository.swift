@@ -47,19 +47,8 @@ struct WorkoutRecordsRepository: WorkoutRecordsRepositoryRepresentable {
       }
     }
     .decode(type: GWResponse<[RecordResponseDTO]>.self, decoder: JSONDecoder())
-    .tryMap { response -> [Record] in
-      guard let recordResponseDTOs = response.data else {
-        throw WorkoutRecordsRepositoryError.bindingError
-      }
-      var records: [Record] = []
-      for recordResonseDTO in recordResponseDTOs {
-        guard let record = Record(dto: recordResonseDTO) else {
-          continue
-        }
-        records.append(record)
-      }
-      return records
-    }
+    .compactMap(\.data)
+    .map { $0.compactMap(Record.init) }
     .catch { error -> AnyPublisher<[Record], Error> in
       Log.make().error("\(error)")
       return Just([])
