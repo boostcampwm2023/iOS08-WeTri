@@ -89,6 +89,7 @@ private extension TNKeychainInterceptor {
       throw TNError.serverError
     }
     Log.make().debug("정상적으로 retry요청을 통해서 AccessToken을 받아왔습니다. ")
+    Keychain.shared.delete(key: Tokens.accessToken)
     Keychain.shared.save(key: Tokens.accessToken, data: tokenData)
   }
 
@@ -103,6 +104,7 @@ private extension TNKeychainInterceptor {
       throw TNError.serverError
     }
     Log.make().debug("정상적으로 retry요청을 통해서 refreshToken을 받아왔습니다. ")
+    Keychain.shared.delete(key: Tokens.refreshToken)
     Keychain.shared.save(key: Tokens.refreshToken, data: tokenData)
   }
 
