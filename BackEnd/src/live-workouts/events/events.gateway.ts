@@ -55,7 +55,11 @@ export class EventsGateway
     if (!this.eventsService.checkMsgRoomId(data)) {
       client.wemit('workout_session', 'data에 roomId를 포함시켜주세요.');
     } else {
-      this.server.to(data.roomId).emit('workout_session', JSON.stringify(data));
+      if (this.server.sids.get(client.id).has(data.roomId)) {
+        this.server
+          .to(data.roomId)
+          .emit('workout_session', JSON.stringify(data));
+      }
     }
   }
 

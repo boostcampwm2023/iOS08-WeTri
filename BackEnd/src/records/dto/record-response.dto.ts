@@ -14,9 +14,7 @@ class GetRecord extends PickType(Record, [
   'createdAt',
 ]) {}
 
-class GetRecordWithId extends PickType(Record, [
-  'id'
-]) {}
+class GetRecordWithId extends PickType(Record, ['id']) {}
 
 export class CreateRecordResDto extends SuccessResDto {
   @ApiProperty({ type: () => GetRecordWithId })

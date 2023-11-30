@@ -101,6 +101,9 @@ export class ExtensionWebSocketServer {
       const room = this.rooms.get(roomId);
       const jsonMessage = JSON.parse(message);
       const issuedClientId: string | undefined = jsonMessage.issuedClientId;
+      if (issuedClientId && !this.sids.get(issuedClientId).has(roomId)) {
+        return;
+      }
       room.forEach((clientId) => {
         if (clientId !== issuedClientId) {
           const client = this.clientMap.get(clientId);
