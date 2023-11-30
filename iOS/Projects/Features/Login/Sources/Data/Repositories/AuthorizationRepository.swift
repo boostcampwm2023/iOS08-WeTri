@@ -15,6 +15,7 @@ import Trinet
 
 enum AuthorizationRepositoryError: Error {
   case invalidData
+  case invalidToken
   case failureDecode
 }
 
@@ -29,10 +30,13 @@ public struct AuthorizationRepository: AuthorizationRepositoryRepresentable {
   }
 
   public func fetch(authorizationInfo: AuthorizationInfo) -> AnyPublisher<Token, Never> {
-    return Future<Data, Never> { promise in
+    return Future<Data, Error> { promise in
       Task {
-        let identityToken = try decoder.decode(String.self, from: authorizationInfo.identityToken)
-        let authorizationCode = try decoder.decode(String.self, from: authorizationInfo.authorizationCode)
+        guard let identityToken = String(data: authorizationInfo.identityToken, encoding: .utf8),
+              let authorizationCode = String(data: authorizationInfo.authorizationCode, encoding: .utf8)
+        else {
+          return promise(.failure(AuthorizationRepositoryError.invalidToken))
+        }
         let authorizationInfoRequestDTO = AuthorizationInfoRequestDTO(identityToken: identityToken, authorizationCode: authorizationCode)
 
         let data = try await provider.request(.signIn(authorizationInfoRequestDTO))
