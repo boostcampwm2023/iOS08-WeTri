@@ -102,7 +102,7 @@ export class AuthService {
       return this.jwtService.verify(token, {
         secret: process.env.JWT_SECRET,
       });
-    } catch (error)
+    } catch (error) {
       throw new InvalidTokenException();
     }
   }
