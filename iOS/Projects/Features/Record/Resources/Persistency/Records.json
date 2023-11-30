@@ -1,0 +1,56 @@
+{
+  "code": null,
+  "errorMessage": null,
+  "data": [
+    {
+      "workoutTime": 6000000,
+      "distance": 100000,
+      "calorie": 360,
+      "avgHeartRate": 60,
+      "minHeartRate": 120,
+      "maxHeartRate": 180,
+      "createdAt": "2023-11-22 09:00:00",
+      "workout": "달리기"
+    },
+    {
+      "workoutTime": 6000000,
+      "distance": 100000,
+      "calorie": 360,
+      "avgHeartRate": 60,
+      "minHeartRate": 120,
+      "maxHeartRate": 180,
+      "createdAt": "2023-11-22 09:00:00",
+      "workout": "수영"
+    },
+    {
+      "workoutTime": 6000000,
+      "distance": 100000,
+      "calorie": 360,
+      "avgHeartRate": 60,
+      "minHeartRate": 120,
+      "maxHeartRate": 180,
+      "createdAt": "2023-11-22 09:00:00",
+      "workout": "자전거"
+    },
+    {
+      "workoutTime": 6000000,
+      "distance": 100000,
+      "calorie": 360,
+      "avgHeartRate": 60,
+      "minHeartRate": 120,
+      "maxHeartRate": 180,
+      "createdAt": "2023-11-22 09:00:00",
+      "workout": "달리기"
+    },
+    {
+      "workoutTime": 6000000,
+      "distance": 100000,
+      "calorie": 360,
+      "avgHeartRate": 60,
+      "minHeartRate": 120,
+      "maxHeartRate": 180,
+      "createdAt": "2023-11-22 09:00:00",
+      "workout": "수영"
+    }
+  ]
+}
