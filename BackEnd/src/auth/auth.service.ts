@@ -98,9 +98,13 @@ export class AuthService {
   }
 
   verifyToken(token: string) {
-    return this.jwtService.verify(token, {
-      secret: process.env.JWT_SECRET,
-    });
+    try {
+      return this.jwtService.verify(token, {
+        secret: process.env.JWT_SECRET,
+      }); 
+    } catch (error) {
+      throw new InvalidTokenException();
+    }
   }
 
   rotateToken(token: string, isRefreshToken: boolean) {
