@@ -8,6 +8,15 @@
 
 import Foundation
 
+// MARK: - GWResponseForStatusCode
+
+struct GWResponseForStatusCode: Decodable {
+  let code: Int?
+  let errorMessage: String?
+}
+
+// MARK: - GWResponse
+
 struct GWResponse<T>: Decodable where T: Decodable {
   let code: Int?
   let errorMessage: String?
