@@ -33,7 +33,10 @@ public final class RecordFeatureCoordinator: RecordFeatureCoordinating {
       ),
       recordListViewController: RecordListViewController(
         viewModel: RecordListViewModel(
-          recordUpdateUsecase: RecordUpdateUseCase(workoutRecordsRepository: MockWorkoutRecordsRepository()),
+          recordUpdateUsecase: RecordUpdateUseCase(
+            workoutRecordsRepository: WorkoutRecordsRepository(
+              session: URLSession.shared)
+          ),
           dateProvideUsecase: dateProvideUseCase,
           coordinator: self
         )
