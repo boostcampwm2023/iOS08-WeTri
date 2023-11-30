@@ -20,15 +20,15 @@ enum AuthorizationRepositoryError: Error {
 
 // MARK: - AuthorizationRepository
 
-struct AuthorizationRepository: AuthorizationRepositoryRepresentable {
+public struct AuthorizationRepository: AuthorizationRepositoryRepresentable {
   private let provider: TNProvider<AuthorizationRepositoryEndPoint>
   private let decoder = JSONDecoder()
 
-  init(session: URLSessionProtocol) {
+  public init(session: URLSessionProtocol) {
     provider = .init(session: session)
   }
 
-  func fetch(authorizationInfo: AuthorizationInfo) -> AnyPublisher<Token, Never> {
+  public func fetch(authorizationInfo: AuthorizationInfo) -> AnyPublisher<Token, Never> {
     return Future<Data, Never> { promise in
       Task {
         let identityToken = try decoder.decode(String.self, from: authorizationInfo.identityToken)

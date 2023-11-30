@@ -9,7 +9,7 @@
 import Combine
 import Foundation
 
-protocol AuthorizeUseCaseRepresentable {
+public protocol AuthorizeUseCaseRepresentable {
   func authorize(authorizationInfo: AuthorizationInfo) -> AnyPublisher<Token, Never>
   func accessTokenSave(_ token: String)
   func refreshTokenSave(_ token: String)

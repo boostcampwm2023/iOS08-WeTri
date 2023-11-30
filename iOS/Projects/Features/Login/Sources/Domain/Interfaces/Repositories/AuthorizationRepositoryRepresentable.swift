@@ -9,6 +9,6 @@
 import Combine
 import Foundation
 
-protocol AuthorizationRepositoryRepresentable {
+public protocol AuthorizationRepositoryRepresentable {
   func fetch(authorizationInfo: AuthorizationInfo) -> AnyPublisher<Token, Never>
 }

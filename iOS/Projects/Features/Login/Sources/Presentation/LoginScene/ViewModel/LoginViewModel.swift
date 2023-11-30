@@ -11,16 +11,24 @@ import Foundation
 
 // MARK: - LoginViewModelInput
 
-struct LoginViewModelInput {
-  let credential: AnyPublisher<AuthorizationInfo, Never>
-  let appleLoginButtonDidTap: AnyPublisher<Void, Never>
+public struct LoginViewModelInput {
+  public let credential: AnyPublisher<AuthorizationInfo, Never>
+  public let appleLoginButtonDidTap: AnyPublisher<Void, Never>
+
+  public init(
+    credential: AnyPublisher<AuthorizationInfo, Never>,
+    appleLoginButtonDidTap: AnyPublisher<Void, Never>
+  ) {
+    self.credential = credential
+    self.appleLoginButtonDidTap = appleLoginButtonDidTap
+  }
 }
 
-typealias LoginViewModelOutput = AnyPublisher<LoginState, Never>
+public typealias LoginViewModelOutput = AnyPublisher<LoginState, Never>
 
 // MARK: - LoginState
 
-enum LoginState {
+public enum LoginState {
   case idle
   case success
   case customError(Error)
@@ -28,12 +36,12 @@ enum LoginState {
 
 // MARK: - LoginViewModel
 
-final class LoginViewModel {
+public final class LoginViewModel {
   private var subscriptions: Set<AnyCancellable> = []
 
   private let authorizeUseCase: AuthorizeUseCaseRepresentable
 
-  init(authorizeUseCase: AuthorizeUseCaseRepresentable) {
+  public init(authorizeUseCase: AuthorizeUseCaseRepresentable) {
     self.authorizeUseCase = authorizeUseCase
   }
 }
@@ -41,7 +49,7 @@ final class LoginViewModel {
 // MARK: LoginViewModelRepresentable
 
 extension LoginViewModel: LoginViewModelRepresentable {
-  func transform(input: LoginViewModelInput) -> LoginViewModelOutput {
+  public func transform(input: LoginViewModelInput) -> LoginViewModelOutput {
     input.credential
       .flatMap(authorizeUseCase.authorize(authorizationInfo:))
       .sink(receiveValue: { [weak self] token in
@@ -73,7 +81,7 @@ extension LoginViewModel: LoginViewModelRepresentable {
 
 // MARK: - LoginViewModelRepresentable
 
-protocol LoginViewModelRepresentable {
+public protocol LoginViewModelRepresentable {
   func transform(input: LoginViewModelInput) -> LoginViewModelOutput
 }
 

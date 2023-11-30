@@ -11,11 +11,11 @@ import Foundation
 
 // MARK: - AuthorizeUseCase
 
-final class AuthorizeUseCase: AuthorizeUseCaseRepresentable {
+public final class AuthorizeUseCase: AuthorizeUseCaseRepresentable {
   private let authorizationRepository: AuthorizationRepositoryRepresentable
   private let keychainRepository: KeychainRepositoryRepresentable
 
-  init(
+  public init(
     authorizationRepository: AuthorizationRepositoryRepresentable,
     keychainRepository: KeychainRepositoryRepresentable
   ) {
@@ -23,16 +23,16 @@ final class AuthorizeUseCase: AuthorizeUseCaseRepresentable {
     self.keychainRepository = keychainRepository
   }
 
-  func authorize(authorizationInfo: AuthorizationInfo) -> AnyPublisher<Token, Never> {
+  public func authorize(authorizationInfo: AuthorizationInfo) -> AnyPublisher<Token, Never> {
     return authorizationRepository.fetch(authorizationInfo: authorizationInfo)
       .eraseToAnyPublisher()
   }
 
-  func accessTokenSave(_ token: String) {
+  public func accessTokenSave(_ token: String) {
     keychainRepository.save(key: Keys.accessToken, value: token)
   }
 
-  func refreshTokenSave(_ token: String) {
+  public func refreshTokenSave(_ token: String) {
     keychainRepository.save(key: Keys.refreshToken, value: token)
   }
 }

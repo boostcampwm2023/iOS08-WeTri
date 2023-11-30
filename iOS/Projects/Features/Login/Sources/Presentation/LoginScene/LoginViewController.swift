@@ -14,7 +14,7 @@ import UIKit
 
 // MARK: - LoginViewController
 
-final class LoginViewController: UIViewController {
+public class LoginViewController: UIViewController {
   private var subscriptions: Set<AnyCancellable> = []
 
   private let viewModel: LoginViewModelRepresentable
@@ -27,7 +27,7 @@ final class LoginViewController: UIViewController {
     return button
   }()
 
-  init(viewModel: LoginViewModelRepresentable) {
+  public init(viewModel: LoginViewModelRepresentable) {
     self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
   }

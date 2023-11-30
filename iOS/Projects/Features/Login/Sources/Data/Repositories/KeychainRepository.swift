@@ -19,14 +19,14 @@ enum KeychainRepositoryError: Error {
 
 // MARK: - KeychainRepository
 
-final class KeychainRepository: KeychainRepositoryRepresentable {
+public final class KeychainRepository: KeychainRepositoryRepresentable {
   private let keychain: Keychaining
 
-  init(keychain: Keychaining) {
+  public init(keychain: Keychaining) {
     self.keychain = keychain
   }
 
-  func save(key: String, value: String) {
+  public func save(key: String, value: String) {
     do {
       let encoder = JSONEncoder()
       let data = try encoder.encode(value)
@@ -36,7 +36,7 @@ final class KeychainRepository: KeychainRepositoryRepresentable {
     }
   }
 
-  func load(key: String) -> AnyPublisher<Data, Error> {
+  public func load(key: String) -> AnyPublisher<Data, Error> {
     return Future<Data, Error> { [weak self] promise in
       guard let data = self?.keychain.load(key: key) else {
         return promise(.failure(KeychainRepositoryError.invalidKey))
@@ -46,7 +46,7 @@ final class KeychainRepository: KeychainRepositoryRepresentable {
     .eraseToAnyPublisher()
   }
 
-  func delete(key: String) -> AnyPublisher<Void, Error> {
+  public func delete(key: String) -> AnyPublisher<Void, Error> {
     return Future<Void, Error> { [weak self] promise in
       let status = self?.keychain.delete(key: key)
       guard status != errSecItemNotFound else {
