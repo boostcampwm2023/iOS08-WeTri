@@ -16,7 +16,7 @@ import UIKit
 /// 건강 정보를 제공받을 때 사용합니다.
 protocol HealthDataProtocol: UIViewController {
   /// 건강 데이터를 제공하는 Publisher
-  var healthDataPublisher: AnyPublisher<WorkoutDataForm, Never> { get }
+  var healthDataPublisher: AnyPublisher<WorkoutHealthForm, Never> { get }
 }
 
 // MARK: - WorkoutSessionViewController
@@ -28,8 +28,7 @@ public final class WorkoutSessionViewController: UIViewController {
 
   private var participantsDataSource: ParticipantsDataSource?
 
-  @Published private var healthData: WorkoutDataForm = .init(
-    workoutTime: 0,
+  @Published private var healthData: WorkoutHealthForm = .init(
     distance: nil,
     calorie: nil,
     averageHeartRate: nil,
@@ -113,6 +112,10 @@ public final class WorkoutSessionViewController: UIViewController {
           break
         case .alert:
           break
+        case let .fetchMyHealthForm(myHealthForm):
+          self?.healthData = myHealthForm
+        case .fetchParticipantsIncludedMySelf:
+          break
         }
       }
       .store(in: &subscriptions)
@@ -187,7 +190,7 @@ public final class WorkoutSessionViewController: UIViewController {
 // MARK: HealthDataProtocol
 
 extension WorkoutSessionViewController: HealthDataProtocol {
-  var healthDataPublisher: AnyPublisher<WorkoutDataForm, Never> {
+  var healthDataPublisher: AnyPublisher<WorkoutHealthForm, Never> {
     $healthData.eraseToAnyPublisher()
   }
 }

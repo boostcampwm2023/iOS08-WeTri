@@ -56,7 +56,12 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
     let session: URLSessionProtocol = isMockEnvironment ? MockURLSession(mockData: jsonData) : URLSession.shared
     let repository = WorkoutRecordRepository(session: session)
     let useCase = WorkoutRecordUseCase(repository: repository)
-    let viewModel = WorkoutSessionContainerViewModel(workoutRecordUseCase: useCase, coordinating: self)
+    let viewModel = WorkoutSessionContainerViewModel(
+      workoutRecordUseCase: useCase,
+      coordinating: self,
+      startDate: healthDependency.date
+    )
+
     let viewController = WorkoutSessionContainerViewController(viewModel: viewModel, healthDataProtocol: sessionViewController)
     navigationController.pushViewController(viewController, animated: true)
   }

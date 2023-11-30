@@ -15,7 +15,7 @@ import Foundation
 public struct WorkoutSessionContainerViewModelInput {
   let endWorkoutPublisher: AnyPublisher<Void, Never>
   let locationPublisher: AnyPublisher<[CLLocation], Never>
-  let healthPublisher: AnyPublisher<WorkoutDataForm, Never>
+  let healthPublisher: AnyPublisher<WorkoutHealthForm, Never>
 }
 
 public typealias WorkoutSessionContainerViewModelOutput = AnyPublisher<WorkoutSessionContainerState, Never>
@@ -44,9 +44,16 @@ final class WorkoutSessionContainerViewModel {
 
   private weak var coordinating: WorkoutSessionCoordinating?
 
-  init(workoutRecordUseCase: WorkoutRecordUseCaseRepresentable, coordinating: WorkoutSessionCoordinating) {
+  private let startDate: Date
+
+  init(
+    workoutRecordUseCase: WorkoutRecordUseCaseRepresentable,
+    coordinating: WorkoutSessionCoordinating,
+    startDate: Date
+  ) {
     self.workoutRecordUseCase = workoutRecordUseCase
     self.coordinating = coordinating
+    self.startDate = startDate
   }
 }
 
@@ -60,9 +67,18 @@ extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepr
     // == Input Output Binding ==
 
     let recordPublisher = input.endWorkoutPublisher
-      .combineLatest(input.locationPublisher, input.healthPublisher) { _, rawLocations, health in
+      .combineLatest(input.locationPublisher, input.healthPublisher) { [startDate] _, rawLocations, health in
         let locations = rawLocations.map { LocationDTO(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
-        return (locations, health)
+        let healthData = WorkoutDataForm(
+          workoutTime: Int(startDate.timeIntervalSince1970.rounded(.down)),
+          distance: Int(health.distance?.rounded(.toNearestOrAwayFromZero) ?? 0),
+          calorie: Int(health.calorie?.rounded(.toNearestOrAwayFromZero) ?? 0),
+          averageHeartRate: Int(health.averageHeartRate?.rounded(.toNearestOrAwayFromZero) ?? 0),
+          minimumHeartRate: Int(health.minimumHeartRate?.rounded(.toNearestOrAwayFromZero) ?? 0),
+          maximumHeartRate: Int(health.maximumHeartRate?.rounded(.toNearestOrAwayFromZero) ?? 0)
+        )
+
+        return (locations, healthData)
       }
       .flatMap(workoutRecordUseCase.record)
 

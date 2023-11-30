@@ -18,6 +18,8 @@ typealias WorkoutSessionViewModelOutput = AnyPublisher<WorkoutSessionState, Neve
 
 enum WorkoutSessionState {
   case idle
+  case fetchMyHealthForm(WorkoutHealthForm)
+  case fetchParticipantsIncludedMySelf(WorkoutRealTimeModel)
   case alert(Error)
 }
 
@@ -49,6 +51,14 @@ extension WorkoutSessionViewModel: WorkoutSessionViewModelRepresentable {
   func transform(input _: WorkoutSessionViewModelInput) -> WorkoutSessionViewModelOutput {
     subscriptions.removeAll()
 
-    return Just(.idle).eraseToAnyPublisher()
+    let myHealth = useCase.myHealthFormPublisher
+      .map(WorkoutSessionState.fetchMyHealthForm)
+      .catch { Just(.alert($0)) }
+
+    let participants = useCase.participantsStatusPublisher
+      .map(WorkoutSessionState.fetchParticipantsIncludedMySelf)
+      .catch { Just(.alert($0)) }
+
+    return Just(.idle).merge(with: myHealth, participants).eraseToAnyPublisher()
   }
 }

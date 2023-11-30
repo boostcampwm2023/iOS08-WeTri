@@ -22,7 +22,10 @@ struct WorkoutSessionUseCaseDependency {
 
 // MARK: - WorkoutSessionUseCaseRepresentable
 
-protocol WorkoutSessionUseCaseRepresentable {}
+protocol WorkoutSessionUseCaseRepresentable {
+  var myHealthFormPublisher: AnyPublisher<WorkoutHealthForm, Error> { get }
+  var participantsStatusPublisher: AnyPublisher<WorkoutRealTimeModel, Error> { get }
+}
 
 // MARK: - WorkoutSessionUseCase
 
@@ -131,4 +134,12 @@ extension WorkoutSessionUseCase {
 
 // MARK: WorkoutSessionUseCaseRepresentable
 
-extension WorkoutSessionUseCase: WorkoutSessionUseCaseRepresentable {}
+extension WorkoutSessionUseCase: WorkoutSessionUseCaseRepresentable {
+  var myHealthFormPublisher: AnyPublisher<WorkoutHealthForm, Error> {
+    myHealthFormSubject.eraseToAnyPublisher()
+  }
+
+  var participantsStatusPublisher: AnyPublisher<WorkoutRealTimeModel, Error> {
+    participantsStatusSubject.eraseToAnyPublisher()
+  }
+}
