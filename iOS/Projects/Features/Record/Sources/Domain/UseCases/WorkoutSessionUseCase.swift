@@ -10,6 +10,10 @@ import Combine
 import CombineCocoa
 import Foundation
 
+struct WorkoutSessionUseCaseDependency {
+  let date: Date
+}
+
 // MARK: - WorkoutSessionUseCaseRepresentable
 
 protocol WorkoutSessionUseCaseRepresentable {
@@ -25,10 +29,11 @@ final class WorkoutSessionUseCase {
   private var subscriptions: Set<AnyCancellable> = []
 
   // TODO: 서버로부터 받은 데이트 타입으로 설정할 필요
-  private let date: Date = .now
+  private let dependency: WorkoutSessionUseCaseDependency
 
-  init(repository: HealthRepositoryRepresentable) {
+  init(repository: HealthRepositoryRepresentable, dependency: WorkoutSessionUseCaseDependency) {
     self.repository = repository
+    self.dependency = dependency
     bind()
   }
 
@@ -40,9 +45,9 @@ final class WorkoutSessionUseCase {
         else {
           return Just(([0.0], [0.0], [0.0])).setFailureType(to: Error.self).eraseToAnyPublisher()
         }
-        return repository.getDistanceWalkingRunningSample(startDate: date).combineLatest(
-          repository.getCaloriesSample(startDate: date),
-          repository.getHeartRateSample(startDate: date)
+        return repository.getDistanceWalkingRunningSample(startDate: dependency.date).combineLatest(
+          repository.getCaloriesSample(startDate: dependency.date),
+          repository.getHeartRateSample(startDate: dependency.date)
         ) {
           (distance: $0, calories: $1, heartRate: $2)
         }
