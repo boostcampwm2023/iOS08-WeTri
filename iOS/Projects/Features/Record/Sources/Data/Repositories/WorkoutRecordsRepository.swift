@@ -37,8 +37,13 @@ struct WorkoutRecordsRepository: WorkoutRecordsRepositoryRepresentable {
         return promise(.failure(WorkoutRecordsRepositoryError.bindingError))
       }
       Task {
-        let data = try await provider.request(.dateOfRecords(dateRequestDTO))
-        return promise(.success(data))
+        do {
+          let data = try await provider.request(.dateOfRecords(dateRequestDTO))
+          return promise(.success(data))
+        } catch {
+          promise(.failure(error))
+          Log.make().error("\(error)")
+        }
       }
     }
     .decode(type: GWResponse<[RecordResponseDTO]>.self, decoder: JSONDecoder())
