@@ -65,7 +65,7 @@ final class InterceptorTest: XCTestCase {
     XCTAssertEqual(stringData, "아아답트")
   }
 
-  func test_request에_sessionResponse를401로설정한다면_retry에서_data를_retry로넘겨줍니다() async throws {
+  func test_request에_sessionResponse를401로설정한다면_retry에서_data를변경하여넘겨줍니다() async throws {
     // arrange
     let tokkenDidBeExpierResponse = HTTPURLResponse(url: URL(string: "www.naver.com")!, statusCode: 401, httpVersion: nil, headerFields: nil)!
     mockSession = MockURLSession(mockData: "나는목이다".data(using: .utf8)!, mockResponse: tokkenDidBeExpierResponse)
@@ -77,12 +77,5 @@ final class InterceptorTest: XCTestCase {
     // assert
     let stringData = String(data: data, encoding: .utf8)
     XCTAssertEqual(stringData, "retry")
-  }
-
-  func testPerformanceExample() throws {
-    // This is an example of a performance test case.
-    measure {
-      // Put the code you want to measure the time of here.
-    }
   }
 }
