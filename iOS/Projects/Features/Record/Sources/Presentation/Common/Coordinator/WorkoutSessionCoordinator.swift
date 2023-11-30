@@ -11,6 +11,23 @@ import Log
 import Trinet
 import UIKit
 
+// MARK: - WorkoutSessionDependency
+
+protocol WorkoutSessionDependency: WorkoutSessionUseCaseDependency,
+  WorkoutSocketRepositoryDependency,
+  WorkoutSessionViewModelDependency,
+  WorkoutSessionViewControllerDependency {}
+
+// MARK: - WorkoutSessionComponents
+
+struct WorkoutSessionComponents: WorkoutSessionDependency {
+  let participants: [SessionPeerType]
+  let startDate: Date
+  let roomID: String
+  let id: String
+  let nickname: String
+}
+
 // MARK: - WorkoutSessionCoordinator
 
 final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
@@ -29,7 +46,7 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
     pushCountDownBeforeWorkout()
   }
 
-  func pushWorkoutSession() {
+  func pushWorkoutSession(dependency: WorkoutSessionDependency) {
     guard let jsonPath = Bundle(for: Self.self).path(forResource: "WorkoutSession", ofType: "json"),
           let jsonData = try? Data(contentsOf: .init(filePath: jsonPath))
     else {
@@ -37,21 +54,19 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
       return
     }
 
-    // FIXME: Dependency값을 올바르게 설정해주세요.
-    let healthDependency = WorkoutSessionUseCaseDependency(date: .now, roomID: "해시값", id: "자신의 아이디값", nickname: "내 닉네임")
     let healthRepository = HealthRepository()
 
     // TODO: 같이하기, 혼자하기 모드에 따라 session 주입을 다르게 해야합니다.
-    let socketRepository = WorkoutSocketRepository(session: MockWebSocketSession(), roomID: healthDependency.roomID)
+    let socketRepository = WorkoutSocketRepository(session: MockWebSocketSession(), dependency: dependency)
 
     let sessionUseCase = WorkoutSessionUseCase(
       healthRepository: healthRepository,
       socketRepository: socketRepository,
-      dependency: healthDependency
+      dependency: dependency
     )
 
     let sessionViewModel = WorkoutSessionViewModel(useCase: sessionUseCase)
-    let sessionViewController = WorkoutSessionViewController(viewModel: sessionViewModel, participants: [])
+    let sessionViewController = WorkoutSessionViewController(viewModel: sessionViewModel, dependency: dependency)
 
     let session: URLSessionProtocol = isMockEnvironment ? MockURLSession(mockData: jsonData) : URLSession.shared
     let repository = WorkoutRecordRepository(session: session)
@@ -59,7 +74,7 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
     let viewModel = WorkoutSessionContainerViewModel(
       workoutRecordUseCase: useCase,
       coordinating: self,
-      startDate: healthDependency.date
+      dependency: dependency
     )
 
     let viewController = WorkoutSessionContainerViewController(viewModel: viewModel, healthDataProtocol: sessionViewController)

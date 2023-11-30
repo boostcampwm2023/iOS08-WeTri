@@ -10,6 +10,12 @@ import Combine
 import CoreLocation
 import Foundation
 
+// MARK: - WorkoutSessionViewModelDependency
+
+protocol WorkoutSessionViewModelDependency {
+  var startDate: Date { get }
+}
+
 // MARK: - WorkoutSessionContainerViewModelInput
 
 public struct WorkoutSessionContainerViewModelInput {
@@ -45,16 +51,16 @@ final class WorkoutSessionContainerViewModel {
 
   private weak var coordinating: WorkoutSessionCoordinating?
 
-  private let startDate: Date
+  private let dependency: WorkoutSessionViewModelDependency
 
   init(
     workoutRecordUseCase: WorkoutRecordUseCaseRepresentable,
     coordinating: WorkoutSessionCoordinating,
-    startDate: Date
+    dependency: WorkoutSessionViewModelDependency
   ) {
     self.workoutRecordUseCase = workoutRecordUseCase
     self.coordinating = coordinating
-    self.startDate = startDate
+    self.dependency = dependency
   }
 }
 
@@ -68,10 +74,10 @@ extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepr
     // == Input Output Binding ==
 
     let recordPublisher = input.endWorkoutPublisher
-      .combineLatest(input.locationPublisher, input.healthPublisher) { [startDate] _, rawLocations, health in
+      .combineLatest(input.locationPublisher, input.healthPublisher) { [dependency] _, rawLocations, health in
         let locations = rawLocations.map { LocationDTO(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
         let healthData = WorkoutDataForm(
-          workoutTime: Int(startDate.timeIntervalSince1970.rounded(.down)),
+          workoutTime: Int(dependency.startDate.timeIntervalSince1970.rounded(.down)),
           distance: Int(health.distance?.rounded(.toNearestOrAwayFromZero) ?? 0),
           calorie: Int(health.calorie?.rounded(.toNearestOrAwayFromZero) ?? 0),
           averageHeartRate: Int(health.averageHeartRate?.rounded(.toNearestOrAwayFromZero) ?? 0),
@@ -102,7 +108,7 @@ extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepr
 
     let workoutTimerPublisher = Timer.publish(every: 1, on: .main, in: .common)
       .autoconnect()
-      .map(startDate.timeIntervalSince(_:))
+      .map(dependency.startDate.timeIntervalSince(_:))
       .map { WorkoutSessionContainerState.updateTime($0) }
 
     return Just(WorkoutSessionContainerState.idle).merge(with: recordErrorPublisher, workoutTimerPublisher).eraseToAnyPublisher()

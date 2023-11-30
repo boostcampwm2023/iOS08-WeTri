@@ -13,11 +13,11 @@ import Log
 
 // MARK: - WorkoutSessionUseCaseDependency
 
-struct WorkoutSessionUseCaseDependency {
-  let date: Date
-  let roomID: String
-  let id: String
-  let nickname: String
+protocol WorkoutSessionUseCaseDependency {
+  var startDate: Date { get }
+  var roomID: String { get }
+  var id: String { get }
+  var nickname: String { get }
 }
 
 // MARK: - WorkoutSessionUseCaseRepresentable
@@ -63,9 +63,9 @@ extension WorkoutSessionUseCase {
     let healthDataPublisher = Timer.publish(every: 2, on: .main, in: .common)
       .autoconnect()
       .flatMap { [healthRepository, dependency] _ in
-        return healthRepository.getDistanceWalkingRunningSample(startDate: dependency.date).combineLatest(
-          healthRepository.getCaloriesSample(startDate: dependency.date),
-          healthRepository.getHeartRateSample(startDate: dependency.date)
+        return healthRepository.getDistanceWalkingRunningSample(startDate: dependency.startDate).combineLatest(
+          healthRepository.getCaloriesSample(startDate: dependency.startDate),
+          healthRepository.getHeartRateSample(startDate: dependency.startDate)
         ) { (distance: $0, calories: $1, heartRate: $2) }
       }
 

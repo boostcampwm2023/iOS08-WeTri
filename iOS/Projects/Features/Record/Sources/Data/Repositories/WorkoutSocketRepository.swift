@@ -11,6 +11,12 @@ import Foundation
 import Log
 import Trinet
 
+// MARK: - WorkoutSocketRepositoryDependency
+
+protocol WorkoutSocketRepositoryDependency {
+  var roomID: String { get }
+}
+
 // MARK: - WorkoutSocketRepository
 
 struct WorkoutSocketRepository {
@@ -21,10 +27,10 @@ struct WorkoutSocketRepository {
 
   private let subject: PassthroughSubject<WorkoutRealTimeModel, Error> = .init()
 
-  init(session: URLSessionWebSocketProtocol, roomID: String) {
+  init(session: URLSessionWebSocketProtocol, dependency: WorkoutSocketRepositoryDependency) {
     provider = .init(
       session: session,
-      endPoint: .init(headers: [.init(key: "roomId", value: roomID)])
+      endPoint: .init(headers: [.init(key: "roomId", value: dependency.roomID)])
     )
     task = receiveParticipantsData()
   }

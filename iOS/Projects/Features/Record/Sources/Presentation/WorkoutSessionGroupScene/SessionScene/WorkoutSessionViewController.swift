@@ -19,6 +19,12 @@ protocol HealthDataProtocol: UIViewController {
   var healthDataPublisher: AnyPublisher<WorkoutHealthForm, Never> { get }
 }
 
+// MARK: - WorkoutSessionViewControllerDependency
+
+protocol WorkoutSessionViewControllerDependency {
+  var participants: [SessionPeerType] { get }
+}
+
 // MARK: - WorkoutSessionViewController
 
 public final class WorkoutSessionViewController: UIViewController {
@@ -55,9 +61,9 @@ public final class WorkoutSessionViewController: UIViewController {
 
   // MARK: Initializations
 
-  init(viewModel: WorkoutSessionViewModelRepresentable, participants: [SessionPeerType]) {
+  init(viewModel: WorkoutSessionViewModelRepresentable, dependency: WorkoutSessionViewControllerDependency) {
     self.viewModel = viewModel
-    for participant in participants {
+    for participant in dependency.participants {
       userInfoByID[participant.id] = participant
       realTimeModelByID[participant.id] = .init(distance: 0, calories: 0, heartRate: 0)
     }
