@@ -33,6 +33,7 @@
     "@nestjs/typeorm": "^10.0.0",
     "@nestjs/websockets": "^10.2.10",
     "@songkeys/nestjs-redis": "^10.0.0",
+    "@types/ws": "^8.5.10",
     "axios": "^1.6.2",
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",

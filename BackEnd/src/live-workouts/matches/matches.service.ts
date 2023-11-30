@@ -1,5 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { InjectRedis } from '@songkeys/nestjs-redis';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Redis } from 'ioredis';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { Profile } from '../../profiles/entities/profiles.entity';
@@ -23,14 +22,14 @@ import {
 export class MatchesService {
   private readonly logger: Logger = new Logger(MatchesService.name);
 
-  constructor(@InjectRedis() private readonly redis: Redis) {}
+  constructor(@Inject('DATA_REDIS') private readonly redis: Redis) {}
   async startMatch(
     profile: Profile,
     createMatchDto: CreateMatchDto,
   ): Promise<void> {
-    const { nickname } = profile;
+    const { publicId } = profile;
     const { workoutId } = createMatchDto;
-    this.logger.log(`startMatch: ${nickname} ${workoutId}`);
+    this.logger.log(`startMatch: ${publicId} ${workoutId}`);
 
     await this.initMatch(profile, workoutId);
     await this.redis.rpush(`matching:${workoutId}`, JSON.stringify(profile));
@@ -40,9 +39,9 @@ export class MatchesService {
     profile: Profile,
     createMatchDto: CreateMatchDto,
   ): Promise<void> {
-    const { nickname } = profile;
+    const { publicId } = profile;
     const { workoutId } = createMatchDto;
-    this.logger.log(`cancelMatch: ${nickname} ${workoutId}`);
+    this.logger.log(`cancelMatch: ${publicId} ${workoutId}`);
 
     await this.initMatch(profile, workoutId);
   }
@@ -51,11 +50,11 @@ export class MatchesService {
     profile: Profile,
     randomMatchDto: RandomMatchDto,
   ): Promise<RandomMatch> {
-    const { nickname } = profile;
+    const { publicId } = profile;
     const { workoutId, waitingTime } = randomMatchDto;
-    this.logger.log(`isRandomMatched: ${nickname} ${workoutId}`);
+    this.logger.log(`isRandomMatched: ${publicId} ${workoutId}`);
 
-    const roomId: string = await this.redis.get(`userMatch:${nickname}`);
+    const roomId: string = await this.redis.get(`userMatch:${publicId}`);
     if (roomId) {
       const serializedProfiles: string = await this.redis.get(
         `matchProfiles:${roomId}`,
@@ -66,7 +65,7 @@ export class MatchesService {
       );
       return {
         matched: true,
-        matchId: roomId,
+        roomId: roomId,
         liveWorkoutStartTime: liveWorkoutStartTimeUTC,
         peers: profiles,
       };
@@ -102,8 +101,8 @@ export class MatchesService {
     const liveWorkoutStartTimeUTC = liveWorkoutStartTime.toISOString();
 
     const multi = this.redis.multi();
-    for (const { nickname } of profiles) {
-      multi.set(`userMatch:${nickname}`, roomId);
+    for (const { publicId } of profiles) {
+      multi.set(`userMatch:${publicId}`, roomId);
     }
 
     multi.set(`matchProfiles:${roomId}`, JSON.stringify(profiles));
@@ -117,7 +116,7 @@ export class MatchesService {
 
     return {
       matched: true,
-      matchId: roomId,
+      roomId: roomId,
       liveWorkoutStartTime: liveWorkoutStartTimeUTC,
       peers: profiles,
     };
@@ -148,7 +147,7 @@ export class MatchesService {
   private async initMatch(profile: Profile, workoutId: number) {
     return Promise.all([
       this.redis.lrem(`matching:${workoutId}`, 0, JSON.stringify(profile)),
-      this.redis.del(`userMatch:${profile.nickname}`),
+      this.redis.del(`userMatch:${profile.publicId}`),
     ]);
   }
 }

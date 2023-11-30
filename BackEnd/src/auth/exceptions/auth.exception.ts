@@ -52,3 +52,11 @@ export class NotExistToken extends HttpException {
     super(response, httpCode);
   }
 }
+
+export class VerificationFailedIdentityToken extends HttpException {
+  constructor() {
+    const response = { statusCode: 1020, message: 'apple login error.' };
+    const httpCode = 400;
+    super(response, httpCode);
+  }
+}

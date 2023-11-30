@@ -18,6 +18,9 @@ public typealias WorkoutSessionViewModelOutput = AnyPublisher<WorkoutSessionStat
 
 public enum WorkoutSessionState {
   case idle
+  // FIXME: API Model로 바꿔야합니다.
+  case connectHealthData(distance: Double, calories: Double, heartRate: Double)
+  case alert(Error)
 }
 
 // MARK: - WorkoutSessionViewModelRepresentable
@@ -31,11 +34,15 @@ public protocol WorkoutSessionViewModelRepresentable {
 public final class WorkoutSessionViewModel {
   // MARK: Properties
 
+  private let useCase: WorkoutSessionUseCaseRepresentable
+
   private var subscriptions: Set<AnyCancellable> = []
 
   // MARK: Initializations
 
-  public init() {}
+  init(useCase: WorkoutSessionUseCaseRepresentable) {
+    self.useCase = useCase
+  }
 }
 
 // MARK: WorkoutSessionViewModelRepresentable
@@ -46,6 +53,10 @@ extension WorkoutSessionViewModel: WorkoutSessionViewModelRepresentable {
 
     let initialState: WorkoutSessionViewModelOutput = Just(.idle).eraseToAnyPublisher()
 
-    return initialState
+    let healthData = useCase.healthPublisher
+      .map(WorkoutSessionState.connectHealthData)
+      .catch { Just(.alert($0)) }
+
+    return initialState.merge(with: healthData).eraseToAnyPublisher()
   }
 }

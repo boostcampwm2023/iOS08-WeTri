@@ -6,11 +6,14 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import Combine
 import UIKit
 
 // MARK: - RecordContainerViewController
 
 public final class RecordContainerViewController: UIViewController {
+  private var subscriptions: Set<AnyCancellable> = []
+
   private let recordCalendarViewController: RecordCalendarViewController
   private let recordListViewController: RecordListViewController
 
@@ -28,12 +31,24 @@ public final class RecordContainerViewController: UIViewController {
   override public func viewDidLoad() {
     super.viewDidLoad()
     configureUI()
+    bindRecordCalendarViewController()
+  }
+}
+
+private extension RecordContainerViewController {
+  func bindRecordCalendarViewController() {
+    recordCalendarViewController.selectedDatePublisher
+      .sink { [weak self] indexPath in
+        self?.recordListViewController.selectedDateSubject.send(indexPath)
+      }
+      .store(in: &subscriptions)
   }
 }
 
 private extension RecordContainerViewController {
   func configureUI() {
     view.backgroundColor = .systemBackground
+    navigationController?.navigationBar.isHidden = true
     let safeArea = view.safeAreaLayoutGuide
 
     guard let calendarView = recordCalendarViewController.view else { return }
@@ -45,21 +60,7 @@ private extension RecordContainerViewController {
       calendarView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.componentInterval),
       calendarView.heightAnchor.constraint(equalToConstant: Metrics.calendarHeight),
     ])
-    guard let navigationController else {
-      return
-    }
-    let recordListViewController = RecordListViewController(viewModel:
-      RecordListViewModel(
-        recordUpdateUsecase:
-        RecordUpdateUseCase(
-          workoutRecordsRepository:
-          MockWorkoutRecordsRepository()
-        ),
-        dateProvideUsecase:
-        DateProvideUseCase(),
-        coordinator: RecordFeatureCoordinator(navigationController: navigationController)
-      )
-    )
+
     guard let listView = recordListViewController.view else { return }
     listView.translatesAutoresizingMaskIntoConstraints = false
     add(child: recordListViewController)

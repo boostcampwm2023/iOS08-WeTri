@@ -3,7 +3,6 @@ import { SuccessResDto } from 'src/common/dto/SuccessRes.dto';
 import { Record } from '../entities/records.entity';
 
 class GetRecord extends PickType(Record, [
-  'id',
   'workout',
   'profile',
   'workoutTime',
@@ -15,14 +14,11 @@ class GetRecord extends PickType(Record, [
   'createdAt',
 ]) {}
 
-class RecordIdDto {
-  @ApiProperty({ example: 1, description: '운동 기록 레코드 ID' })
-  recordId: number;
-}
+class GetRecordWithId extends PickType(Record, ['id']) {}
 
 export class CreateRecordResDto extends SuccessResDto {
-  @ApiProperty({ type: () => RecordIdDto })
-  data: Pick<RecordIdDto, 'recordId'>;
+  @ApiProperty({ type: () => GetRecordWithId })
+  data: Pick<GetRecordWithId, 'id'>;
 }
 
 export class GetUsersRecordsResDto extends SuccessResDto {

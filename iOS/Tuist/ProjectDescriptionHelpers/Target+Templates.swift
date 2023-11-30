@@ -27,6 +27,7 @@ public extension [Target] {
   static func app(
     name: String,
     testingOptions: Set<TestingOption> = [],
+    entitlements: Entitlements? = nil,
     dependencies: [TargetDependency] = [],
     testDependencies: [TargetDependency] = [],
     infoPlist: [String: Plist.Value] = [:]
@@ -34,6 +35,7 @@ public extension [Target] {
 
     let mergedInfoPlist: [String: Plist.Value] = [
       "BaseURL": "$(BASE_URL)",
+      "SocketURL": "$(SOCKET_URL)",
       "UILaunchStoryboardName": "LaunchScreen",
       "UIApplicationSceneManifest": [
         "UIApplicationSupportsMultipleScenes": false,
@@ -46,9 +48,16 @@ public extension [Target] {
           ],
         ],
       ],
+      "UIBackgroundModes": [
+        "fetch",
+        "location",
+        "processing",
+        "remote-notification"
+      ]
     ].merging(infoPlist) { _, new in
       new
     }
+
 
     var targets: [Target] = [
       Target(
@@ -60,6 +69,7 @@ public extension [Target] {
         infoPlist: .extendingDefault(with: mergedInfoPlist),
         sources: "Sources/**",
         resources: "Resources/**",
+        entitlements: entitlements,
         scripts: [.swiftFormat, .swiftLint],
         dependencies: dependencies
       ),
@@ -113,7 +123,7 @@ public extension [Target] {
     resources: ResourceFileElements? = nil
   ) -> [Target] {
 
-    let mergedInfoPlist: [String: Plist.Value] = ["BaseURL": "$(BASE_URL)"].merging(infoPlist) { _, new in
+    let mergedInfoPlist: [String: Plist.Value] = ["BaseURL": "$(BASE_URL)", "SocketURL": "$(SOCKET_URL)"].merging(infoPlist) { _, new in
       new
     }
 
@@ -194,7 +204,7 @@ public extension [Target] {
     settings: Settings? = nil
   ) -> [Target] {
     
-    let mergedInfoPlist: [String: Plist.Value] = ["BaseURL": "$(BASE_URL)"].merging(infoPlist) { _, new in
+    let mergedInfoPlist: [String: Plist.Value] = ["BaseURL": "$(BASE_URL)", "SocketURL": "$(SOCKET_URL)"].merging(infoPlist) { _, new in
       new
     }
 

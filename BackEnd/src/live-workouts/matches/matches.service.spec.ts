@@ -1,5 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRedisToken } from '@songkeys/nestjs-redis';
 import { MatchesService } from './matches.service';
 import { Profile } from '../../profiles/entities/profiles.entity';
 import { RandomMatchDto } from './dto/random-match.dto';
@@ -36,7 +35,7 @@ describe('MatchesService', () => {
       providers: [
         MatchesService,
         {
-          provide: getRedisToken('default'),
+          provide: 'DATA_REDIS',
           useValue: {
             rpush,
             lrem,
@@ -60,7 +59,7 @@ describe('MatchesService', () => {
     let createMatchDto;
 
     beforeEach(() => {
-      profile = { nickname: 'TestUser' } as Profile;
+      profile = { publicId: 'TestUser' } as Profile;
       createMatchDto = { workoutId: 1 };
     });
 
@@ -99,8 +98,8 @@ describe('MatchesService', () => {
       const workoutId = 1;
       const waitingUsers = 2;
       const serializedUsers = [
-        JSON.stringify({ nickname: 'User1' }),
-        JSON.stringify({ nickname: 'User2' }),
+        JSON.stringify({ publicId: 'User1' }),
+        JSON.stringify({ publicId: 'User2' }),
       ];
       lrange.mockResolvedValue(serializedUsers);
 
@@ -161,7 +160,7 @@ describe('MatchesService', () => {
 
   describe('initMatch 메서드 검증', () => {
     it('닉네임과 운동 종류가 주어질 때, 실제로 리스트에서 제거 및 매칭에서 제거되는지 확인한다.', async () => {
-      const profile = { nickname: 'TestUser' } as Profile;
+      const profile = { publicId: 'TestUser' } as Profile;
       const workoutId = 1;
 
       await service['initMatch'](profile, workoutId);
@@ -171,7 +170,7 @@ describe('MatchesService', () => {
         0,
         JSON.stringify(profile),
       );
-      expect(del).toHaveBeenCalledWith(`userMatch:${profile.nickname}`);
+      expect(del).toHaveBeenCalledWith(`userMatch:${profile.publicId}`);
     });
   });
 });

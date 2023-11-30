@@ -25,7 +25,7 @@ private let template = Template(
     ),
     .file(
       path: "Projects/Features/\(nameAttribute)/Tests/TempFeatureTests.swift",
-      templatePath: "TempViewModel.stencil"
+      templatePath: "TempFeatureTests.stencil"
     ),
   ]
 )

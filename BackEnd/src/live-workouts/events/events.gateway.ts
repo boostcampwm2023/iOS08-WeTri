@@ -5,55 +5,63 @@ import {
   WebSocketServer,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  OnGatewayInit,
 } from '@nestjs/websockets';
 import * as WebSocket from 'ws';
 import { EventsService } from './events.service';
-import { CreateEventDto } from './dto/create-event.dto';
-import { UpdateEventDto } from './dto/update-event.dto';
+import { ExtensionWebSocketService } from './extensionWebSocket.service';
+import { WetriWebSocket, WetriServer } from './types/custom-websocket.type';
+import { AuthService } from '../../auth/auth.service';
+import { CheckMatchingDto } from './dto/checkMatching.dto';
+import { Logger } from '@nestjs/common';
 
 @WebSocketGateway(3003)
-export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  @WebSocketServer() server: WebSocket.Server;
-  constructor(private readonly eventsService: EventsService) {}
+export class EventsGateway
+  implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit
+{
+  @WebSocketServer() server: WetriServer;
+  constructor(
+    private readonly authService: AuthService,
+    private readonly eventsService: EventsService,
+    private readonly extensionWebSocketService: ExtensionWebSocketService,
+  ) {}
 
-  handleDisconnect(client: any) {
-    throw new Error('Method not implemented.');
+  afterInit(server: WetriServer): any {
+    this.extensionWebSocketService.webSocketServer(server);
   }
 
-  @SubscribeMessage('events')
-  onEvent(client: WebSocket, data: any): void {
-    console.log(`전송받은 데이터: ${data}`);
-    this.server.clients.forEach((others: WebSocket) => {
-      if (others.readyState === WebSocket.OPEN) {
-        others.send(data);
+  async handleConnection(client: WetriWebSocket, ...args: any[]) {
+    const { authorization, roomid } = args[0].headers;
+    if (!(await this.authService.verifyWs(authorization, client))) {
+      client.close();
+      return;
+    }
+    const matchInfo: CheckMatchingDto = {
+      matchingKey: `userMatch:${client.id}`,
+      roomId: roomid,
+    };
+    const resultCheckMatching =
+      await this.eventsService.checkMatching(matchInfo);
+    if (!resultCheckMatching) {
+      client.close();
+      return;
+    }
+    this.extensionWebSocketService.webSocket(client, this.server);
+    client.join(roomid);
+  }
+
+  @SubscribeMessage('workout_session')
+  onWorkoutSession(client: WetriWebSocket, data: any): void {
+    if (!this.eventsService.checkMsgRoomId(data)) {
+      client.wemit('workout_session', 'data에 roomId를 포함시켜주세요.');
+    } else {
+      if (this.server.sids.get(client.id).has(data.roomId)) {
+        this.server
+          .to(data.roomId)
+          .emit('workout_session', JSON.stringify(data));
       }
-    });
+    }
   }
 
-  @SubscribeMessage('createEvent')
-  create(@MessageBody() createEventDto: CreateEventDto) {
-    return this.eventsService.create(createEventDto);
-  }
-
-  @SubscribeMessage('findAllEvents')
-  findAll() {
-    return this.eventsService.findAll();
-  }
-
-  @SubscribeMessage('findOneEvent')
-  findOne(@MessageBody() id: number) {
-    return this.eventsService.findOne(id);
-  }
-
-  @SubscribeMessage('updateEvent')
-  update(@MessageBody() updateEventDto: UpdateEventDto) {
-    return this.eventsService.update(updateEventDto.id, updateEventDto);
-  }
-
-  @SubscribeMessage('removeEvent')
-  remove(@MessageBody() id: number) {
-    return this.eventsService.remove(id);
-  }
-
-  handleConnection(client: any, ...args: any[]): any {}
+  handleDisconnect(client: any) {}
 }

@@ -13,4 +13,10 @@ import Foundation
 struct WorkoutSetting {
   let workoutType: WorkoutType
   let workoutPeerType: PeerType
+  let isWorkoutAlone: Bool
+  init(workoutType: WorkoutType, workoutPeerType: PeerType, isWorkoutAlone: Bool = true) {
+    self.workoutType = workoutType
+    self.workoutPeerType = workoutPeerType
+    self.isWorkoutAlone = isWorkoutAlone
+  }
 }

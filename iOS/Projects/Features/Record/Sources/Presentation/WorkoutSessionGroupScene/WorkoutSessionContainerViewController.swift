@@ -24,7 +24,13 @@ final class WorkoutSessionContainerViewController: UIViewController {
 
   // MARK: UI Components - ViewController
 
-  private let sessionViewController: HealthDataProtocol = WorkoutSessionViewController(viewModel: WorkoutSessionViewModel())
+  private let sessionViewController: HealthDataProtocol = WorkoutSessionViewController(
+    viewModel: WorkoutSessionViewModel(
+      useCase: WorkoutSessionUseCase(
+        repository: HealthRepository()
+      )
+    )
+  )
 
   private let routeMapViewController: LocationTrackingProtocol = WorkoutRouteMapViewController(viewModel: WorkoutRouteMapViewModel())
 

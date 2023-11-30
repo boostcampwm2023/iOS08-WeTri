@@ -27,19 +27,19 @@ export class RandomMatch {
 
   @IsString()
   @ApiProperty({ example: 'uuid' })
-  matchId?: string;
+  roomId?: string;
 
   @ApiProperty({
     example: [
       {
         nickname: 'nickname',
         publicId: 'profileImage',
-        etc: 'etc',
+        etc: '그 외 나머지 모든 컬럼',
       },
       {
         nickname: 'nickname',
         publicId: 'profileImage',
-        etc: 'etc',
+        etc: '그 외 나머지 모든 컬럼',
       },
     ],
   })

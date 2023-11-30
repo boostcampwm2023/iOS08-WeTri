@@ -25,7 +25,11 @@ final class WorkoutCoordinator: WorkoutCoordinating {
 
   func pushWorkoutSummaryViewController() {
     let workoutSummaryViewController = WorkoutSessionViewController(
-      viewModel: WorkoutSessionViewModel()
+      viewModel: WorkoutSessionViewModel(
+        useCase: WorkoutSessionUseCase(
+          repository: HealthRepository()
+        )
+      )
     )
     navigationController.pushViewController(workoutSummaryViewController, animated: false)
   }

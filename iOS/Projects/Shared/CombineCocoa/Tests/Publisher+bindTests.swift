@@ -12,18 +12,13 @@ import XCTest
 
 final class PublisherBindTests: XCTestCase {
   private var subscriptions: Set<AnyCancellable> = []
-  private let publisher: PassthroughSubject<Void, Never> = .init()
-  private var sut: AnyPublisher<Void, Never>?
 
   override func tearDown() {
-    for subscription in subscriptions {
-      subscription.cancel()
-    }
     subscriptions.removeAll()
   }
 
   func testBindToPassthroughSubject() {
-    // assign
+    // arrange
     let expectation = XCTestExpectation(description: "PassthroughSubject should receive value")
     let passthroughSubject = PassthroughSubject<String, Never>()
     let testValue = "Test"
@@ -45,7 +40,7 @@ final class PublisherBindTests: XCTestCase {
   }
 
   func testBindToCurrentValueSubject() {
-    // assign
+    // arrange
     let expectation = XCTestExpectation(description: "CurrentValueSubject should receive value")
     let currentValueSubject = CurrentValueSubject<String, Never>("Initial Value")
     let testValue = "Test"

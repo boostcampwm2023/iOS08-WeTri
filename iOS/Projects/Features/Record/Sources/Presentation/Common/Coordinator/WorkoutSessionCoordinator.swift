@@ -26,6 +26,10 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
   }
 
   func start() {
+    pushCountDownBeforeWorkout()
+  }
+
+  func pushWorkoutSession() {
     // TODO: Mock Data 연결 필요
     guard let jsonPath = Bundle(for: Self.self).path(forResource: "WorkoutSession", ofType: "json"),
           let jsonData = try? Data(contentsOf: .init(filePath: jsonPath))
@@ -56,5 +60,20 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
     let viewModel = WorkoutSummaryViewModel(workoutSummaryUseCase: useCase)
     let workoutSummaryViewController = WorkoutSummaryViewController(viewModel: viewModel)
     navigationController.setViewControllers([workoutSummaryViewController], animated: true)
+  }
+
+  func pushCountDownBeforeWorkout() {
+    // TODO: CountDown 관련 ViewController 생성
+    let useCase = CountDownBeforeWorkoutStartTimerUseCase(initDate: .now + 8)
+
+    let viewModel = CountDownBeforeWorkoutViewModel(coordinator: self, useCase: useCase)
+
+    let viewController = CountDownBeforeWorkoutViewController(viewModel: viewModel)
+    navigationController.pushViewController(viewController, animated: true)
+  }
+
+  func pushTapBarViewController() {
+    // TODO: 코디네이팅 종료에 관한 로직 생성
+    finishDelegate?.flowDidFinished(childCoordinator: self)
   }
 }

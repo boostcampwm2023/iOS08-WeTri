@@ -1,5 +1,5 @@
 //
-//  WorkoutSettingCoordinator.swift
+//  WorkoutEnvironmentSetUpCoordinator.swift
 //  RecordFeature
 //
 //  Created by 안종표 on 2023/11/20.
@@ -11,9 +11,9 @@ import Log
 import Trinet
 import UIKit
 
-// MARK: - WorkoutSettingCoordinator
+// MARK: - WorkoutEnvironmentSetUpCoordinator
 
-final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
+final class WorkoutEnvironmentSetUpCoordinator: WorkoutEnvironmentSetUpCoordinating {
   var navigationController: UINavigationController
   var childCoordinators: [Coordinating] = []
   weak var finishDelegate: CoordinatorFinishDelegate?
@@ -46,7 +46,7 @@ final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
   }
 
   func pushPeerRandomMatchingViewController(workoutSetting: WorkoutSetting) {
-    let repository = WorkoutPeerRandomMatchingRepository(session: makeMockDataFromRnaomMatching())
+    let repository = WorkoutPeerRandomMatchingRepository(session: makeMockDataFromRandomMatching())
 
     let useCase = WorkoutPeerRandomMatchingUseCase(repository: repository)
 
@@ -63,26 +63,22 @@ final class WorkoutSettingCoordinator: WorkoutSettingCoordinating {
     navigationController.dismiss(animated: true)
   }
 
-  func pushCountdownViewController(workoutSetting _: WorkoutSetting) {
-    // TODO: 뷰 컨트롤러 시작 로직 작성
-  }
-
   func finish(workoutSetting: WorkoutSetting) {
     settingDidFinishedDelegate?.workoutSettingCoordinatorDidFinished(workoutSetting: workoutSetting)
   }
 }
 
-private extension WorkoutSettingCoordinator {
-  func makeMockDataFromRnaomMatching() -> URLSessionProtocol {
-    let mockSession = MockURLSession(mockDataByURLString: makeMockDataFromRnaomMatchingDataByURLString())
+private extension WorkoutEnvironmentSetUpCoordinator {
+  func makeMockDataFromRandomMatching() -> URLSessionProtocol {
+    let mockSession = MockURLSession(mockDataByURLString: makeMockDataFromRandomMatchingDataByURLString())
     return mockSession
   }
 
-  func makeMockDataFromRnaomMatchingDataByURLString() -> [String: Data] {
+  func makeMockDataFromRandomMatchingDataByURLString() -> [String: Data] {
     let serverURL = Bundle.main.infoDictionary?["BaseURL"] as? String ?? ""
     let res = [
       "\(serverURL)/\(PersistencyProperty.matchStartPath)": mockDataMatchStart(),
-      "\(serverURL)/\(PersistencyProperty.matchCancellPath)": mockDataMatchStart(),
+      "\(serverURL)/\(PersistencyProperty.matchCancelPath)": mockDataMatchStart(),
       "\(serverURL)/\(PersistencyProperty.matchesRandomPath)": mockDataRandomMatching(),
     ]
     return res
@@ -132,7 +128,7 @@ private extension WorkoutSettingCoordinator {
     static let matchStartPath = "matches/start"
 
     static let matchCancel = "matchesCancel"
-    static let matchCancellPath = "matches/cancle"
+    static let matchCancelPath = "matches/cancle"
 
     static let matchesRandom = "MatchesRandom"
     static let matchesRandomPath = "matches/random"

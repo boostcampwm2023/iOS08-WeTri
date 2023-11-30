@@ -1,15 +1,20 @@
+import { Redis } from 'ioredis';
+import { AuthAppleService } from './auth-apple.service';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import {JwtService, TokenExpiredError} from '@nestjs/jwt';
 import { ProfilesService } from '../profiles/profiles.service';
 import { User } from '../users/entities/users.entity';
 import { UsersService } from '../users/users.service';
 import { SignupDto } from './dto/signup.dto';
+import { v4 as uuidv4 } from 'uuid';
 import {
   InvalidTokenException,
   NicknameDuplicateException,
   NotRefreshTokenException,
 } from './exceptions/auth.exception';
 import * as process from 'process';
+import { WetriWebSocket } from 'src/live-workouts/events/types/custom-websocket.type';
+import { GetuserByUserIdAndProViderDto } from './dto/getUserByUserIdAndProvider.dto';
 
 @Injectable()
 export class AuthService {
@@ -17,10 +22,11 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
     private readonly profilesService: ProfilesService,
+    private readonly authAppleService: AuthAppleService,
+    @Inject('DATA_REDIS') private readonly redisData: Redis
   ) {}
 
   signToken(publicId: string, isRefreshToken: boolean) {
-    //payload에는 sub -> id가 들어감 (사용자를 고유하게 식별하는데 사용), type (access token, refresh token)
     const payload = {
       sub: publicId,
       type: isRefreshToken ? 'refresh' : 'access',
@@ -41,23 +47,9 @@ export class AuthService {
     };
   }
 
-  async authenticateWithUserIdAndProvider(
-    user: Pick<User, 'userId' | 'provider'>,
-  ) {
-    const existingUser =
-      await this.usersService.getUserByUserIdAndProvider(user);
-
-    if (!existingUser) {
-      //   throw new UnauthorizedException('존재하지 않는 사용자입니다.');
-      console.log('회원가입 페이지로 리디렉션');
-    }
-
-    return existingUser;
-  }
-
+  
   async registerWithUserIdAndProvider(signupInfo: SignupDto) {
     if (await this.profilesService.existByNickname(signupInfo.nickname)) {
-      //   throw new BadRequestException('중복된 nickname 입니다.');
       throw new NicknameDuplicateException();
     }
     const newUser = await this.usersService.createUser(signupInfo);
@@ -79,12 +71,38 @@ export class AuthService {
     return token;
   }
 
+  async verifyWs(authorization: string, client: WetriWebSocket) {
+    if (!authorization) {
+      return false;
+    }
+
+    const token = this.extractTokenFromHeader(authorization);
+    const decoded = await this.verifyToken(token);
+
+    if (!decoded) {
+      return false;
+    }
+
+    const profile = await this.profilesService.findByPublicId(decoded.sub);
+
+    if (!profile) {
+      return false;
+    }
+
+    client.id = profile.publicId;
+    client.profile = profile;
+    client.token = token;
+    client.tokenType = decoded.type;
+
+    return true;
+  }
+
   verifyToken(token: string) {
     try {
       return this.jwtService.verify(token, {
         secret: process.env.JWT_SECRET,
       });
-    } catch (e) {
+    } catch (error)
       throw new InvalidTokenException();
     }
   }
@@ -96,5 +114,30 @@ export class AuthService {
     }
 
     return this.signToken(decoded.sub, isRefreshToken);
+  }
+
+  async checkSignUp(userId: string) {
+    const userInfo: GetuserByUserIdAndProViderDto = {
+      userId,
+      provider: 'apple',
+    };
+    const user = this.usersService.getUserByUserIdAndProvider(userInfo);
+    return user;
+  }
+
+  async appleSignIn(token: string) {
+    const userId = await this.authAppleService.getAppleSub(token);
+    const user = await this.checkSignUp(userId);
+    if (!user) {
+      const mappedUserID = uuidv4();
+      await this.redisData.set(mappedUserID, userId, 'EX', 600);
+      return {
+        redirectUrl: 'api/v1/auth/signup',
+        mappedUserID,
+        provider: 'apple',
+      };
+    } else {
+      return this.loginUser(user.profile.publicId);
+    }
   }
 }
