@@ -19,7 +19,7 @@ final class RefreshTokenAdaptor: TNRequestInterceptor {
     var mutatbleRequest = request
     if let refreshToken = RefreshTokenManager.refreshToken {
       let headerValue = "Bearer \(refreshToken)"
-      mutatbleRequest.addValue(headerValue, forHTTPHeaderField: "authorization")
+      mutatbleRequest.setValue(headerValue, forHTTPHeaderField: "authorization")
     }
     return mutatbleRequest
   }

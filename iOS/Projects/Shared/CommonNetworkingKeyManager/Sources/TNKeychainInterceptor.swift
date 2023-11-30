@@ -30,7 +30,7 @@ extension TNKeychainInterceptor: TNRequestInterceptor {
       return request
     }
     var mutatableRequest = request
-    mutatableRequest.addValue(accessToken, forHTTPHeaderField: "Authorization")
+    mutatableRequest.setValue(accessToken, forHTTPHeaderField: "Authorization")
 
     return mutatableRequest
   }
@@ -46,7 +46,7 @@ extension TNKeychainInterceptor: TNRequestInterceptor {
     if code == 401 {
       try await refreshAccessToken(session: session)
       try await refreshRefreshToken(session: session)
-      return try await session.data(for: request, delegate: nil)
+      return try await session.data(for: addAccessToken(request: request), delegate: nil)
     }
 
     return (data, response)
