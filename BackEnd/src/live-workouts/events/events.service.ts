@@ -8,11 +8,8 @@ export class EventsService {
   constructor(@Inject('DATA_REDIS') private readonly redisData: Redis) {}
 
   async checkMatching(matchInfo: CheckMatchingDto) {
-    const resultUserId = await this.redisData.get(matchInfo.matchingKey);
-    if (!resultUserId) {
-      return false;
-    }
-    if (resultUserId !== matchInfo.roomId) {
+    const resultRoomId = await this.redisData.get(matchInfo.matchingKey);
+    if (resultRoomId !== matchInfo.roomId) {
       return false;
     }
     return true;
