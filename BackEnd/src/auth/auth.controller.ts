@@ -11,13 +11,14 @@ import {
   SignupResDto,
 } from './dto/auth-response.dto';
 import { SignInDto } from './dto/signin.dto';
+import { SigninRedirectResDto } from './dto/signinRedirectRes.dto';
 
 @ApiTags('Authentication')
 @Controller('api/v1/auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-  ) {}
+  ) { }
 
   @ApiOperation({ summary: '유저 회원가입' })
   @ApiBody({ description: 'The ID of the item', type: SignupDto })
@@ -72,8 +73,16 @@ export class AuthController {
 
   @ApiOperation({ summary: '유저 애플 로그인' })
   @ApiBody({ description: 'Identity Token, AuthorizationCode', type: SignInDto })
-  @ApiResponse({ status: 200, description: '로그인 성공' })
-  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({
+    status: 200,
+    description: '로그인 성공',
+    type: SignupResDto,
+  })
+  @ApiResponse({
+    status: 201,
+    description: '첫 로그인 회원가입 페이지로 이동',
+    type: SigninRedirectResDto
+  })
   @Post('apple/signin')
   async appleSignIn(@IdentityToken() token: string) {
     return this.authService.appleSignIn(token);
