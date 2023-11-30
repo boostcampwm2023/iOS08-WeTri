@@ -29,6 +29,7 @@ public final class WorkoutSessionViewController: UIViewController {
   private var participantsDataSource: ParticipantsDataSource?
 
   @Published private var healthData: WorkoutHealth = .init(
+    workoutTime: 0,
     distance: nil,
     calorie: nil,
     averageHeartRate: nil,
@@ -114,6 +115,7 @@ public final class WorkoutSessionViewController: UIViewController {
         // FIXME: 데이터모델을 수정해야합니다.
         case let .connectHealthData(distance: distance, calories: calories, heartRate: heartRate):
           self?.healthData = WorkoutHealth(
+            workoutTime: 0,
             distance: distance,
             calorie: calories,
             averageHeartRate: heartRate,
