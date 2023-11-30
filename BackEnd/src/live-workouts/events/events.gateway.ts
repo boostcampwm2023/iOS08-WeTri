@@ -1,19 +1,16 @@
 import {
   WebSocketGateway,
   SubscribeMessage,
-  MessageBody,
   WebSocketServer,
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
 } from '@nestjs/websockets';
-import * as WebSocket from 'ws';
 import { EventsService } from './events.service';
 import { ExtensionWebSocketService } from './extensionWebSocket.service';
 import { WetriWebSocket, WetriServer } from './types/custom-websocket.type';
 import { AuthService } from '../../auth/auth.service';
 import { CheckMatchingDto } from './dto/checkMatching.dto';
-import { Logger } from '@nestjs/common';
 
 @WebSocketGateway(3003)
 export class EventsGateway

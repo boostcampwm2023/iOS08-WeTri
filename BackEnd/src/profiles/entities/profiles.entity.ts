@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsString, IsUrl } from 'class-validator';
 import { Post } from '../../posts/entities/posts.entity';
 import { Record } from '../../records/entities/records.entity';
 import { User } from '../../users/entities/users.entity';
@@ -57,6 +57,10 @@ export class Profile {
   @Column({ unique: true })
   @Generated('uuid')
   publicId: string;
+
+  @Column({ nullable: true })
+  @IsUrl()
+  profileImage: string;
 
   @OneToOne(() => User, (user) => user.profile)
   user: User;

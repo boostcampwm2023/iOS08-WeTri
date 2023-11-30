@@ -12,9 +12,9 @@ class ProfileDto extends PickType(Profile, [
 
 export class SignupDto extends IntersectionType(UserDto, ProfileDto) {
   @ApiProperty({
-    example: "WQRWR-214-SADF",
-    description: 'userId를 매핑한 uuid입니다.'
+    example: 'WQRWR-214-SADF',
+    description: 'userId를 매핑한 uuid입니다.',
   })
   @IsString()
-  mappedUserID: string
+  mappedUserID: string;
 }

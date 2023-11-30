@@ -17,7 +17,7 @@ class Token {
 
 class AccessToken extends PickType(Token, ['accessToken']) {}
 
-class RefreshToken extends PickType(Token, ['refreshToken']){}
+class RefreshToken extends PickType(Token, ['refreshToken']) {}
 
 export class SignupResDto extends SuccessResDto {
   @ApiProperty({ type: () => Token })
@@ -26,10 +26,10 @@ export class SignupResDto extends SuccessResDto {
 
 export class CreateAccessTokenResDto extends SuccessResDto {
   @ApiProperty({ type: () => AccessToken })
-  data: AccessToken
+  data: AccessToken;
 }
 
 export class CreateRefreshTokenResDto extends SuccessResDto {
-  @ApiProperty({ type: () => RefreshToken})
+  @ApiProperty({ type: () => RefreshToken })
   data: RefreshToken;
 }
