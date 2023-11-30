@@ -104,7 +104,7 @@ private extension OnboardingViewController {
 
     view.addSubview(onboardingImage)
     onboardingImage.topAnchor
-      .constraint(equalTo: safeArea.topAnchor, constant: 100).isActive = true
+      .constraint(equalTo: safeArea.topAnchor, constant: Metrics.imageAndSafeAreaSpacing).isActive = true
     onboardingImage.leadingAnchor
       .constraint(equalTo: safeArea.leadingAnchor, constant: ConstraintsGuideLine.value).isActive = true
     onboardingImage.trailingAnchor
@@ -187,6 +187,7 @@ private extension OnboardingViewController {
   }
 
   enum Metrics {
+    static let imageAndSafeAreaSpacing: CGFloat = 100
     static let imageHeight: CGFloat = 250
     static let ImageAndTitleSpacing: CGFloat = 45
     static let titleAndSubtitleSpacing: CGFloat = 15
