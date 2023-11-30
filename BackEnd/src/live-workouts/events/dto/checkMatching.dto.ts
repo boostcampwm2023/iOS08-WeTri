@@ -2,7 +2,7 @@ import { IsString } from 'class-validator';
 
 export class CheckMatchingDto {
   @IsString()
-  clientId: string;
+  matchingKey: string;
 
   @IsString()
   roomId: string;

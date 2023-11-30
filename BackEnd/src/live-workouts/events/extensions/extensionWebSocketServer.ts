@@ -38,7 +38,7 @@ export class ExtensionWebSocketServer {
       this.rooms.set(roomId, new Set());
     }
     if (this.rooms.get(roomId).size === 0) {
-      this.subscribe(`room:${roomId}`);
+      this.subscribe(`channel/${roomId}`);
     }
     if (!this.sids.has(clientId)) {
       this.sids.set(clientId, new Set());
@@ -54,7 +54,7 @@ export class ExtensionWebSocketServer {
       curRoom.delete(clientId);
       await this.redisData.srem(roomId, clientId);
       if (curRoom.size === 0) {
-        this.unSubscribe(`room:${roomId}`);
+        this.unSubscribe(`channel/${roomId}`);
       }
     }
     if (this.sids.has(clientId)) {
@@ -70,7 +70,10 @@ export class ExtensionWebSocketServer {
           jsonMessage['issuedClientId'] = issuedClientId;
         }
         if (this.rooms.has(roomId)) {
-          this.redisData.publish(`room:${roomId}`, JSON.stringify(jsonMessage));
+          this.redisData.publish(
+            `channel/${roomId}`,
+            JSON.stringify(jsonMessage),
+          );
         }
       },
     };
@@ -87,7 +90,7 @@ export class ExtensionWebSocketServer {
 
   handlePublishMessage() {
     this.redisSubscribe.on('message', (channel, message) => {
-      const chSplit = channel.split(':');
+      const chSplit = channel.split('/');
       if (chSplit.length !== 2) {
         return;
       }

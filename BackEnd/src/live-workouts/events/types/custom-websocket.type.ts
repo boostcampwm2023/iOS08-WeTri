@@ -24,6 +24,7 @@ export interface WetriWebSocket extends WebSocket {
   join: (roomId: string) => void;
   leave: (roomId: string) => void;
   to: (roomId: string) => { emit: (event: string, message: string) => void };
+  wemit: (event: string, message: string) => void;
   authorization?: string;
   profile?: Profile;
   token?: string;

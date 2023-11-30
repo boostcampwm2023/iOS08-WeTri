@@ -1,14 +1,17 @@
+import * as WebSocket from 'ws';
 import { WetriServer, WetriWebSocket } from '../types/custom-websocket.type';
 
-export class ExtensionWebSocket {
+export class ExtensionWebSocket extends WebSocket {
   server: WetriServer;
   id: string;
   constructor(client: WetriWebSocket, server: WetriServer) {
+    super(null);
     client.id = client.profile.publicId;
     client.server = server;
     client.join = this.join;
     client.leave = this.leave;
     client.to = this.to;
+    client.wemit = this.wemit;
     client.server.clientMap.set(client.id, client);
     client.on('close', () => {
       if (client.server.sids.has(client.id)) {
@@ -34,5 +37,10 @@ export class ExtensionWebSocket {
         this.server.to(roomId).emit(event, message, this.id);
       },
     };
+  }
+
+  wemit(event: string, message: string): boolean {
+    this.send(JSON.stringify({ event, message }));
+    return true;
   }
 }

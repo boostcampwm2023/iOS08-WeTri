@@ -12,9 +12,8 @@ import { EventsService } from './events.service';
 import { ExtensionWebSocketService } from './extensionWebSocket.service';
 import { WetriWebSocket, WetriServer } from './types/custom-websocket.type';
 import { AuthService } from '../../auth/auth.service';
-import { ProfilesService } from '../../profiles/profiles.service';
 import { CheckMatchingDto } from './dto/checkMatching.dto';
-import { Logger, Headers } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 
 @WebSocketGateway(3003)
 export class EventsGateway
@@ -37,7 +36,10 @@ export class EventsGateway
       client.close();
       return;
     }
-    const matchInfo: CheckMatchingDto = { clientId: client.id, roomId: roomid };
+    const matchInfo: CheckMatchingDto = {
+      matchingKey: `userMatch:${client.id}`,
+      roomId: roomid,
+    };
     const resultCheckMatching =
       await this.eventsService.checkMatching(matchInfo);
     if (!resultCheckMatching) {
@@ -50,7 +52,11 @@ export class EventsGateway
 
   @SubscribeMessage('workout_session')
   onWorkoutSession(client: WetriWebSocket, data: any): void {
-    this.server.to(data.roomId).emit('workout_session', JSON.stringify(data));
+    if (!this.eventsService.checkMsgRoomId(data)) {
+      client.wemit('workout_session', 'data에 roomId를 포함시켜주세요.');
+    } else {
+      this.server.to(data.roomId).emit('workout_session', JSON.stringify(data));
+    }
   }
 
   handleDisconnect(client: any) {}
