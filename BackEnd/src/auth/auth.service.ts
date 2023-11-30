@@ -1,5 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import {JwtService, TokenExpiredError} from '@nestjs/jwt';
 import { ProfilesService } from '../profiles/profiles.service';
 import { User } from '../users/entities/users.entity';
 import { UsersService } from '../users/users.service';
@@ -80,9 +80,13 @@ export class AuthService {
   }
 
   verifyToken(token: string) {
-    return this.jwtService.verify(token, {
-      secret: process.env.JWT_SECRET,
-    });
+    try {
+      return this.jwtService.verify(token, {
+        secret: process.env.JWT_SECRET,
+      });
+    } catch (e) {
+      throw new InvalidTokenException();
+    }
   }
 
   rotateToken(token: string, isRefreshToken: boolean) {
