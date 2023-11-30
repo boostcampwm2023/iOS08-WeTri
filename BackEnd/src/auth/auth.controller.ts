@@ -16,7 +16,6 @@ import {
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly authAppleService: AuthAppleService,
   ) {}
 
   @ApiOperation({ summary: '유저 회원가입' })
@@ -75,7 +74,6 @@ export class AuthController {
   @ApiResponse({ status: 400, description: 'Bad request' })
   @Post('apple/signin')
   async appleSignIn(@IdentityToken() token: string) {
-    const userInfo = await this.authAppleService.getAppleUserId(token);
-    console.log(userInfo);
+    return this.authService.appleSignIn(token);
   }
 }

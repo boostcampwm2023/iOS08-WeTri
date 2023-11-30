@@ -1,3 +1,4 @@
+import { AuthAppleService } from './auth-apple.service';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ProfilesService } from '../profiles/profiles.service';
@@ -11,6 +12,7 @@ import {
 } from './exceptions/auth.exception';
 import * as process from 'process';
 import { WetriWebSocket } from 'src/live-workouts/events/types/custom-websocket.type';
+import { GetuserByUserIdAndProViderDto } from './dto/getUserByUserIdAndProvider.dto';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +20,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
     private readonly profilesService: ProfilesService,
+    private readonly authAppleService: AuthAppleService,
   ) {}
 
   signToken(publicId: string, isRefreshToken: boolean) {
@@ -119,5 +122,25 @@ export class AuthService {
     }
 
     return this.signToken(decoded.sub, isRefreshToken);
+  }
+
+  async checkSignUp(userId: string) {
+    const userInfo: GetuserByUserIdAndProViderDto = {userId, provider: 'apple'};
+    const user = this.usersService.getUserByUserIdAndProvider(userInfo);
+    return user;
+  }
+
+  async appleSignIn(token: string) {
+    const userId = await this.authAppleService.getAppleUserId(token);
+    const user = await this.checkSignUp(userId);
+    if(!user) {
+      return {
+        redirectUrl: 'api/v1/auth/signup',
+        userId,
+        provider: 'apple',
+      }
+    } else {
+      return this.loginUser(user.profile.publicId);
+    }
   }
 }

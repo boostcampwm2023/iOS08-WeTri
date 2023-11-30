@@ -1,3 +1,4 @@
+import { GetuserByUserIdAndProViderDto } from './../auth/dto/getUserByUserIdAndProvider.dto';
 import { Injectable } from '@nestjs/common';
 import { User } from './entities/users.entity';
 import { Repository } from 'typeorm';
@@ -28,11 +29,11 @@ export class UsersService {
     return newUesr;
   }
 
-  async getUserByUserIdAndProvider(user: Pick<User, 'userId' | 'provider'>) {
-    return this.usersRepository.findOne({
+  async getUserByUserIdAndProvider(userInfo: GetuserByUserIdAndProViderDto) {
+    return await this.usersRepository.findOne({
       where: {
-        userId: user.userId,
-        provider: user.provider,
+        userId: userInfo.userId,
+        provider: userInfo.provider,
       },
     });
   }
