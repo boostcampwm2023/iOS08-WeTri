@@ -31,7 +31,7 @@ export class AuthAppleService {
     return decoded;
   }
 
-  async getAppleUserId(token: string) {
+  async getAppleSub(token: string) {
     const decoded = await this.verifyToken(token);
     return decoded.sub;
   }

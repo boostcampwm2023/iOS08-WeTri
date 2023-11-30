@@ -12,10 +12,10 @@ class SigninRedirectRes {
 
   @ApiProperty({
     example: '1233498sdafksdjhfk...',
-    description: 'userId -> 애플리케이션에서 고유한 apple id를 뜻함',
+    description: 'mappedUserID -> 애플리케이션에서 고유한 apple id를 매핑한 uuid',
   })
   @IsString()
-  userId: string;
+  mappedUserID: string;
 
   @ApiProperty({
     example: 'apple',
