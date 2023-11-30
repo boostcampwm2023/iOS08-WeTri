@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Log
 import CombineCocoa
 import Foundation
 
@@ -27,7 +28,7 @@ protocol WorkoutSessionUseCaseRepresentable {}
 
 final class WorkoutSessionUseCase {
   private let myHealthFormSubject: CurrentValueSubject<WorkoutHealthForm, Error> = .init(.init(distance: 0, calorie: 0, averageHeartRate: 0, minimumHeartRate: 0, maximumHeartRate: 0))
-  private let dataSentSubject: PassthroughSubject<WorkoutRealTimeModel, Error> = .init()
+  private let participantsStatusSubject: PassthroughSubject<WorkoutRealTimeModel, Error> = .init()
 
   private let healthRepository: HealthRepositoryRepresentable
   private let socketRepository: WorkoutSocketRepositoryRepresentable
@@ -57,14 +58,22 @@ final class WorkoutSessionUseCase {
         ) { (distance: $0, calories: $1, heartRate: $2) }
       }
 
+    // 기록할 운동 데이터를 myHealthForm에 전달
     healthDataPublisher
       .map(calculateHealthForm(distance:calories:heartRates:))
       .bind(to: myHealthFormSubject)
       .store(in: &subscriptions)
 
+    // 소켓으로 자신의 데이터 전달
     healthDataPublisher
       .map(calculateWorkoutRealTimeModel(distance:calories:heartRates:))
-      .bind(to: dataSentSubject)
+      .flatMap(socketRepository.sendMyWorkout(with:))
+      .sink { completion in
+        if case let .failure(error) = completion {
+          Log.make(with: .network).error("\(error)")
+        }
+      } receiveValue: { _ in
+      }
       .store(in: &subscriptions)
   }
 
