@@ -11,13 +11,13 @@ import { WorkoutsModule } from './workouts/workouts.module';
 import { EventsModule } from './live-workouts/events/events.module';
 import { MatchesModule } from './live-workouts/matches/matches.module';
 import { AdminModule } from './admin/admin.module';
-import {ImagesModule} from "./images/images.module";
-import {ConfigModule} from "@nestjs/config";
+import { ImagesModule } from './images/images.module';
+import { ConfigModule } from '@nestjs/config';
 import { RedisModule } from './common/redis.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({isGlobal: true}),
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot(typeOrmConfig),
     RedisModule,
     AuthModule,

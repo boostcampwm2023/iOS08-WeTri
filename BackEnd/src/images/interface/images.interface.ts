@@ -1,4 +1,4 @@
 export interface FileUploadOptions {
-    maxSize: number;
-    fileType: string[];
+  maxSize: number;
+  fileType: string[];
 }

@@ -1,4 +1,4 @@
-import {IsString, IsUrl} from 'class-validator';
+import { IsString, IsUrl } from 'class-validator';
 import { Post } from '../../posts/entities/posts.entity';
 import { Record } from '../../records/entities/records.entity';
 import { User } from '../../users/entities/users.entity';
@@ -14,7 +14,7 @@ import {
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Admin } from '../../admin/entities/admin.entity';
-import * as url from "url";
+import * as url from 'url';
 
 @Entity()
 export class Profile {
