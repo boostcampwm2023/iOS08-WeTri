@@ -15,4 +15,14 @@ struct AuthorizationInfoRequestDTO: Codable {
 
   /// authorizationCode
   let authorizationCode: String
+
+  init?(identityTokenData: Data, authorizationCodeData: Data) {
+    guard let identityToken = String(data: identityTokenData, encoding: .utf8),
+          let authorizationCode = String(data: authorizationCodeData, encoding: .utf8)
+    else {
+      return nil
+    }
+    self.identityToken = identityToken
+    self.authorizationCode = authorizationCode
+  }
 }

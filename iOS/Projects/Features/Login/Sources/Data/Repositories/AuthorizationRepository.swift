@@ -32,12 +32,13 @@ public struct AuthorizationRepository: AuthorizationRepositoryRepresentable {
   public func fetch(authorizationInfo: AuthorizationInfo) -> AnyPublisher<Token, Never> {
     return Future<Data, Error> { promise in
       Task {
-        guard let identityToken = String(data: authorizationInfo.identityToken, encoding: .utf8),
-              let authorizationCode = String(data: authorizationInfo.authorizationCode, encoding: .utf8)
+        guard let authorizationInfoRequestDTO = AuthorizationInfoRequestDTO(
+          identityTokenData: authorizationInfo.identityToken,
+          authorizationCodeData: authorizationInfo.authorizationCode
+        )
         else {
           return promise(.failure(AuthorizationRepositoryError.invalidToken))
         }
-        let authorizationInfoRequestDTO = AuthorizationInfoRequestDTO(identityToken: identityToken, authorizationCode: authorizationCode)
 
         let data = try await provider.request(.signIn(authorizationInfoRequestDTO))
         promise(.success(data))
