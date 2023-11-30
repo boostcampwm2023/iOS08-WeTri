@@ -121,7 +121,12 @@ private extension RecordListViewController {
       break
     case let .sucessRecords(records):
       let workoutInformationItems = records.map {
-        WorkoutInformationItem(sport: $0.mode.description, time: $0.timeToTime, distance: "\($0.distance)km")
+        WorkoutInformationItem(
+          sport: $0.mode.description,
+          startTime: $0.startTime,
+          endTime: $0.endTime,
+          distance: "\($0.distance)km"
+        )
       }
       configureSnapShot(items: workoutInformationItems)
       workoutInformationCollectionView.isHidden = false
@@ -182,7 +187,8 @@ private extension RecordListViewController {
       cell.configure(workoutInformation:
         WorkoutInformation(
           sport: item.sport,
-          time: item.time,
+          startTime: item.startTime,
+          endTime: item.endTime,
           distance: item.distance
         )
       )
@@ -247,6 +253,7 @@ private enum Section {
 private struct WorkoutInformationItem: Identifiable, Hashable {
   let id = UUID()
   let sport: String
-  let time: String
+  let startTime: String
+  let endTime: String
   let distance: String
 }

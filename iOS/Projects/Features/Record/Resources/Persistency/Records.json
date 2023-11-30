@@ -3,7 +3,7 @@
   "errorMessage": null,
   "data": [
     {
-      "workoutTime": 6000000,
+      "workoutTime": 60000,
       "distance": 100000,
       "calorie": 360,
       "avgHeartRate": 60,
@@ -13,7 +13,7 @@
       "workout": "달리기"
     },
     {
-      "workoutTime": 6000000,
+      "workoutTime": 60000,
       "distance": 100000,
       "calorie": 360,
       "avgHeartRate": 60,
@@ -23,7 +23,7 @@
       "workout": "수영"
     },
     {
-      "workoutTime": 6000000,
+      "workoutTime": 60000,
       "distance": 100000,
       "calorie": 360,
       "avgHeartRate": 60,
@@ -33,7 +33,7 @@
       "workout": "자전거"
     },
     {
-      "workoutTime": 6000000,
+      "workoutTime": 60000,
       "distance": 100000,
       "calorie": 360,
       "avgHeartRate": 60,
@@ -43,7 +43,7 @@
       "workout": "달리기"
     },
     {
-      "workoutTime": 6000000,
+      "workoutTime": 60000,
       "distance": 100000,
       "calorie": 360,
       "avgHeartRate": 60,

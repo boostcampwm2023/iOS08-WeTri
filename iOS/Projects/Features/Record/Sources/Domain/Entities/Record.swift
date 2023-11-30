@@ -15,8 +15,11 @@ struct Record {
   /// 현재 운동의 목록을 나타냅니다.
   let mode: String
 
-  /// 몇시몇분부터 몇시몇분까지 운동하였는지 나타내줍니다.
-  let timeToTime: String
+  /// 운동 시작 시간
+  let startTime: String
+
+  /// 운동 끝 시간
+  let endTime: String
 
   /// 총 운동한 거리를 "미터"단위로 표시해줍니다.
   let distance: Int

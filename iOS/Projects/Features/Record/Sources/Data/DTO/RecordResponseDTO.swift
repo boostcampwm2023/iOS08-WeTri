@@ -31,16 +31,17 @@ extension Record {
           let distance = dto.distance,
           let createdAt = dto.createdAt,
           let workoutTime = dto.workoutTime,
-          let resultTimeToTime = Record.timeToTime(createdAt: createdAt, workoutTime: workoutTime)
+          let (startTime, endTime) = Record.timeToTime(createdAt: createdAt, workoutTime: workoutTime)
     else {
       return nil
     }
     mode = workout
     self.distance = distance
-    timeToTime = resultTimeToTime
+    self.startTime = startTime
+    self.endTime = endTime
   }
 
-  private static func timeToTime(createdAt: String, workoutTime: Int) -> String? {
+  private static func timeToTime(createdAt: String, workoutTime: Int) -> (startTime: String, endTime: String)? {
     let startTime = createdAt.components(separatedBy: " ")[1]
     guard let time = separateTime(startTime: startTime) else {
       return nil
@@ -49,7 +50,7 @@ extension Record {
     let endSeconds = startSeconds + workoutTime
     let start = prettyStyle(time: timeToHourMinuteSecond(seconds: startSeconds))
     let end = prettyStyle(time: timeToHourMinuteSecond(seconds: endSeconds))
-    return "\(start)~\(end)"
+    return (start, end)
   }
 
   private static func separateTime(startTime: String) -> Time? {
