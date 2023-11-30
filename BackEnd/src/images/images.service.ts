@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
-import { audit } from 'rxjs';
 import { ADULT_RATIO, PORN_RATIO } from './constant/images.constant';
 
 @Injectable()

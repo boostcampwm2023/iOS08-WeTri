@@ -1,9 +1,8 @@
 import { Redis } from 'ioredis';
 import { AuthAppleService } from './auth-apple.service';
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import {JwtService, TokenExpiredError} from '@nestjs/jwt';
+import { Inject, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { ProfilesService } from '../profiles/profiles.service';
-import { User } from '../users/entities/users.entity';
 import { UsersService } from '../users/users.service';
 import { SignupDto } from './dto/signup.dto';
 import { v4 as uuidv4 } from 'uuid';
@@ -23,7 +22,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly profilesService: ProfilesService,
     private readonly authAppleService: AuthAppleService,
-    @Inject('DATA_REDIS') private readonly redisData: Redis
+    @Inject('DATA_REDIS') private readonly redisData: Redis,
   ) {}
 
   signToken(publicId: string, isRefreshToken: boolean) {
@@ -47,7 +46,6 @@ export class AuthService {
     };
   }
 
-  
   async registerWithUserIdAndProvider(signupInfo: SignupDto) {
     if (await this.profilesService.existByNickname(signupInfo.nickname)) {
       throw new NicknameDuplicateException();

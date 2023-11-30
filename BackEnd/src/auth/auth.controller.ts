@@ -2,7 +2,6 @@ import { Body, Controller, Headers, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RefreshTokenGuard } from './guard/bearerToken.guard';
 import { SignupDto } from './dto/signup.dto';
-import { AuthAppleService } from './auth-apple.service';
 import { IdentityToken } from './decorator/apple-token.decorator';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {

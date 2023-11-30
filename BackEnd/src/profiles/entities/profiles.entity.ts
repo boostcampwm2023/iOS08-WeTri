@@ -14,7 +14,6 @@ import {
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Admin } from '../../admin/entities/admin.entity';
-import * as url from 'url';
 
 @Entity()
 export class Profile {
