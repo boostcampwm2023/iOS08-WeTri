@@ -38,11 +38,22 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
       return
     }
 
+    let healthDependency = WorkoutSessionUseCaseDependency(date: .now, roomID: "해시값", id: "자신의 아이디값", nickname: "내 닉네임")
+    let healthRepository = HealthRepository()
+
+    let sessionUseCase = WorkoutSessionUseCase(
+      repository: healthRepository,
+      dependency: healthDependency
+    )
+
+    let sessionViewModel = WorkoutSessionViewModel(useCase: sessionUseCase)
+    let sessionViewController = WorkoutSessionViewController(viewModel: sessionViewModel)
+
     let session: URLSessionProtocol = isMockEnvironment ? MockURLSession(mockData: jsonData) : URLSession.shared
     let repository = WorkoutRecordRepository(session: session)
     let useCase = WorkoutRecordUseCase(repository: repository)
     let viewModel = WorkoutSessionContainerViewModel(workoutRecordUseCase: useCase, coordinating: self)
-    let viewController = WorkoutSessionContainerViewController(viewModel: viewModel)
+    let viewController = WorkoutSessionContainerViewController(viewModel: viewModel, healthDataProtocol: sessionViewController)
     navigationController.pushViewController(viewController, animated: true)
   }
 
