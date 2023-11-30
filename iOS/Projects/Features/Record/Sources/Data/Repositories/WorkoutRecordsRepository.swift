@@ -41,7 +41,17 @@ struct WorkoutRecordsRepository: WorkoutRecordsRepositoryRepresentable {
         return promise(.success(data))
       }
     }
-    .decode(type: [Record].self, decoder: JSONDecoder())
+    .decode(type: [RecordResponseDTO].self, decoder: JSONDecoder())
+    .map { recordResposeDTOs -> [Record] in
+      var records: [Record] = []
+      for recordResonseDTO in recordResposeDTOs {
+        guard let record = Record(dto: recordResonseDTO) else {
+          continue
+        }
+        records.append(record)
+      }
+      return records
+    }
     .catch { error -> AnyPublisher<[Record], Error> in
       Log.make().error("\(error)")
       return Just([])
