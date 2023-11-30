@@ -11,6 +11,7 @@ import UIKit
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   var window: UIWindow?
+  private var coordinating: AppCoordinating?
 
   func scene(_ scene: UIScene, willConnectTo _: UISceneSession, options _: UIScene.ConnectionOptions) {
     guard let windowScene = scene as? UIWindowScene else { return }
@@ -18,6 +19,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     window = UIWindow(windowScene: windowScene)
     window?.rootViewController = navigationController
     let coordinator = AppCoordinator(navigationController: navigationController)
+    coordinating = coordinator
     coordinator.start()
     window?.makeKeyAndVisible()
   }

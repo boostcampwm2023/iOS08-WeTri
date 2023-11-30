@@ -12,10 +12,23 @@ export const WorkoutResDtoSwagger = () => {
     example: {
       code: null,
       errorMessage: null,
-      data: {
-        id: 1,
-        name: '달리기',
-      },
+      data: [
+        {
+          id: 1,
+          name: '달리기',
+          icon: 'figure.outdoor.a',
+        },
+        {
+          id: 2,
+          name: '수영',
+          icon: 'figure.outdoor.b',
+        },
+        {
+          id: 3,
+          name: '사이클',
+          icon: 'figure.outdoor.c',
+        },
+      ]
     },
   };
 };

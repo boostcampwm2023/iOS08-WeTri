@@ -35,6 +35,7 @@ public extension [Target] {
 
     let mergedInfoPlist: [String: Plist.Value] = [
       "BaseURL": "$(BASE_URL)",
+      "SocketURL": "$(SOCKET_URL)",
       "UILaunchStoryboardName": "LaunchScreen",
       "UIApplicationSceneManifest": [
         "UIApplicationSupportsMultipleScenes": false,
@@ -122,7 +123,7 @@ public extension [Target] {
     resources: ResourceFileElements? = nil
   ) -> [Target] {
 
-    let mergedInfoPlist: [String: Plist.Value] = ["BaseURL": "$(BASE_URL)"].merging(infoPlist) { _, new in
+    let mergedInfoPlist: [String: Plist.Value] = ["BaseURL": "$(BASE_URL)", "SocketURL": "$(SOCKET_URL)"].merging(infoPlist) { _, new in
       new
     }
 
@@ -203,7 +204,7 @@ public extension [Target] {
     settings: Settings? = nil
   ) -> [Target] {
     
-    let mergedInfoPlist: [String: Plist.Value] = ["BaseURL": "$(BASE_URL)"].merging(infoPlist) { _, new in
+    let mergedInfoPlist: [String: Plist.Value] = ["BaseURL": "$(BASE_URL)", "SocketURL": "$(SOCKET_URL)"].merging(infoPlist) { _, new in
       new
     }
 
