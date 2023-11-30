@@ -16,6 +16,7 @@ import Trinet
 struct WorkoutSocketRepository {
   private let provider: TNSocketProvider<WorkoutSocketEndPoint>
 
+  private let jsonDecoder: JSONDecoder = .init()
   private var task: Task<Void, Error>?
 
   private let subject: PassthroughSubject<WorkoutRealTimeModel, Error> = .init()
@@ -28,19 +29,60 @@ struct WorkoutSocketRepository {
     task = receiveParticipantsData()
   }
 
+  private func stringToWorkoutRealTimeModel(rawString: String) throws -> WorkoutRealTimeModel {
+    guard let jsonData = rawString.data(using: .utf8) else {
+      throw WorkoutSocketRepositoryError.invalidStringForConversion
+    }
+    return try jsonDecoder.decode(WorkoutRealTimeModel.self, from: jsonData)
+  }
+
   private func receiveParticipantsData() -> Task<Void, Error> {
     return Task {
       Log.make(with: .network).debug("receive Ready")
-      while let data = try await provider.receive() {
-        switch data {
-        case let .string(string):
-          Log.make(with: .network).debug("received \(string)")
-          subject.send(string)
-        default:
-          fatalError("절대 여기 와서는 안 됨")
+      while true {
+        do {
+          switch try await provider.receive() {
+          case let .string(string):
+            Log.make(with: .network).debug("received \(string)")
+            try subject.send(stringToWorkoutRealTimeModel(rawString: string))
+          default:
+            fatalError("절대 여기 와서는 안 됨")
+          }
+        } catch {
+          subject.send(completion: .failure(error))
         }
       }
       Log.make().fault("You can't enter this line")
+    }
+  }
+}
+
+extension WorkoutSocketRepository: WorkoutSocketRepositoryRepresentable {
+  func fetchParticipantsRealTime() -> AnyPublisher<WorkoutRealTimeModel, Error> {
+    subject.eraseToAnyPublisher()
+  }
+
+  func sendMyWorkout(with model: WorkoutRealTimeModel) -> AnyPublisher<Bool, Error> {
+    Future { promise in
+      Task {
+        do {
+          try await provider.send(model: model)
+          promise(.success(true))
+        } catch {
+          promise(.failure(error))
+        }
+      }
+    }
+    .eraseToAnyPublisher()
+  }
+}
+
+extension WorkoutSocketRepository {
+  enum WorkoutSocketRepositoryError: LocalizedError {
+    case invalidStringForConversion
+
+    var errorDescription: String? {
+      return "문자열을 Data로 변환할 수 없습니다. 문자열이 비어있는지 확인하세요."
     }
   }
 }
