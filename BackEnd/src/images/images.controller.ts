@@ -14,7 +14,7 @@ import {ValidateFilesPipe} from "./pipe/validate-files.pip";
 import {ImagesResponse} from "./dto/images.response";
 
 @ApiTags('이미지 업로드 API')
-// @UseGuards(AccessTokenGuard)
+@UseGuards(AccessTokenGuard)
 @Controller('api/v1/images')
 export class ImagesController {
     constructor(private readonly imagesService: ImagesService) {}
