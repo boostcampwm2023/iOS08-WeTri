@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { RefreshTokenGuard } from './guard/bearerToken.guard';
 import { SignupDto } from './dto/signup.dto';
 import { AuthAppleService } from './auth-apple.service';
-import { AppleToken } from './decorator/apple-token.decorator';
+import { IdentityToken } from './decorator/apple-token.decorator';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   CreateAccessTokenResDto,
@@ -74,8 +74,8 @@ export class AuthController {
   @ApiResponse({ status: 200, description: '로그인 성공' })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @Post('apple/signin')
-  async appleSignIn(@AppleToken() token: string) {
-    const userInfo = await this.authAppleService.getUserInfo(token);
+  async appleSignIn(@IdentityToken() token: string) {
+    const userInfo = await this.authAppleService.getAppleUserId(token);
     console.log(userInfo);
   }
 }
