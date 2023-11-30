@@ -53,7 +53,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Refresh token 생성' })
   @ApiResponse({
     status: 200,
-    description: '토큰 생성 성공',
+    description: 'Refresh 토큰 생성 성공',
     type: CreateRefreshTokenResDto,
   })
   @ApiResponse({ status: 400, description: 'Bad request' })
