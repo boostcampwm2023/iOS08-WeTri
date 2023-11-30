@@ -24,6 +24,7 @@ public typealias WorkoutSessionContainerViewModelOutput = AnyPublisher<WorkoutSe
 
 public enum WorkoutSessionContainerState {
   case idle
+  case updateTime(TimeInterval)
   case alert(Error)
 }
 
@@ -99,8 +100,11 @@ extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepr
       .catch { return Just(.alert($0)) }
       .eraseToAnyPublisher()
 
-    let initialState: WorkoutSessionContainerViewModelOutput = Just(.idle).eraseToAnyPublisher()
+    let workoutTimerPublisher = Timer.publish(every: 1, on: .main, in: .common)
+      .autoconnect()
+      .map(startDate.timeIntervalSince(_:))
+      .map { WorkoutSessionContainerState.updateTime($0) }
 
-    return initialState.merge(with: recordErrorPublisher).eraseToAnyPublisher()
+    return Just(WorkoutSessionContainerState.idle).merge(with: recordErrorPublisher, workoutTimerPublisher).eraseToAnyPublisher()
   }
 }
