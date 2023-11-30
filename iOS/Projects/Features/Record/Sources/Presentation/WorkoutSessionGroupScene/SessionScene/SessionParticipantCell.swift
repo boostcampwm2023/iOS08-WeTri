@@ -177,7 +177,7 @@ final class SessionParticipantCell: UICollectionViewCell {
   }
 
   // FIXME: API가 정해졌을 때 데이터 모델을 수정해야합니다.
-  func configure(model: WorkoutHealth?) {
+  func configure(model: WorkoutDataForm?) {
     distanceLabel.text = "\(model?.distance ?? 0)"
   }
 }

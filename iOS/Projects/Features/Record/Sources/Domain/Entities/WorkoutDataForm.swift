@@ -1,5 +1,5 @@
 //
-//  WorkoutHealth.swift
+//  WorkoutDataForm.swift
 //  RecordFeature
 //
 //  Created by 홍승현 on 11/25/23.
@@ -9,7 +9,7 @@
 import Foundation
 
 /// 건강 데이터를 body로 전달하기 위한 요청(request) 모델입니다. 운동 세션이 종료될 때 이 모델을 사용합니다.
-public struct WorkoutHealth: Encodable {
+public struct WorkoutDataForm: Encodable {
   /// 운동 누적 시간
   let workoutTime: Double
 

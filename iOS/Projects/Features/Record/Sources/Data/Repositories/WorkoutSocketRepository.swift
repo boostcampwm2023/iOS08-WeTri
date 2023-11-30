@@ -57,6 +57,8 @@ struct WorkoutSocketRepository {
   }
 }
 
+// MARK: WorkoutSocketRepositoryRepresentable
+
 extension WorkoutSocketRepository: WorkoutSocketRepositoryRepresentable {
   func fetchParticipantsRealTime() -> AnyPublisher<WorkoutRealTimeModel, Error> {
     subject.eraseToAnyPublisher()
@@ -76,6 +78,8 @@ extension WorkoutSocketRepository: WorkoutSocketRepositoryRepresentable {
     .eraseToAnyPublisher()
   }
 }
+
+// MARK: WorkoutSocketRepository.WorkoutSocketRepositoryError
 
 extension WorkoutSocketRepository {
   enum WorkoutSocketRepositoryError: LocalizedError {

@@ -10,5 +10,5 @@ import Combine
 import Foundation
 
 protocol WorkoutRecordRepositoryRepresentable {
-  func record(usingLocation locationData: [LocationDTO], andHealthData healthData: WorkoutHealth) -> AnyPublisher<Int, Error>
+  func record(usingLocation locationData: [LocationDTO], andHealthData healthData: WorkoutDataForm) -> AnyPublisher<Int, Error>
 }

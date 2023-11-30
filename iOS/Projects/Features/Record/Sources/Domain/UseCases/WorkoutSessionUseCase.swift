@@ -23,7 +23,7 @@ protocol WorkoutSessionUseCaseRepresentable {
 // MARK: - WorkoutSessionUseCase
 
 final class WorkoutSessionUseCase {
-  private let healthPassthroughSubject: CurrentValueSubject<(distance: Double, calories: Double, heartRate: Double), Error> = .init((0, 0, 0))
+  private let healthPassthroughSubject: CurrentValueSubject<WorkoutRealTimeModel, Error> = .init(.init(id: "", roomID: "", nickname: "", health: .init(distance: 0, calories: 0, heartRate: 0)))
   private let repository: HealthRepositoryRepresentable
 
   private var subscriptions: Set<AnyCancellable> = []
@@ -55,7 +55,7 @@ final class WorkoutSessionUseCase {
       }
       .compactMap { [weak self] distance, calories, heartRate in
         guard let self else { return nil }
-        let (beforeDistance, beforeCalories, beforeHeartRate) = healthPassthroughSubject.value
+        let beforeData = healthPassthroughSubject.value
         let afterDistance = distance.reduce(beforeDistance, +)
         let afterCalories = calories.reduce(beforeCalories, +)
         let afterHeartRate = heartRate.last ?? beforeHeartRate

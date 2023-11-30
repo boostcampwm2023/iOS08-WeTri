@@ -15,7 +15,7 @@ import Foundation
 public struct WorkoutSessionContainerViewModelInput {
   let endWorkoutPublisher: AnyPublisher<Void, Never>
   let locationPublisher: AnyPublisher<[CLLocation], Never>
-  let healthPublisher: AnyPublisher<WorkoutHealth, Never>
+  let healthPublisher: AnyPublisher<WorkoutDataForm, Never>
 }
 
 public typealias WorkoutSessionContainerViewModelOutput = AnyPublisher<WorkoutSessionContainerState, Never>
