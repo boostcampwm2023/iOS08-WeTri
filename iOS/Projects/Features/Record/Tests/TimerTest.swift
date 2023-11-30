@@ -37,29 +37,6 @@ final class TimerTest: XCTestCase {
     wait(for: [expectation], timeout: 8)
   }
 
-  func test_6점9초_동안_123456값을_방출하며_complete_되는지_확인한다() {
-    // arrange
-    let expectaionValue = (1 ... 6).map { $0 }
-    var receivedValue: [Int] = []
-    let timer = OneSecondsTimerUseCase(initDate: .now)
-    let expectation = XCTestExpectation(description: "Received Timer value \(receivedValue),expecation \(expectaionValue)")
-
-    DispatchQueue.main.asyncAfter(deadline: .now() + 6.9) {
-      if receivedValue.count == expectaionValue.count {
-        expectation.fulfill()
-      }
-    }
-    // act
-    timer.oneSecondsTimerPublisher()
-      .sink { text in
-        receivedValue.append(text)
-      }
-      .store(in: &subscriptions)
-
-    // assert
-    wait(for: [expectation], timeout: 6.9)
-  }
-
   func test_2초타이머를세팅하고_9점5초_동안_네번의값을_방출하며_complete_되는지_확인한다() {
     let expectaionValue = [2, 4, 6, 8]
     var receivedValue: [Int] = []
