@@ -60,3 +60,4 @@ export class VerificationFailedIdentityToken extends HttpException {
     super(response, httpCode);
   }
 }
+

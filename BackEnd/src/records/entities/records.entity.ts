@@ -88,6 +88,6 @@ export class Record {
 
   @ApiProperty({ example: '달리기', description: '선택한 운동 종료' })
   @ManyToOne(() => Workout, (workout) => workout.records)
-  @JoinColumn({ name: 'id' })
+  @JoinColumn()
   workout: Workout;
 }
