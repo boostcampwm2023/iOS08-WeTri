@@ -14,5 +14,5 @@ protocol WorkoutSocketRepositoryRepresentable {
   func fetchParticipantsRealTime() -> AnyPublisher<WorkoutRealTimeModel, Error>
 
   /// 나의 운동 정보를 전달합니다.
-  func sendMyWorkout(with model: WorkoutRealTimeModel) -> AnyPublisher<Bool, Error>
+  func sendMyWorkout(with model: WorkoutRealTimeModel) -> AnyPublisher<Void, Error>
 }

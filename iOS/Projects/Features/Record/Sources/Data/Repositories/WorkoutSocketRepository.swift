@@ -64,12 +64,12 @@ extension WorkoutSocketRepository: WorkoutSocketRepositoryRepresentable {
     subject.eraseToAnyPublisher()
   }
 
-  func sendMyWorkout(with model: WorkoutRealTimeModel) -> AnyPublisher<Bool, Error> {
+  func sendMyWorkout(with model: WorkoutRealTimeModel) -> AnyPublisher<Void, Error> {
     Future { promise in
       Task {
         do {
           try await provider.send(model: model)
-          promise(.success(true))
+          promise(.success(()))
         } catch {
           promise(.failure(error))
         }
