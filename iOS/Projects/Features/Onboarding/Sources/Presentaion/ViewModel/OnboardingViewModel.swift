@@ -54,20 +54,20 @@ extension OnboardingViewModel: OnboardingViewModelRepresentable {
     subscriptions.removeAll()
 
     let presentMapAuth: OnboardingViewModelOutput = input.shouldPresentMapAuthorizationPublisher
-      .map { _ -> OnboardingState in
-        guard let dto = self.useCase.loadOnboardingMapAuthProperty() else {
+      .map { [useCase] _ in
+        guard let response = useCase.loadOnboardingMapAuthProperty() else {
           return .errorState(OnboardingViewModelError.nilValue)
         }
-        return .shouldPresentMapAuthorization(dto)
+        return .shouldPresentMapAuthorization(response)
       }
       .eraseToAnyPublisher()
 
     let presentHealthAuth: OnboardingViewModelOutput = input.shouldPresentHealthAuthorizationPublisher
-      .map { _ -> OnboardingState in
-        guard let dto = self.useCase.loadOnboardingHealthAuthProperty() else {
+      .map { [useCase] _ -> OnboardingState in
+        guard let response = useCase.loadOnboardingHealthAuthProperty() else {
           return .errorState(OnboardingViewModelError.nilValue)
         }
-        return .shouldPresentHealthAuthorization(dto)
+        return .shouldPresentHealthAuthorization(response)
       }
       .eraseToAnyPublisher()
 
