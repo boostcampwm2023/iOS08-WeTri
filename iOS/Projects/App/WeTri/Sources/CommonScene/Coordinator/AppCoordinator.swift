@@ -26,9 +26,10 @@ final class AppCoordinator: AppCoordinating {
 
   func start() {
     // (LoginFlow와 TabBarFlow 분기 처리) (todo)
-    let tabBarCoordinator = TabBarCoordinator(navigationController: navigationController)
-    childCoordinators.append(tabBarCoordinator)
-    tabBarCoordinator.start()
+    showLoginFlow()
+//    let tabBarCoordinator = TabBarCoordinator(navigationController: navigationController)
+//    childCoordinators.append(tabBarCoordinator)
+//    tabBarCoordinator.start()
   }
 
   func showLoginFlow() {

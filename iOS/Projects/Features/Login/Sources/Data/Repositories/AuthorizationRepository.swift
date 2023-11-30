@@ -74,7 +74,7 @@ enum AuthorizationRepositoryEndPoint: TNEndPoint {
   var path: String {
     switch self {
     case .signIn:
-      return "auth/apple/signin"
+      return "api/v1/auth/apple/signin"
     }
   }
 
@@ -98,7 +98,6 @@ enum AuthorizationRepositoryEndPoint: TNEndPoint {
 
   var headers: TNHeaders {
     return .init(headers: [
-      // TODO: 헤더 설정
     ])
   }
 }
