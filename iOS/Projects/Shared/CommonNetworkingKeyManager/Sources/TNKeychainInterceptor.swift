@@ -14,7 +14,7 @@ import Trinet
 
 public final class TNKeychainInterceptor {
   private let decoder = JSONDecoder()
-  public let shared = TNKeychainInterceptor()
+  public static let shared = TNKeychainInterceptor()
   private init() {}
 }
 
@@ -83,7 +83,7 @@ private extension TNKeychainInterceptor {
       throw TNError.serverError
     }
 
-    Keychain.shared.save(key: "accessToken", data: tokenData)
+    Keychain.shared.save(key: Tokens.accessToken, data: tokenData)
   }
 
   func refreshRefreshToken(session: URLSessionProtocol) async throws {
@@ -97,13 +97,13 @@ private extension TNKeychainInterceptor {
       throw TNError.serverError
     }
 
-    Keychain.shared.save(key: "refreshToken", data: tokenData)
+    Keychain.shared.save(key: Tokens.refreshToken, data: tokenData)
   }
 
   enum TNKeyChainManager {
     static var accessToken: String? {
       guard
-        let accessTokenData = Keychain.shared.load(key: "accessToken"),
+        let accessTokenData = Keychain.shared.load(key: Tokens.accessToken),
         let accessToken = String(data: accessTokenData, encoding: .utf8)
       else {
         return nil
