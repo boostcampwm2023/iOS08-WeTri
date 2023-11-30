@@ -1,5 +1,5 @@
 //
-//  OnboardingScenePropertyDTO.swift
+//  OnboardingScenePropertyResponse.swift
 //  OnboardingFeature
 //
 //  Created by MaraMincho on 11/29/23.
@@ -8,11 +8,11 @@
 
 import Foundation
 
-public struct OnboardingScenePropertyResponseDTO: Decodable {
+public struct OnboardingScenePropertyResponse: Decodable {
   let id: Int
   let titleText: String
   let descriptionText: String
-  let imageData: Data?
+  var imageData: Data?
   init(id: Int, titleText: String, descriptionText: String, imageData: Data?) {
     self.id = id
     self.titleText = titleText

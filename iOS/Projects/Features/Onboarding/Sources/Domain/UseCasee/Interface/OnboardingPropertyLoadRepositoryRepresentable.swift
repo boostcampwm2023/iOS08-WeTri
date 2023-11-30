@@ -1,5 +1,5 @@
 //
-//  OnboardingImageRepositoryRepresentable.swift
+//  OnboardingPropertyLoadRepositoryRepresentable.swift
 //  OnboardingFeature
 //
 //  Created by MaraMincho on 11/29/23.
@@ -11,6 +11,6 @@ import Foundation
 // MARK: - OnboardingImageRepositoryRepresentable
 
 public protocol OnboardingPropertyLoadRepositoryRepresentable {
-  func mapOnboardingProperty() -> OnboardingScenePropertyResponseDTO?
-  func healthOnboardingImage() -> OnboardingScenePropertyResponseDTO?
+  func mapOnboardingProperty() -> OnboardingScenePropertyResponse?
+  func healthOnboardingProperty() -> OnboardingScenePropertyResponse?
 }

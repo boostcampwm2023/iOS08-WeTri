@@ -1,5 +1,5 @@
 //
-//  OnboardingImageRepository.swift
+//  OnboardingPropertyLoadRepository.swift
 //  OnboardingFeature
 //
 //  Created by MaraMincho on 11/29/23.
@@ -8,17 +8,17 @@
 
 import Foundation
 
-// MARK: - OnboardingImageRepository
+// MARK: - OnboardingPropertyLoadRepository
 
 public struct OnboardingPropertyLoadRepository {
   let decoder = JSONDecoder()
   public init() {}
 }
 
-// MARK: OnboardingImageRepositoryRepresentable
+// MARK: OnboardingPropertyLoadRepositoryRepresentable
 
 extension OnboardingPropertyLoadRepository: OnboardingPropertyLoadRepositoryRepresentable {
-  public func mapOnboardingProperty() -> OnboardingScenePropertyResponseDTO? {
+  public func mapOnboardingProperty() -> OnboardingScenePropertyResponse? {
     guard
       let imagePath = Bundle(identifier: Constants.bundleName)?
       .path(forResource: Constants.mapImageResourceFileName, ofType: Constants.imageOfType),
@@ -30,11 +30,13 @@ extension OnboardingPropertyLoadRepository: OnboardingPropertyLoadRepositoryRepr
     else {
       return nil
     }
-    let dto = try? JSONDecoder().decode(GWResponse<OnboardingScenePropertyTextResponseDTO>.self, from: jsonData).data
-    return dto?.toOnboardingScenePropertyDTO(imageData: imageData)
+
+    var dto = try? JSONDecoder().decode(GWResponse<OnboardingScenePropertyResponse>.self, from: jsonData).data
+    dto?.imageData = imageData
+    return dto
   }
 
-  public func healthOnboardingImage() -> OnboardingScenePropertyResponseDTO? {
+  public func healthOnboardingProperty() -> OnboardingScenePropertyResponse? {
     guard
       let imagePath = Bundle(identifier: Constants.bundleName)?
       .path(forResource: Constants.healthOnboardingImageFileName, ofType: Constants.imageOfType),
@@ -46,8 +48,10 @@ extension OnboardingPropertyLoadRepository: OnboardingPropertyLoadRepositoryRepr
     else {
       return nil
     }
-    let dto = try? JSONDecoder().decode(GWResponse<OnboardingScenePropertyTextResponseDTO>.self, from: jsonData).data
-    return dto?.toOnboardingScenePropertyDTO(imageData: imageData)
+
+    var dto = try? JSONDecoder().decode(GWResponse<OnboardingScenePropertyResponse>.self, from: jsonData).data
+    dto?.imageData = imageData
+    return dto
   }
 
   enum Constants {

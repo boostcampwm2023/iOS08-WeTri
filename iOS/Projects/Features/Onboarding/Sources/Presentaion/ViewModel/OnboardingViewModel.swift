@@ -22,8 +22,8 @@ public typealias OnboardingViewModelOutput = AnyPublisher<OnboardingState, Never
 
 public enum OnboardingState {
   case idle
-  case shouldPresentMapAuthorization(OnboardingScenePropertyResponseDTO)
-  case shouldPresentHealthAuthorization(OnboardingScenePropertyResponseDTO)
+  case shouldPresentMapAuthorization(OnboardingScenePropertyResponse)
+  case shouldPresentHealthAuthorization(OnboardingScenePropertyResponse)
   case finish
   case errorState(Error)
 }
@@ -54,29 +54,21 @@ extension OnboardingViewModel: OnboardingViewModelRepresentable {
     subscriptions.removeAll()
 
     let presentMapAuth: OnboardingViewModelOutput = input.shouldPresentMapAuthorizationPublisher
-      .tryMap { [weak self] _ -> OnboardingState in
-        guard let self else {
-          return .errorState(OnboardingViewModelError.didNotInitViewModel)
-        }
-        guard let dto = useCase.loadOnboardingMapAuthProperty() else {
+      .map { _ -> OnboardingState in
+        guard let dto = self.useCase.loadOnboardingMapAuthProperty() else {
           return .errorState(OnboardingViewModelError.nilValue)
         }
         return .shouldPresentMapAuthorization(dto)
       }
-      .catch { error in return Just(OnboardingState.errorState(error)) }
       .eraseToAnyPublisher()
 
     let presentHealthAuth: OnboardingViewModelOutput = input.shouldPresentHealthAuthorizationPublisher
-      .tryMap { [weak self] _ -> OnboardingState in
-        guard let self else {
-          return .errorState(OnboardingViewModelError.didNotInitViewModel)
-        }
-        guard let dto = useCase.loadOnboardingHealthAuthProperty() else {
+      .map { _ -> OnboardingState in
+        guard let dto = self.useCase.loadOnboardingHealthAuthProperty() else {
           return .errorState(OnboardingViewModelError.nilValue)
         }
         return .shouldPresentHealthAuthorization(dto)
       }
-      .catch { error in return Just(OnboardingState.errorState(error)) }
       .eraseToAnyPublisher()
 
     let initialState: OnboardingViewModelOutput = Just(.idle).eraseToAnyPublisher()
@@ -88,6 +80,5 @@ extension OnboardingViewModel: OnboardingViewModelRepresentable {
 // MARK: - OnboardingViewModelError
 
 enum OnboardingViewModelError: LocalizedError {
-  case didNotInitViewModel
   case nilValue
 }

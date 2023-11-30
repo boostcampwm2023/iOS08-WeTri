@@ -1,5 +1,5 @@
 //
-//  OnboardingImageLoadUseCase.swift
+//  OnboardingPropertyLoadUseCase.swift
 //  OnboardingFeature
 //
 //  Created by MaraMincho on 11/29/23.
@@ -11,15 +11,15 @@ import Foundation
 // MARK: - OnboardingPropertyLoadUseCaseRepresentable
 
 public protocol OnboardingPropertyLoadUseCaseRepresentable {
-  func loadOnboardingMapAuthProperty() -> OnboardingScenePropertyResponseDTO?
-  func loadOnboardingHealthAuthProperty() -> OnboardingScenePropertyResponseDTO?
+  func loadOnboardingMapAuthProperty() -> OnboardingScenePropertyResponse?
+  func loadOnboardingHealthAuthProperty() -> OnboardingScenePropertyResponse?
 }
 
-// MARK: - OnboardingImageLoadUseCase
+// MARK: - OnboardingPropertyLoadUseCase
 
 public struct OnboardingPropertyLoadUseCase: OnboardingPropertyLoadUseCaseRepresentable {
   private let repository: OnboardingPropertyLoadRepositoryRepresentable
-  private var onboardingImageDataByType: [OnboardingImageType: OnboardingScenePropertyResponseDTO] = [:]
+  private var onboardingImageDataByType: [OnboardingImageType: OnboardingScenePropertyResponse] = [:]
 
   public init(repository: OnboardingPropertyLoadRepositoryRepresentable) {
     self.repository = repository
@@ -27,16 +27,16 @@ public struct OnboardingPropertyLoadUseCase: OnboardingPropertyLoadUseCaseRepres
     loadOnboardingImage()
   }
 
-  public func loadOnboardingMapAuthProperty() -> OnboardingScenePropertyResponseDTO? {
+  public func loadOnboardingMapAuthProperty() -> OnboardingScenePropertyResponse? {
     return onboardingImageDataByType[.map]
   }
 
-  public func loadOnboardingHealthAuthProperty() -> OnboardingScenePropertyResponseDTO? {
+  public func loadOnboardingHealthAuthProperty() -> OnboardingScenePropertyResponse? {
     return onboardingImageDataByType[.health]
   }
 
   private mutating func loadOnboardingImage() {
-    onboardingImageDataByType[.health] = repository.healthOnboardingImage()
+    onboardingImageDataByType[.health] = repository.healthOnboardingProperty()
     onboardingImageDataByType[.map] = repository.mapOnboardingProperty()
   }
 
