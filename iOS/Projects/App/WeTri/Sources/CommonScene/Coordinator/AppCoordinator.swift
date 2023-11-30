@@ -7,6 +7,7 @@
 //
 
 import Coordinator
+import LoginFeature
 import UIKit
 
 // MARK: - AppCoordinator
@@ -31,7 +32,10 @@ final class AppCoordinator: AppCoordinating {
   }
 
   func showLoginFlow() {
-    // (LoginViewController 추가되면 로직 추가) (todo)
+    let loginCoordinator = LoginCoordinator(navigationController: navigationController)
+    childCoordinators.append(loginCoordinator)
+    loginCoordinator.finishDelegate = self
+    loginCoordinator.start()
   }
 
   func showTabBarFlow() {
