@@ -51,6 +51,53 @@ final class WorkoutSessionUseCase {
           repository.getHeartRateSample(startDate: dependency.date)
         ) { (distance: $0, calories: $1, heartRate: $2) }
       }
+
+    healthDataPublisher
+      .map(calculateHealthForm(distance:calories:heartRates:))
+      .bind(to: myHealthFormSubject)
+      .store(in: &subscriptions)
+
+    healthDataPublisher
+      .map(calculateWorkoutRealTimeModel(distance:calories:heartRates:))
+      .bind(to: dataSentSubject)
+      .store(in: &subscriptions)
+  }
+
+  private func calculateHealthForm(distance: [Double], calories: [Double], heartRates: [Double]) -> WorkoutHealthForm {
+    let beforeData = myHealthFormSubject.value
+    let afterDistance = distance.reduce(beforeData.distance ?? 0, +)
+    let afterCalories = calories.reduce(beforeData.calorie ?? 0, +)
+
+    self.heartRates.append(contentsOf: heartRates)
+    let averageHeartRate = self.heartRates.reduce(0, +) / Double(self.heartRates.count)
+    let minimumHeartRate = self.heartRates.min()
+    let maximumHeartRate = self.heartRates.max()
+
+    return WorkoutHealthForm(
+      distance: afterDistance,
+      calorie: afterCalories,
+      averageHeartRate: averageHeartRate,
+      minimumHeartRate: minimumHeartRate,
+      maximumHeartRate: maximumHeartRate
+    )
+  }
+
+  private func calculateWorkoutRealTimeModel(distance: [Double], calories: [Double], heartRates: [Double]) -> WorkoutRealTimeModel {
+    let beforeData = myHealthFormSubject.value
+    let afterDistance = distance.reduce(beforeData.distance ?? 0, +)
+    let afterCalories = calories.reduce(beforeData.calorie ?? 0, +)
+    let afterHeartRate = heartRates.last
+
+    return .init(
+      id: dependency.id,
+      roomID: dependency.roomID,
+      nickname: dependency.nickname,
+      health: .init(
+        distance: afterDistance,
+        calories: afterCalories,
+        heartRate: afterHeartRate
+      )
+    )
   }
 }
 
