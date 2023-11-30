@@ -46,7 +46,7 @@ struct WorkoutSocketRepository {
             Log.make(with: .network).debug("received \(string)")
             try subject.send(stringToWorkoutRealTimeModel(rawString: string))
           default:
-            fatalError("절대 여기 와서는 안 됨")
+            Log.make().error("You can't enter this line")
           }
         } catch {
           subject.send(completion: .failure(error))
