@@ -28,7 +28,8 @@ protocol WorkoutSessionUseCaseRepresentable {}
 final class WorkoutSessionUseCase {
   private let myHealthFormSubject: CurrentValueSubject<WorkoutHealthForm, Error> = .init(.init(distance: 0, calorie: 0, averageHeartRate: 0, minimumHeartRate: 0, maximumHeartRate: 0))
   private let dataSentSubject: PassthroughSubject<WorkoutRealTimeModel, Error> = .init()
-  private let repository: HealthRepositoryRepresentable
+  private let healthRepository: HealthRepositoryRepresentable
+
 
   private var heartRates: [Double] = []
 
@@ -36,8 +37,8 @@ final class WorkoutSessionUseCase {
 
   private let dependency: WorkoutSessionUseCaseDependency
 
-  init(repository: HealthRepositoryRepresentable, dependency: WorkoutSessionUseCaseDependency) {
-    self.repository = repository
+  init(healthRepository: HealthRepositoryRepresentable, dependency: WorkoutSessionUseCaseDependency) {
+    self.healthRepository = healthRepository
     self.dependency = dependency
     bind()
   }
@@ -45,10 +46,10 @@ final class WorkoutSessionUseCase {
   private func bind() {
     let healthDataPublisher = Timer.publish(every: 2, on: .main, in: .common)
       .autoconnect()
-      .flatMap { [repository, dependency] _ in
-        return repository.getDistanceWalkingRunningSample(startDate: dependency.date).combineLatest(
-          repository.getCaloriesSample(startDate: dependency.date),
-          repository.getHeartRateSample(startDate: dependency.date)
+      .flatMap { [healthRepository, dependency] _ in
+        return healthRepository.getDistanceWalkingRunningSample(startDate: dependency.date).combineLatest(
+          healthRepository.getCaloriesSample(startDate: dependency.date),
+          healthRepository.getHeartRateSample(startDate: dependency.date)
         ) { (distance: $0, calories: $1, heartRate: $2) }
       }
 

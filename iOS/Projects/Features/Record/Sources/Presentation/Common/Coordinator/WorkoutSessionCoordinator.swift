@@ -42,7 +42,7 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
     let healthRepository = HealthRepository()
 
     let sessionUseCase = WorkoutSessionUseCase(
-      repository: healthRepository,
+      healthRepository: healthRepository,
       dependency: healthDependency
     )
 
