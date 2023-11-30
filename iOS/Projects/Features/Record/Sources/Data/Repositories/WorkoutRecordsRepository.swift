@@ -16,6 +16,7 @@ import Trinet
 enum WorkoutRecordsRepositoryError: Error {
   case requestError
   case decodeError
+  case bindingError
 }
 
 // MARK: - WorkoutRecordsRepository
@@ -31,14 +32,13 @@ struct WorkoutRecordsRepository: WorkoutRecordsRepositoryRepresentable {
   func fetchRecordsList(date: Date) -> AnyPublisher<[Record], Error> {
     return Future<Data, Error> { promise in
       encoder.dateEncodingStrategy = .formatted(dateFormatter())
-      do {
-        let requestBody = try encoder.encode(date)
-        Task {
-          let data = try await provider.request(.dateOfRecords(requestBody))
-          return promise(.success(data))
-        }
-      } catch {
-        Log.make().error("\(error)")
+      let dateString = dateFormatter().string(from: date)
+      guard let dateRequestDTO = transform(date: dateString) else {
+        return promise(.failure(WorkoutRecordsRepositoryError.bindingError))
+      }
+      Task {
+        let data = try await provider.request(.dateOfRecords(dateRequestDTO))
+        return promise(.success(data))
       }
     }
     .decode(type: [Record].self, decoder: JSONDecoder())
@@ -57,6 +57,17 @@ struct WorkoutRecordsRepository: WorkoutRecordsRepositoryRepresentable {
     formatter.locale = Locale(identifier: "ko_KR")
     return formatter
   }
+
+  private func transform(date: String) -> DateRequestDTO? {
+    let splited = date.split(separator: "-").map { String($0) }
+    guard let year = Int(splited[0]),
+          let month = Int(splited[1]),
+          let day = Int(splited[2])
+    else {
+      return nil
+    }
+    return DateRequestDTO(year: year, month: month, day: day)
+  }
 }
 
 // MARK: - WorkoutRecordsRepositoryError + LocalizedError
@@ -68,6 +79,8 @@ extension WorkoutRecordsRepositoryError: LocalizedError {
       return "Network-Request 실패"
     case .decodeError:
       return "decode 실패"
+    case .bindingError:
+      return "binding 실패"
     }
   }
 }
@@ -75,7 +88,7 @@ extension WorkoutRecordsRepositoryError: LocalizedError {
 // MARK: - WorkoutRecordsRepositoryEndPoint
 
 enum WorkoutRecordsRepositoryEndPoint: TNEndPoint {
-  case dateOfRecords(Data)
+  case dateOfRecords(DateRequestDTO)
 
   var path: String {
     switch self {
@@ -97,8 +110,8 @@ enum WorkoutRecordsRepositoryEndPoint: TNEndPoint {
 
   var body: Encodable? {
     switch self {
-    case let .dateOfRecords(data):
-      return data
+    case let .dateOfRecords(dateRequestDTO):
+      return dateRequestDTO
     }
   }
 
