@@ -53,7 +53,7 @@ public final class WorkoutSessionViewController: UIViewController {
 
   // MARK: Initializations
 
-  public init(viewModel: WorkoutSessionViewModelRepresentable) {
+  init(viewModel: WorkoutSessionViewModelRepresentable) {
     self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
   }
@@ -111,18 +111,6 @@ public final class WorkoutSessionViewController: UIViewController {
         switch state {
         case .idle:
           break
-
-        // FIXME: 데이터모델을 수정해야합니다.
-        case let .connectHealthData(distance: distance, calories: calories, heartRate: heartRate):
-          self?.healthData = WorkoutDataForm(
-            workoutTime: 0,
-            distance: distance,
-            calorie: calories,
-            averageHeartRate: heartRate,
-            minimumHeartRate: nil,
-            maximumHeartRate: nil
-          )
-          self?.updateSnapshot(from: "house")
         case .alert:
           break
         }
