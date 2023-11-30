@@ -30,7 +30,6 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
   }
 
   func pushWorkoutSession() {
-    // TODO: Mock Data 연결 필요
     guard let jsonPath = Bundle(for: Self.self).path(forResource: "WorkoutSession", ofType: "json"),
           let jsonData = try? Data(contentsOf: .init(filePath: jsonPath))
     else {
@@ -38,11 +37,16 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
       return
     }
 
+    // FIXME: Dependency값을 올바르게 설정해주세요.
     let healthDependency = WorkoutSessionUseCaseDependency(date: .now, roomID: "해시값", id: "자신의 아이디값", nickname: "내 닉네임")
     let healthRepository = HealthRepository()
 
+    // TODO: 같이하기, 혼자하기 모드에 따라 session 주입을 다르게 해야합니다.
+    let socketRepository = WorkoutSocketRepository(session: MockWebSocketSession(), roomID: healthDependency.roomID)
+
     let sessionUseCase = WorkoutSessionUseCase(
       healthRepository: healthRepository,
+      socketRepository: socketRepository,
       dependency: healthDependency
     )
 

@@ -14,6 +14,8 @@ public final class MockWebSocketTask: WebSocketTaskProtocol {
   private var sentMessage: URLSessionWebSocketTask.Message?
   private var receiveContinuation: CheckedContinuation<URLSessionWebSocketTask.Message, Never>?
 
+  public init() {}
+
   public func send(_ message: URLSessionWebSocketTask.Message) async throws {
     sentMessage = message
     receiveContinuation?.resume(returning: message)
@@ -37,6 +39,8 @@ public final class MockWebSocketTask: WebSocketTaskProtocol {
 
 public struct MockWebSocketSession: URLSessionWebSocketProtocol {
   var webSocketTask: MockWebSocketTask = .init()
+
+  public init() {}
 
   public func webSocketTask(with _: URLRequest) -> WebSocketTaskProtocol {
     return webSocketTask

@@ -28,8 +28,9 @@ protocol WorkoutSessionUseCaseRepresentable {}
 final class WorkoutSessionUseCase {
   private let myHealthFormSubject: CurrentValueSubject<WorkoutHealthForm, Error> = .init(.init(distance: 0, calorie: 0, averageHeartRate: 0, minimumHeartRate: 0, maximumHeartRate: 0))
   private let dataSentSubject: PassthroughSubject<WorkoutRealTimeModel, Error> = .init()
-  private let healthRepository: HealthRepositoryRepresentable
 
+  private let healthRepository: HealthRepositoryRepresentable
+  private let socketRepository: WorkoutSocketRepositoryRepresentable
 
   private var heartRates: [Double] = []
 
@@ -37,8 +38,11 @@ final class WorkoutSessionUseCase {
 
   private let dependency: WorkoutSessionUseCaseDependency
 
-  init(healthRepository: HealthRepositoryRepresentable, dependency: WorkoutSessionUseCaseDependency) {
+  init(healthRepository: HealthRepositoryRepresentable,
+       socketRepository: WorkoutSocketRepositoryRepresentable,
+       dependency: WorkoutSessionUseCaseDependency) {
     self.healthRepository = healthRepository
+    self.socketRepository = socketRepository
     self.dependency = dependency
     bind()
   }
