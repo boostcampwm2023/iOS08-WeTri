@@ -9,7 +9,7 @@ import Foundation
 import Security
 
 public final class Keychain: Keychaining {
-  static let shared = Keychain()
+  public static let shared = Keychain()
 
   private init() {}
 
