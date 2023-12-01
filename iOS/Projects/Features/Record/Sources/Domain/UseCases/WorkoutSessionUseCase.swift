@@ -48,7 +48,6 @@ final class WorkoutSessionUseCase {
   private var subscriptions: Set<AnyCancellable> = []
 
   private let dependency: WorkoutSessionUseCaseDependency
-  private lazy var updateDate: Date = dependency.startDate
 
   init(healthRepository: HealthRepositoryRepresentable,
        socketRepository: WorkoutSocketRepositoryRepresentable,
@@ -65,11 +64,10 @@ extension WorkoutSessionUseCase {
     // 2초마다 Health Repository에게 데이터 요청
     Timer.publish(every: 2, on: .main, in: .common)
       .autoconnect()
-      .withUnretained(self)
-      .flatMap { [healthRepository] owner, _ in
-        return healthRepository.getDistanceWalkingRunningSample(startDate: owner.updateDate).combineLatest(
-          healthRepository.getCaloriesSample(startDate: owner.updateDate),
-          healthRepository.getHeartRateSample(startDate: owner.updateDate)
+      .flatMap { [healthRepository, dependency] _ in
+        return healthRepository.getDistanceWalkingRunningSample(startDate: dependency.startDate).combineLatest(
+          healthRepository.getCaloriesSample(startDate: dependency.startDate),
+          healthRepository.getHeartRateSample(startDate: dependency.startDate)
         )
       }
       .filter {
