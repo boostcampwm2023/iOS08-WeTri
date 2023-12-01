@@ -11,7 +11,13 @@ import Keychain
 import Trinet
 
 final class RefreshTokenAdaptor: TNRequestInterceptor {
-  func retry(_: URLRequest, session _: URLSessionProtocol, data: Data, response: URLResponse, delegate _: URLSessionDelegate?) async throws -> (Data, URLResponse) {
+  func retry(
+    _: URLRequest,
+    session _: URLSessionProtocol,
+    data: Data,
+    response: URLResponse,
+    delegate _: URLSessionDelegate?
+  ) async throws -> (Data, URLResponse) {
     return (data, response)
   }
 

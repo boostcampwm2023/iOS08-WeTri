@@ -27,7 +27,7 @@ extension TNKeychainInterceptor: TNRequestInterceptor {
 
   func addAccessToken(request: URLRequest) -> URLRequest {
     guard let accessToken = TNKeyChainManager.accessToken else {
-      Log.make().debug("AccessToken이 KeyChain에 저장되어있지 않아서, Header에 토큰을 동봉하지 못했습니다.")
+      Log.make().error("AccessToken이 KeyChain에 저장되어있지 않아서, Header에 토큰을 동봉하지 못했습니다.")
       return request
     }
     var mutatableRequest = request
@@ -42,15 +42,12 @@ extension TNKeychainInterceptor: TNRequestInterceptor {
     response: URLResponse,
     delegate _: URLSessionDelegate?
   ) async throws -> (Data, URLResponse) {
-    Log.make().debug("인터셉터에서 받아온 값은 \(String(data: data, encoding: .utf8)!).")
     let code = try decoder.decode(GWResponseForStatusCode.self, from: data).code
     if code == 1030 {
       Log.make().debug("AccessToken이 만료되어, Retry를 진행합니다.")
       try await refreshAccessToken(session: session)
       try await refreshRefreshToken(session: session)
       let (retriedData, retriedResponse) = try await session.data(for: addAccessToken(request: request), delegate: nil)
-
-      Log.make().debug("인터셉터를 통해, retry된 data는 \(String(data: retriedData, encoding: .utf8) ?? "") 입니다.")
       return (retriedData, retriedResponse)
     }
 
@@ -86,9 +83,9 @@ private extension TNKeychainInterceptor {
       let token = gwResponse.data?.accessToken,
       let tokenData = token.data(using: .utf8)
     else {
+      Log.make().error("리프레시 토큰을 통해 엑세스 토큰을 가져오는 작업을 실패했습니다.")
       throw TNError.serverError
     }
-    Log.make().debug("정상적으로 retry요청을 통해서 AccessToken을 받아왔습니다. ")
     Keychain.shared.delete(key: Tokens.accessToken)
     Keychain.shared.save(key: Tokens.accessToken, data: tokenData)
   }
@@ -101,6 +98,7 @@ private extension TNKeychainInterceptor {
       let token = gwResponse.data?.refreshToken,
       let tokenData = token.data(using: .utf8)
     else {
+      Log.make().error("리프레시 토큰을 통해 리프레시 토큰을 가져오는 작업을 실패했습니다.")
       throw TNError.serverError
     }
     Log.make().debug("정상적으로 retry요청을 통해서 refreshToken을 받아왔습니다. ")
