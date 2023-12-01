@@ -27,12 +27,12 @@ final class RefreshTokenAdaptor: TNRequestInterceptor {
   enum RefreshTokenManager {
     static var refreshToken: String? {
       guard
-        let accessTokenData = Keychain.shared.load(key: Tokens.refreshToken),
-        let accessToken = String(data: accessTokenData, encoding: .utf8)
+        let refreshTokenData = Keychain.shared.load(key: Tokens.refreshToken),
+        let refreshToken = String(data: refreshTokenData, encoding: .utf8)
       else {
         return nil
       }
-      return accessToken
+      return refreshToken
     }
   }
 }
