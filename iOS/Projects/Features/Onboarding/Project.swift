@@ -3,12 +3,12 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project.makeModule(
-  name: "RecordFeature",
+  name: "OnboardingFeature",
   targets: .feature(
-    .record,
+    .onboarding,
     testingOptions: [.unitTest],
-    dependencies: [.trinet, .designSystem, .combineCocoa, .coordinator, .log],
-    testDependencies: [.trinet, .designSystem, .combineCocoa, .log],
+    dependencies: [.designSystem, .combineCocoa, .coordinator, .log],
+    testDependencies: [.designSystem, .combineCocoa, .log],
     resources: "Resources/**"
   )
 )

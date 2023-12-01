@@ -12,4 +12,5 @@ import Foundation
 protocol AppCoordinating: Coordinating {
   func showLoginFlow()
   func showTabBarFlow()
+  func showOnboardingFlow()
 }
