@@ -11,6 +11,7 @@ import ProjectDescription
 
 public enum Feature: String {
   case login
+  case onboarding
   case record
 
   public var targetName: String {

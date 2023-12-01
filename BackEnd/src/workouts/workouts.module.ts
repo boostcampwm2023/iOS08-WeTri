@@ -6,7 +6,7 @@ import { Workout } from './entities/workout.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersModule } from '../users/users.module';
 import { ProfilesModule } from '../profiles/profiles.module';
-import { AuthService } from '../auth/auth.service';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [
@@ -14,8 +14,9 @@ import { AuthService } from '../auth/auth.service';
     JwtModule.register({}),
     UsersModule,
     ProfilesModule,
+    AuthModule,
   ],
   controllers: [WorkoutsController],
-  providers: [WorkoutsService, AuthService],
+  providers: [WorkoutsService],
 })
 export class WorkoutsModule {}

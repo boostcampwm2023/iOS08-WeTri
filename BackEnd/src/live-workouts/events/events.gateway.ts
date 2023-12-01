@@ -1,19 +1,16 @@
 import {
   WebSocketGateway,
   SubscribeMessage,
-  MessageBody,
   WebSocketServer,
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
 } from '@nestjs/websockets';
-import * as WebSocket from 'ws';
 import { EventsService } from './events.service';
 import { ExtensionWebSocketService } from './extensionWebSocket.service';
 import { WetriWebSocket, WetriServer } from './types/custom-websocket.type';
 import { AuthService } from '../../auth/auth.service';
 import { CheckMatchingDto } from './dto/checkMatching.dto';
-import { Logger } from '@nestjs/common';
 
 @WebSocketGateway(3003)
 export class EventsGateway
@@ -55,7 +52,11 @@ export class EventsGateway
     if (!this.eventsService.checkMsgRoomId(data)) {
       client.wemit('workout_session', 'data에 roomId를 포함시켜주세요.');
     } else {
-      this.server.to(data.roomId).emit('workout_session', JSON.stringify(data));
+      if (this.server.sids.get(client.id).has(data.roomId)) {
+        this.server
+          .to(data.roomId)
+          .emit('workout_session', JSON.stringify(data));
+      }
     }
   }
 

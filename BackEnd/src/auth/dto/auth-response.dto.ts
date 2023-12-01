@@ -9,11 +9,15 @@ class Token {
   accessToken: string;
 
   @ApiProperty({
-    example: 'ewaf1313RWDFA...',
+    example: 'ewaf1313RWDFdddA...',
     description: 'Refresh Token 입니다.',
   })
   refreshToken: string;
 }
+
+class AccessToken extends PickType(Token, ['accessToken']) {}
+
+class RefreshToken extends PickType(Token, ['refreshToken']) {}
 
 export class SignupResDto extends SuccessResDto {
   @ApiProperty({ type: () => Token })
@@ -21,11 +25,11 @@ export class SignupResDto extends SuccessResDto {
 }
 
 export class CreateAccessTokenResDto extends SuccessResDto {
-  @ApiProperty({ type: () => PickType(Token, ['accessToken']) })
-  data: Pick<Token, 'accessToken'>;
+  @ApiProperty({ type: () => AccessToken })
+  data: AccessToken;
 }
 
 export class CreateRefreshTokenResDto extends SuccessResDto {
-  @ApiProperty({ type: () => PickType(Token, ['refreshToken']) })
-  data: Pick<Token, 'refreshToken'>;
+  @ApiProperty({ type: () => RefreshToken })
+  data: RefreshToken;
 }
