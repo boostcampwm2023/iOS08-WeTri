@@ -110,7 +110,7 @@ extension WorkoutSessionUseCase {
     let afterCalories = healthRawData.calories.reduce(beforeData.calorie ?? 0, +)
 
     heartRates.append(contentsOf: heartRates)
-    let averageHeartRate = heartRates.reduce(0, +) / Double(heartRates.count)
+    let averageHeartRate = heartRates.reduce(0, +) / (Double(heartRates.count) == 0 ? 1 : Double(heartRates.count))
     let minimumHeartRate = heartRates.min()
     let maximumHeartRate = heartRates.max()
 
