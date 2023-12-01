@@ -7,6 +7,8 @@
 //
 
 import Coordinator
+import Log
+import Trinet
 import UIKit
 
 // MARK: - RecordFeatureCoordinator
@@ -17,27 +19,42 @@ public final class RecordFeatureCoordinator: RecordFeatureCoordinating {
   public weak var finishDelegate: CoordinatorFinishDelegate?
   public var flow: CoordinatorFlow = .workoutSetting
 
+  private let isMockEnvironment: Bool
+
   public init(
-    navigationController: UINavigationController
+    navigationController: UINavigationController,
+    isMockEnvironment: Bool
   ) {
     self.navigationController = navigationController
+    self.isMockEnvironment = isMockEnvironment
   }
 
   public func start() {
+    guard let jsonPath = Bundle(for: Self.self).path(forResource: "Records", ofType: "json"),
+          let jsonData = try? Data(contentsOf: .init(filePath: jsonPath))
+    else {
+      Log.make().error("Records Mock 데이터를 생성할 수 없습니다.")
+      return
+    }
+
+    let session: URLSessionProtocol = isMockEnvironment ? MockURLSession(mockData: jsonData) : URLSession.shared
+
     let dateProvideUseCase = DateProvideUseCase()
+    let recordCalendarViewModel = RecordCalendarViewModel(dateProvideUseCase: dateProvideUseCase)
+    let recordCalendarViewCotnroller = RecordCalendarViewController(viewModel: recordCalendarViewModel)
+
+    let workoutRecordsRepository = WorkoutRecordsRepository(session: session)
+    let recordUpdateUseCase = RecordUpdateUseCase(workoutRecordsRepository: workoutRecordsRepository)
+    let recordListViewModel = RecordListViewModel(
+      recordUpdateUsecase: recordUpdateUseCase,
+      dateProvideUsecase: dateProvideUseCase,
+      coordinator: self
+    )
+    let recordListViewController = RecordListViewController(viewModel: recordListViewModel)
+
     let recordContainerViewController = RecordContainerViewController(
-      recordCalendarViewController: RecordCalendarViewController(
-        viewModel: RecordCalendarViewModel(
-          dateProvideUseCase: dateProvideUseCase
-        )
-      ),
-      recordListViewController: RecordListViewController(
-        viewModel: RecordListViewModel(
-          recordUpdateUsecase: RecordUpdateUseCase(workoutRecordsRepository: MockWorkoutRecordsRepository()),
-          dateProvideUsecase: dateProvideUseCase,
-          coordinator: self
-        )
-      )
+      recordCalendarViewController: recordCalendarViewCotnroller,
+      recordListViewController: recordListViewController
     )
     navigationController.pushViewController(recordContainerViewController, animated: false)
   }

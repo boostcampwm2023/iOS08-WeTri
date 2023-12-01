@@ -52,7 +52,10 @@ final class TabBarCoordinator: TabBarCoordinating {
       homeCoordinator.start()
 
     case .record:
-      let recordCoordinator = RecordFeatureCoordinator(navigationController: pageNavigationViewController)
+      let recordCoordinator = RecordFeatureCoordinator(
+        navigationController: pageNavigationViewController,
+        isMockEnvironment: true
+      )
       childCoordinators.append(recordCoordinator)
       recordCoordinator.finishDelegate = self
       recordCoordinator.start()
