@@ -48,15 +48,15 @@ public final class HealthRepository {
   /// 사용자에게 HealthKit 사용 인가를 요청합니다.
   private func requestAuthorization() {
     if HKHealthStore.isHealthDataAvailable() == false {
-      Log.make().error("Not available HealthKit.")
+      Log.make(with: .healthKit).error("Not available HealthKit.")
       return
     }
 
-    Log.make().notice("Requesting HealthKit authorization...")
+    Log.make(with: .healthKit).notice("Requesting HealthKit authorization...")
 
     healthStore.requestAuthorization(toShare: nil, read: healthDataTypeValues) { _, error in
       if let error {
-        Log.make().error("Received an HealthKit error type: \(error)")
+        Log.make(with: .healthKit).error("Received an HealthKit error type: \(error)")
       }
     }
   }
@@ -71,6 +71,7 @@ public final class HealthRepository {
     return try await withCheckedThrowingContinuation { continuation in
 
       let handler: (HKAnchoredObjectQuery, [HKSample]?, [HKDeletedObject]?, HKQueryAnchor?, Error?) -> Void = { _, samples, _, newAnchor, error in
+        Log.make(with: .healthKit).notice("\(samples ?? []), \(newAnchor)")
         if let error {
           continuation.resume(throwing: error)
         } else {
@@ -79,7 +80,7 @@ public final class HealthRepository {
         guard let samples,
               samples.isEmpty == false
         else {
-          Log.make().notice("\(identifier.rawValue) Samples are empty.")
+          Log.make(with: .healthKit).notice("\(identifier.rawValue) Samples are empty.")
           return
         }
       }

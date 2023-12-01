@@ -35,6 +35,8 @@ final class WorkoutSessionUseCase {
     .init(distance: 0, calorie: 0, averageHeartRate: 0, minimumHeartRate: 0, maximumHeartRate: 0)
   )
 
+  private let healthRawDataSubject: PassthroughSubject<HealthRawData, Error> = .init()
+
   /// 참여자의 운동 정보를 업데이트해주는 Subject입니다.
   private let participantsStatusSubject: PassthroughSubject<WorkoutRealTimeModel, Error> = .init()
 
@@ -46,6 +48,7 @@ final class WorkoutSessionUseCase {
   private var subscriptions: Set<AnyCancellable> = []
 
   private let dependency: WorkoutSessionUseCaseDependency
+  private lazy var updateDate: Date = dependency.startDate
 
   init(healthRepository: HealthRepositoryRepresentable,
        socketRepository: WorkoutSocketRepositoryRepresentable,
@@ -60,24 +63,31 @@ final class WorkoutSessionUseCase {
 extension WorkoutSessionUseCase {
   private func bind() {
     // 2초마다 Health Repository에게 데이터 요청
-    let healthDataPublisher = Timer.publish(every: 2, on: .main, in: .common)
+    Timer.publish(every: 2, on: .main, in: .common)
       .autoconnect()
-      .flatMap { [healthRepository, dependency] _ in
-        return healthRepository.getDistanceWalkingRunningSample(startDate: dependency.startDate).combineLatest(
-          healthRepository.getCaloriesSample(startDate: dependency.startDate),
-          healthRepository.getHeartRateSample(startDate: dependency.startDate)
-        ) { (distance: $0, calories: $1, heartRate: $2) }
+      .withUnretained(self)
+      .flatMap { [healthRepository] owner, _ in
+        return healthRepository.getDistanceWalkingRunningSample(startDate: owner.updateDate).combineLatest(
+          healthRepository.getCaloriesSample(startDate: owner.updateDate),
+          healthRepository.getHeartRateSample(startDate: owner.updateDate)
+        )
       }
+      .filter {
+        return !$0.isEmpty || !$1.isEmpty || !$2.isEmpty
+      }
+      .map(HealthRawData.init)
+      .bind(to: healthRawDataSubject)
+      .store(in: &subscriptions)
 
     // 기록할 운동 데이터를 myHealthForm에 전달
-    healthDataPublisher
-      .map(calculateHealthForm(distance:calories:heartRates:))
+    healthRawDataSubject
+      .map(calculateHealthForm)
       .bind(to: myHealthFormSubject)
       .store(in: &subscriptions)
 
     // 소켓으로 자신의 데이터 전달
-    healthDataPublisher
-      .map(calculateWorkoutRealTimeModel(distance:calories:heartRates:))
+    healthRawDataSubject
+      .map(calculateWorkoutRealTimeModel)
       .flatMap(socketRepository.sendMyWorkout(with:))
       .sink { completion in
         if case let .failure(error) = completion {
@@ -94,15 +104,15 @@ extension WorkoutSessionUseCase {
       .store(in: &subscriptions)
   }
 
-  private func calculateHealthForm(distance: [Double], calories: [Double], heartRates: [Double]) -> WorkoutHealthForm {
+  private func calculateHealthForm(healthRawData: HealthRawData) -> WorkoutHealthForm {
     let beforeData = myHealthFormSubject.value
-    let afterDistance = distance.reduce(beforeData.distance ?? 0, +)
-    let afterCalories = calories.reduce(beforeData.calorie ?? 0, +)
+    let afterDistance = healthRawData.distances.reduce(beforeData.distance ?? 0, +)
+    let afterCalories = healthRawData.calories.reduce(beforeData.calorie ?? 0, +)
 
-    self.heartRates.append(contentsOf: heartRates)
-    let averageHeartRate = self.heartRates.reduce(0, +) / Double(self.heartRates.count)
-    let minimumHeartRate = self.heartRates.min()
-    let maximumHeartRate = self.heartRates.max()
+    heartRates.append(contentsOf: heartRates)
+    let averageHeartRate = heartRates.reduce(0, +) / Double(heartRates.count)
+    let minimumHeartRate = heartRates.min()
+    let maximumHeartRate = heartRates.max()
 
     return WorkoutHealthForm(
       distance: afterDistance,
@@ -113,10 +123,10 @@ extension WorkoutSessionUseCase {
     )
   }
 
-  private func calculateWorkoutRealTimeModel(distance: [Double], calories: [Double], heartRates: [Double]) -> WorkoutRealTimeModel {
+  private func calculateWorkoutRealTimeModel(healthRawData: HealthRawData) -> WorkoutRealTimeModel {
     let beforeData = myHealthFormSubject.value
-    let afterDistance = distance.reduce(beforeData.distance ?? 0, +)
-    let afterCalories = calories.reduce(beforeData.calorie ?? 0, +)
+    let afterDistance = healthRawData.distances.reduce(beforeData.distance ?? 0, +)
+    let afterCalories = healthRawData.calories.reduce(beforeData.calorie ?? 0, +)
     let afterHeartRate = heartRates.last
 
     return .init(
@@ -142,4 +152,12 @@ extension WorkoutSessionUseCase: WorkoutSessionUseCaseRepresentable {
   var participantsStatusPublisher: AnyPublisher<WorkoutRealTimeModel, Error> {
     participantsStatusSubject.eraseToAnyPublisher()
   }
+}
+
+// MARK: - HealthRawData
+
+private struct HealthRawData {
+  let distances: [Double]
+  let calories: [Double]
+  let heartRates: [Double]
 }
