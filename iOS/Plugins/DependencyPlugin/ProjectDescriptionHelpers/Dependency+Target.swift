@@ -21,6 +21,7 @@ public enum Feature: String {
 
 public extension TargetDependency {
   static let designSystem: TargetDependency = .project(target: "DesignSystem", path: .relativeToShared("DesignSystem"))
+  static let commonNetworkingKeyManager: TargetDependency = .project(target: "CommonNetworkingKeyManager", path: .relativeToShared("CommonNetworkingKeyManager"))
   static let trinet: TargetDependency = .project(target: "Trinet", path: .relativeToCore("Network"))
   static let coordinator: TargetDependency = .project(target: "Coordinator", path: .relativeToCore("Coordinator"))
   static let combineCocoa: TargetDependency = .project(target: "CombineCocoa", path: .relativeToShared("CombineCocoa"))
