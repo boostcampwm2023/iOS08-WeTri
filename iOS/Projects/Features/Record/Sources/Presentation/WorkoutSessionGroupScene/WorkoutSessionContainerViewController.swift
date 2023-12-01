@@ -159,8 +159,8 @@ final class WorkoutSessionContainerViewController: UIViewController {
         case .idle:
           break
         case let .updateTime(elapsedTime):
-          let minutes = Int(elapsedTime) / 60 % 60
-          let seconds = Int(elapsedTime) % 60
+          let minutes = Int(-elapsedTime) / 60 % 60
+          let seconds = Int(-elapsedTime) % 60
           self?.recordTimerLabel.text = String(format: "%02d분 %02d초", minutes, seconds)
         case let .alert(error):
           self?.showAlert(with: error)
