@@ -64,7 +64,15 @@ extension CountDownBeforeWorkoutViewModel: CountDownBeforeWorkoutViewModelRepres
     input
       .didFinishTimerSubscription
       .sink { [weak self] _ in
-        self?.coordinator?.pushWorkoutSession()
+        self?.coordinator?.pushWorkoutSession(
+          dependency: WorkoutSessionComponents(
+            participants: [.init(nickname: "S043_홍승현", id: "MyID", profileImageURL: .init(filePath: ""))],
+            startDate: .now,
+            roomID: "HHH",
+            id: "MyID",
+            nickname: "S043_홍승현"
+          )
+        )
       }
       .store(in: &subscriptions)
 
