@@ -70,7 +70,12 @@ public final class HealthRepository {
   private func query(startDate: Date, identifier: HKQuantityTypeIdentifier, anchor: HKQueryAnchor?) async throws -> ([HKSample]?, HKQueryAnchor?) {
     return try await withCheckedThrowingContinuation { continuation in
 
-      let handler: (HKAnchoredObjectQuery, [HKSample]?, [HKDeletedObject]?, HKQueryAnchor?, Error?) -> Void = { _, samples, _, newAnchor, error in
+      let query = HKAnchoredObjectQuery(
+        type: HKQuantityType(identifier),
+        predicate: HKQuery.predicateForSamples(withStart: startDate, end: nil),
+        anchor: anchor,
+        limit: HKObjectQueryNoLimit
+      ) { _, samples, _, newAnchor, error in
         Log.make(with: .healthKit).notice("\(samples ?? []), \(newAnchor)")
         if let error {
           continuation.resume(throwing: error)
@@ -85,15 +90,15 @@ public final class HealthRepository {
         }
       }
 
-      let query = HKAnchoredObjectQuery(
-        type: HKQuantityType(identifier),
-        predicate: HKQuery.predicateForSamples(withStart: startDate, end: nil),
-        anchor: anchor,
-        limit: HKObjectQueryNoLimit,
-        resultsHandler: handler
-      )
-
-      query.updateHandler = handler
+      query.updateHandler = { _, samples, _, newAnchor, _ in
+        Log.make(with: .healthKit).notice("\(samples ?? []), \(newAnchor)")
+        guard let samples,
+              samples.isEmpty == false
+        else {
+          Log.make(with: .healthKit).notice("\(identifier.rawValue) Samples are empty.")
+          return
+        }
+      }
 
       switch identifier {
       case .activeEnergyBurned:
