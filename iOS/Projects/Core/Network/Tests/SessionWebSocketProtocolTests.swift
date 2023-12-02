@@ -11,7 +11,7 @@
 import XCTest
 
 final class SessionWebSocketProtocolTests: XCTestCase {
-  private var mockSession: MockWebSocketSession?
+  private var mockSession: MockWebSocketSession<TestModel>?
   private var socketProvider: TNSocketProvider<MockEndPoint>?
 
   struct TestModel: Codable, Equatable {
@@ -23,7 +23,7 @@ final class SessionWebSocketProtocolTests: XCTestCase {
 
   override func setUp() {
     super.setUp()
-    let mockSession = MockWebSocketSession()
+    let mockSession = MockWebSocketSession<TestModel>()
     self.mockSession = mockSession
     socketProvider = TNSocketProvider(session: mockSession, endPoint: MockEndPoint())
   }
