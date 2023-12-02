@@ -129,6 +129,7 @@ public final class WorkoutSessionViewController: UIViewController {
         case let .fetchMyHealthForm(myHealthForm):
           self?.healthData = myHealthForm
         case let .fetchParticipantsIncludedMySelf(model):
+          Log.make().debug("\(model)")
           self?.realTimeModelByID[model.id] = model.health
           var snapshot = self?.participantsDataSource?.snapshot()
           snapshot?.reconfigureItems([model.id])
