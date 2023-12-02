@@ -44,7 +44,7 @@ final class WorkoutSessionContainerViewController: UIViewController {
   private let recordTimerLabel: UILabel = {
     let label = UILabel()
     label.font = .preferredFont(forTextStyle: .largeTitle)
-    label.text = "0분 0초"
+    label.text = "00분 00초"
     return label
   }()
 
