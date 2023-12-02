@@ -14,6 +14,7 @@ public protocol TNProvidable {
   associatedtype EndPoint = TNEndPoint
   func request(_ service: EndPoint, successStatusCodeRange: Range<Int>) async throws -> Data
   func request(_ service: EndPoint, completion: @Sendable @escaping (Data?, URLResponse?, Error?) -> Void) throws
+  func request(_ service: EndPoint, successStatusCodeRange range: Range<Int>, interceptor: TNRequestInterceptor) async throws -> Data
 }
 
 // MARK: - TNProvider
@@ -31,17 +32,25 @@ public struct TNProvider<T: TNEndPoint>: TNProvidable {
 
   public func request(_ service: T, successStatusCodeRange range: Range<Int> = 200 ..< 300) async throws -> Data {
     let (data, response) = try await session.data(for: service.request(), delegate: nil)
-    guard let httpResponse = (response as? HTTPURLResponse) else {
-      throw TNError.httpResponseDownCastingError
-    }
-    try checkStatusCode(httpResponse.statusCode, successStatusCodeRange: range)
-
+    try checkStatusCode(response, successStatusCodeRange: range)
     return data
+  }
+
+  public func request(_ service: T, successStatusCodeRange range: Range<Int> = 200 ..< 300, interceptor: TNRequestInterceptor) async throws -> Data {
+    let request = try interceptor.adapt(service.request(), session: session)
+    let (data, response) = try await session.data(for: request, delegate: nil)
+    let (retriedData, retriedResponse) = try await interceptor.retry(request, session: session, data: data, response: response, delegate: nil)
+    try checkStatusCode(retriedResponse, successStatusCodeRange: range)
+
+    return retriedData
   }
 }
 
 private extension TNProvider {
-  func checkStatusCode(_ statusCode: Int, successStatusCodeRange: Range<Int>) throws {
+  func checkStatusCode(_ urlResponse: URLResponse, successStatusCodeRange: Range<Int>) throws {
+    guard let statusCode = (urlResponse as? HTTPURLResponse)?.statusCode else {
+      throw TNError.httpResponseDownCastingError
+    }
     switch statusCode {
     case successStatusCodeRange:
       return

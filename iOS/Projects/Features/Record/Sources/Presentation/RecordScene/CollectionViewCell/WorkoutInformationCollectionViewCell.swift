@@ -29,10 +29,17 @@ final class WorkoutInformationCollectionViewCell: UICollectionViewCell {
     return label
   }()
 
-  private let timeLabel: UILabel = {
+  private let startTimeLabel: UILabel = {
     let label = UILabel()
     label.font = .preferredFont(forTextStyle: .body)
-    label.text = "시간: 07:00~08:00"
+    label.text = "시작: 07:00:00"
+    return label
+  }()
+
+  private let endTimeLabel: UILabel = {
+    let label = UILabel()
+    label.font = .preferredFont(forTextStyle: .body)
+    label.text = "끝: 08:00:00"
     return label
   }()
 
@@ -55,7 +62,8 @@ final class WorkoutInformationCollectionViewCell: UICollectionViewCell {
   func configure(workoutInformation: WorkoutInformation) {
     configureUI()
     sportLabel.text = "\(workoutInformation.sport)"
-    timeLabel.text = "\(workoutInformation.time)"
+    startTimeLabel.text = "\(workoutInformation.startTime) 부터"
+    endTimeLabel.text = "\(workoutInformation.endTime) 까지"
     distanceLabel.text = "\(workoutInformation.distance)"
   }
 }
@@ -64,7 +72,7 @@ private extension WorkoutInformationCollectionViewCell {
   func configureUI() {
     contentView.backgroundColor = DesignSystemColor.gray01
 
-    [sportLabel, timeLabel, distanceLabel].forEach {
+    [sportLabel, startTimeLabel, endTimeLabel, distanceLabel].forEach {
       stackView.addArrangedSubview($0)
     }
     contentView.addSubview(stackView)
@@ -87,6 +95,7 @@ private enum Metrics {
 
 struct WorkoutInformation {
   let sport: String
-  let time: String
+  let startTime: String
+  let endTime: String
   let distance: String
 }

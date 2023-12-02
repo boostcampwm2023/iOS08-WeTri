@@ -24,10 +24,16 @@ final class AppCoordinator: AppCoordinating {
   }
 
   func start() {
-    // (LoginFlow와 TabBarFlow 분기 처리) (todo)
-    let tabBarCoordinator = TabBarCoordinator(navigationController: navigationController)
-    childCoordinators.append(tabBarCoordinator)
-    tabBarCoordinator.start()
+    showOnboardingFlow()
+  }
+
+  func showOnboardingFlow() {
+    let onBoardingCoordinator = OnboardingCoordinator(
+      navigationController: navigationController,
+      finishDelegate: self
+    )
+    childCoordinators.append(onBoardingCoordinator)
+    onBoardingCoordinator.start()
   }
 
   func showLoginFlow() {
@@ -35,7 +41,10 @@ final class AppCoordinator: AppCoordinating {
   }
 
   func showTabBarFlow() {
-    // (TabBarController 추가되면 로직 추가) (todo)
+    // (LoginFlow와 TabBarFlow 분기 처리) (todo)
+    let tabBarCoordinator = TabBarCoordinator(navigationController: navigationController)
+    childCoordinators.append(tabBarCoordinator)
+    tabBarCoordinator.start()
   }
 }
 

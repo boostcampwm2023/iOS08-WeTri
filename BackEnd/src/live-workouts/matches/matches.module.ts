@@ -4,11 +4,11 @@ import { MatchesController } from './matches.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersModule } from '../../users/users.module';
 import { ProfilesModule } from '../../profiles/profiles.module';
-import { AuthService } from '../../auth/auth.service';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [JwtModule.register({}), UsersModule, ProfilesModule],
+  imports: [JwtModule.register({}), UsersModule, ProfilesModule, AuthModule],
   controllers: [MatchesController],
-  providers: [MatchesService, AuthService],
+  providers: [MatchesService],
 })
 export class MatchesModule {}
