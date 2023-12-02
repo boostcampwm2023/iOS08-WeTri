@@ -12,6 +12,10 @@ import UIKit
 // MARK: - SessionParticipantCell
 
 final class SessionParticipantCell: UICollectionViewCell {
+  // MARK: Properties
+
+  private var isInitiallyConfigured = false
+
   // MARK: UI Components
 
   private let profileImageView: UIImageView = {
@@ -172,12 +176,20 @@ final class SessionParticipantCell: UICollectionViewCell {
 
   // MARK: Internal
 
-  func configure(with imageName: String) {
-    profileImageView.image = UIImage(systemName: imageName)
+  override func prepareForReuse() {
+    super.prepareForReuse()
+    isInitiallyConfigured = false
   }
 
-  // FIXME: API가 정해졌을 때 데이터 모델을 수정해야합니다.
-  func configure(model: WorkoutHealth?) {
+  func configure(initial model: SessionPeerType) {
+    guard isInitiallyConfigured == false else { return }
+    isInitiallyConfigured = true
+    distanceLabel.text = "0"
+    profileImageView.image = try? UIImage(data: Data(contentsOf: model.profileImageURL)) ?? .init(systemName: "person")
+    nicknameLabel.text = model.nickname
+  }
+
+  func configure(with model: WorkoutHealthRealTimeModel?) {
     distanceLabel.text = "\(model?.distance ?? 0)"
   }
 }

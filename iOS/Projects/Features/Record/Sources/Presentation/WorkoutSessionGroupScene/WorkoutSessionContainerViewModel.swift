@@ -10,12 +10,18 @@ import Combine
 import CoreLocation
 import Foundation
 
+// MARK: - WorkoutSessionViewModelDependency
+
+protocol WorkoutSessionViewModelDependency {
+  var startDate: Date { get }
+}
+
 // MARK: - WorkoutSessionContainerViewModelInput
 
 public struct WorkoutSessionContainerViewModelInput {
   let endWorkoutPublisher: AnyPublisher<Void, Never>
   let locationPublisher: AnyPublisher<[CLLocation], Never>
-  let healthPublisher: AnyPublisher<WorkoutHealth, Never>
+  let healthPublisher: AnyPublisher<WorkoutHealthForm, Never>
 }
 
 public typealias WorkoutSessionContainerViewModelOutput = AnyPublisher<WorkoutSessionContainerState, Never>
@@ -24,6 +30,7 @@ public typealias WorkoutSessionContainerViewModelOutput = AnyPublisher<WorkoutSe
 
 public enum WorkoutSessionContainerState {
   case idle
+  case updateTime(TimeInterval)
   case alert(Error)
 }
 
@@ -44,9 +51,16 @@ final class WorkoutSessionContainerViewModel {
 
   private weak var coordinating: WorkoutSessionCoordinating?
 
-  init(workoutRecordUseCase: WorkoutRecordUseCaseRepresentable, coordinating: WorkoutSessionCoordinating) {
+  private let dependency: WorkoutSessionViewModelDependency
+
+  init(
+    workoutRecordUseCase: WorkoutRecordUseCaseRepresentable,
+    coordinating: WorkoutSessionCoordinating,
+    dependency: WorkoutSessionViewModelDependency
+  ) {
     self.workoutRecordUseCase = workoutRecordUseCase
     self.coordinating = coordinating
+    self.dependency = dependency
   }
 }
 
@@ -60,9 +74,18 @@ extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepr
     // == Input Output Binding ==
 
     let recordPublisher = input.endWorkoutPublisher
-      .combineLatest(input.locationPublisher, input.healthPublisher) { _, rawLocations, health in
+      .combineLatest(input.locationPublisher, input.healthPublisher) { [dependency] _, rawLocations, health in
         let locations = rawLocations.map { LocationDTO(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
-        return (locations, health)
+        let healthData = WorkoutDataForm(
+          workoutTime: Int(dependency.startDate.timeIntervalSince1970.rounded(.down)),
+          distance: Int(health.distance?.rounded(.toNearestOrAwayFromZero) ?? 0),
+          calorie: Int(health.calorie?.rounded(.toNearestOrAwayFromZero) ?? 0),
+          averageHeartRate: Int(health.averageHeartRate?.rounded(.toNearestOrAwayFromZero) ?? 0),
+          minimumHeartRate: Int(health.minimumHeartRate?.rounded(.toNearestOrAwayFromZero) ?? 0),
+          maximumHeartRate: Int(health.maximumHeartRate?.rounded(.toNearestOrAwayFromZero) ?? 0)
+        )
+
+        return (locations, healthData)
       }
       .flatMap(workoutRecordUseCase.record)
 
@@ -83,8 +106,11 @@ extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepr
       .catch { return Just(.alert($0)) }
       .eraseToAnyPublisher()
 
-    let initialState: WorkoutSessionContainerViewModelOutput = Just(.idle).eraseToAnyPublisher()
+    let workoutTimerPublisher = Timer.publish(every: 1, on: .main, in: .common)
+      .autoconnect()
+      .map(dependency.startDate.timeIntervalSince(_:))
+      .map { WorkoutSessionContainerState.updateTime($0) }
 
-    return initialState.merge(with: recordErrorPublisher).eraseToAnyPublisher()
+    return Just(WorkoutSessionContainerState.idle).merge(with: recordErrorPublisher, workoutTimerPublisher).eraseToAnyPublisher()
   }
 }

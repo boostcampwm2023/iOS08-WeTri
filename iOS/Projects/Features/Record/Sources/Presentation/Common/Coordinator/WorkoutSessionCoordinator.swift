@@ -11,6 +11,23 @@ import Log
 import Trinet
 import UIKit
 
+// MARK: - WorkoutSessionDependency
+
+protocol WorkoutSessionDependency: WorkoutSessionUseCaseDependency,
+  WorkoutSocketRepositoryDependency,
+  WorkoutSessionViewModelDependency,
+  WorkoutSessionViewControllerDependency {}
+
+// MARK: - WorkoutSessionComponents
+
+struct WorkoutSessionComponents: WorkoutSessionDependency {
+  let participants: [SessionPeerType]
+  let startDate: Date
+  let roomID: String
+  let id: String
+  let nickname: String
+}
+
 // MARK: - WorkoutSessionCoordinator
 
 final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
@@ -29,8 +46,7 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
     pushCountDownBeforeWorkout()
   }
 
-  func pushWorkoutSession() {
-    // TODO: Mock Data 연결 필요
+  func pushWorkoutSession(dependency: WorkoutSessionDependency) {
     guard let jsonPath = Bundle(for: Self.self).path(forResource: "WorkoutSession", ofType: "json"),
           let jsonData = try? Data(contentsOf: .init(filePath: jsonPath))
     else {
@@ -38,11 +54,30 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
       return
     }
 
+    let healthRepository = HealthRepository()
+
+    // TODO: 같이하기, 혼자하기 모드에 따라 session 주입을 다르게 해야합니다.
+    let socketRepository = WorkoutSocketRepository(session: MockWebSocketSession(), dependency: dependency)
+
+    let sessionUseCase = WorkoutSessionUseCase(
+      healthRepository: healthRepository,
+      socketRepository: socketRepository,
+      dependency: dependency
+    )
+
+    let sessionViewModel = WorkoutSessionViewModel(useCase: sessionUseCase)
+    let sessionViewController = WorkoutSessionViewController(viewModel: sessionViewModel, dependency: dependency)
+
     let session: URLSessionProtocol = isMockEnvironment ? MockURLSession(mockData: jsonData) : URLSession.shared
     let repository = WorkoutRecordRepository(session: session)
     let useCase = WorkoutRecordUseCase(repository: repository)
-    let viewModel = WorkoutSessionContainerViewModel(workoutRecordUseCase: useCase, coordinating: self)
-    let viewController = WorkoutSessionContainerViewController(viewModel: viewModel)
+    let viewModel = WorkoutSessionContainerViewModel(
+      workoutRecordUseCase: useCase,
+      coordinating: self,
+      dependency: dependency
+    )
+
+    let viewController = WorkoutSessionContainerViewController(viewModel: viewModel, healthDataProtocol: sessionViewController)
     navigationController.pushViewController(viewController, animated: true)
   }
 

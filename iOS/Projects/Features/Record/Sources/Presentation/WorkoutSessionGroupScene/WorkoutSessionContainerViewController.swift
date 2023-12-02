@@ -24,13 +24,7 @@ final class WorkoutSessionContainerViewController: UIViewController {
 
   // MARK: UI Components - ViewController
 
-  private let sessionViewController: HealthDataProtocol = WorkoutSessionViewController(
-    viewModel: WorkoutSessionViewModel(
-      useCase: WorkoutSessionUseCase(
-        repository: HealthRepository()
-      )
-    )
-  )
+  private let sessionViewController: HealthDataProtocol
 
   private let routeMapViewController: LocationTrackingProtocol = WorkoutRouteMapViewController(viewModel: WorkoutRouteMapViewModel())
 
@@ -65,8 +59,9 @@ final class WorkoutSessionContainerViewController: UIViewController {
 
   // MARK: Initializations
 
-  init(viewModel: WorkoutSessionContainerViewModelRepresentable) {
+  init(viewModel: WorkoutSessionContainerViewModelRepresentable, healthDataProtocol: HealthDataProtocol) {
     self.viewModel = viewModel
+    sessionViewController = healthDataProtocol
     super.init(nibName: nil, bundle: nil)
   }
 
@@ -163,6 +158,10 @@ final class WorkoutSessionContainerViewController: UIViewController {
         switch state {
         case .idle:
           break
+        case let .updateTime(elapsedTime):
+          let minutes = Int(-elapsedTime) / 60 % 60
+          let seconds = Int(-elapsedTime) % 60
+          self?.recordTimerLabel.text = String(format: "%02d분 %02d초", minutes, seconds)
         case let .alert(error):
           self?.showAlert(with: error)
         }
@@ -235,16 +234,4 @@ private extension WorkoutSessionContainerViewController {
     static let endingWorkoutButtonSize: CGFloat = 150
     static let pageControlHeight: CGFloat = 8
   }
-}
-
-@available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, xrOS 1.0, *)
-#Preview {
-  WorkoutSessionContainerViewController(
-    viewModel: WorkoutSessionContainerViewModel(
-      workoutRecordUseCase: WorkoutRecordUseCase(
-        repository: WorkoutRecordRepository(session: URLSession.shared)
-      ),
-      coordinating: WorkoutSessionCoordinator(navigationController: .init(), isMockEnvironment: true)
-    )
-  )
 }

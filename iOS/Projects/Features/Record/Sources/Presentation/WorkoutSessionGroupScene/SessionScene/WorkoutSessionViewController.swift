@@ -16,7 +16,13 @@ import UIKit
 /// 건강 정보를 제공받을 때 사용합니다.
 protocol HealthDataProtocol: UIViewController {
   /// 건강 데이터를 제공하는 Publisher
-  var healthDataPublisher: AnyPublisher<WorkoutHealth, Never> { get }
+  var healthDataPublisher: AnyPublisher<WorkoutHealthForm, Never> { get }
+}
+
+// MARK: - WorkoutSessionViewControllerDependency
+
+protocol WorkoutSessionViewControllerDependency {
+  var participants: [SessionPeerType] { get }
 }
 
 // MARK: - WorkoutSessionViewController
@@ -28,13 +34,16 @@ public final class WorkoutSessionViewController: UIViewController {
 
   private var participantsDataSource: ParticipantsDataSource?
 
-  @Published private var healthData: WorkoutHealth = .init(
+  @Published private var healthData: WorkoutHealthForm = .init(
     distance: nil,
     calorie: nil,
     averageHeartRate: nil,
     minimumHeartRate: nil,
     maximumHeartRate: nil
   )
+
+  private var realTimeModelByID: [UserID: WorkoutHealthRealTimeModel] = [:]
+  private var userInfoByID: [UserID: SessionPeerType] = [:]
 
   private var subscriptions: Set<AnyCancellable> = []
 
@@ -52,8 +61,13 @@ public final class WorkoutSessionViewController: UIViewController {
 
   // MARK: Initializations
 
-  public init(viewModel: WorkoutSessionViewModelRepresentable) {
+  init(viewModel: WorkoutSessionViewModelRepresentable, dependency: WorkoutSessionViewControllerDependency) {
     self.viewModel = viewModel
+    for participant in dependency.participants {
+      userInfoByID[participant.id] = participant
+      realTimeModelByID[participant.id] = .init(distance: 0, calories: 0, heartRate: 0)
+    }
+
     super.init(nibName: nil, bundle: nil)
   }
 
@@ -110,19 +124,14 @@ public final class WorkoutSessionViewController: UIViewController {
         switch state {
         case .idle:
           break
-
-        // FIXME: 데이터모델을 수정해야합니다.
-        case let .connectHealthData(distance: distance, calories: calories, heartRate: heartRate):
-          self?.healthData = WorkoutHealth(
-            distance: distance,
-            calorie: calories,
-            averageHeartRate: heartRate,
-            minimumHeartRate: nil,
-            maximumHeartRate: nil
-          )
-          self?.updateSnapshot(from: "house")
         case .alert:
           break
+        case let .fetchMyHealthForm(myHealthForm):
+          self?.healthData = myHealthForm
+        case let .fetchParticipantsIncludedMySelf(model):
+          self?.realTimeModelByID[model.id] = model.health
+          var snapshot = self?.participantsDataSource?.snapshot()
+          snapshot?.reconfigureItems([model.id])
         }
       }
       .store(in: &subscriptions)
@@ -158,8 +167,8 @@ public final class WorkoutSessionViewController: UIViewController {
   /// DataSource를 생성합니다.
   private func generateDataSources() {
     let cellRegistration = ParticipantsCellRegistration { [weak self] cell, _, itemIdentifier in
-      cell.configure(with: itemIdentifier)
-      cell.configure(model: self?.healthData)
+      cell.configure(initial: self?.userInfoByID[itemIdentifier] ?? .init(nickname: "Unknown", id: "Unknown", profileImageURL: .init(filePath: "")))
+      cell.configure(with: self?.realTimeModelByID[itemIdentifier])
     }
 
     participantsDataSource = ParticipantsDataSource(
@@ -173,15 +182,7 @@ public final class WorkoutSessionViewController: UIViewController {
     guard let participantsDataSource else { return }
     var snapshot = ParticipantsSnapshot()
     snapshot.appendSections([.main])
-    snapshot.appendItems(
-      [
-        "house",
-        "square.and.arrow.up",
-        "pencil.circle",
-        "pencil.and.outline",
-        "pencil.tip.crop.circle.badge.minus.fill",
-      ]
-    )
+    snapshot.appendItems(Array(userInfoByID.keys))
 
     participantsDataSource.apply(snapshot)
   }
@@ -197,7 +198,7 @@ public final class WorkoutSessionViewController: UIViewController {
 // MARK: HealthDataProtocol
 
 extension WorkoutSessionViewController: HealthDataProtocol {
-  var healthDataPublisher: AnyPublisher<WorkoutHealth, Never> {
+  var healthDataPublisher: AnyPublisher<WorkoutHealthForm, Never> {
     $healthData.eraseToAnyPublisher()
   }
 }
@@ -217,9 +218,9 @@ private extension WorkoutSessionViewController {
   typealias ParticipantsCellRegistration = UICollectionView.CellRegistration<SessionParticipantCell, Item>
   typealias ParticipantsDataSource = UICollectionViewDiffableDataSource<Section, Item>
   typealias ParticipantsSnapshot = NSDiffableDataSourceSnapshot<Section, Item>
+  typealias UserID = String
 
-  // TODO: API가 정해진 뒤 Item 설정 필요
-  typealias Item = String
+  typealias Item = UserID
 
   enum Section {
     case main

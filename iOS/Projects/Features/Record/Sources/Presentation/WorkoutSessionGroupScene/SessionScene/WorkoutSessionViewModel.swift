@@ -10,28 +10,28 @@ import Combine
 
 // MARK: - WorkoutSessionViewModelInput
 
-public struct WorkoutSessionViewModelInput {}
+struct WorkoutSessionViewModelInput {}
 
-public typealias WorkoutSessionViewModelOutput = AnyPublisher<WorkoutSessionState, Never>
+typealias WorkoutSessionViewModelOutput = AnyPublisher<WorkoutSessionState, Never>
 
 // MARK: - WorkoutSessionState
 
-public enum WorkoutSessionState {
+enum WorkoutSessionState {
   case idle
-  // FIXME: API Model로 바꿔야합니다.
-  case connectHealthData(distance: Double, calories: Double, heartRate: Double)
+  case fetchMyHealthForm(WorkoutHealthForm)
+  case fetchParticipantsIncludedMySelf(WorkoutRealTimeModel)
   case alert(Error)
 }
 
 // MARK: - WorkoutSessionViewModelRepresentable
 
-public protocol WorkoutSessionViewModelRepresentable {
+protocol WorkoutSessionViewModelRepresentable {
   func transform(input: WorkoutSessionViewModelInput) -> WorkoutSessionViewModelOutput
 }
 
 // MARK: - WorkoutSessionViewModel
 
-public final class WorkoutSessionViewModel {
+final class WorkoutSessionViewModel {
   // MARK: Properties
 
   private let useCase: WorkoutSessionUseCaseRepresentable
@@ -48,15 +48,17 @@ public final class WorkoutSessionViewModel {
 // MARK: WorkoutSessionViewModelRepresentable
 
 extension WorkoutSessionViewModel: WorkoutSessionViewModelRepresentable {
-  public func transform(input _: WorkoutSessionViewModelInput) -> WorkoutSessionViewModelOutput {
+  func transform(input _: WorkoutSessionViewModelInput) -> WorkoutSessionViewModelOutput {
     subscriptions.removeAll()
 
-    let initialState: WorkoutSessionViewModelOutput = Just(.idle).eraseToAnyPublisher()
-
-    let healthData = useCase.healthPublisher
-      .map(WorkoutSessionState.connectHealthData)
+    let myHealth = useCase.myHealthFormPublisher
+      .map(WorkoutSessionState.fetchMyHealthForm)
       .catch { Just(.alert($0)) }
 
-    return initialState.merge(with: healthData).eraseToAnyPublisher()
+    let participants = useCase.participantsStatusPublisher
+      .map(WorkoutSessionState.fetchParticipantsIncludedMySelf)
+      .catch { Just(.alert($0)) }
+
+    return Just(.idle).merge(with: myHealth, participants).eraseToAnyPublisher()
   }
 }

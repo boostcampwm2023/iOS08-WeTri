@@ -12,7 +12,7 @@ import Foundation
 // MARK: - WorkoutRecordUseCaseRepresentable
 
 protocol WorkoutRecordUseCaseRepresentable {
-  func record(locations: [LocationDTO], healthData: WorkoutHealth) -> AnyPublisher<Int, Error>
+  func record(locations: [LocationDTO], healthData: WorkoutDataForm) -> AnyPublisher<Int, Error>
 }
 
 // MARK: - WorkoutRecordUseCase
@@ -28,7 +28,7 @@ struct WorkoutRecordUseCase {
 // MARK: WorkoutRecordUseCaseRepresentable
 
 extension WorkoutRecordUseCase: WorkoutRecordUseCaseRepresentable {
-  func record(locations: [LocationDTO], healthData: WorkoutHealth) -> AnyPublisher<Int, Error> {
+  func record(locations: [LocationDTO], healthData: WorkoutDataForm) -> AnyPublisher<Int, Error> {
     repository.record(usingLocation: locations, andHealthData: healthData)
   }
 }

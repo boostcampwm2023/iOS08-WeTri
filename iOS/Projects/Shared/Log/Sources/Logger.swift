@@ -31,6 +31,12 @@ public enum LogCategory: String {
 
   /// 네트워크 로그를 작성할 때 사용합니다.
   case network
+
+  /// HealthKit 로그를 담당합니다.
+  case healthKit
+
+  /// Socket 로그를 담당합니다.
+  case socket
 }
 
 private extension String {

@@ -9,62 +9,159 @@
 import Combine
 import CombineCocoa
 import Foundation
+import Log
+
+// MARK: - WorkoutSessionUseCaseDependency
+
+protocol WorkoutSessionUseCaseDependency {
+  var startDate: Date { get }
+  var roomID: String { get }
+  var id: String { get }
+  var nickname: String { get }
+}
 
 // MARK: - WorkoutSessionUseCaseRepresentable
 
 protocol WorkoutSessionUseCaseRepresentable {
-  var healthPublisher: AnyPublisher<(distance: Double, calories: Double, heartRate: Double), Error> { get }
+  var myHealthFormPublisher: AnyPublisher<WorkoutHealthForm, Never> { get }
+  var participantsStatusPublisher: AnyPublisher<WorkoutRealTimeModel, Error> { get }
 }
 
 // MARK: - WorkoutSessionUseCase
 
 final class WorkoutSessionUseCase {
-  private let healthPassthroughSubject: CurrentValueSubject<(distance: Double, calories: Double, heartRate: Double), Error> = .init((0, 0, 0))
-  private let repository: HealthRepositoryRepresentable
+  /// 내 운동 정보를 갖습니다.
+  private let myHealthFormSubject: CurrentValueSubject<WorkoutHealthForm, Never> = .init(
+    .init(distance: 0, calorie: 0, averageHeartRate: 0, minimumHeartRate: 0, maximumHeartRate: 0)
+  )
+
+  private let healthRawDataSubject: PassthroughSubject<HealthRawData?, Never> = .init()
+
+  /// 참여자의 운동 정보를 업데이트해주는 Subject입니다.
+  private let participantsStatusSubject: PassthroughSubject<WorkoutRealTimeModel, Error> = .init()
+
+  private let healthRepository: HealthRepositoryRepresentable
+  private let socketRepository: WorkoutSocketRepositoryRepresentable
+
+  private var heartRates: [Double] = []
 
   private var subscriptions: Set<AnyCancellable> = []
 
-  // TODO: 서버로부터 받은 데이트 타입으로 설정할 필요
-  private let date: Date = .now
+  private let dependency: WorkoutSessionUseCaseDependency
 
-  init(repository: HealthRepositoryRepresentable) {
-    self.repository = repository
+  init(healthRepository: HealthRepositoryRepresentable,
+       socketRepository: WorkoutSocketRepositoryRepresentable,
+       dependency: WorkoutSessionUseCaseDependency) {
+    self.healthRepository = healthRepository
+    self.socketRepository = socketRepository
+    self.dependency = dependency
     bind()
   }
+}
 
+extension WorkoutSessionUseCase {
   private func bind() {
+    // 2초마다 Health Repository에게 데이터 요청
     Timer.publish(every: 2, on: .main, in: .common)
       .autoconnect()
-      .flatMap { [weak self] _ in
-        guard let self
-        else {
-          return Just(([0.0], [0.0], [0.0])).setFailureType(to: Error.self).eraseToAnyPublisher()
-        }
-        return repository.getDistanceWalkingRunningSample(startDate: date).combineLatest(
-          repository.getCaloriesSample(startDate: date),
-          repository.getHeartRateSample(startDate: date)
-        ) {
-          (distance: $0, calories: $1, heartRate: $2)
-        }
-        .eraseToAnyPublisher()
+      .flatMap { [healthRepository, dependency] _ in
+        return healthRepository.getDistanceWalkingRunningSample(startDate: dependency.startDate).combineLatest(
+          healthRepository.getCaloriesSample(startDate: dependency.startDate),
+          healthRepository.getHeartRateSample(startDate: dependency.startDate)
+        )
       }
-      .compactMap { [weak self] distance, calories, heartRate in
-        guard let self else { return nil }
-        let (beforeDistance, beforeCalories, beforeHeartRate) = healthPassthroughSubject.value
-        let afterDistance = distance.reduce(beforeDistance, +)
-        let afterCalories = calories.reduce(beforeCalories, +)
-        let afterHeartRate = heartRate.last ?? beforeHeartRate
-        return (distance: afterDistance, calories: afterCalories, heartRate: afterHeartRate)
+      .filter {
+        return !$0.isEmpty || !$1.isEmpty || !$2.isEmpty
       }
-      .bind(to: healthPassthroughSubject)
+      .map(HealthRawData.init)
+      .catch { _ in
+        // 실패 시 nil 전달
+        return Just(nil)
+      }
+      .bind(to: healthRawDataSubject)
       .store(in: &subscriptions)
+
+    // 기록할 운동 데이터를 myHealthForm에 전달
+    healthRawDataSubject
+      .compactMap { $0 } // nil이 들어오면 무시
+      .map(calculateHealthForm)
+      .bind(to: myHealthFormSubject)
+      .store(in: &subscriptions)
+
+    // 소켓으로 자신의 데이터 전달
+    healthRawDataSubject
+      .compactMap { $0 }
+      .map(calculateWorkoutRealTimeModel)
+      .flatMap(socketRepository.sendMyWorkout(with:))
+      .sink { completion in
+        if case let .failure(error) = completion {
+          Log.make(with: .socket).error("\(error)")
+        }
+      } receiveValue: { _ in
+        // 정상적으로 전송되면 아무 일도 하지 않습니다.
+      }
+      .store(in: &subscriptions)
+
+    // 참여자의 운동 정보를 실시간으로 수신
+    socketRepository.fetchParticipantsRealTime()
+      .bind(to: participantsStatusSubject)
+      .store(in: &subscriptions)
+  }
+
+  private func calculateHealthForm(healthRawData: HealthRawData) -> WorkoutHealthForm {
+    let beforeData = myHealthFormSubject.value
+    let afterDistance = healthRawData.distances.reduce(beforeData.distance ?? 0, +)
+    let afterCalories = healthRawData.calories.reduce(beforeData.calorie ?? 0, +)
+
+    heartRates.append(contentsOf: heartRates)
+    let averageHeartRate = heartRates.reduce(0, +) / (Double(heartRates.count) == 0 ? 1 : Double(heartRates.count))
+    let minimumHeartRate = heartRates.min()
+    let maximumHeartRate = heartRates.max()
+
+    return WorkoutHealthForm(
+      distance: afterDistance,
+      calorie: afterCalories,
+      averageHeartRate: averageHeartRate,
+      minimumHeartRate: minimumHeartRate,
+      maximumHeartRate: maximumHeartRate
+    )
+  }
+
+  private func calculateWorkoutRealTimeModel(healthRawData: HealthRawData) -> WorkoutRealTimeModel {
+    let beforeData = myHealthFormSubject.value
+    let afterDistance = healthRawData.distances.reduce(beforeData.distance ?? 0, +)
+    let afterCalories = healthRawData.calories.reduce(beforeData.calorie ?? 0, +)
+    let afterHeartRate = heartRates.last
+
+    return .init(
+      id: dependency.id,
+      roomID: dependency.roomID,
+      nickname: dependency.nickname,
+      health: .init(
+        distance: afterDistance,
+        calories: afterCalories,
+        heartRate: afterHeartRate
+      )
+    )
   }
 }
 
 // MARK: WorkoutSessionUseCaseRepresentable
 
 extension WorkoutSessionUseCase: WorkoutSessionUseCaseRepresentable {
-  var healthPublisher: AnyPublisher<(distance: Double, calories: Double, heartRate: Double), Error> {
-    healthPassthroughSubject.eraseToAnyPublisher()
+  var myHealthFormPublisher: AnyPublisher<WorkoutHealthForm, Never> {
+    myHealthFormSubject.eraseToAnyPublisher()
   }
+
+  var participantsStatusPublisher: AnyPublisher<WorkoutRealTimeModel, Error> {
+    participantsStatusSubject.eraseToAnyPublisher()
+  }
+}
+
+// MARK: - HealthRawData
+
+private struct HealthRawData {
+  let distances: [Double]
+  let calories: [Double]
+  let heartRates: [Double]
 }
