@@ -2,9 +2,9 @@ name: iOS-CI
 
 on:
   push:
-    branches: 'feature/iOS/*'
+    branches: "feature/iOS/*"
   pull_request:
-    branches: 'develop'
+    branches: "develop"
     types: [labeled, opened, synchronize, reopened]
 
 jobs:
@@ -59,4 +59,8 @@ jobs:
 
       - name: Run Tuist Test
         run: make ci
+        working-directory: ${{env.working-directory}}
+
+      - name: Tuist Build
+        run: make build
         working-directory: ${{env.working-directory}}
