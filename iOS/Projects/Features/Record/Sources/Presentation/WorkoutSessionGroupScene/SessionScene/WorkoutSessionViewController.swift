@@ -133,6 +133,11 @@ public final class WorkoutSessionViewController: UIViewController {
           self?.realTimeModelByID[model.id] = model.health
           var snapshot = self?.participantsDataSource?.snapshot()
           snapshot?.reconfigureItems([model.id])
+          if let snapshot {
+            self?.participantsDataSource?.apply(snapshot)
+          } else {
+            Log.make().error("snapshot이 생성되지 못했습니다. 헬스 데이터로 UI를 그리지 못합니다.")
+          }
         }
       }
       .store(in: &subscriptions)
