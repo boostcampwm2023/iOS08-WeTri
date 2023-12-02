@@ -6,7 +6,7 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
-@testable import CombineCocoa
+@testable import CombineExtension
 
 import Combine
 import XCTest

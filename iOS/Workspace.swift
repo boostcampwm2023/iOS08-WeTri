@@ -4,6 +4,6 @@ import ProjectDescriptionHelpers
 let workspace = Workspace(
   name: "WeTri",
   projects: [
-    "Projects/App/WeTri",
+    "Projects/Features/Record",
   ]
 )
