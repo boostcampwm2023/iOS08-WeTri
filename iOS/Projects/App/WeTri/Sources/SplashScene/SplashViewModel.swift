@@ -34,7 +34,14 @@ public protocol SplashViewModelRepresentable {
 public final class SplashViewModel {
   // MARK: Properties
 
+  private weak var coordinator: SplashCoordinator?
   private var subscriptions: Set<AnyCancellable> = []
+
+  // MARK: Initializations
+
+  public init(coordinator: SplashCoordinator) {
+    self.coordinator = coordinator
+  }
 }
 
 // MARK: SplashViewModelRepresentable
