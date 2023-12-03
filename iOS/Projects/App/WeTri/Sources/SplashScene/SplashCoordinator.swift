@@ -35,7 +35,9 @@ public final class SplashCoordinator: SplashCoordinating {
   }
 
   public func start() {
-    let viewController = SplashViewController(viewModel: SplashViewModel(coordinator: self))
+    let useCase = SplashUseCase()
+    let viewModel = SplashViewModel(coordinator: self, useCase: useCase)
+    let viewController = SplashViewController(viewModel: viewModel)
     navigationController.pushViewController(viewController, animated: false)
   }
 }

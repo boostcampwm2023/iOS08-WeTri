@@ -36,11 +36,16 @@ public final class SplashViewModel {
 
   private weak var coordinator: SplashCoordinator?
   private var subscriptions: Set<AnyCancellable> = []
+  private let useCase: SplashUseCaseRepresentable
 
   // MARK: Initializations
 
-  public init(coordinator: SplashCoordinator) {
+  public init(
+    coordinator: SplashCoordinator,
+    useCase: SplashUseCaseRepresentable
+  ) {
     self.coordinator = coordinator
+    self.useCase = useCase
   }
 }
 
