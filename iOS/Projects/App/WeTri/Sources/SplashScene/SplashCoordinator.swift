@@ -7,6 +7,7 @@
 //
 
 import Coordinator
+import Log
 import UIKit
 
 // MARK: - SplashCoordinatorFinishDelegate
@@ -23,6 +24,10 @@ public final class SplashCoordinator {
   public weak var finishDelegate: CoordinatorFinishDelegate?
   private weak var splashCoordinatorFinishDelegate: SplashCoordinatorFinishDelegate?
   public var flow: CoordinatorFlow = .splash
+
+  deinit {
+    Log.make().debug("\(Self.self) deinitialized")
+  }
 
   public init(
     navigationController: UINavigationController,

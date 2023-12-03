@@ -10,6 +10,7 @@ import Combine
 import CommonNetworkingKeyManager
 import Foundation
 import Keychain
+import Log
 
 // MARK: - SplashUseCaseRepresentable
 
@@ -27,9 +28,10 @@ public struct SplashUseCase: SplashUseCaseRepresentable {
   }
 
   public func reissueToken() -> AnyPublisher<Bool, Never> {
-    repository.reissueRefreshToken()
+    return repository.reissueRefreshToken()
       .map(\.refreshToken)
       .tryMap {
+        Log.make().debug("refresh token: \($0)")
         guard let data = $0.data(using: .utf8) else {
           throw SplashUseCaseError.cannotData
         }
@@ -42,6 +44,7 @@ public struct SplashUseCase: SplashUseCaseRepresentable {
       .flatMap(repository.reissueAccessToken)
       .map(\.accessToken)
       .tryMap {
+        Log.make().debug("access token: \($0)")
         guard let data = $0.data(using: .utf8) else {
           throw SplashUseCaseError.cannotData
         }

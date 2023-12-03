@@ -8,6 +8,7 @@
 
 import Combine
 import Foundation
+import Log
 
 // MARK: - SplashViewModelInput
 
@@ -40,6 +41,10 @@ public final class SplashViewModel {
 
   // MARK: Initializations
 
+  deinit {
+    Log.make().debug("\(Self.self) deinitialized")
+  }
+
   public init(
     coordinator: SplashCoordinator,
     useCase: SplashUseCaseRepresentable
@@ -57,8 +62,10 @@ extension SplashViewModel: SplashViewModelRepresentable {
 
     input.viewDidLoadPublisher
       .flatMap(useCase.reissueToken)
+      .receive(on: RunLoop.main)
       .sink { [weak self] hasTokenReissued in
-        self?.coordinator?.showLoginOrMainFlow(when: hasTokenReissued)
+        Log.make().debug("hasTokenReissued: \(hasTokenReissued)")
+        self?.coordinator?.showLoginOrMainFlow(when: !hasTokenReissued)
       }
       .store(in: &subscriptions)
 

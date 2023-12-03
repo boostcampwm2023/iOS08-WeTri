@@ -8,6 +8,7 @@
 
 import Combine
 import DesignSystem
+import Log
 import UIKit
 
 // MARK: - SplashViewController
@@ -31,6 +32,10 @@ final class SplashViewController: UIViewController {
   }()
 
   // MARK: Initializations
+
+  deinit {
+    Log.make().debug("\(Self.self) deinitialized")
+  }
 
   init(viewModel: SplashViewModelRepresentable) {
     self.viewModel = viewModel
