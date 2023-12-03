@@ -44,4 +44,9 @@ export class RecordsService {
 
     return result;
   }
+
+  async updateIsPostedTrue(record: Record) {
+    record.isPosted = true;
+    await this.recordsRepository.save(record);
+  }
 }
