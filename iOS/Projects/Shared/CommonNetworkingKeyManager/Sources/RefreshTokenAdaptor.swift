@@ -10,8 +10,10 @@ import Foundation
 import Keychain
 import Trinet
 
-final class RefreshTokenAdaptor: TNRequestInterceptor {
-  func retry(
+public final class RefreshTokenAdaptor: TNRequestInterceptor {
+  public init() {}
+
+  public func retry(
     _: URLRequest,
     session _: URLSessionProtocol,
     data: Data,
@@ -21,7 +23,7 @@ final class RefreshTokenAdaptor: TNRequestInterceptor {
     return (data, response)
   }
 
-  func adapt(_ request: URLRequest, session _: URLSessionProtocol) -> URLRequest {
+  public func adapt(_ request: URLRequest, session _: URLSessionProtocol) -> URLRequest {
     var mutatbleRequest = request
     if let refreshToken = RefreshTokenManager.refreshToken {
       let headerValue = "Bearer \(refreshToken)"

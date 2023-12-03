@@ -23,6 +23,6 @@ final class ACoordinator: ACoordinating {
 
   func start() {
     let viewController = AViewController()
-    navigationController.pushViewController(viewController, animated: false)
+    navigationController.setViewControllers([viewController], animated: true)
   }
 }
