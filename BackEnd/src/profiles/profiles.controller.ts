@@ -16,7 +16,7 @@ import { AccessTokenGuard } from '../auth/guard/bearerToken.guard';
 import { GetProfileAndPosts, SuccessProfile } from './dto/create-profile.dto';
 
 @ApiTags('Profiles API')
-@Controller('profiles')
+@Controller('api/v1/profiles')
 @UseGuards(AccessTokenGuard)
 export class ProfilesController {
   constructor(private readonly profilesService: ProfilesService) {}
