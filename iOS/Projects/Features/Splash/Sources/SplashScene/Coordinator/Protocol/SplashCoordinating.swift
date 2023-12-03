@@ -10,5 +10,5 @@ import Coordinator
 import Foundation
 
 protocol SplashCoordinating: Coordinating {
-  func showLoginOrMainFlow(when tokenExpired: Bool)
+  func showLoginOrMainFlow(when hasTokenExpired: Bool)
 }
