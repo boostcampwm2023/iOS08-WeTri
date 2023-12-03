@@ -8,12 +8,4 @@
 
 import Foundation
 
-protocol WorkoutRecordCacheRepositoryRepresentable {
-  func fetch(cacheKey: String) throws -> Data?
-  func set(data: Data, cacheKey: String) throws
-  func fetchMemoryData(cacheKey: String) -> Data?
-  func fetchDiskData(cacheKey: String) throws -> Data?
-  func setMemory(data: Data, cacheKey: String)
-  func setDisk(data: Data, cacheKey: String) throws
-  func generateFileURL(cacheKey: String) -> URL?
-}
+protocol WorkoutRecordCacheRepositoryRepresentable {}

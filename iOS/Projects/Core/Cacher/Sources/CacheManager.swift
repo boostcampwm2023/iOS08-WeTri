@@ -6,3 +6,11 @@
 //
 
 import Foundation
+
+public final class CacheManager {
+  public static let shared = CacheManager()
+  
+  private let cacher = Cacher(fileManager: FileManager.default)
+
+  private init() {}  
+}
