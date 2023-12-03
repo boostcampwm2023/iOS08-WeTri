@@ -18,6 +18,12 @@ public protocol SplashUseCaseRepresentable {
 // MARK: - SplashUseCase
 
 public struct SplashUseCase: SplashUseCaseRepresentable {
+  private let repository: SplashTokenRepositoryRepresentable
+
+  public init(repository: SplashTokenRepositoryRepresentable) {
+    self.repository = repository
+  }
+
   public func reissueToken() -> AnyPublisher<Bool, Error> {
     PassthroughSubject<Bool, Error>().eraseToAnyPublisher()
   }

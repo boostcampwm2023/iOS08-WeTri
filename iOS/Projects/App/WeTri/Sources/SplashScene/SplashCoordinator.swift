@@ -35,7 +35,9 @@ public final class SplashCoordinator: SplashCoordinating {
   }
 
   public func start() {
-    let useCase = SplashUseCase()
+    let session = URLSession.shared
+    let repository = SplashTokenRepository(session: session)
+    let useCase = SplashUseCase(repository: repository)
     let viewModel = SplashViewModel(coordinator: self, useCase: useCase)
     let viewController = SplashViewController(viewModel: viewModel)
     navigationController.pushViewController(viewController, animated: false)
