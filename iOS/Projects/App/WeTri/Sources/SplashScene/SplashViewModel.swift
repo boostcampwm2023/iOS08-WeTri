@@ -56,6 +56,12 @@ extension SplashViewModel: SplashViewModelRepresentable {
     subscriptions.removeAll()
 
     input.viewDidLoadPublisher
+      .flatMap(useCase.reissueToken)
+      .sink { [weak self] hasTokenReissued in
+        self?.coordinator?.splashCoordinatorFinishDelegate?.splashCoordinatorDidFinished(hasTokenExpired: hasTokenReissued)
+      }
+      .store(in: &subscriptions)
+
 
     let initialState: SplashViewModelOutput = Just(.idle).eraseToAnyPublisher()
 
