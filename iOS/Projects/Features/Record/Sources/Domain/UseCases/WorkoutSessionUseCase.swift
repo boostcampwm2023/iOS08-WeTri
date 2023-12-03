@@ -8,6 +8,7 @@
 
 import Combine
 import CombineCocoa
+import CombineExtension
 import Foundation
 import Log
 

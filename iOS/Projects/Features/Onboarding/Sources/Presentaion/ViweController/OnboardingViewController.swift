@@ -8,6 +8,7 @@
 
 import Combine
 import CombineCocoa
+import CombineExtension
 import DesignSystem
 import Log
 import UIKit

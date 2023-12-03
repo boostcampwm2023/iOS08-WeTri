@@ -5,7 +5,7 @@
 //  Created by 홍승현 on 11/23/23.
 //
 
-@testable import CombineCocoa
+@testable import CombineExtension
 
 import Combine
 import XCTest
