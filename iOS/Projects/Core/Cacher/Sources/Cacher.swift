@@ -24,6 +24,7 @@ final class Cacher {
   init(fileManager: FileManager) {
     self.fileManager = fileManager
   }
+
   /// memory와 disk에서 데이터를 가져옵니다.
   /// memory캐시를 진행하고 메모리에 데이터가 없으면 디스크캐시로 넘어갑니다. 그마저 없다면 Error를 방출합니다.
   /// Error는 나중에 API호출로 처리됩니다.
@@ -43,7 +44,7 @@ final class Cacher {
     setMemory(data: data, cacheKey: cacheKey)
     try setDisk(data: data, cacheKey: cacheKey)
   }
-  
+
   /// memory데이터를 불러옵니다.
   func fetchMemoryData(cacheKey: String) -> Data? {
     return cache.object(forKey: cacheKey as NSString) as? Data
