@@ -190,7 +190,8 @@ final class SessionParticipantCell: UICollectionViewCell {
   }
 
   func configure(with model: WorkoutHealthRealTimeModel?) {
-    distanceLabel.text = "\(model?.distance ?? 0)"
+    // 소수점 세 자리까지만 표현
+    distanceLabel.text = "\(((model?.distance ?? 0) * 1000).rounded(.toNearestOrAwayFromZero) / 1000)m"
   }
 }
 
