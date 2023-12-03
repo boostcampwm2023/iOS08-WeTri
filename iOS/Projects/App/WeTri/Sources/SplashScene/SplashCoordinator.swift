@@ -17,11 +17,11 @@ public protocol SplashCoordinatorFinishDelegate: AnyObject {
 
 // MARK: - SplashCoordinator
 
-public final class SplashCoordinator: SplashCoordinating {
+public final class SplashCoordinator {
   public var navigationController: UINavigationController
   public var childCoordinators: [Coordinating] = []
   public weak var finishDelegate: CoordinatorFinishDelegate?
-  weak var splashCoordinatorFinishDelegate: SplashCoordinatorFinishDelegate?
+  private weak var splashCoordinatorFinishDelegate: SplashCoordinatorFinishDelegate?
   public var flow: CoordinatorFlow = .splash
 
   public init(
@@ -41,5 +41,14 @@ public final class SplashCoordinator: SplashCoordinating {
     let viewModel = SplashViewModel(coordinator: self, useCase: useCase)
     let viewController = SplashViewController(viewModel: viewModel)
     navigationController.pushViewController(viewController, animated: false)
+  }
+}
+
+// MARK: SplashCoordinating
+
+extension SplashCoordinator: SplashCoordinating {
+  func showLoginOrMainFlow(when tokenExpired: Bool) {
+    finish()
+    splashCoordinatorFinishDelegate?.splashCoordinatorDidFinished(hasTokenExpired: tokenExpired)
   }
 }

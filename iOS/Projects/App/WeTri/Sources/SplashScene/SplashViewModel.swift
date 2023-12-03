@@ -34,7 +34,7 @@ public protocol SplashViewModelRepresentable {
 public final class SplashViewModel {
   // MARK: Properties
 
-  private weak var coordinator: SplashCoordinator?
+  private weak var coordinator: SplashCoordinating?
   private var subscriptions: Set<AnyCancellable> = []
   private let useCase: SplashUseCaseRepresentable
 
@@ -58,10 +58,9 @@ extension SplashViewModel: SplashViewModelRepresentable {
     input.viewDidLoadPublisher
       .flatMap(useCase.reissueToken)
       .sink { [weak self] hasTokenReissued in
-        self?.coordinator?.splashCoordinatorFinishDelegate?.splashCoordinatorDidFinished(hasTokenExpired: hasTokenReissued)
+        self?.coordinator?.showLoginOrMainFlow(when: hasTokenReissued)
       }
       .store(in: &subscriptions)
-
 
     let initialState: SplashViewModelOutput = Just(.idle).eraseToAnyPublisher()
 

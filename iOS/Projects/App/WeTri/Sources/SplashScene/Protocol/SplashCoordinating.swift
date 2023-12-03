@@ -9,4 +9,6 @@
 import Coordinator
 import Foundation
 
-protocol SplashCoordinating: Coordinating {}
+protocol SplashCoordinating: Coordinating {
+  func showLoginOrMainFlow(when tokenExpired: Bool)
+}
