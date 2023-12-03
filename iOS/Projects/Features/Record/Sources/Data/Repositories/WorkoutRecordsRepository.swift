@@ -33,15 +33,16 @@ struct WorkoutRecordsRepository: WorkoutRecordsRepositoryRepresentable {
     provider = .init(session: session)
   }
 
-  func fetchRecordsList(date: Date) -> AnyPublisher<[Record], Error> {
+  func fetchRecordsList(date: Date, isToday: Bool) -> AnyPublisher<[Record], Error> {
     return Future<Data, Error> { promise in
       Task {
         do {
           let dateRequestDTO = try toDateRequestDTO(date: date)
           let key = makeKey(dateRequestDTO: dateRequestDTO)
           let data = try await provider.request(.dateOfRecords(dateRequestDTO))
-          try cacheManager.set(cacheKey: key, data: data)
-          Log.make().debug("API 데이터 불러옴")
+          if !isToday {
+            try cacheManager.set(cacheKey: key, data: data)
+          }
           return promise(.success(data))
         } catch {
           promise(.failure(error))

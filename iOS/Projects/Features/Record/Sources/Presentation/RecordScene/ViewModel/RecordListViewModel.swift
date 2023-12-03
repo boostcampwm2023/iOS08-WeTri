@@ -65,7 +65,7 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
           return Just(.customError(RecordListViewModelError.viewModelDeinitialized))
             .eraseToAnyPublisher()
         }
-        return recordUpdateUsecase.execute(date: Date.now)
+        return recordUpdateUsecase.execute(date: Date.now, isToday: true)
           .map { records -> RecordListState in
             .sucessRecords(records)
           }
@@ -89,7 +89,6 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
       }
       .eraseToAnyPublisher()
 
-    // 여기를 수정해야됨.
     let selectedRecords = input.selectedDate
       .flatMap { [weak self] indexPath -> AnyPublisher<RecordListState, Never> in
         guard let self else {
@@ -103,8 +102,8 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
           return Just(.customError(RecordListViewModelError.dateNotFound))
             .eraseToAnyPublisher()
         }
-
-        if !dateProvideUsecase.isToday(date: date) {
+        let isToday = dateProvideUsecase.isToday(date: date)
+        if !isToday {
           return recordUpdateUsecase.executeCached(date: date)
             .map { records -> RecordListState in
               return .sucessRecords(records)
@@ -113,7 +112,7 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
               if let repositoryError = error as? WorkoutRecordsRepositoryError {
                 switch repositoryError {
                 case .invalidCachedData:
-                  guard let publisher = self?.recordUpdateUsecase.execute(date: date)
+                  guard let publisher = self?.recordUpdateUsecase.execute(date: date, isToday: isToday)
                   else {
                     return Just(.sucessRecords([]))
                       .eraseToAnyPublisher()
@@ -136,7 +135,7 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
             }
             .eraseToAnyPublisher()
         } else {
-          return recordUpdateUsecase.execute(date: date)
+          return recordUpdateUsecase.execute(date: date, isToday: isToday)
             .map { records -> RecordListState in
               return .sucessRecords(records)
             }
