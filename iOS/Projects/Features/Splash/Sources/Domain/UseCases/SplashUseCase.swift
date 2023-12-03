@@ -19,7 +19,7 @@ public struct SplashUseCase: SplashUseCaseRepresentable {
   public init(repository: SplashTokenRepositoryRepresentable) {
     self.repository = repository
   }
-  
+
   /// 토큰을 재발급받습니다.
   /// - Returns: 토큰 재발급시 True, 실패시 False를 리턴하는 Publisher
   ///
