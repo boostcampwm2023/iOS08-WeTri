@@ -22,14 +22,14 @@ public final class TempViewModel {
   public init() {}
 }
 
-extension WorkoutSummaryViewModel: TempViewModelRepresentable {
+extension TempViewModel: TempViewModelRepresentable {
   public func transform(input: TempViewModelInput) -> TempViewModelOutput {
     for subscription in subscriptions {
       subscription.cancel()
     }
     subscriptions.removeAll()
 
-    let initialState: WorkoutSummaryViewModelOutput = Just(.idle).eraseToAnyPublisher()
+    let initialState: TempViewModelOutput = Just(.idle).eraseToAnyPublisher()
 
     return initialState
   }
