@@ -58,8 +58,11 @@ export class Profile {
   @Generated('uuid')
   publicId: string;
 
+  @ApiProperty({
+    example: 'https://s3.bucket.url',
+    description: '프로필 이미지 url을 의미합니다.',
+  })
   @Column({ nullable: true })
-  @IsUrl()
   profileImage: string;
 
   @OneToOne(() => User, (user) => user.profile)

@@ -10,9 +10,11 @@ import {
 } from 'typeorm';
 import { Record } from '../../records/entities/records.entity';
 import { Profile } from '../../profiles/entities/profiles.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
 export class Post {
+  @ApiProperty({ example: '1', description: '테이블 id를 의미합니다.' })
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -34,6 +36,10 @@ export class Post {
   @Column()
   deletedAt: Date;
 
+  @ApiProperty({
+    example: 'https://www.naver.com',
+    description: '게시물 url을 의미합니다.',
+  })
   @Column()
   postUrl: string;
 
