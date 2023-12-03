@@ -12,5 +12,13 @@ public final class CacheManager {
   
   private let cacher = Cacher(fileManager: FileManager.default)
 
-  private init() {}  
+  private init() {}
+  
+  func fetch(cacheKey: String) throws -> Data? {
+    try cacher.fetch(cacheKey: cacheKey)
+  }
+  
+  func set(cacheKey: String, data: Data) throws {
+    try cacher.set(data: data, cacheKey: cacheKey)
+  }
 }
