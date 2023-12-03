@@ -61,6 +61,7 @@ extension SplashViewModel: SplashViewModelRepresentable {
     subscriptions.removeAll()
 
     input.viewDidLoadPublisher
+      .delay(for: .seconds(2), scheduler: DispatchQueue.global())
       .flatMap(useCase.reissueToken)
       .receive(on: RunLoop.main)
       .sink { [weak self] hasTokenReissued in
