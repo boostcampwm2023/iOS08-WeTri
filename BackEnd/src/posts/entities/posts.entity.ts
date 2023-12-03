@@ -34,6 +34,9 @@ export class Post {
   @Column()
   deletedAt: Date;
 
+  @Column()
+  postUrl: string;
+
   @OneToOne(() => Record)
   @JoinColumn()
   record: Record;
