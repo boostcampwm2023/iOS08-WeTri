@@ -7,6 +7,7 @@
 //
 
 import Coordinator
+import SplashFeature
 import UIKit
 
 // MARK: - AppCoordinator

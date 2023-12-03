@@ -12,12 +12,6 @@ import Foundation
 import Keychain
 import Log
 
-// MARK: - SplashUseCaseRepresentable
-
-public protocol SplashUseCaseRepresentable {
-  func reissueToken() -> AnyPublisher<Bool, Never>
-}
-
 // MARK: - SplashUseCase
 
 public struct SplashUseCase: SplashUseCaseRepresentable {

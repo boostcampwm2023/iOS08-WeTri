@@ -10,26 +10,6 @@ import Combine
 import Foundation
 import Log
 
-// MARK: - SplashViewModelInput
-
-public struct SplashViewModelInput {
-  let viewDidLoadPublisher: AnyPublisher<Void, Never>
-}
-
-public typealias SplashViewModelOutput = AnyPublisher<SplashState, Never>
-
-// MARK: - SplashState
-
-public enum SplashState {
-  case idle
-}
-
-// MARK: - SplashViewModelRepresentable
-
-public protocol SplashViewModelRepresentable {
-  func transform(input: SplashViewModelInput) -> SplashViewModelOutput
-}
-
 // MARK: - SplashViewModel
 
 public final class SplashViewModel {

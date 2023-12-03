@@ -11,13 +11,6 @@ import CommonNetworkingKeyManager
 import Foundation
 import Trinet
 
-// MARK: - SplashTokenRepositoryRepresentable
-
-public protocol SplashTokenRepositoryRepresentable {
-  func reissueAccessToken() -> AnyPublisher<ReissueAccessTokenResponse, Error>
-  func reissueRefreshToken() -> AnyPublisher<ReissueRefreshTokenResponse, Error>
-}
-
 // MARK: - SplashTokenRepository
 
 public struct SplashTokenRepository: SplashTokenRepositoryRepresentable {
@@ -28,7 +21,7 @@ public struct SplashTokenRepository: SplashTokenRepositoryRepresentable {
     provider = .init(session: session)
   }
 
-  public func reissueAccessToken() -> AnyPublisher<ReissueAccessTokenResponse, Error> {
+  public func reissueAccessToken() -> AnyPublisher<ReissueAccessTokenDTO, Error> {
     Future<Data, Error> { promise in
       Task {
         do {
@@ -39,7 +32,7 @@ public struct SplashTokenRepository: SplashTokenRepositoryRepresentable {
         }
       }
     }
-    .decode(type: GWResponse<ReissueAccessTokenResponse>.self, decoder: jsonDecoder)
+    .decode(type: GWResponse<ReissueAccessTokenDTO>.self, decoder: jsonDecoder)
     .tryMap {
       guard let response = $0.data else {
         throw TokenError.noData
@@ -49,7 +42,7 @@ public struct SplashTokenRepository: SplashTokenRepositoryRepresentable {
     .eraseToAnyPublisher()
   }
 
-  public func reissueRefreshToken() -> AnyPublisher<ReissueRefreshTokenResponse, Error> {
+  public func reissueRefreshToken() -> AnyPublisher<ReissueRefreshTokenDTO, Error> {
     Future<Data, Error> { promise in
       Task {
         do {
@@ -60,7 +53,7 @@ public struct SplashTokenRepository: SplashTokenRepositoryRepresentable {
         }
       }
     }
-    .decode(type: GWResponse<ReissueRefreshTokenResponse>.self, decoder: jsonDecoder)
+    .decode(type: GWResponse<ReissueRefreshTokenDTO>.self, decoder: jsonDecoder)
     .tryMap {
       guard let response = $0.data else {
         throw TokenError.noData
@@ -90,18 +83,6 @@ private enum ReissueEndPoint: TNEndPoint {
   var query: Encodable? { nil }
   var body: Encodable? { nil }
   var headers: TNHeaders { .default }
-}
-
-// MARK: - ReissueAccessTokenResponse
-
-public struct ReissueAccessTokenResponse: Decodable {
-  let accessToken: String
-}
-
-// MARK: - ReissueRefreshTokenResponse
-
-public struct ReissueRefreshTokenResponse: Decodable {
-  let refreshToken: String
 }
 
 // MARK: - TokenError
