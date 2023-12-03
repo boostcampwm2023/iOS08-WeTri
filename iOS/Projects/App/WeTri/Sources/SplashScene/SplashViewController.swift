@@ -89,6 +89,8 @@ final class SplashViewController: UIViewController {
       }
     }
     .store(in: &subscriptions)
+
+    viewDidLoadSubject.send(())
   }
 }
 
