@@ -10,10 +10,14 @@ import Combine
 import DesignSystem
 import UIKit
 
+// MARK: - SplashViewController
+
 final class SplashViewController: UIViewController {
   // MARK: Properties
 
   private let viewModel: SplashViewModelRepresentable
+
+  private let viewDidLoadSubject: PassthroughSubject<Void, Never> = .init()
 
   private var subscriptions: Set<AnyCancellable> = []
 
@@ -72,7 +76,7 @@ final class SplashViewController: UIViewController {
   }
 
   private func bind() {
-    let output = viewModel.transform(input: .init())
+    let output = viewModel.transform(input: .init(viewDidLoadPublisher: viewDidLoadSubject.eraseToAnyPublisher()))
     output.sink { state in
       switch state {
       case .idle:
@@ -82,6 +86,8 @@ final class SplashViewController: UIViewController {
     .store(in: &subscriptions)
   }
 }
+
+// MARK: SplashViewController.Metrics
 
 private extension SplashViewController {
   enum Metrics {

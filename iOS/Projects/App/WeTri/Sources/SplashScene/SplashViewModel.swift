@@ -11,7 +11,9 @@ import Foundation
 
 // MARK: - SplashViewModelInput
 
-public struct SplashViewModelInput {}
+public struct SplashViewModelInput {
+  let viewDidLoadPublisher: AnyPublisher<Void, Never>
+}
 
 public typealias SplashViewModelOutput = AnyPublisher<SplashState, Never>
 
@@ -23,14 +25,14 @@ public enum SplashState {
 
 // MARK: - SplashViewModelRepresentable
 
-protocol SplashViewModelRepresentable {
+public protocol SplashViewModelRepresentable {
   func transform(input: SplashViewModelInput) -> SplashViewModelOutput
 }
 
 // MARK: - SplashViewModel
 
-final class SplashViewModel {
-  // MARK: - Properties
+public final class SplashViewModel {
+  // MARK: Properties
 
   private var subscriptions: Set<AnyCancellable> = []
 }
@@ -38,8 +40,10 @@ final class SplashViewModel {
 // MARK: SplashViewModelRepresentable
 
 extension SplashViewModel: SplashViewModelRepresentable {
-  public func transform(input _: SplashViewModelInput) -> SplashViewModelOutput {
+  public func transform(input: SplashViewModelInput) -> SplashViewModelOutput {
     subscriptions.removeAll()
+
+    input.viewDidLoadPublisher
 
     let initialState: SplashViewModelOutput = Just(.idle).eraseToAnyPublisher()
 
