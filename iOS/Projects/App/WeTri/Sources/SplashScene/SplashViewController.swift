@@ -19,7 +19,12 @@ final class SplashViewController: UIViewController {
 
   // MARK: UI Components
 
-  private let button: UIButton = .init(configuration: .mainEnabled(title: "test button"))
+  private let logoImageView: UIImageView = {
+    let imageView = UIImageView()
+    imageView.image = .logoImage
+    imageView.contentMode = .scaleAspectFit
+    return imageView
+  }()
 
   // MARK: Initializations
 
@@ -46,16 +51,18 @@ final class SplashViewController: UIViewController {
   // MARK: Configuration
 
   private func setupLayouts() {
-    view.addSubview(button)
+    view.addSubview(logoImageView)
   }
 
   private func setupConstraints() {
-    button.translatesAutoresizingMaskIntoConstraints = false
+    logoImageView.translatesAutoresizingMaskIntoConstraints = false
 
     NSLayoutConstraint.activate(
       [
-        button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-        button.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+        logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+        logoImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+        logoImageView.widthAnchor.constraint(equalToConstant: Metrics.logoSize),
+        logoImageView.heightAnchor.constraint(equalToConstant: Metrics.logoSize),
       ]
     )
   }
@@ -73,6 +80,12 @@ final class SplashViewController: UIViewController {
       }
     }
     .store(in: &subscriptions)
+  }
+}
+
+private extension SplashViewController {
+  enum Metrics {
+    static let logoSize: CGFloat = 200
   }
 }
 
