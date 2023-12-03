@@ -9,6 +9,7 @@
 import Combine
 import Coordinator
 import Foundation
+import Log
 
 // MARK: - RecordListViewModelInput
 

@@ -101,7 +101,10 @@ final class DateProvideUseCase: DateProvideUseCaseRepresentable {
   }
 
   func isToday(date: Date) -> Bool {
-    guard date == Date.now else {
+    let nowDateInfo = transform(date: Date.now)
+    guard let nowDate = transform(dateInfo: nowDateInfo),
+          nowDate == date
+    else {
       return false
     }
     return true
