@@ -25,7 +25,7 @@ export class ProfilesController {
   @UseGuards(AccessTokenGuard)
   @Get(':publicId')
   async getMyProfile(@Param('publicId') publicId: string) {
-    return this.profilesService.getProfile(publicId);
+    return this.profilesService.getProfileAndPost(publicId);
   }
 
   @ApiOperation({ summary: '프로필을 수정한다. 닉네임 또는 사진' })

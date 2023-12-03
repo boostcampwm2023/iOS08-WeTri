@@ -15,7 +15,7 @@ export class ProfilesService {
     private readonly profilesRepository: Repository<Profile>,
   ) {}
 
-  async getProfile(publicId: string) {
+  async getProfileAndPost(publicId: string) {
     const posts = await this.postsRepository.find({
       where: {
         publicId: publicId,
@@ -63,6 +63,14 @@ export class ProfilesService {
     return this.profilesRepository.exist({
       where: {
         nickname,
+      },
+    });
+  }
+
+  async getProfile(publicId: string) {
+    return this.profilesRepository.findOne({
+      where: {
+        publicId,
       },
     });
   }
