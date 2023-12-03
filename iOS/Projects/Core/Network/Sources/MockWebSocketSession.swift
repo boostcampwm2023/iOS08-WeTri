@@ -26,7 +26,7 @@ public final class MockWebSocketTask<DataModel: Codable>: WebSocketTaskProtocol 
       guard let jsonString = String(data: jsonData, encoding: .utf8) else {
         throw MockWebSocketError.stringConversionFailed
       }
-      // string Message로 변환
+
       let stringMessage = URLSessionWebSocketTask.Message.string(jsonString)
       sentMessage = stringMessage
       receiveContinuation?.resume(returning: stringMessage)
