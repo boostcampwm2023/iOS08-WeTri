@@ -109,26 +109,24 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
               return .sucessRecords(records)
             }
             .catch { [weak self] error -> AnyPublisher<RecordListState, Never> in
-              if let repositoryError = error as? WorkoutRecordsRepositoryError {
-                switch repositoryError {
-                case .invalidCachedData:
-                  guard let publisher = self?.recordUpdateUsecase.execute(date: date, isToday: isToday)
-                  else {
+              switch error {
+              case let error as WorkoutRecordsRepositoryError where error == .invalidCachedData:
+                guard let publisher = self?.recordUpdateUsecase.execute(date: date, isToday: isToday)
+                else {
+                  return Just(.sucessRecords([]))
+                    .eraseToAnyPublisher()
+                }
+                return publisher
+                  .map { records -> RecordListState in
+                    return .sucessRecords(records)
+                  }
+                  .catch { _ in
                     return Just(.sucessRecords([]))
                       .eraseToAnyPublisher()
                   }
-                  return publisher
-                    .map { records -> RecordListState in
-                      return .sucessRecords(records)
-                    }
-                    .catch { _ in
-                      return Just(.sucessRecords([]))
-                        .eraseToAnyPublisher()
-                    }
-                    .eraseToAnyPublisher()
-                default:
-                  break
-                }
+                  .eraseToAnyPublisher()
+              default:
+                break
               }
               return Just(.sucessRecords([]))
                 .eraseToAnyPublisher()
