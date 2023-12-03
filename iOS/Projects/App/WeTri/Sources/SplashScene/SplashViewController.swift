@@ -1,4 +1,4 @@
-// 
+//
 //  SplashViewController.swift
 //  WeTri
 //
@@ -11,7 +11,6 @@ import DesignSystem
 import UIKit
 
 final class SplashViewController: UIViewController {
-
   // MARK: Properties
 
   private let viewModel: SplashViewModelRepresentable

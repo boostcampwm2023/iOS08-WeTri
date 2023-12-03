@@ -1,4 +1,4 @@
-// 
+//
 //  SplashViewModel.swift
 //  WeTri
 //
@@ -27,17 +27,19 @@ protocol SplashViewModelRepresentable {
   func transform(input: SplashViewModelInput) -> SplashViewModelOutput
 }
 
-final class SplashViewModel {
+// MARK: - SplashViewModel
 
+final class SplashViewModel {
   // MARK: - Properties
 
   private var subscriptions: Set<AnyCancellable> = []
 }
 
-extension SplashViewModel: SplashViewModelRepresentable {
-  public func transform(input: SplashViewModelInput) -> SplashViewModelOutput {
-    subscriptions.removeAll()
+// MARK: SplashViewModelRepresentable
 
+extension SplashViewModel: SplashViewModelRepresentable {
+  public func transform(input _: SplashViewModelInput) -> SplashViewModelOutput {
+    subscriptions.removeAll()
 
     let initialState: SplashViewModelOutput = Just(.idle).eraseToAnyPublisher()
 

@@ -24,7 +24,17 @@ final class AppCoordinator: AppCoordinating {
   }
 
   func start() {
-    showOnboardingFlow()
+    showSplashFlow()
+  }
+
+  private func showSplashFlow() {
+    let splashCoordinator = SplashCoordinator(
+      navigationController: navigationController,
+      finishDelegate: self,
+      splashCoordinatorFinishDelegate: self
+    )
+    childCoordinators.append(splashCoordinator)
+    splashCoordinator.start()
   }
 
   func showOnboardingFlow() {
@@ -53,5 +63,17 @@ final class AppCoordinator: AppCoordinating {
 extension AppCoordinator: CoordinatorFinishDelegate {
   func flowDidFinished(childCoordinator _: Coordinating) {
     // TODO: 로그아웃 Flow, 로그인 Flow (앱 실행 도중 발생되는 분기처리)
+  }
+}
+
+// MARK: SplashCoordinatorFinishDelegate
+
+extension AppCoordinator: SplashCoordinatorFinishDelegate {
+  func splashCoordinatorDidFinished(hasTokenExpired: Bool) {
+    if hasTokenExpired {
+      showLoginFlow()
+    } else {
+      showTabBarFlow()
+    }
   }
 }
