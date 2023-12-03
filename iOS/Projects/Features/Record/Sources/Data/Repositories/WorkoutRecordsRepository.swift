@@ -6,6 +6,7 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import Cacher
 import Combine
 import Foundation
 import Log
@@ -23,7 +24,9 @@ enum WorkoutRecordsRepositoryError: Error {
 
 struct WorkoutRecordsRepository: WorkoutRecordsRepositoryRepresentable {
   private let provider: TNProvider<WorkoutRecordsRepositoryEndPoint>
+  private let cacheManager = CacheManager.shared
   private let encoder = JSONEncoder()
+  private let decoder = JSONDecoder()
 
   init(session: URLSessionProtocol) {
     provider = .init(session: session)
@@ -31,14 +34,12 @@ struct WorkoutRecordsRepository: WorkoutRecordsRepositoryRepresentable {
 
   func fetchRecordsList(date: Date) -> AnyPublisher<[Record], Error> {
     return Future<Data, Error> { promise in
-      encoder.dateEncodingStrategy = .formatted(dateFormatter())
-      let dateString = dateFormatter().string(from: date)
-      guard let dateRequestDTO = transform(date: dateString) else {
-        return promise(.failure(WorkoutRecordsRepositoryError.bindingError))
-      }
       Task {
         do {
+          let dateRequestDTO = try toDateRequestDTO(date: date)
+          let key = makeKey(dateRequestDTO: dateRequestDTO)
           let data = try await provider.request(.dateOfRecords(dateRequestDTO))
+          try cacheManager.set(cacheKey: key, data: data)
           return promise(.success(data))
         } catch {
           promise(.failure(error))
@@ -46,7 +47,7 @@ struct WorkoutRecordsRepository: WorkoutRecordsRepositoryRepresentable {
         }
       }
     }
-    .decode(type: GWResponse<[RecordResponseDTO]>.self, decoder: JSONDecoder())
+    .decode(type: GWResponse<[RecordResponseDTO]>.self, decoder: decoder)
     .compactMap(\.data)
     .map { $0.compactMap(Record.init) }
     .catch { error -> AnyPublisher<[Record], Error> in
@@ -56,6 +57,40 @@ struct WorkoutRecordsRepository: WorkoutRecordsRepositoryRepresentable {
         .eraseToAnyPublisher()
     }
     .eraseToAnyPublisher()
+  }
+
+  // TODO: 오늘날짜 확인하는 로직은 Usecase에서 확인하고, 오늘날짜면 fetchRecordsList를 거치도록하고 아니면 fetchCacedRecords를 먼저 거치도록 해야한다. 그리고 fetchCaced를 통해 데이터를 받아왔다면 멈추고 받아오지 못했다면 fetchRecordsList를 실행
+  func fetchCachedRecords(date: Date) -> AnyPublisher<[Record], Error> {
+    return Future<Data, Error> { promise in
+      do {
+        let dateRequestDTO = try toDateRequestDTO(date: date)
+        let key = makeKey(dateRequestDTO: dateRequestDTO)
+        guard let data = try cacheManager.fetch(cacheKey: key) else {
+          throw WorkoutRecordsRepositoryError.bindingError
+        }
+        return promise(.success(data))
+      } catch {
+        Log.make().error("\(error)")
+      }
+    }
+    .decode(type: [Record].self, decoder: decoder)
+    .eraseToAnyPublisher()
+  }
+
+  private func toDateRequestDTO(date: Date) throws -> DateRequestDTO {
+    encoder.dateEncodingStrategy = .formatted(dateFormatter())
+    let dateString = dateFormatter().string(from: date)
+    guard let dateRequestDTO = transform(date: dateString) else {
+      throw WorkoutRecordsRepositoryError.bindingError
+    }
+    return dateRequestDTO
+  }
+
+  private func makeKey(dateRequestDTO: DateRequestDTO) -> String {
+    let year = dateRequestDTO.year
+    let month = dateRequestDTO.month
+    let day = dateRequestDTO.day
+    return "\(year)-\(month)-\(day)"
   }
 
   private func dateFormatter() -> DateFormatter {

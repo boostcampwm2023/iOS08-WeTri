@@ -9,16 +9,16 @@ import Foundation
 
 public final class CacheManager {
   public static let shared = CacheManager()
-  
+
   private let cacher = Cacher(fileManager: FileManager.default)
 
   private init() {}
-  
-  func fetch(cacheKey: String) throws -> Data? {
+
+  public func fetch(cacheKey: String) throws -> Data? {
     try cacher.fetch(cacheKey: cacheKey)
   }
-  
-  func set(cacheKey: String, data: Data) throws {
+
+  public func set(cacheKey: String, data: Data) throws {
     try cacher.set(data: data, cacheKey: cacheKey)
   }
 }
