@@ -6,6 +6,7 @@ let project = Project.makeModule(
   targets: .custom(
     name: "Cacher",
     product: .framework,
-    testingOptions: [.unitTest]
+    testingOptions: [.unitTest],
+    dependencies: [.log]
   )
 )

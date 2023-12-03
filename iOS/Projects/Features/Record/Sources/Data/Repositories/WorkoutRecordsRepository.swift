@@ -18,6 +18,7 @@ enum WorkoutRecordsRepositoryError: Error {
   case requestError
   case decodeError
   case bindingError
+  case invalidCachedData
 }
 
 // MARK: - WorkoutRecordsRepository
@@ -40,6 +41,7 @@ struct WorkoutRecordsRepository: WorkoutRecordsRepositoryRepresentable {
           let key = makeKey(dateRequestDTO: dateRequestDTO)
           let data = try await provider.request(.dateOfRecords(dateRequestDTO))
           try cacheManager.set(cacheKey: key, data: data)
+          Log.make().debug("API 데이터 불러옴")
           return promise(.success(data))
         } catch {
           promise(.failure(error))
@@ -59,7 +61,6 @@ struct WorkoutRecordsRepository: WorkoutRecordsRepositoryRepresentable {
     .eraseToAnyPublisher()
   }
 
-  // TODO: 오늘날짜 확인하는 로직은 Usecase에서 확인하고, 오늘날짜면 fetchRecordsList를 거치도록하고 아니면 fetchCacedRecords를 먼저 거치도록 해야한다. 그리고 fetchCaced를 통해 데이터를 받아왔다면 멈추고 받아오지 못했다면 fetchRecordsList를 실행
   func fetchCachedRecords(date: Date) -> AnyPublisher<[Record], Error> {
     return Future<Data, Error> { promise in
       do {
@@ -71,9 +72,12 @@ struct WorkoutRecordsRepository: WorkoutRecordsRepositoryRepresentable {
         return promise(.success(data))
       } catch {
         Log.make().error("\(error)")
+        return promise(.failure(WorkoutRecordsRepositoryError.invalidCachedData))
       }
     }
-    .decode(type: [Record].self, decoder: decoder)
+    .decode(type: GWResponse<[RecordResponseDTO]>.self, decoder: decoder)
+    .compactMap(\.data)
+    .map { $0.compactMap(Record.init) }
     .eraseToAnyPublisher()
   }
 
@@ -123,6 +127,8 @@ extension WorkoutRecordsRepositoryError: LocalizedError {
       return "decode 실패"
     case .bindingError:
       return "binding 실패"
+    case .invalidCachedData:
+      return "cache에 데이터가 존재하지 않습니다."
     }
   }
 }

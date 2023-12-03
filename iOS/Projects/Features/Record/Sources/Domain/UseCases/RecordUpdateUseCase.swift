@@ -29,4 +29,9 @@ final class RecordUpdateUseCase: RecordUpdateUseCaseRepresentable {
       }
       .eraseToAnyPublisher()
   }
+
+  func executeCached(date: Date) -> AnyPublisher<[Record], Error> {
+    return workoutRecordsRepository.fetchCachedRecords(date: date)
+      .eraseToAnyPublisher()
+  }
 }

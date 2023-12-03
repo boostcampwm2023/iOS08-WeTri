@@ -46,10 +46,11 @@ final class Cacher {
   }
 
   func fetchDiskData(cacheKey: String) throws -> Data? {
-    guard let url = generateFileURL(cacheKey: cacheKey) else {
+    guard let directoryURL = generateFileURL(cacheKey: cacheKey) else {
       throw CacheError.invalidFileURL
     }
-    let data = try Data(contentsOf: url)
+    let fileURL = directoryURL.appending(path: cacheKey)
+    let data = try Data(contentsOf: fileURL)
     return data
   }
 
@@ -66,7 +67,8 @@ final class Cacher {
       atPath: path,
       withIntermediateDirectories: true
     )
-    fileManager.createFile(atPath: path, contents: data)
+    let appendedPath = url.appending(path: cacheKey).path()
+    fileManager.createFile(atPath: appendedPath, contents: data)
   }
 
   private func generateFileURL(cacheKey: String) -> URL? {
