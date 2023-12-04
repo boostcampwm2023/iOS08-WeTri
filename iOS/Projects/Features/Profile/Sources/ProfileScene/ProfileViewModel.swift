@@ -28,19 +28,26 @@ public final class ProfileViewModel {
 
   private var subscriptions: Set<AnyCancellable> = []
 
+  private weak var coordinating: ProfileCoordinating?
+
   // MARK: Initializations
 
-  public init() {}
+  public init(coordinating: ProfileCoordinating) {
+    self.coordinating = coordinating
+  }
 }
 
 // MARK: ProfileViewModelRepresentable
 
 extension ProfileViewModel: ProfileViewModelRepresentable {
-  public func transform(input _: ProfileViewModelInput) -> ProfileViewModelOutput {
-    for subscription in subscriptions {
-      subscription.cancel()
-    }
+  public func transform(input: ProfileViewModelInput) -> ProfileViewModelOutput {
     subscriptions.removeAll()
+
+    input.didTapSettingButtonPublisher
+      .sink { [weak self] _ in
+        self?.coordinating?.pushToSettings()
+      }
+      .store(in: &subscriptions)
 
     let initialState: ProfileViewModelOutput = Just(.idle).eraseToAnyPublisher()
 

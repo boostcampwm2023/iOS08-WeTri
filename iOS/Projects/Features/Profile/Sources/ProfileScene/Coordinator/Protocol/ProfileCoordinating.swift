@@ -9,4 +9,7 @@
 import Coordinator
 import UIKit
 
-public protocol ProfileCoordinating: Coordinating {}
+public protocol ProfileCoordinating: Coordinating {
+  /// 설정 창으로 이동합니다.
+  func pushToSettings()
+}

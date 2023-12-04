@@ -9,7 +9,9 @@
 import Coordinator
 import UIKit
 
-public final class ProfileCoordinator: ProfileCoordinating {
+// MARK: - ProfileCoordinator
+
+public final class ProfileCoordinator {
   public var navigationController: UINavigationController
   public var childCoordinators: [Coordinating] = []
   public weak var finishDelegate: CoordinatorFinishDelegate?
@@ -22,8 +24,16 @@ public final class ProfileCoordinator: ProfileCoordinating {
   }
 
   public func start() {
-    let viewModel = ProfileViewModel()
+    let viewModel = ProfileViewModel(coordinating: self)
     let viewController = ProfileViewController(viewModel: viewModel)
     navigationController.setViewControllers([viewController], animated: false)
+  }
+}
+
+// MARK: ProfileCoordinating
+
+extension ProfileCoordinator: ProfileCoordinating {
+  public func pushToSettings() {
+    // TODO: 설정창으로 이동
   }
 }
