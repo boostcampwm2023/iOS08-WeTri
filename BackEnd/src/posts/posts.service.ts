@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './entities/posts.entity';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { RecordsService } from 'src/records/records.service';
 import { Profile } from 'src/profiles/entities/profiles.entity';
@@ -33,7 +33,7 @@ export class PostsService {
     });
   }
 
-  async paginatePost(query: PaginatePostDto) {
+  async paginatePosts(query: PaginatePostDto) {
     return await this.commonService.paginate<Post>(query, this.postsRepository);
   }
 
@@ -43,5 +43,11 @@ export class PostsService {
       throw new NotFoundPostException();
     }
     return post;
+  }
+
+  async paginateUserPosts(publicId: string, query: PaginatePostDto) {
+    const findManyOptions: FindManyOptions<Post> = {};
+    findManyOptions.where = {publicId}
+    return await this.commonService.paginate<Post>(query, this.postsRepository, findManyOptions);
   }
 }

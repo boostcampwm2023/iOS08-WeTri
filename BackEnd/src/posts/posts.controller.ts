@@ -34,13 +34,28 @@ export class PostsController {
   @ApiOperation({ summary: '게시글 가져오기' })
   @ApiCreatedResponse({ type: GetPostsResponseDto })
   async getPosts(@Query() query: PaginatePostDto) {
-    return this.postsService.paginatePost(query);
+    return this.postsService.paginatePosts(query);
   }
-ç
+
   @Get(':id')
   @ApiOperation({summary: '특정 게시글 가져오기'})
   @ApiCreatedResponse({ type: GetPostResponseDto })
   async getPostById(@Param('id', ParseIntPipe) id: number) {
     return this.postsService.findOneById(id);
+  }
+
+  @Get('public-id/:publicId')
+  @ApiOperation({summary: '유저의 게시글 가져오기'})
+  @ApiCreatedResponse({ type: GetPostsResponseDto })
+  async getUserPosts(@Param('publicId') publicId: string, @Query() query: PaginatePostDto) {
+    return this.postsService.paginateUserPosts(publicId, query);
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @ApiOperation({summary: '나의 게시글 가져오기'})
+  @ApiCreatedResponse({ type: GetPostsResponseDto })
+  @Get('user/me')
+  async getMyPosts(@ProfileDeco() profile: Profile, @Query() query: PaginatePostDto) {
+    return this.postsService.paginateUserPosts(profile.publicId, query);
   }
 }
