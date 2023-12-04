@@ -6,6 +6,9 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import Combine
 import Foundation
 
-public protocol ProfileRepositoryRepresentable {}
+public protocol ProfileRepositoryRepresentable {
+  func fetchProfiles() -> AnyPublisher<ProfileInfo, Error>
+}
