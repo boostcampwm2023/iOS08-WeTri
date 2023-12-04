@@ -14,7 +14,15 @@ import Trinet
 
 public struct ProfileRepository {
   private let provider: TNProvider<ProfileEndPoint>
-  private let jsonDecoder: JSONDecoder = .init()
+  private let jsonDecoder: JSONDecoder = {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy-MM-dd" // JSON의 날짜 형식에 맞춰 설정합니다.
+    dateFormatter.locale = Locale(identifier: "ko_KR")
+
+    let decoder = JSONDecoder()
+    decoder.dateDecodingStrategy = .formatted(dateFormatter)
+    return decoder
+  }()
 
   // MARK: Initializations
 

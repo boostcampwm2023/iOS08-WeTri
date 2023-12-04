@@ -14,6 +14,7 @@ public final class ProfileViewController: UICollectionViewController {
   private var subscriptions: Set<AnyCancellable> = []
 
   private var dataSource: ProfileDataSource?
+  private var headerInfo: ProfileInfo?
 
   private let viewModel: ProfileViewModelRepresentable
 
@@ -64,18 +65,32 @@ public final class ProfileViewController: UICollectionViewController {
         didTapSettingButtonPublisher: didTapSettingButtonSubject.eraseToAnyPublisher()
       )
     )
-    .sink { state in
+    .receive(on: RunLoop.main)
+    .sink { [weak self] state in
       switch state {
       case .idle:
         break
+      case let .setupProfile(profile):
+        self?.updateHeaderSnapshots(with: profile)
+      case let .alert(error):
+        self?.showAlert(with: error)
       }
     }
     .store(in: &subscriptions)
   }
 
+  // MARK: - Custom Methods
+
   @objc
   private func didTapSettingButton() {
     didTapSettingButtonSubject.send(())
+  }
+
+  /// 에러 알림 문구를 보여줍니다.
+  private func showAlert(with error: Error) {
+    let alertController = UIAlertController(title: "알림", message: String(describing: error), preferredStyle: .alert)
+    alertController.addAction(UIAlertAction(title: "확인", style: .default))
+    present(alertController, animated: true)
   }
 }
 
@@ -140,7 +155,10 @@ private extension ProfileViewController {
     let registration = ProfileCellRegistration { _, _, _ in
     }
 
-    let headerRegistration = ProfileReusableRegistration(elementKind: UICollectionView.elementKindSectionHeader) { _, _, _ in
+    let headerRegistration = ProfileReusableRegistration(elementKind: UICollectionView.elementKindSectionHeader) { [weak self] headerView, _, _ in
+      if let headerInfo = self?.headerInfo {
+        headerView.configure(with: headerInfo)
+      }
     }
 
     let dataSource = ProfileDataSource(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in
@@ -163,6 +181,14 @@ private extension ProfileViewController {
     var snapshot = dataSource.snapshot()
     snapshot.appendSections([.header, .main])
     snapshot.appendItems(["A", "B", "C", "D", "E", "F", "G"], toSection: .main)
+    dataSource.apply(snapshot)
+  }
+
+  private func updateHeaderSnapshots(with model: ProfileInfo) {
+    guard let dataSource else { return }
+    headerInfo = model
+    var snapshot = dataSource.snapshot()
+    snapshot.reloadSections([.header])
     dataSource.apply(snapshot)
   }
 }

@@ -8,6 +8,7 @@ let project = Project.makeModule(
     .profile,
     testingOptions: [.unitTest],
     dependencies: [.designSystem, .trinet, .combineExtension, .combineCocoa, .log, .coordinator],
-    testDependencies: []
+    testDependencies: [],
+    resources: "Resources/**"
   )
 )

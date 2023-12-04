@@ -6,9 +6,12 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import Combine
 import Foundation
 
-public struct ProfileUseCase: ProfileUseCaseRepresentable {
+// MARK: - ProfileUseCase
+
+public struct ProfileUseCase {
   // MARK: Properties
 
   private let repository: ProfileRepositoryRepresentable
@@ -17,5 +20,13 @@ public struct ProfileUseCase: ProfileUseCaseRepresentable {
 
   public init(repository: ProfileRepositoryRepresentable) {
     self.repository = repository
+  }
+}
+
+// MARK: ProfileUseCaseRepresentable
+
+extension ProfileUseCase: ProfileUseCaseRepresentable {
+  public func fetchProfile() -> AnyPublisher<ProfileInfo, Error> {
+    return repository.fetchProfiles()
   }
 }

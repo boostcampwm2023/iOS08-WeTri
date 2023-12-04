@@ -13,6 +13,8 @@ public typealias ProfileViewModelOutput = AnyPublisher<ProfileViewModelState, Ne
 
 public enum ProfileViewModelState {
   case idle
+  case setupProfile(ProfileInfo)
+  case alert(Error)
 }
 
 // MARK: - ProfileViewModelRepresentable
@@ -52,8 +54,11 @@ extension ProfileViewModel: ProfileViewModelRepresentable {
       }
       .store(in: &subscriptions)
 
-    let initialState: ProfileViewModelOutput = Just(.idle).eraseToAnyPublisher()
+    let profileInfoPublisher = input.viewWillAppearPublisher
+      .flatMap(useCase.fetchProfile)
+      .map(ProfileViewModelState.setupProfile)
+      .catch { Just(ProfileViewModelState.alert($0)) }
 
-    return initialState
+    return Just(.idle).merge(with: profileInfoPublisher).eraseToAnyPublisher()
   }
 }

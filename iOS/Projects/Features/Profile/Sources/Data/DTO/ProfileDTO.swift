@@ -17,7 +17,7 @@ public struct ProfileDTO: Decodable {
 
 // MARK: - ProfileInfo
 
-public struct ProfileInfo: Decodable {
+public struct ProfileInfo: Decodable, Hashable {
   /// 닉네임
   let nickname: String
 

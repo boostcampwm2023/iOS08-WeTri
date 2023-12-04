@@ -7,6 +7,7 @@
 //
 
 import DesignSystem
+import Log
 import UIKit
 
 // MARK: - ProfileHeaderView
@@ -91,6 +92,13 @@ final class ProfileHeaderView: UICollectionReusableView {
         postSectionLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Metrics.postSectionLabelBottom),
       ]
     )
+  }
+
+  func configure(with model: ProfileInfo) {
+    DispatchQueue.main.async {
+      self.profileImageView.image = try? UIImage(data: .init(contentsOf: model.profileImage))
+      self.nicknameLabel.text = model.nickname
+    }
   }
 }
 

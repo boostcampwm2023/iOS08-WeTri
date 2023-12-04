@@ -7,6 +7,7 @@
 //
 
 import Coordinator
+import Log
 import Trinet
 import UIKit
 
@@ -28,7 +29,15 @@ public final class ProfileCoordinator {
   }
 
   public func start() {
-    let session: URLSessionProtocol = isMockEnvironment ? MockURLSession() : URLSession.shared
+    guard let jsonPath = Bundle(for: Self.self).path(forResource: "GetProfile", ofType: "json"),
+          let jsonData = try? Data(contentsOf: .init(filePath: jsonPath))
+    else {
+      Log.make().error("Records Mock 데이터를 생성할 수 없습니다.")
+      return
+    }
+
+    let session: URLSessionProtocol = isMockEnvironment ? MockURLSession(mockData: jsonData) : URLSession.shared
+
     let repository = ProfileRepository(session: session)
     let useCase = ProfileUseCase(repository: repository)
     let viewModel = ProfileViewModel(coordinating: self, useCase: useCase)
