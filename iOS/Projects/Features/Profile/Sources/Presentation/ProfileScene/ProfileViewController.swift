@@ -8,7 +8,7 @@ import UIKit
 public final class ProfileViewController: UICollectionViewController {
   // MARK: Properties
 
-  private let viewWillAppearSubject: PassthroughSubject<Void, Never> = .init()
+  private let viewDidLoadSubject: PassthroughSubject<Void, Never> = .init()
   private let didTapSettingButtonSubject: PassthroughSubject<Void, Never> = .init()
 
   private var subscriptions: Set<AnyCancellable> = []
@@ -38,11 +38,7 @@ public final class ProfileViewController: UICollectionViewController {
     bind()
     setupDataSource()
     setupInitialSnapshots()
-  }
-
-  override public func viewWillAppear(_ animated: Bool) {
-    super.viewWillAppear(animated)
-    viewWillAppearSubject.send(())
+    viewDidLoadSubject.send(())
   }
 
   // MARK: Configurations
@@ -61,7 +57,7 @@ public final class ProfileViewController: UICollectionViewController {
   private func bind() {
     viewModel.transform(
       input: .init(
-        viewWillAppearPublisher: viewWillAppearSubject.eraseToAnyPublisher(),
+        viewDidLoadPublisher: viewDidLoadSubject.eraseToAnyPublisher(),
         didTapSettingButtonPublisher: didTapSettingButtonSubject.eraseToAnyPublisher()
       )
     )

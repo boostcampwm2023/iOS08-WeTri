@@ -3,7 +3,7 @@ import Combine
 // MARK: - ProfileViewModelInput
 
 public struct ProfileViewModelInput {
-  let viewWillAppearPublisher: AnyPublisher<Void, Never>
+  let viewDidLoadPublisher: AnyPublisher<Void, Never>
   let didTapSettingButtonPublisher: AnyPublisher<Void, Never>
 }
 
@@ -54,7 +54,7 @@ extension ProfileViewModel: ProfileViewModelRepresentable {
       }
       .store(in: &subscriptions)
 
-    let profileInfoPublisher = input.viewWillAppearPublisher
+    let profileInfoPublisher = input.viewDidLoadPublisher
       .flatMap(useCase.fetchProfile)
       .map(ProfileViewModelState.setupProfile)
       .catch { Just(ProfileViewModelState.alert($0)) }
