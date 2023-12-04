@@ -36,7 +36,7 @@ public final class ProfileViewController: UICollectionViewController {
   // MARK: Configurations
 
   private func setupStyles() {
-    view.backgroundColor = DesignSystemColor.primaryBackground
+    collectionView.backgroundColor = DesignSystemColor.primaryBackground
     navigationItem.rightBarButtonItem = .init(
       image: .init(systemName: "gearshape"),
       style: .plain,
@@ -110,11 +110,7 @@ private extension ProfileViewController {
 
 private extension ProfileViewController {
   private func setupDataSource() {
-    let registration = ProfileCellRegistration { collectionViewCell, _, itemIdentifier in
-      var configuration = collectionViewCell.defaultContentConfiguration()
-      configuration.text = itemIdentifier
-      collectionViewCell.contentView.backgroundColor = DesignSystemColor.gray03
-      collectionViewCell.contentConfiguration = configuration
+    let registration = ProfileCellRegistration { _, _, _ in
     }
 
     let headerRegistration = ProfileReusableRegistration(elementKind: UICollectionView.elementKindSectionHeader) { _, _, _ in
@@ -147,7 +143,7 @@ private extension ProfileViewController {
 private extension ProfileViewController {
   typealias ProfileDataSource = UICollectionViewDiffableDataSource<Section, Item>
   typealias ProfileSnapshot = NSDiffableDataSourceSnapshot<Section, Item>
-  typealias ProfileCellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Item>
+  typealias ProfileCellRegistration = UICollectionView.CellRegistration<ProfilePostCell, Item>
   typealias ProfileReusableRegistration = UICollectionView.SupplementaryRegistration<ProfileHeaderView>
 
   enum Section: Int {
