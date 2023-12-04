@@ -29,6 +29,14 @@ public final class ProfileViewController: UIViewController {
     return stackView
   }()
 
+  private let postSectionLabel: UILabel = {
+    let label = UILabel()
+    label.text = "내 게시물"
+    label.textColor = DesignSystemColor.primaryText
+    label.font = .preferredFont(forTextStyle: .title2, weight: .medium)
+    return label
+  }()
+
   // MARK: Initializations
 
   public init(viewModel: ProfileViewModelRepresentable) {
@@ -52,6 +60,7 @@ public final class ProfileViewController: UIViewController {
 
   private func setupLayouts() {
     view.addSubview(profileStackView)
+    view.addSubview(postSectionLabel)
     for view in [profileButton, nicknameLabel] {
       profileStackView.addArrangedSubview(view)
     }
@@ -61,6 +70,7 @@ public final class ProfileViewController: UIViewController {
     let safeArea = view.safeAreaLayoutGuide
     profileStackView.translatesAutoresizingMaskIntoConstraints = false
     profileButton.translatesAutoresizingMaskIntoConstraints = false
+    postSectionLabel.translatesAutoresizingMaskIntoConstraints = false
 
     NSLayoutConstraint.activate(
       [
@@ -69,6 +79,9 @@ public final class ProfileViewController: UIViewController {
 
         profileButton.widthAnchor.constraint(equalToConstant: Metrics.profileSize),
         profileButton.heightAnchor.constraint(equalToConstant: Metrics.profileSize),
+
+        postSectionLabel.topAnchor.constraint(equalTo: profileStackView.bottomAnchor, constant: Metrics.postSectionLabelTop),
+        postSectionLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.horizontal),
       ]
     )
   }
@@ -97,5 +110,7 @@ private extension ProfileViewController {
     static let profileSize: CGFloat = 60
     static let profileStackViewTop: CGFloat = 18
     static let horizontal: CGFloat = 24
+
+    static let postSectionLabelTop: CGFloat = 30
   }
 }
