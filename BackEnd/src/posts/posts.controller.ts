@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { AccessTokenGuard } from 'src/auth/guard/bearerToken.guard';
 import {
@@ -14,6 +14,7 @@ import { PaginatePostDto } from './dto/paginate-post.dto';
 import { GetPostsResponseDto } from './dto/get-posts-response.dto';
 import { GetPostResponseDto } from './dto/get-post-response.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { DeletePostResponseDto } from './dto/delete-post-response.dto';
 
 @ApiTags('게시글 관련 API')
 @Controller('api/v1/posts')
@@ -66,5 +67,13 @@ export class PostsController {
   @Put(':id')
   async updateMyPost(@Param('id', ParseIntPipe) id: number ,@Body() body: UpdatePostDto) {
     return this.postsService.updatePost(id, body);
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @ApiOperation({summary: '내 게시글 삭제하기'})
+  @ApiCreatedResponse({type: DeletePostResponseDto})
+  @Delete(':id')
+  async deleteMypost(@Param('id', ParseIntPipe) id: number) {
+    await this.postsService.deletePost(id);
   }
 }

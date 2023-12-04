@@ -57,4 +57,9 @@ export class PostsService {
     await this.postsRepository.update(id, updatePostInfo);
     return await this.postsRepository.findOneBy({ id });
   }
+
+  async deletePost(id: number) {
+    await this.findOneById(id);
+    await this.postsRepository.softDelete(id);
+  }
 }
