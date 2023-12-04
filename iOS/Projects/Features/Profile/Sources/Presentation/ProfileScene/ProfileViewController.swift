@@ -116,7 +116,7 @@ private extension ProfileViewController {
 
     let section = NSCollectionLayoutSection(group: group)
 
-    let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(100)) // 대략 100으로 설정함
+    let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(300)) // 대략 300으로 설정함
     let header = NSCollectionLayoutBoundarySupplementaryItem(
       layoutSize: headerSize,
       elementKind: UICollectionView.elementKindSectionHeader,
