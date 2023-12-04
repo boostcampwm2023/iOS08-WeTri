@@ -28,12 +28,15 @@ public final class ProfileViewModel {
 
   private var subscriptions: Set<AnyCancellable> = []
 
+  private let useCase: ProfileUseCaseRepresentable
+
   private weak var coordinating: ProfileCoordinating?
 
   // MARK: Initializations
 
-  public init(coordinating: ProfileCoordinating) {
+  public init(coordinating: ProfileCoordinating, useCase: ProfileUseCaseRepresentable) {
     self.coordinating = coordinating
+    self.useCase = useCase
   }
 }
 
