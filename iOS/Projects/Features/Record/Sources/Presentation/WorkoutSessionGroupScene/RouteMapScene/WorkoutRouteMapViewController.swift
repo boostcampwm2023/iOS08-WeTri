@@ -81,8 +81,6 @@ final class WorkoutRouteMapViewController: UIViewController {
     locationManager.stopUpdatingLocation()
     locationManager.stopMonitoringSignificantLocationChanges()
 
-    let runningData = locations.map(\.coordinate).map { ($0.latitude.description, $0.longitude.description) }
-    UserDefaults.standard.setValue(runningData, forKey: "Running")
     Log.make().debug("\(Self.self) deinitialized")
   }
 

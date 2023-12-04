@@ -85,6 +85,12 @@ final class WorkoutSessionContainerViewController: UIViewController {
     bind()
   }
 
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+
+    routeMapViewController.view.layoutIfNeeded()
+  }
+
   // MARK: Configuration
 
   private func setupLayouts() {

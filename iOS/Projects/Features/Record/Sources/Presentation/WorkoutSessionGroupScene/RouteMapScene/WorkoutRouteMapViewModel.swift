@@ -53,6 +53,7 @@ extension WorkoutRouteMapViewModel: WorkoutRouteMapViewModelRepresentable {
 
     input
       .filterShouldUpdateHeadingPublisher
+      .dropFirst(4)
       .sink { [useCase] value in
         useCase.updateHeading(value)
       }
@@ -60,7 +61,7 @@ extension WorkoutRouteMapViewModel: WorkoutRouteMapViewModelRepresentable {
 
     let updateValue: WorkoutRouteMapViewModelOutput = input
       .filterShouldUpdatePositionPublisher
-      .dropFirst(5)
+      .dropFirst(4)
       .map { [useCase] element in
         let censoredValue = useCase.updateFilter(element)
         return WorkoutRouteMapState.censoredValue(censoredValue)
