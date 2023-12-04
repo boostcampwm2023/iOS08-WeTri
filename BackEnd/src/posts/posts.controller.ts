@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Query, UseGuards } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { AccessTokenGuard } from 'src/auth/guard/bearerToken.guard';
 import {
@@ -11,6 +11,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { Profile } from 'src/profiles/entities/profiles.entity';
 import { ProfileDeco } from 'src/profiles/decorator/profile.decorator';
 import { PaginatePostDto } from './dto/paginate-post.dto';
+import { GetPostsResponseDto } from './dto/get-posts-response.dto';
 import { GetPostResponseDto } from './dto/get-post-response.dto';
 
 @ApiTags('게시글 관련 API')
@@ -31,8 +32,15 @@ export class PostsController {
 
   @Get()
   @ApiOperation({ summary: '게시글 가져오기' })
-  @ApiCreatedResponse({ type: GetPostResponseDto })
-  async getPost(@Query() query: PaginatePostDto) {
+  @ApiCreatedResponse({ type: GetPostsResponseDto })
+  async getPosts(@Query() query: PaginatePostDto) {
     return this.postsService.paginatePost(query);
+  }
+ç
+  @Get(':id')
+  @ApiOperation({summary: '특정 게시글 가져오기'})
+  @ApiCreatedResponse({ type: GetPostResponseDto })
+  async getPostById(@Param('id', ParseIntPipe) id: number) {
+    return this.postsService.findOneById(id);
   }
 }

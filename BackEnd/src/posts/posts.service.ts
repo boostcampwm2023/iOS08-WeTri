@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { RecordsService } from 'src/records/records.service';
 import { Profile } from 'src/profiles/entities/profiles.entity';
-import { ExistPostException } from './exceptions/posts.exception';
+import { ExistPostException, NotFoundPostException } from './exceptions/posts.exception';
 import { PaginatePostDto } from './dto/paginate-post.dto';
 import { CommonService } from 'src/common/common.service';
 
@@ -35,5 +35,13 @@ export class PostsService {
 
   async paginatePost(query: PaginatePostDto) {
     return await this.commonService.paginate<Post>(query, this.postsRepository);
+  }
+
+  async findOneById(id: number) {
+    const post = await this.postsRepository.findOneBy({id});
+    if(!post) {
+      throw new NotFoundPostException();
+    }
+    return post;
   }
 }
