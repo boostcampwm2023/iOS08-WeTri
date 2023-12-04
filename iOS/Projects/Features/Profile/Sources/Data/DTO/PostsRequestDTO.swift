@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - PostsRequestDTO
 
-struct PostsRequestDTO: Encodable {
+public struct PostsRequestDTO: Encodable {
   /// id값보다 낮은 아이템을 가져올 때 설정합니다.
   ///
   /// `idMoreThan`과 동시에 사용하면 안 됩니다.

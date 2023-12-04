@@ -8,8 +8,9 @@
 
 import Foundation
 
-struct PostsResponseDTO: Codable {
+// MARK: - PostsResponseDTO
 
+struct PostsResponseDTO: Codable {
   /// 게시글 목록
   let posts: [Post]
 
@@ -22,10 +23,10 @@ struct PostsResponseDTO: Codable {
   }
 }
 
-// MARK: - Item
+// MARK: - Post
 
 /// 게시글
-struct Post: Codable {
+public struct Post: Codable {
   /// 게시글 Identifier
   let id: Int
 
