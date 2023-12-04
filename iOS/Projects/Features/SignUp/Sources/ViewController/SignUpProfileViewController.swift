@@ -12,9 +12,11 @@ import DesignSystem
 import Log
 import UIKit
 
+// MARK: - SignUpProfileViewController
+
 final class SignUpProfileViewController: UIViewController {
-  private let subscriptions: Set<AnyCancellable> = []
-  
+  private var subscriptions: Set<AnyCancellable> = []
+
   private let titleLabel: UILabel = {
     let label = UILabel()
     label.translatesAutoresizingMaskIntoConstraints = false
@@ -22,12 +24,12 @@ final class SignUpProfileViewController: UIViewController {
     label.text = "프로필을 만들어 볼까요?"
     return label
   }()
-  
+
   private let profileImageButton: GWProfileButton = {
     let button = GWProfileButton()
     return button
   }()
-  
+
   private let nickNameLabel: UILabel = {
     let label = UILabel()
     label.translatesAutoresizingMaskIntoConstraints = false
@@ -36,17 +38,26 @@ final class SignUpProfileViewController: UIViewController {
     return label
   }()
 
+  private let nickNameBoxView: NickNameBoxView = {
+    let view = NickNameBoxView(frame: .zero)
+    return view
+  }()
+
   override func viewDidLoad() {
     super.viewDidLoad()
-    
   }
 }
 
 private extension SignUpProfileViewController {
   func bindUI() {
-    
+    nickNameBoxView.nickNameDidChangedPublisher
+      .sink { _ in
+        // TODO: ViewModel로 닉네임 넘겨서 사용가능한닉인지 아닌지 받아와서 사용가능하면 true/false
+      }
+      .store(in: &subscriptions)
   }
 }
+
 // MARK: - Metrics
 
 private enum Metrics {
