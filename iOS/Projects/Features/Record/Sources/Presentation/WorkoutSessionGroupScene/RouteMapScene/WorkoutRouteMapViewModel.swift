@@ -9,22 +9,6 @@
 import Combine
 import Foundation
 
-// MARK: - KalmanFilterUpdateRequireElement
-
-struct KalmanFilterUpdateRequireElement {
-  let longitude: Double
-  let latitude: Double
-  let prevSpeedAtLongitude: Double
-  let prevSpeedAtLatitude: Double
-}
-
-// MARK: - KalmanFilterCensored
-
-public struct KalmanFilterCensored {
-  let longitude: Double
-  let latitude: Double
-}
-
 // MARK: - WorkoutRouteMapViewModelInput
 
 public struct WorkoutRouteMapViewModelInput {
@@ -86,10 +70,4 @@ extension WorkoutRouteMapViewModel: WorkoutRouteMapViewModelRepresentable {
 
     return initialState.merge(with: updateValue).eraseToAnyPublisher()
   }
-}
-
-// MARK: - WorkoutRouteMapViewModelError
-
-enum WorkoutRouteMapViewModelError: LocalizedError {
-  case nullData
 }

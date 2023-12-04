@@ -27,7 +27,9 @@ final class KalmanUseCase {
 // MARK: KalmanUseCaseRepresentable
 
 extension KalmanUseCase: KalmanUseCaseRepresentable {
-  func updateHeading(_: Double) {}
+  func updateHeading(_ heading: Double) {
+    filter?.update(heading: heading)
+  }
 
   func updateFilter(_ element: KalmanFilterUpdateRequireElement) -> KalmanFilterCensored? {
     if filter == nil {

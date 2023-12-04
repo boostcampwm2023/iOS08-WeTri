@@ -117,6 +117,6 @@ struct KalmanFilter {
   }
 
   var latestCensoredPosition: KalmanFilterCensored {
-    return .init(longitude: x.value[0][0], latitude: x.value[2][0])
+    return .init(longitude: x.value[2][0], latitude: x.value[0][0])
   }
 }
