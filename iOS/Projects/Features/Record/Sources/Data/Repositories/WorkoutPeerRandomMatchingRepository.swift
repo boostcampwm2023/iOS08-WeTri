@@ -53,21 +53,18 @@ extension WorkoutPeerRandomMatchingRepository: WorkoutPeerRandomMatchingReposito
     }
   }
 
-  func isMatchedRandomPeer(workoutTypeCode: Int) -> AnyPublisher<Result<PeerMatchResponseDTO?, Error>, Never> {
-    return Future<Result<PeerMatchResponseDTO?, Error>, Never> { promise in
+  func isMatchedRandomPeer(isMatchedRandomPeersRequest: IsMatchedRandomPeersRequest) -> AnyPublisher<Result<IsMatchedRandomPeersResponse?, Error>, Never> {
+    return Future<Result<IsMatchedRandomPeersResponse?, Error>, Never> { promise in
       Task {
         do {
-          let data = try await provider.request(.isMatchedRandomPeer(workoutTypeCode: workoutTypeCode))
-          let response = try decoder.decode(GWResponse<PeerMatchResponseDTO>.self, from: data)
-          if response.code == 201 {
-            promise(.success(.success(nil)))
-          } else if response.code == 200 {
-            promise(.success(.success(response.data)))
-          } else {
-            promise(.success(.failure(RepositoryError.serverError)))
+          let data = try await provider.request(.isMatchedRandomPeer(isMatchedRandomPeersRequest: isMatchedRandomPeersRequest))
+          guard
+            let responseData = try decoder.decode(GWResponse<IsMatchedRandomPeersResponse>.self, from: data).data
+          else {
+            throw RepositoryError.serverError
           }
+          promise(.success(.success(responseData)))
         } catch {
-          // TODO: ERROR Handling
           promise(.success(.failure(error)))
         }
       }
@@ -89,7 +86,7 @@ extension WorkoutPeerRandomMatchingRepository {
     /// Proeprty
     case matchStart(workoutTypeCode: Int)
     case matchCancel
-    case isMatchedRandomPeer(workoutTypeCode: Int)
+    case isMatchedRandomPeer(isMatchedRandomPeersRequest: IsMatchedRandomPeersRequest)
 
     /// TNEndPoint
     var path: String {
@@ -99,7 +96,7 @@ extension WorkoutPeerRandomMatchingRepository {
       case .matchCancel:
         return "matches/cancle"
       case .isMatchedRandomPeer:
-        return "matches/random"
+        return "/api/v1/matches/random"
       }
     }
 
@@ -121,8 +118,8 @@ extension WorkoutPeerRandomMatchingRepository {
       switch self {
       case let .matchStart(workoutTypeCode):
         return workoutTypeCode
-      case let .isMatchedRandomPeer(workoutTypeCode):
-        return workoutTypeCode
+      case let .isMatchedRandomPeer(isMatchedRandomPeersRequest):
+        return isMatchedRandomPeersRequest
       case .matchCancel:
         return nil
       }

@@ -49,6 +49,7 @@ final class WorkoutPeerRandomMatchingViewModel {
     self.workoutSetting = workoutSetting
   }
 
+  private var didMatchStartedDate = Date.now
   private var subscriptions: Set<AnyCancellable> = []
 }
 
@@ -107,20 +108,49 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
   }
 
   private func sendIsMatchedRandomPeer() {
+    didMatchStartedDate = .now
+    Timer.publish(every: 2, on: .main, in: .common)
+      .autoconnect()
+      .sink { [weak self] date in
+        guard let self else {
+          return
+        }
+        let waitingTime = Int(date.timeIntervalSince(didMatchStartedDate))
+        let request = IsMatchedRandomPeersRequest(workoutID: workoutSetting.workoutType.typeCode, waitingTime: waitingTime)
+        requestIsMatchedRandomPeers(request: request)
+      }
+      .store(in: &subscriptions)
+  }
+
+  func requestIsMatchedRandomPeers(request: IsMatchedRandomPeersRequest) {
     useCase
-      .isMatchedRandomPeer(workoutTypeCode: workoutSetting.workoutType.typeCode)
+      .isMatchedRandomPeer(isMatchedRandomPeersRequest: request)
       .receive(on: RunLoop.main)
       .sink { [weak self] result in
         switch result {
-        case let .success(dto):
-          if dto == nil {
-            break
+        case let .success(response):
+          if response == nil {
+            return
           }
+          self?.pushWorkoutSession(response: response)
         case .failure:
           self?.coordinating?.popPeerRandomMatchingViewController()
         }
       }
       .store(in: &subscriptions)
+  }
+
+  func pushWorkoutSession(response: IsMatchedRandomPeersResponse?) {
+    guard
+      let response,
+      let peersResponse = response.peers,
+      let roomID = response.roomID,
+      let startDate = response.liveWorkoutStartTime
+    else {
+      return
+    }
+    let peers = peersResponse.map { Peer(nickname: $0.nickname, imageURL: $0.publicID) }
+    coordinating?.finish(workoutSessionElement: .init(startDate: startDate, peers: peers, roomID: roomID))
   }
 
   private func cancelPeerRandomMatching() {

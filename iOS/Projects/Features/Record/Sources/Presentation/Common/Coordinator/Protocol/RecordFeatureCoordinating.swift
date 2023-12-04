@@ -11,5 +11,5 @@ import Foundation
 
 protocol RecordFeatureCoordinating: Coordinating {
   func showSettingFlow()
-  func showWorkoutFlow(workoutSetting: WorkoutSetting)
+  func showWorkoutFlow(_ workoutSessionElement: WorkoutSessionElement)
 }

@@ -14,7 +14,7 @@ import Foundation
 protocol WorkoutPeerRandomMatchingUseCaseRepresentable {
   func matcheStart(workoutSetting: WorkoutSetting) -> AnyPublisher<Result<Void, Error>, Never>
   func matchCancel()
-  func isMatchedRandomPeer(workoutTypeCode: Int) -> AnyPublisher<Result<PeerMatchResponseDTO?, Error>, Never>
+  func isMatchedRandomPeer(isMatchedRandomPeersRequest: IsMatchedRandomPeersRequest) -> AnyPublisher<Result<IsMatchedRandomPeersResponse?, Error>, Never>
 }
 
 // MARK: - WorkoutPeerRandomMatchingUseCase
@@ -37,8 +37,21 @@ extension WorkoutPeerRandomMatchingUseCase: WorkoutPeerRandomMatchingUseCaseRepr
     return repository.matchCancel()
   }
 
-  func isMatchedRandomPeer(workoutTypeCode: Int) -> AnyPublisher<Result<PeerMatchResponseDTO?, Error>, Never> {
-    // TODO: DTO to Entity 변환 작업 필요
-    return repository.isMatchedRandomPeer(workoutTypeCode: workoutTypeCode)
+  func isMatchedRandomPeer(isMatchedRandomPeersRequest: IsMatchedRandomPeersRequest) -> AnyPublisher<Result<IsMatchedRandomPeersResponse?, Error>, Never> {
+    return repository
+      .isMatchedRandomPeer(isMatchedRandomPeersRequest: isMatchedRandomPeersRequest)
+      .map { result -> Result<IsMatchedRandomPeersResponse?, Error> in
+        switch result {
+        case let .failure(error):
+          return .failure(error)
+        case let .success(response):
+          // 만약 매칭이 잡혔으면
+          if response?.matched == true {
+            return .success(response)
+          }
+          return .success(response)
+        }
+      }
+      .eraseToAnyPublisher()
   }
 }

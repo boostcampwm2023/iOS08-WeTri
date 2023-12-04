@@ -67,7 +67,7 @@ public final class RecordFeatureCoordinator: RecordFeatureCoordinating {
     workoutSettingCoordinator.start()
   }
 
-  func showWorkoutFlow(workoutSetting _: WorkoutSetting) {
+  func showWorkoutFlow(_: WorkoutSessionElement) {
     let coordinator = WorkoutSessionCoordinator(navigationController: navigationController, isMockEnvironment: true)
     childCoordinators.append(coordinator)
     coordinator.finishDelegate = self
@@ -89,7 +89,7 @@ extension RecordFeatureCoordinator: CoordinatorFinishDelegate {
 // MARK: WorkoutSettingCoordinatorFinishDelegate
 
 extension RecordFeatureCoordinator: WorkoutSettingCoordinatorFinishDelegate {
-  func workoutSettingCoordinatorDidFinished(workoutSetting: WorkoutSetting) {
-    showWorkoutFlow(workoutSetting: workoutSetting)
+  func workoutSettingCoordinatorDidFinished(workoutSessionElement: WorkoutSessionElement) {
+    showWorkoutFlow(workoutSessionElement)
   }
 }

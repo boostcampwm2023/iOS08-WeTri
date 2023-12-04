@@ -160,7 +160,8 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
 
     switch mode {
     case .solo:
-      coordinator?.finish(workoutSetting: workoutSettiong)
+      let date = (Date.now + 5).description
+      coordinator?.finish(workoutSessionElement: .init(startDate: date, peers: [], roomID: ""))
     case .random:
       coordinator?.pushPeerRandomMatchingViewController(workoutSetting: workoutSettiong)
     }
