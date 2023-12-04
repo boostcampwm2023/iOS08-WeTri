@@ -35,6 +35,6 @@ public final class ProfileViewController: UIViewController {
   private func setupConstraints() {}
 
   private func setupStyles() {
-    view.backgroundColor = DesignSystemColor.primaryBackground
+    view.backgroundColor = DesignSystemColor.error
   }
 }
