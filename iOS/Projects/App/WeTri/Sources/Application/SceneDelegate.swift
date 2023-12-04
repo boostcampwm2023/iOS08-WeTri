@@ -7,6 +7,7 @@
 //
 
 import RecordFeature
+import SignUpFeature
 import UIKit
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -17,10 +18,11 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     guard let windowScene = scene as? UIWindowScene else { return }
     let navigationController = UINavigationController()
     window = UIWindow(windowScene: windowScene)
-    window?.rootViewController = navigationController
-    let coordinator = AppCoordinator(navigationController: navigationController)
-    coordinating = coordinator
-    coordinator.start()
+    let vc = SignUpGenderBirthViewController()
+    window?.rootViewController = vc
+//    let coordinator = AppCoordinator(navigationController: navigationController)
+//    coordinating = coordinator
+//    coordinator.start()
     window?.makeKeyAndVisible()
   }
 }
