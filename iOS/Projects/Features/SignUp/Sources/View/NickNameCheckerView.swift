@@ -24,7 +24,7 @@ final class NickNameCheckerView: UIView {
   private let label: UILabel = {
     let label = UILabel()
     label.translatesAutoresizingMaskIntoConstraints = false
-    label.text = "글자수는 2~20자\n특수문자는 사용할 수 없어요."
+    label.text = "글자수는 2~20자, 특수문자는 사용할 수 없어요."
     label.textColor = DesignSystemColor.error
     label.font = .systemFont(ofSize: 12)
     return label
@@ -33,6 +33,7 @@ final class NickNameCheckerView: UIView {
   override init(frame _: CGRect) {
     super.init(frame: .zero)
     configureUI()
+    configureDisabled()
   }
 
   @available(*, unavailable)
@@ -43,17 +44,17 @@ final class NickNameCheckerView: UIView {
 
 extension NickNameCheckerView {
   func configureEnabled() {
-    label.text = "글자수는 2~20자\n특수문자는 사용할 수 없어요."
-    label.textColor = DesignSystemColor.error
-    imageView.image = UIImage(systemName: "exclamationmark.bubble")
-    imageView.tintColor = DesignSystemColor.error
-  }
-
-  func configureDisabled() {
     label.text = "사용가능한 닉네임이에요."
     label.textColor = DesignSystemColor.main03
     imageView.image = UIImage(systemName: "checkmark.bubble")
     imageView.tintColor = DesignSystemColor.main03
+  }
+
+  func configureDisabled() {
+    label.text = "글자수는 2~20자, 특수문자는 사용할 수 없어요."
+    label.textColor = DesignSystemColor.error
+    imageView.image = UIImage(systemName: "exclamationmark.bubble")
+    imageView.tintColor = DesignSystemColor.error
   }
 }
 
