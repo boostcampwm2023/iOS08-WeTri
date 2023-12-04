@@ -9,6 +9,8 @@
 import DesignSystem
 import UIKit
 
+// MARK: - PostsEmptyStateView
+
 final class PostsEmptyStateView: UICollectionReusableView {
   // MARK: UI Components
 
@@ -41,12 +43,14 @@ final class PostsEmptyStateView: UICollectionReusableView {
     super.init(frame: frame)
     setupLayouts()
     setupConstraints()
+    setupStyles()
   }
 
   required init?(coder: NSCoder) {
     super.init(coder: coder)
     setupLayouts()
     setupConstraints()
+    setupStyles()
   }
 
   // MARK: - Configurations
@@ -67,19 +71,26 @@ final class PostsEmptyStateView: UICollectionReusableView {
       [
         profileStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
         profileStackView.centerYAnchor.constraint(equalTo: centerYAnchor),
+        profileStackView.topAnchor.constraint(equalTo: topAnchor, constant: Metrics.profileStackViewTop),
+        profileStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Metrics.profileStackViewTop),
 
         emptyImageView.widthAnchor.constraint(equalToConstant: Metrics.emptyStateImageViewWidth),
-        emptyImageView.heightAnchor.constraint(equalToConstant: Metrics.emptyStateImageViewHeight),
+        emptyImageView.heightAnchor.constraint(equalTo: emptyImageView.widthAnchor, multiplier: Metrics.emptyStateImageViewHeightMultiplier),
       ]
     )
   }
+
+  private func setupStyles() {
+    backgroundColor = DesignSystemColor.gray01
+  }
 }
 
-// MARK: ProfileHeaderView.Metrics
+// MARK: PostsEmptyStateView.Metrics
 
 private extension PostsEmptyStateView {
   enum Metrics {
+    static let profileStackViewTop: CGFloat = 90
     static let emptyStateImageViewWidth: CGFloat = 350
-    static let emptyStateImageViewHeight: CGFloat = 285
+    static let emptyStateImageViewHeightMultiplier: CGFloat = 0.81
   }
 }

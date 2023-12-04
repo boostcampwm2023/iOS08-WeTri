@@ -95,10 +95,15 @@ public final class ProfileViewController: UICollectionViewController {
 private extension ProfileViewController {
   private static func createProfileLayout() -> UICollectionViewLayout {
     return UICollectionViewCompositionalLayout { sectionNumber, _ in
-      if sectionNumber == Section.header.rawValue {
+      switch sectionNumber {
+      case Section.header.rawValue:
         return createHeaderSection()
-      } else {
+      case Section.main.rawValue:
         return createMainSection()
+      case Section.emptyState.rawValue:
+        return createEmptyStateSection()
+      default:
+        return nil
       }
     }
   }
@@ -142,6 +147,26 @@ private extension ProfileViewController {
     // 섹션 정의
     return NSCollectionLayoutSection(group: group)
   }
+
+  private static func createEmptyStateSection() -> NSCollectionLayoutSection {
+    let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(1)) // 높이를 1으로 설정, 아무 값도 넣지 않을 예정임
+    let item = NSCollectionLayoutItem(layoutSize: itemSize)
+
+    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(1)) // 높이를 1으로 설정, 아무 값도 넣지 않을 예정임
+    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+
+    let section = NSCollectionLayoutSection(group: group)
+
+    let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(300))
+    let header = NSCollectionLayoutBoundarySupplementaryItem(
+      layoutSize: headerSize,
+      elementKind: UICollectionView.elementKindSectionFooter,
+      alignment: .top
+    )
+    section.boundarySupplementaryItems = [header]
+
+    return section
+  }
 }
 
 // MARK: - Diffable DataSources
@@ -157,16 +182,21 @@ private extension ProfileViewController {
       }
     }
 
+    let footerRegistration = PostEmptyStateRegistration(elementKind: UICollectionView.elementKindSectionFooter) { _, _, _ in
+    }
+
     let dataSource = ProfileDataSource(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in
       collectionView.dequeueConfiguredReusableCell(using: registration, for: indexPath, item: itemIdentifier)
     }
 
     dataSource.supplementaryViewProvider = { collectionView, kind, indexPath in
       // Header view 요청을 확인합니다.
-      guard kind == UICollectionView.elementKindSectionHeader else {
-        return nil
+      if kind == UICollectionView.elementKindSectionHeader {
+        return collectionView.dequeueConfiguredReusableSupplementary(using: headerRegistration, for: indexPath)
+      } else if kind == UICollectionView.elementKindSectionFooter {
+        return collectionView.dequeueConfiguredReusableSupplementary(using: footerRegistration, for: indexPath)
       }
-      return collectionView.dequeueConfiguredReusableSupplementary(using: headerRegistration, for: indexPath)
+      return nil
     }
     self.dataSource = dataSource
   }
@@ -175,8 +205,7 @@ private extension ProfileViewController {
   private func setupInitialSnapshots() {
     guard let dataSource else { return }
     var snapshot = dataSource.snapshot()
-    snapshot.appendSections([.header, .main])
-    snapshot.appendItems(["A", "B", "C", "D", "E", "F", "G"], toSection: .main)
+    snapshot.appendSections([.header, .main, .emptyState])
     dataSource.apply(snapshot)
   }
 
@@ -194,10 +223,12 @@ private extension ProfileViewController {
   typealias ProfileSnapshot = NSDiffableDataSourceSnapshot<Section, Item>
   typealias ProfileCellRegistration = UICollectionView.CellRegistration<ProfilePostCell, Item>
   typealias ProfileReusableRegistration = UICollectionView.SupplementaryRegistration<ProfileHeaderView>
+  typealias PostEmptyStateRegistration = UICollectionView.SupplementaryRegistration<PostsEmptyStateView>
 
   enum Section: Int {
     case header
     case main
+    case emptyState
   }
 
   typealias Item = String
