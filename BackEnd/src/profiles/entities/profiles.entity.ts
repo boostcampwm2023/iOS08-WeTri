@@ -54,6 +54,10 @@ export class Profile {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @ApiProperty({
+    example: 'XCVSF-SADF123..',
+    description: '유저의 고유 식별 ID를 의미합니다.'
+  })
   @Column({ unique: true })
   @Generated('uuid')
   publicId: string;

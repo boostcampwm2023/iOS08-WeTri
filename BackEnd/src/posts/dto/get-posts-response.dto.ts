@@ -13,7 +13,7 @@ export class ItemDto extends PickType(Post, [
   'postUrl',
 ]) {}
 
-class MetaDataDto {
+export class MetaDataDto {
   @ApiProperty({
     example: 5,
     description: 'lastItem의 id를 의미합니다.',
