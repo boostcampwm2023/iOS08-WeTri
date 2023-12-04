@@ -24,7 +24,7 @@ final class AppCoordinator: AppCoordinating {
   }
 
   func start() {
-    showOnboardingFlow()
+    showTabBarFlow()
   }
 
   func showOnboardingFlow() {

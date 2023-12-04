@@ -30,18 +30,37 @@ final class WorkoutRouteMapViewController: UIViewController {
 
   /// 사용자 위치 추적 배열
   @Published private var locations: [CLLocation] = []
+  var filter: KalmanFilter!
 
   private var subscriptions: Set<AnyCancellable> = []
 
-  private let locationManager: CLLocationManager = .init()
+  lazy var locationManager: CLLocationManager = {
+    let manager = CLLocationManager()
+    manager.startMonitoringSignificantLocationChanges()
+    manager.distanceFilter = 10
+    manager.startUpdatingLocation()
+
+    manager.delegate = self
+    return manager
+  }()
 
   // MARK: UI Components
 
   private lazy var mapView: MKMapView = {
     let mapView = MKMapView()
-    mapView.showsUserLocation = true
     mapView.delegate = self
     mapView.setUserTrackingMode(.follow, animated: true)
+
+    // Set MKMapView Property
+
+    mapView.isZoomEnabled = false
+    mapView.isScrollEnabled = false
+    // 각도 조절 가능 여부 (두 손가락으로 위/아래 슬라이드
+    mapView.isPitchEnabled = false
+    mapView.isRotateEnabled = false
+    mapView.showsCompass = true
+    mapView.showsUserLocation = true
+
     return mapView
   }()
 
@@ -59,6 +78,10 @@ final class WorkoutRouteMapViewController: UIViewController {
 
   deinit {
     locationManager.stopUpdatingLocation()
+    locationManager.stopMonitoringSignificantLocationChanges()
+
+    let runningData = locations.map(\.coordinate).map { ($0.latitude.description, $0.longitude.description) }
+    UserDefaults.standard.setValue(runningData, forKey: "Running")
     Log.make().debug("\(Self.self) deinitialized")
   }
 
@@ -111,8 +134,10 @@ final class WorkoutRouteMapViewController: UIViewController {
   private func setupLocationManager() {
     locationManager.delegate = self
     locationManager.requestWhenInUseAuthorization()
-    locationManager.startUpdatingLocation()
   }
+
+  private var prevLocation: CLLocation = .init(latitude: 37.5519, longitude: 126.9918)
+  private var prevDate = Date.now
 }
 
 // MARK: LocationTrackingProtocol
@@ -143,9 +168,22 @@ extension WorkoutRouteMapViewController: CLLocationManagerDelegate {
       Log.make().error("location 값이 존재하지 않습니다.")
       return
     }
+    if filter == nil {
+      filter = .init(initLongitude: newLocation.coordinate.longitude, initLatitude: newLocation.coordinate.latitude,
+                     headingValue: 0, processNoiseCovariance: 1)
+    }
+    let currentTime = Date.now
+    let timeDistance = currentTime.distance(to: prevDate)
+    let v = (
+      (newLocation.coordinate.latitude - prevLocation.coordinate.latitude) / timeDistance,
+      (newLocation.coordinate.longitude - prevLocation.coordinate.longitude) / timeDistance
+    )
 
-    locations.append(newLocation)
+    filter.update(initLongitude: newLocation.coordinate.longitude, initLatitude: newLocation.coordinate.latitude, prevSpeedAtLatitude: v.0, prevVSpeedAtLongitude: v.1)
+    let filterdLocation = CLLocation(latitude: filter.x.value[0][0], longitude: filter.x.value[2][0])
+    locations.append(filterdLocation)
     let coordinates = locations.map(\.coordinate)
+    Log.make().debug("\(coordinates.count), \(coordinates.map { String("\($0.latitude.description), \($0.longitude.description)") })")
     let polyline = MKPolyline(coordinates: coordinates, count: coordinates.count)
     mapView.addOverlay(polyline)
 
@@ -156,6 +194,12 @@ extension WorkoutRouteMapViewController: CLLocationManagerDelegate {
       longitudinalMeters: Metrics.mapDistance
     )
     mapView.setRegion(region, animated: true)
+  }
+
+  func locationManager(_: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
+    if filter != nil {
+      filter.update(heading: newHeading.trueHeading)
+    }
   }
 
   func locationManager(_: CLLocationManager, didFailWithError error: Error) {
@@ -175,6 +219,28 @@ extension WorkoutRouteMapViewController: MKMapViewDelegate {
     }
 
     return MKOverlayRenderer(overlay: overlay)
+  }
+
+  func calculateDistanceBetweenPoints(prev: CLLocation, current: CLLocation) -> Double {
+    // 지구 반지름 (단위: 미터)
+    let earthRadius = 6_371_000.0
+
+    // 위도 및 경도를 라디안으로 변환
+    let lat1Rad = prev.coordinate.latitude * .pi / 180.0
+    let lon1Rad = prev.coordinate.longitude * .pi / 180.0
+    let lat2Rad = current.coordinate.latitude * .pi / 180.0
+    let lon2Rad = current.coordinate.longitude * .pi / 180.0
+
+    // 위도 및 경도의 차이 계산
+    let deltaLat = lat2Rad - lat1Rad
+    let deltaLon = lon2Rad - lon1Rad
+
+    // Haversine 공식을 이용하여 거리 계산
+    let a = sin(deltaLat / 2.0) * sin(deltaLat / 2.0) + cos(lat1Rad) * cos(lat2Rad) * sin(deltaLon / 2.0) * sin(deltaLon / 2.0)
+    let c = 2.0 * atan2(sqrt(a), sqrt(1.0 - a))
+    let distance = earthRadius * c
+
+    return distance
   }
 }
 
