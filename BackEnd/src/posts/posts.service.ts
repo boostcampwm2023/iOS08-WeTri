@@ -8,6 +8,7 @@ import { Profile } from 'src/profiles/entities/profiles.entity';
 import { ExistPostException, NotFoundPostException } from './exceptions/posts.exception';
 import { PaginatePostDto } from './dto/paginate-post.dto';
 import { CommonService } from 'src/common/common.service';
+import { UpdatePostDto } from './dto/update-post.dto';
 
 @Injectable()
 export class PostsService {
@@ -16,7 +17,7 @@ export class PostsService {
     private readonly postsRepository: Repository<Post>,
     private readonly recordService: RecordsService,
     private readonly commonService: CommonService,
-  ) {}
+  ) { }
 
   async createPost(postInfo: CreatePostDto, profile: Profile) {
     const record = await this.recordService.findById(postInfo.recordId);
@@ -38,8 +39,8 @@ export class PostsService {
   }
 
   async findOneById(id: number) {
-    const post = await this.postsRepository.findOneBy({id});
-    if(!post) {
+    const post = await this.postsRepository.findOneBy({ id });
+    if (!post) {
       throw new NotFoundPostException();
     }
     return post;
@@ -47,7 +48,13 @@ export class PostsService {
 
   async paginateUserPosts(publicId: string, query: PaginatePostDto) {
     const findManyOptions: FindManyOptions<Post> = {};
-    findManyOptions.where = {publicId}
+    findManyOptions.where = { publicId }
     return await this.commonService.paginate<Post>(query, this.postsRepository, findManyOptions);
+  }
+
+  async updatePost(id: number, updatePostInfo: UpdatePostDto) {
+    await this.findOneById(id);
+    await this.postsRepository.update(id, updatePostInfo);
+    return await this.postsRepository.findOneBy({ id });
   }
 }

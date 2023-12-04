@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { AccessTokenGuard } from 'src/auth/guard/bearerToken.guard';
 import {
@@ -13,6 +13,7 @@ import { ProfileDeco } from 'src/profiles/decorator/profile.decorator';
 import { PaginatePostDto } from './dto/paginate-post.dto';
 import { GetPostsResponseDto } from './dto/get-posts-response.dto';
 import { GetPostResponseDto } from './dto/get-post-response.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
 
 @ApiTags('게시글 관련 API')
 @Controller('api/v1/posts')
@@ -57,5 +58,13 @@ export class PostsController {
   @Get('user/me')
   async getMyPosts(@ProfileDeco() profile: Profile, @Query() query: PaginatePostDto) {
     return this.postsService.paginateUserPosts(profile.publicId, query);
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @ApiOperation({summary: '내 게시글 수정하기'})
+  @ApiCreatedResponse({type: GetPostResponseDto})
+  @Put(':id')
+  async updateMyPost(@Param('id', ParseIntPipe) id: number ,@Body() body: UpdatePostDto) {
+    return this.postsService.updatePost(id, body);
   }
 }
