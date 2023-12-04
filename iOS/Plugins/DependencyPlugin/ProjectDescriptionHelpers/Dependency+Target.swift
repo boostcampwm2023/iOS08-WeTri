@@ -15,6 +15,7 @@ public enum Feature: String {
   case login
   case onboarding
   case record
+  case signUp
 
   public var targetName: String {
     return rawValue.prefix(1).capitalized + rawValue.dropFirst()

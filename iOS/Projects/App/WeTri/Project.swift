@@ -21,6 +21,7 @@ let projects = Project.makeModule(
       .feature(.onboarding),
       .feature(.login),
       .feature(.splash),
+      .feature(.signUp),
       .feature(.profile),
       .keychain,
     ],
