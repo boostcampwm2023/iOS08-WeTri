@@ -62,7 +62,7 @@ extension ProfileRepository: ProfileRepositoryRepresentable {
 
 private enum ProfileEndPoint {
   case fetchProfile
-  case fetchPosts
+  case fetchPosts(PostsRequestDTO)
 }
 
 // MARK: TNEndPoint
@@ -82,7 +82,12 @@ extension ProfileEndPoint: TNEndPoint {
   }
 
   var query: Encodable? {
-    nil
+    switch self {
+    case .fetchProfile:
+      return nil
+    case let .fetchPosts(model):
+      return model
+    }
   }
 
   var body: Encodable? {
