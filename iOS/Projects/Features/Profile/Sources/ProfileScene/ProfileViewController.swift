@@ -1,5 +1,6 @@
 import Combine
 import DesignSystem
+import Log
 import UIKit
 
 public final class ProfileViewController: UIViewController {
@@ -35,6 +36,18 @@ public final class ProfileViewController: UIViewController {
   private func setupConstraints() {}
 
   private func setupStyles() {
-    view.backgroundColor = DesignSystemColor.error
+    view.backgroundColor = DesignSystemColor.primaryBackground
+    navigationItem.rightBarButtonItem = .init(
+      image: .init(systemName: "gearshape"),
+      style: .plain,
+      target: self,
+      action: #selector(didTapSettingButton)
+    )
+    navigationItem.rightBarButtonItem?.tintColor = DesignSystemColor.primaryText
+  }
+
+  @objc
+  private func didTapSettingButton() {
+    Log.make().debug("\(#function)")
   }
 }

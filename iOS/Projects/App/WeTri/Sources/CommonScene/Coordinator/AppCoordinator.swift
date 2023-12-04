@@ -55,6 +55,7 @@ final class AppCoordinator: AppCoordinating {
   }
 
   func showTabBarFlow() {
+    navigationController.isNavigationBarHidden = true
     let tabBarCoordinator = TabBarCoordinator(navigationController: navigationController)
     childCoordinators.append(tabBarCoordinator)
     tabBarCoordinator.start()

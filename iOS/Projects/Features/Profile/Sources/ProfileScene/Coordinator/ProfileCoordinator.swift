@@ -24,6 +24,6 @@ public final class ProfileCoordinator: ProfileCoordinating {
   public func start() {
     let viewModel = ProfileViewModel()
     let viewController = ProfileViewController(viewModel: viewModel)
-    navigationController.pushViewController(viewController, animated: false)
+    navigationController.setViewControllers([viewController], animated: false)
   }
 }
