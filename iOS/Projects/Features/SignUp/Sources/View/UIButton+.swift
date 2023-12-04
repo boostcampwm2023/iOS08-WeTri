@@ -18,7 +18,7 @@ extension UIButton {
     } else {
       configuration?.font = .preferredFont(forTextStyle: .headline, weight: .bold)
       configuration?.titleAlignment = .center
-      configuration = .mainDisabled(title: title)
+      configuration = .mainDeSelected(title: title)
     }
   }
 }
