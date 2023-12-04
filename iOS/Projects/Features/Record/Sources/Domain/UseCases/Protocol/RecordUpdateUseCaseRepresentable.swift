@@ -12,7 +12,11 @@ import Foundation
 // MARK: - RecordUpdateUseCaseRepresentable
 
 protocol RecordUpdateUseCaseRepresentable {
-  func execute(date: Date) -> AnyPublisher<[Record], Error>
+  /// API로부터 [Record] 데이터를 불러옵니다.
+  func execute(date: Date, isToday: Bool) -> AnyPublisher<[Record], Error>
+
+  /// 메모리, 디스크로부터 [Record] 데이터를 불러옵니다.
+  func executeCached(date: Date) -> AnyPublisher<[Record], Error>
 }
 
 // MARK: - RecordUpdateUseCaseError

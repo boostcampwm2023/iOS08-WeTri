@@ -9,7 +9,7 @@
 import Combine
 import Coordinator
 import Foundation
-import OSLog
+import Log
 
 // MARK: - RecordListViewModelInput
 
@@ -65,7 +65,7 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
           return Just(.customError(RecordListViewModelError.viewModelDeinitialized))
             .eraseToAnyPublisher()
         }
-        return recordUpdateUsecase.execute(date: Date.now)
+        return recordUpdateUsecase.execute(date: Date.now, isToday: true)
           .map { records -> RecordListState in
             .sucessRecords(records)
           }
@@ -102,17 +102,48 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
           return Just(.customError(RecordListViewModelError.dateNotFound))
             .eraseToAnyPublisher()
         }
-        return recordUpdateUsecase.execute(date: date)
-          .map { records -> RecordListState in
-            return .sucessRecords(records)
-          }
-          .catch { _ -> AnyPublisher<RecordListState, Never> in
-            return Just(.customError(RecordListViewModelError.recordUpdateFail))
-              .eraseToAnyPublisher()
-          }
-          .eraseToAnyPublisher()
+        let isToday = dateProvideUsecase.isToday(date: date)
+        if !isToday {
+          return recordUpdateUsecase.executeCached(date: date)
+            .map { records -> RecordListState in
+              return .sucessRecords(records)
+            }
+            .catch { [weak self] error -> AnyPublisher<RecordListState, Never> in
+              switch error {
+              case let error as WorkoutRecordsRepositoryError where error == .invalidCachedData:
+                guard let publisher = self?.recordUpdateUsecase.execute(date: date, isToday: isToday)
+                else {
+                  return Just(.sucessRecords([]))
+                    .eraseToAnyPublisher()
+                }
+                return publisher
+                  .map { records -> RecordListState in
+                    return .sucessRecords(records)
+                  }
+                  .catch { _ in
+                    return Just(.sucessRecords([]))
+                      .eraseToAnyPublisher()
+                  }
+                  .eraseToAnyPublisher()
+              default:
+                break
+              }
+              return Just(.sucessRecords([]))
+                .eraseToAnyPublisher()
+            }
+            .eraseToAnyPublisher()
+        } else {
+          return recordUpdateUsecase.execute(date: date, isToday: isToday)
+            .map { records -> RecordListState in
+              return .sucessRecords(records)
+            }
+            .catch { _ in
+              return Just(.sucessRecords([]))
+                .eraseToAnyPublisher()
+            }
+            .eraseToAnyPublisher()
+        }
       }
-      .eraseToAnyPublisher()
 
     let selectedDate = input.selectedDate
       .flatMap { [weak self] indexPath -> AnyPublisher<RecordListState, Never> in

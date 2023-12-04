@@ -100,6 +100,16 @@ final class DateProvideUseCase: DateProvideUseCaseRepresentable {
     return dateInfos[index]
   }
 
+  func isToday(date: Date) -> Bool {
+    let nowDateInfo = transform(date: Date.now)
+    guard let nowDate = transform(dateInfo: nowDateInfo),
+          nowDate == date
+    else {
+      return false
+    }
+    return true
+  }
+
   private func formatter() -> DateFormatter {
     let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = "YYYY-MM-dd-EEEE"

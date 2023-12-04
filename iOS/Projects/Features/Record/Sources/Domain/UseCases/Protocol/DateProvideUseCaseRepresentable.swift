@@ -14,4 +14,5 @@ protocol DateProvideUseCaseRepresentable {
   func transform(dateInfo: DateInfo) -> Date?
   func fetchAllDatesThisMonth() -> [DateInfo]
   func selectedDateInfo(index: Int) -> DateInfo?
+  func isToday(date: Date) -> Bool
 }
