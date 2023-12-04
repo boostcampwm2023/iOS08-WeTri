@@ -11,6 +11,7 @@ import ProjectDescription
 
 public enum Feature: String {
   case splash
+  case profile
   case login
   case onboarding
   case record
