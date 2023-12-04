@@ -77,13 +77,13 @@ private extension NickNameBoxView {
 
   func enabledNickName() {
     textField.textColor = .black
-    textField.layer.borderColor = DesignSystemColor.main03.cgColor
+    layer.borderColor = DesignSystemColor.main03.cgColor
     cancelButton.tintColor = DesignSystemColor.main03
   }
 
   func disabledNickName() {
+    layer.borderColor = DesignSystemColor.error.cgColor
     textField.textColor = DesignSystemColor.error
-    textField.layer.borderColor = DesignSystemColor.error.cgColor
     cancelButton.tintColor = DesignSystemColor.error
   }
 
