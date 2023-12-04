@@ -14,7 +14,7 @@ public final class ProfileViewController: UICollectionViewController {
   private var subscriptions: Set<AnyCancellable> = []
 
   private var dataSource: ProfileDataSource?
-  private var headerInfo: ProfileInfo?
+  private var headerInfo: Profile?
 
   private let viewModel: ProfileViewModelRepresentable
 
@@ -184,7 +184,7 @@ private extension ProfileViewController {
     dataSource.apply(snapshot)
   }
 
-  private func updateHeaderSnapshots(with model: ProfileInfo) {
+  private func updateHeaderSnapshots(with model: Profile) {
     guard let dataSource else { return }
     headerInfo = model
     var snapshot = dataSource.snapshot()

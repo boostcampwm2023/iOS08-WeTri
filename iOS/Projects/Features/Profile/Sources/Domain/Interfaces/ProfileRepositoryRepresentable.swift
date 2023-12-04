@@ -10,5 +10,5 @@ import Combine
 import Foundation
 
 public protocol ProfileRepositoryRepresentable {
-  func fetchProfiles() -> AnyPublisher<ProfileInfo, Error>
+  func fetchProfiles() -> AnyPublisher<Profile, Error>
 }

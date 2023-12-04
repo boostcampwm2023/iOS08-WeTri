@@ -26,7 +26,7 @@ public struct ProfileUseCase {
 // MARK: ProfileUseCaseRepresentable
 
 extension ProfileUseCase: ProfileUseCaseRepresentable {
-  public func fetchProfile() -> AnyPublisher<ProfileInfo, Error> {
+  public func fetchProfile() -> AnyPublisher<Profile, Error> {
     return repository.fetchProfiles()
   }
 }

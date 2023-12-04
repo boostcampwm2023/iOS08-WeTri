@@ -34,7 +34,7 @@ public struct ProfileRepository {
 // MARK: ProfileRepositoryRepresentable
 
 extension ProfileRepository: ProfileRepositoryRepresentable {
-  public func fetchProfiles() -> AnyPublisher<ProfileInfo, Error> {
+  public func fetchProfiles() -> AnyPublisher<Profile, Error> {
     return Deferred {
       Future<Data, Error> { promise in
         Task {
@@ -50,6 +50,9 @@ extension ProfileRepository: ProfileRepositoryRepresentable {
     .decode(type: GWResponse<ProfileDTO>.self, decoder: jsonDecoder)
     .compactMap(\.data)
     .map(\.profile)
+    .tryMap {
+      try Profile(profileData: Data(contentsOf: $0.profileImage), nickname: $0.nickname)
+    }
     .eraseToAnyPublisher()
   }
 }

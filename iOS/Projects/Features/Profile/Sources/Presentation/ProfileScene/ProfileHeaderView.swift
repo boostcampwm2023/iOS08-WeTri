@@ -94,9 +94,9 @@ final class ProfileHeaderView: UICollectionReusableView {
     )
   }
 
-  func configure(with model: ProfileInfo) {
+  func configure(with model: Profile) {
     DispatchQueue.main.async {
-      self.profileImageView.image = try? UIImage(data: .init(contentsOf: model.profileImage))
+      self.profileImageView.image = .init(data: model.profileData)
       self.nicknameLabel.text = model.nickname
     }
   }

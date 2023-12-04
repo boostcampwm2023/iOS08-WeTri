@@ -13,7 +13,7 @@ public typealias ProfileViewModelOutput = AnyPublisher<ProfileViewModelState, Ne
 
 public enum ProfileViewModelState {
   case idle
-  case setupProfile(ProfileInfo)
+  case setupProfile(Profile)
   case alert(Error)
 }
 
