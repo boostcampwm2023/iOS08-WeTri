@@ -53,14 +53,14 @@ final class WorkoutRouteMapViewController: UIViewController {
     mapView.setUserTrackingMode(.follow, animated: true)
 
     // Set MKMapView Property
-//
-//    mapView.isZoomEnabled = false
-//    mapView.isScrollEnabled = false
-//    // 각도 조절 가능 여부 (두 손가락으로 위/아래 슬라이드
-//    mapView.isPitchEnabled = false
-//    mapView.isRotateEnabled = false
-//    mapView.showsCompass = true
-//    mapView.showsUserLocation = true
+    mapView.isZoomEnabled = false
+    mapView.isScrollEnabled = false
+
+    // 각도 조절 가능 여부 (두 손가락으로 위/아래 슬라이드
+    mapView.isPitchEnabled = false
+    mapView.isRotateEnabled = false
+    mapView.showsCompass = true
+    mapView.showsUserLocation = true
 
     return mapView
   }()
@@ -140,11 +140,9 @@ final class WorkoutRouteMapViewController: UIViewController {
   func updatePolyLine(_ value: KalmanFilterCensored?) {
     guard let value else { return }
 
-    Log.make().debug("현재 위치는 위도 \(value.latitude), 경도 \(value.longitude)")
     let currentLocation = CLLocation(latitude: value.latitude, longitude: value.longitude)
     locations.append(currentLocation)
     let coordinates = locations.map(\.coordinate)
-    Log.make().debug("\(coordinates.count), \(coordinates.map { String("\($0.latitude.description), \($0.longitude.description)") })")
     let polyline = MKPolyline(coordinates: coordinates, count: coordinates.count)
 
     mapView.removeOverlays(mapView.overlays)
@@ -205,7 +203,6 @@ extension WorkoutRouteMapViewController: CLLocationManagerDelegate {
       (newLocation.coordinate.longitude - prevLocation.coordinate.longitude) / timeDistance
     )
 
-    Log.make().debug("실제로 받아온 값의 현재 위치는 위도 \(newLocation.coordinate.latitude), 경도 \(newLocation.coordinate.longitude)")
     kalmanFilterShouldUpdatePositionSubject.send(
       .init(
         longitude: newLocation.coordinate.longitude,
