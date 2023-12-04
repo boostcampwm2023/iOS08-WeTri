@@ -12,7 +12,17 @@ public final class ProfileViewController: UIViewController {
 
   // MARK: UI Components
 
-  private let profileButton: GWProfileButton = .init()
+  private let profileImageView: UIImageView = {
+    let imageView = UIImageView(image: .init(systemName: "person.fill"))
+    imageView.contentMode = .scaleAspectFill
+    imageView.tintColor = DesignSystemColor.main03 // 기본 이미지에 메인 색상을 적용하기 위함
+    imageView.backgroundColor = DesignSystemColor.gray01
+    imageView.layer.borderWidth = 2
+    imageView.layer.cornerRadius = Metrics.profileSize * 0.5
+    imageView.layer.borderColor = DesignSystemColor.main03.cgColor
+    imageView.clipsToBounds = true
+    return imageView
+  }()
 
   private let nicknameLabel: UILabel = {
     let label = UILabel()
@@ -61,7 +71,7 @@ public final class ProfileViewController: UIViewController {
   private func setupLayouts() {
     view.addSubview(profileStackView)
     view.addSubview(postSectionLabel)
-    for view in [profileButton, nicknameLabel] {
+    for view in [profileImageView, nicknameLabel] {
       profileStackView.addArrangedSubview(view)
     }
   }
@@ -69,7 +79,7 @@ public final class ProfileViewController: UIViewController {
   private func setupConstraints() {
     let safeArea = view.safeAreaLayoutGuide
     profileStackView.translatesAutoresizingMaskIntoConstraints = false
-    profileButton.translatesAutoresizingMaskIntoConstraints = false
+    profileImageView.translatesAutoresizingMaskIntoConstraints = false
     postSectionLabel.translatesAutoresizingMaskIntoConstraints = false
 
     NSLayoutConstraint.activate(
@@ -77,8 +87,8 @@ public final class ProfileViewController: UIViewController {
         profileStackView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: Metrics.profileStackViewTop),
         profileStackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.horizontal),
 
-        profileButton.widthAnchor.constraint(equalToConstant: Metrics.profileSize),
-        profileButton.heightAnchor.constraint(equalToConstant: Metrics.profileSize),
+        profileImageView.widthAnchor.constraint(equalToConstant: Metrics.profileSize),
+        profileImageView.heightAnchor.constraint(equalToConstant: Metrics.profileSize),
 
         postSectionLabel.topAnchor.constraint(equalTo: profileStackView.bottomAnchor, constant: Metrics.postSectionLabelTop),
         postSectionLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.horizontal),
