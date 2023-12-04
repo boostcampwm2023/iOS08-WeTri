@@ -14,7 +14,6 @@ import { ProfileDeco } from './decorator/profile.decorator';
 import { Profile } from './entities/profiles.entity';
 import { ApiBody, ApiCreatedResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AccessTokenGuard } from '../auth/guard/bearerToken.guard';
-import { GetProfileAndPosts, SuccessProfile } from './dto/create-profile.dto';
 import { GetProfileResponseDto } from './dto/get-profile-response.dto';
 import { PaginateProfilePostDto } from './dto/paginate-profile-post.dto';
 import { GetProfilePostsResponseDto } from './dto/get-profile-posts-response.dto';
