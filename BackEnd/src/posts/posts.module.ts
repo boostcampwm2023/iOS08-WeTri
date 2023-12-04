@@ -9,7 +9,13 @@ import { RecordsModule } from 'src/records/records.module';
 import { CommonModule } from 'src/common/common.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Post]), AuthModule, ProfilesModule, RecordsModule, CommonModule],
+  imports: [
+    TypeOrmModule.forFeature([Post]),
+    AuthModule,
+    ProfilesModule,
+    RecordsModule,
+    CommonModule,
+  ],
   controllers: [PostsController],
   providers: [PostsService],
 })

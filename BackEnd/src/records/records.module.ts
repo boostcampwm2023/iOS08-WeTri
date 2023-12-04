@@ -8,7 +8,12 @@ import { Record } from './entities/records.entity';
 import { WorkoutsModule } from 'src/workouts/workouts.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Record]), AuthModule, ProfilesModule, WorkoutsModule],
+  imports: [
+    TypeOrmModule.forFeature([Record]),
+    AuthModule,
+    ProfilesModule,
+    WorkoutsModule,
+  ],
   exports: [RecordsService],
   controllers: [RecordsController],
   providers: [RecordsService],

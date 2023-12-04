@@ -1,7 +1,12 @@
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { AccessTokenGuard } from 'src/auth/guard/bearerToken.guard';
-import { ApiBody, ApiCreatedResponse, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreatePostDto } from './dto/create-post.dto';
 import { Profile } from 'src/profiles/entities/profiles.entity';
 import { ProfileDeco } from 'src/profiles/decorator/profile.decorator';
@@ -15,20 +20,19 @@ export class PostsController {
 
   @UseGuards(AccessTokenGuard)
   @Post()
-  @ApiOperation({summary: '게시글 생성'})
-  @ApiBody({type: CreatePostDto})
+  @ApiOperation({ summary: '게시글 생성' })
+  @ApiBody({ type: CreatePostDto })
   async createPost(
     @Body() body: CreatePostDto,
     @ProfileDeco() profile: Profile,
   ) {
-      return await this.postsService.createPost(body, profile);
+    return await this.postsService.createPost(body, profile);
   }
 
   @Get()
-  @ApiOperation({summary: "게시글 가져오기"})
-  @ApiCreatedResponse({type: GetPostResponseDto})
+  @ApiOperation({ summary: '게시글 가져오기' })
+  @ApiCreatedResponse({ type: GetPostResponseDto })
   async getPost(@Query() query: PaginatePostDto) {
     return this.postsService.paginatePost(query);
   }
-
 }

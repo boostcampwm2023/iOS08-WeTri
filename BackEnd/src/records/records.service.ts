@@ -16,13 +16,15 @@ export class RecordsService {
   ) {}
 
   async createWorkOutLog(exerciseLog: CreateExerciseLogDto, profile: Profile) {
-    const workout = await this.workoutServices.findByIdWorkout(exerciseLog.workoutId);
-    const {workoutId, ...splitedExerciseLog} = exerciseLog
+    const workout = await this.workoutServices.findByIdWorkout(
+      exerciseLog.workoutId,
+    );
+    const { workoutId, ...splitedExerciseLog } = exerciseLog;
     return await this.recordsRepository.save({
       ...splitedExerciseLog,
       profile,
-      workout
-    })
+      workout,
+    });
   }
 
   findByDate(profileId: number, year: number, month: number, day: number) {
