@@ -7,6 +7,7 @@
 //
 
 import Combine
+import CommonNetworkingKeyManager
 import Foundation
 import Trinet
 
@@ -39,7 +40,7 @@ extension ProfileRepository: ProfileRepositoryRepresentable {
       Future<Data, Error> { promise in
         Task {
           do {
-            let data = try await provider.request(.fetchProfile)
+            let data = try await provider.request(.fetchProfile, interceptor: TNKeychainInterceptor.shared)
             promise(.success(data))
           } catch {
             promise(.failure(error))
