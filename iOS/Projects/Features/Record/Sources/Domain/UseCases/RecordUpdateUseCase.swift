@@ -16,8 +16,8 @@ final class RecordUpdateUseCase: RecordUpdateUseCaseRepresentable {
     self.workoutRecordsRepository = workoutRecordsRepository
   }
 
-  func execute(date: Date) -> AnyPublisher<[Record], Error> {
-    return workoutRecordsRepository.fetchRecordsList(date: date)
+  func execute(date: Date, isToday: Bool) -> AnyPublisher<[Record], Error> {
+    return workoutRecordsRepository.fetchRecordsList(date: date, isToday: isToday)
       .flatMap { records -> AnyPublisher<[Record], Error> in
         guard records.isEmpty else {
           return Just(records)
@@ -27,6 +27,11 @@ final class RecordUpdateUseCase: RecordUpdateUseCaseRepresentable {
         return Fail(error: RecordUpdateUseCaseError.noRecord)
           .eraseToAnyPublisher()
       }
+      .eraseToAnyPublisher()
+  }
+
+  func executeCached(date: Date) -> AnyPublisher<[Record], Error> {
+    return workoutRecordsRepository.fetchCachedRecords(date: date)
       .eraseToAnyPublisher()
   }
 }

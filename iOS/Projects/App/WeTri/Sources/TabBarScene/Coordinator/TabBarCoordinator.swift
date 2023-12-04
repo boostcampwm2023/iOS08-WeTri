@@ -7,6 +7,7 @@
 //
 
 import Coordinator
+import ProfileFeature
 import RecordFeature
 import UIKit
 
@@ -61,7 +62,7 @@ final class TabBarCoordinator: TabBarCoordinating {
       recordCoordinator.start()
 
     case .profile:
-      let profileCoordinator = CCoordinator(navigationController: pageNavigationViewController)
+      let profileCoordinator = ProfileCoordinator(navigationController: pageNavigationViewController, isMockEnvironment: true)
       childCoordinators.append(profileCoordinator)
       profileCoordinator.finishDelegate = self
       profileCoordinator.start()

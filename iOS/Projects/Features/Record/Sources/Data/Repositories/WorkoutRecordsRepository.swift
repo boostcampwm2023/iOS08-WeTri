@@ -6,6 +6,7 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import Cacher
 import Combine
 import Foundation
 import Log
@@ -17,28 +18,31 @@ enum WorkoutRecordsRepositoryError: Error {
   case requestError
   case decodeError
   case bindingError
+  case invalidCachedData
 }
 
 // MARK: - WorkoutRecordsRepository
 
 struct WorkoutRecordsRepository: WorkoutRecordsRepositoryRepresentable {
   private let provider: TNProvider<WorkoutRecordsRepositoryEndPoint>
+  private let cacheManager = CacheManager.shared
   private let encoder = JSONEncoder()
+  private let decoder = JSONDecoder()
 
   init(session: URLSessionProtocol) {
     provider = .init(session: session)
   }
 
-  func fetchRecordsList(date: Date) -> AnyPublisher<[Record], Error> {
+  func fetchRecordsList(date: Date, isToday: Bool) -> AnyPublisher<[Record], Error> {
     return Future<Data, Error> { promise in
-      encoder.dateEncodingStrategy = .formatted(dateFormatter())
-      let dateString = dateFormatter().string(from: date)
-      guard let dateRequestDTO = transform(date: dateString) else {
-        return promise(.failure(WorkoutRecordsRepositoryError.bindingError))
-      }
       Task {
         do {
+          let dateRequestDTO = try toDateRequestDTO(date: date)
+          let key = makeKey(dateRequestDTO: dateRequestDTO)
           let data = try await provider.request(.dateOfRecords(dateRequestDTO))
+          if !isToday {
+            try cacheManager.set(cacheKey: key, data: data)
+          }
           return promise(.success(data))
         } catch {
           promise(.failure(error))
@@ -46,7 +50,7 @@ struct WorkoutRecordsRepository: WorkoutRecordsRepositoryRepresentable {
         }
       }
     }
-    .decode(type: GWResponse<[RecordResponseDTO]>.self, decoder: JSONDecoder())
+    .decode(type: GWResponse<[RecordResponseDTO]>.self, decoder: decoder)
     .compactMap(\.data)
     .map { $0.compactMap(Record.init) }
     .catch { error -> AnyPublisher<[Record], Error> in
@@ -56,6 +60,42 @@ struct WorkoutRecordsRepository: WorkoutRecordsRepositoryRepresentable {
         .eraseToAnyPublisher()
     }
     .eraseToAnyPublisher()
+  }
+
+  func fetchCachedRecords(date: Date) -> AnyPublisher<[Record], Error> {
+    return Future<Data, Error> { promise in
+      do {
+        let dateRequestDTO = try toDateRequestDTO(date: date)
+        let key = makeKey(dateRequestDTO: dateRequestDTO)
+        guard let data = try cacheManager.fetch(cacheKey: key) else {
+          throw WorkoutRecordsRepositoryError.bindingError
+        }
+        return promise(.success(data))
+      } catch {
+        Log.make().error("\(error)")
+        return promise(.failure(WorkoutRecordsRepositoryError.invalidCachedData))
+      }
+    }
+    .decode(type: GWResponse<[RecordResponseDTO]>.self, decoder: decoder)
+    .compactMap(\.data)
+    .map { $0.compactMap(Record.init) }
+    .eraseToAnyPublisher()
+  }
+
+  private func toDateRequestDTO(date: Date) throws -> DateRequestDTO {
+    encoder.dateEncodingStrategy = .formatted(dateFormatter())
+    let dateString = dateFormatter().string(from: date)
+    guard let dateRequestDTO = transform(date: dateString) else {
+      throw WorkoutRecordsRepositoryError.bindingError
+    }
+    return dateRequestDTO
+  }
+
+  private func makeKey(dateRequestDTO: DateRequestDTO) -> String {
+    let year = dateRequestDTO.year
+    let month = dateRequestDTO.month
+    let day = dateRequestDTO.day
+    return "\(year)-\(month)-\(day)"
   }
 
   private func dateFormatter() -> DateFormatter {
@@ -88,6 +128,8 @@ extension WorkoutRecordsRepositoryError: LocalizedError {
       return "decode 실패"
     case .bindingError:
       return "binding 실패"
+    case .invalidCachedData:
+      return "cache에 데이터가 존재하지 않습니다."
     }
   }
 }

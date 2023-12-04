@@ -17,4 +17,5 @@ public enum CoordinatorFlow {
   case workoutSetting
   case workout
   case onboarding
+  case profile
 }

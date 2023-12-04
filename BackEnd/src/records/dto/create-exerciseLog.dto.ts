@@ -1,5 +1,6 @@
-import { PickType } from '@nestjs/swagger';
+import { ApiProperty, PickType } from '@nestjs/swagger';
 import { Record } from '../entities/records.entity';
+import { IsNumber } from 'class-validator';
 
 export class CreateExerciseLogDto extends PickType(Record, [
   'workoutTime',
@@ -8,4 +9,11 @@ export class CreateExerciseLogDto extends PickType(Record, [
   'avgHeartRate',
   'maxHeartRate',
   'minHeartRate',
-]) {}
+]) {
+  @ApiProperty({
+    example: 1,
+    description: '운동 종류 ID입니다.',
+  })
+  @IsNumber()
+  workoutId: number;
+}
