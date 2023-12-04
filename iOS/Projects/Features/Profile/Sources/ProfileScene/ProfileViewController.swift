@@ -8,6 +8,11 @@ import UIKit
 public final class ProfileViewController: UICollectionViewController {
   // MARK: Properties
 
+  private let viewWillAppearSubject: PassthroughSubject<Void, Never> = .init()
+  private let didTapSettingButtonSubject: PassthroughSubject<Void, Never> = .init()
+
+  private var subscriptions: Set<AnyCancellable> = []
+
   private var dataSource: ProfileDataSource?
 
   private let viewModel: ProfileViewModelRepresentable
@@ -29,8 +34,14 @@ public final class ProfileViewController: UICollectionViewController {
   override public func viewDidLoad() {
     super.viewDidLoad()
     setupStyles()
+    bind()
     setupDataSource()
     setupInitialSnapshots()
+  }
+
+  override public func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    viewWillAppearSubject.send(())
   }
 
   // MARK: Configurations
@@ -46,9 +57,25 @@ public final class ProfileViewController: UICollectionViewController {
     navigationItem.rightBarButtonItem?.tintColor = DesignSystemColor.primaryText
   }
 
+  private func bind() {
+    viewModel.transform(
+      input: .init(
+        viewWillAppearPublisher: viewWillAppearSubject.eraseToAnyPublisher(),
+        didTapSettingButtonPublisher: didTapSettingButtonSubject.eraseToAnyPublisher()
+      )
+    )
+    .sink { state in
+      switch state {
+      case .idle:
+        break
+      }
+    }
+    .store(in: &subscriptions)
+  }
+
   @objc
   private func didTapSettingButton() {
-    Log.make().debug("\(#function)")
+    didTapSettingButtonSubject.send(())
   }
 }
 

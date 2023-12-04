@@ -2,7 +2,10 @@ import Combine
 
 // MARK: - ProfileViewModelInput
 
-public struct ProfileViewModelInput {}
+public struct ProfileViewModelInput {
+  let viewWillAppearPublisher: AnyPublisher<Void, Never>
+  let didTapSettingButtonPublisher: AnyPublisher<Void, Never>
+}
 
 public typealias ProfileViewModelOutput = AnyPublisher<ProfileViewModelState, Never>
 
