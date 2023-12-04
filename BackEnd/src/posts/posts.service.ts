@@ -6,6 +6,8 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { RecordsService } from 'src/records/records.service';
 import { Profile } from 'src/profiles/entities/profiles.entity';
 import { ExistPostException } from './exceptions/posts.exception';
+import { PaginatePostDto } from './dto/paginate-post.dto';
+import { CommonService } from 'src/common/common.service';
 
 @Injectable()
 export class PostsService {
@@ -13,6 +15,7 @@ export class PostsService {
         @InjectRepository(Post)
         private readonly postsRepository: Repository<Post>,
         private readonly recordService: RecordsService,
+        private readonly commonService: CommonService,
     ){}
 
     async createPost(postInfo: CreatePostDto, profile: Profile) {
@@ -28,5 +31,9 @@ export class PostsService {
             record,
             profile,
         });
+    }
+
+    async paginatePost(query: PaginatePostDto) {
+        return await this.commonService.paginate<Post>(query, this.postsRepository);
     }
 }
