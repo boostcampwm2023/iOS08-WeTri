@@ -14,7 +14,7 @@ import UIKit
 
 // MARK: - SignUpProfileViewController
 
-final class SignUpProfileViewController: UIViewController {
+public final class SignUpProfileViewController: UIViewController {
   private var subscriptions: Set<AnyCancellable> = []
 
   private let titleLabel: UILabel = {
@@ -27,6 +27,7 @@ final class SignUpProfileViewController: UIViewController {
 
   private let profileImageButton: GWProfileButton = {
     let button = GWProfileButton()
+    button.translatesAutoresizingMaskIntoConstraints = false
     return button
   }()
 
@@ -40,11 +41,88 @@ final class SignUpProfileViewController: UIViewController {
 
   private let nickNameBoxView: NickNameBoxView = {
     let view = NickNameBoxView(frame: .zero)
+    view.translatesAutoresizingMaskIntoConstraints = false
     return view
   }()
 
-  override func viewDidLoad() {
+  private let nickNameCheckerView: NickNameCheckerView = {
+    let view = NickNameCheckerView(frame: .zero)
+    view.translatesAutoresizingMaskIntoConstraints = false
+    return view
+  }()
+
+  private let completionButton: UIButton = {
+    let configuration = UIButton.Configuration.mainEnabled(title: "완료")
+    let button = UIButton(configuration: configuration)
+    button.translatesAutoresizingMaskIntoConstraints = false
+    button.titleLabel?.font = .preferredFont(forTextStyle: .headline, weight: .bold)
+    return button
+  }()
+
+  private lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(viewTapped))
+
+  override public func viewDidLoad() {
     super.viewDidLoad()
+    configureUI()
+    bindUI()
+  }
+}
+
+private extension SignUpProfileViewController {
+  func configureUI() {
+    view.backgroundColor = .systemBackground
+    view.addGestureRecognizer(tapGestureRecognizer)
+
+    let safeArea = view.safeAreaLayoutGuide
+
+    view.addSubview(titleLabel)
+    NSLayoutConstraint.activate([
+      titleLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.safeAreaInterval),
+      titleLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: Metrics.topInterval),
+    ])
+
+    view.addSubview(profileImageButton)
+    NSLayoutConstraint.activate([
+      profileImageButton.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: Metrics.sectionInterval),
+      profileImageButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+      profileImageButton.widthAnchor.constraint(equalToConstant: 100),
+      profileImageButton.heightAnchor.constraint(equalToConstant: 100),
+    ])
+
+    view.addSubview(nickNameLabel)
+    NSLayoutConstraint.activate([
+      nickNameLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.safeAreaInterval),
+      nickNameLabel.topAnchor.constraint(equalTo: profileImageButton.bottomAnchor, constant: Metrics.sectionInterval),
+    ])
+
+    view.addSubview(nickNameBoxView)
+    NSLayoutConstraint.activate([
+      nickNameBoxView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.safeAreaInterval),
+      nickNameBoxView.topAnchor.constraint(equalTo: nickNameLabel.bottomAnchor, constant: Metrics.componentInterval),
+      nickNameBoxView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.safeAreaInterval),
+    ])
+
+    view.addSubview(nickNameCheckerView)
+    NSLayoutConstraint.activate([
+      nickNameCheckerView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.safeAreaInterval),
+      nickNameCheckerView.topAnchor.constraint(equalTo: nickNameBoxView.bottomAnchor, constant: Metrics.componentInterval),
+      nickNameCheckerView.widthAnchor.constraint(equalToConstant: 175),
+//      nickNameCheckerView.heightAnchor.constraint(equalToConstant: 18),
+    ])
+
+    view.addSubview(completionButton)
+    NSLayoutConstraint.activate([
+      completionButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.safeAreaInterval),
+      completionButton.topAnchor.constraint(equalTo: nickNameBoxView.bottomAnchor, constant: 258),
+      completionButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.safeAreaInterval),
+      completionButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -Metrics.safeAreaInterval),
+    ])
+  }
+}
+
+private extension SignUpProfileViewController {
+  @objc func viewTapped(gestureRecognizer _: UITapGestureRecognizer) {
+    view.endEditing(true)
   }
 }
 
@@ -53,6 +131,8 @@ private extension SignUpProfileViewController {
     nickNameBoxView.nickNameDidChangedPublisher
       .sink { _ in
         // TODO: ViewModel로 닉네임 넘겨서 사용가능한닉인지 아닌지 받아와서 사용가능하면 true/false
+        // TODO: NickNameBoxView 사용가능, 불가능
+        // TODO: NickNameCheckerView 사용가능, 불가능
       }
       .store(in: &subscriptions)
   }

@@ -74,13 +74,13 @@ private extension NickNameBoxView {
       cancelButton.widthAnchor.constraint(equalToConstant: 32),
     ])
   }
-  
+
   func enabledNickName() {
     textField.textColor = .black
     textField.layer.borderColor = DesignSystemColor.main03.cgColor
     cancelButton.tintColor = DesignSystemColor.main03
   }
-  
+
   func disabledNickName() {
     textField.textColor = DesignSystemColor.error
     textField.layer.borderColor = DesignSystemColor.error.cgColor
