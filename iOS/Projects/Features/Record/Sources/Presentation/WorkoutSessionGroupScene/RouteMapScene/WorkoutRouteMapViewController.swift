@@ -186,8 +186,3 @@ private extension WorkoutRouteMapViewController {
     static let horizontal: CGFloat = 24
   }
 }
-
-@available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, xrOS 1.0, *)
-#Preview {
-  WorkoutRouteMapViewController(viewModel: WorkoutRouteMapViewModel())
-}

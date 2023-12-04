@@ -13,7 +13,7 @@ import Foundation
 
 protocol WorkoutEnvironmentSetupUseCaseRepresentable {
   func workoutTypes() -> AnyPublisher<Result<[WorkoutType], Error>, Never>
-  func paerTypes() -> AnyPublisher<Result<[PeerType], Error>, Never>
+  func peerTypes() -> AnyPublisher<Result<[PeerType], Error>, Never>
 }
 
 // MARK: - WorkoutEnvironmentSetupUseCase
@@ -25,7 +25,7 @@ final class WorkoutEnvironmentSetupUseCase: WorkoutEnvironmentSetupUseCaseRepres
     self.repository = repository
   }
 
-  func paerTypes() -> AnyPublisher<Result<[PeerType], Error>, Never> {
+  func peerTypes() -> AnyPublisher<Result<[PeerType], Error>, Never> {
     return repository
       .peerType()
       .map { dto -> Result<[PeerType], Error> in
