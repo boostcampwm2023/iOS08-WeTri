@@ -68,7 +68,7 @@ struct KalmanFilter {
     [0, 0, 1, 0],
   ])
 
-  init(initLongitude: Double, initLatitude: Double, headingValue: Double, processNoiseCovariance _: Double) {
+  init(initLongitude: Double, initLatitude: Double, headingValue: Double) {
     x = .init([
       [initLatitude],
       [0],
