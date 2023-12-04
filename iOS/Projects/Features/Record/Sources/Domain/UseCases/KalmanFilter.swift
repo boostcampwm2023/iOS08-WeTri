@@ -13,8 +13,8 @@ struct KalmanFilter {
   /// 새로운 값을 입력하게 된다면, 에측을 통해서 값을 작성하게 되는 변수 입니다.
   var x = MatrixOfTwoDimension([[]])
 
-  /// 초기 확률입니다.
-  /// 초기 값은 에러가 많기 떄문에 일단 항등 행렬로 설정
+  /// 초기 오차 공분산 입니다.
+  /// 초기 값은 에러가 많기 떄문에 다음과 같이 크게 가져갔습니다.
   private var p = MatrixOfTwoDimension([
     [500, 0, 0, 0],
     [0, 1, 0, 0],
@@ -51,13 +51,13 @@ struct KalmanFilter {
 
   var prevHeadingValue: Double
   var prevSpeedAtLatitude: Double = 0
-  var prevVSpeedAtLongitude: Double = 0
+  var prevSpeedAtLongitude: Double = 0
 
   /// 관계 식 입니다.
   lazy var A = MatrixOfTwoDimension([
     [1, cos(prevHeadingValue) * prevSpeedAtLatitude, 0, 0],
     [0, 1, 0, 0],
-    [0, 0, 1, sin(prevHeadingValue) * prevVSpeedAtLongitude],
+    [0, 0, 1, sin(prevHeadingValue) * prevSpeedAtLongitude],
     [0, 0, 0, 1],
   ])
 
@@ -66,9 +66,6 @@ struct KalmanFilter {
     [1, 0, 0, 0],
     [0, 0, 1, 0],
   ])
-
-  /// 공분산 값 입니다.
-  var estimateErrorCovariance: Double = 0.00005
 
   init(initLongitude: Double, initLatitude: Double, headingValue: Double, processNoiseCovariance _: Double) {
     x = .init([
@@ -86,7 +83,7 @@ struct KalmanFilter {
   }
 
   /// Update합니다.
-  mutating func update(initLongitude: Double, initLatitude: Double, prevSpeedAtLatitude: Double, prevVSpeedAtLongitude: Double) {
+  mutating func update(initLongitude: Double, initLatitude: Double, prevSpeedAtLatitude: Double, prevSpeedAtLongitude: Double) {
     let mesure = MatrixOfTwoDimension(
       [
         [initLatitude],
@@ -94,7 +91,7 @@ struct KalmanFilter {
       ]
     )
     self.prevSpeedAtLatitude = prevSpeedAtLatitude
-    self.prevVSpeedAtLongitude = prevVSpeedAtLongitude
+    self.prevSpeedAtLongitude = prevSpeedAtLongitude
     guard
       let prediction = A.multiply(x),
       let predictionErrorCovariance = A.multiply(p)?.multiply(A.transPose())?.add(q),

@@ -40,7 +40,7 @@ extension KalmanUseCase: KalmanUseCaseRepresentable {
       initLongitude: element.longitude,
       initLatitude: element.latitude,
       prevSpeedAtLatitude: element.prevSpeedAtLatitude,
-      prevVSpeedAtLongitude: element.prevSpeedAtLongitude
+      prevSpeedAtLongitude: element.prevSpeedAtLongitude
     )
 
     return filter?.latestCensoredPosition
