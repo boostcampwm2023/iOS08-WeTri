@@ -18,11 +18,8 @@ export class ProfilesService {
     private readonly commonService: CommonService,
   ) {}
 
-  async updateProfile(
-    publicId: string,
-    updateProfileDto: UpdateProfileDto,
-  ) {
-    if(await this.validateProfileNickname(updateProfileDto.nickname)) {
+  async updateProfile(publicId: string, updateProfileDto: UpdateProfileDto) {
+    if (await this.validateProfileNickname(updateProfileDto.nickname)) {
       throw new NicknameDuplicateException();
     }
     this.profilesRepository.update({ publicId }, updateProfileDto);
@@ -32,7 +29,6 @@ export class ProfilesService {
   async deleteProfile(publicId: string) {
     return this.profilesRepository.delete({ publicId });
   }
-
 
   async validateProfileNickname(nickname: string) {
     return await this.profilesRepository.exist({
@@ -52,9 +48,13 @@ export class ProfilesService {
 
   async getProfilePosts(publicId: string, query: PaginateProfilePostDto) {
     const findManyOptions: FindManyOptions<Post> = {
-      where: {publicId}, 
-      select: ['id', 'postUrl']
+      where: { publicId },
+      select: ['id', 'postUrl'],
     };
-    return await this.commonService.paginate<Post>(query, this.postsRepository, findManyOptions);
+    return await this.commonService.paginate<Post>(
+      query,
+      this.postsRepository,
+      findManyOptions,
+    );
   }
 }

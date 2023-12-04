@@ -12,11 +12,10 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @UseGuards(AccessTokenGuard)
-  @ApiOperation({summary: '유저를 삭제함 권한 필요'})
-  @ApiResponse({type: SuccessResDto})
+  @ApiOperation({ summary: '유저를 삭제함 권한 필요' })
+  @ApiResponse({ type: SuccessResDto })
   @Delete('me')
   async deleteUser(@ProfileDeco() profile: Profile) {
     await this.usersService.deleteUser(profile.user, profile.publicId);
   }
-
 }
