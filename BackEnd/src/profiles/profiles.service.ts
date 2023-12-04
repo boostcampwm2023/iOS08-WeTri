@@ -29,9 +29,9 @@ export class ProfilesService {
     return this.getProfile(publicId);
   }
 
-  // async deleteProfile(profileId: string, publicId: string) {
-  //   return this.profilesRepository.delete({ publicId });
-  // }
+  async deleteProfile(publicId: string) {
+    return this.profilesRepository.delete({ publicId });
+  }
 
 
   async validateProfileNickname(nickname: string) {
