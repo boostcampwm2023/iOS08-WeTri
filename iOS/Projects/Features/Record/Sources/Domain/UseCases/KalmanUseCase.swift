@@ -6,4 +6,40 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import CoreLocation
 import Foundation
+
+// MARK: - KalmanUseCaseRepresentable
+
+protocol KalmanUseCaseRepresentable {
+  func updateFilter(_ element: KalmanFilterUpdateRequireElement) -> KalmanFilterCensored?
+  func updateHeading(_ heading: Double)
+}
+
+// MARK: - KalmanUseCase
+
+final class KalmanUseCase {
+  var filter: KalmanFilter?
+
+  init() {}
+}
+
+// MARK: KalmanUseCaseRepresentable
+
+extension KalmanUseCase: KalmanUseCaseRepresentable {
+  func updateHeading(_: Double) {}
+
+  func updateFilter(_ element: KalmanFilterUpdateRequireElement) -> KalmanFilterCensored? {
+    if filter == nil {
+      filter = .init(initLongitude: element.latitude, initLatitude: element.longitude, headingValue: 0, processNoiseCovariance: 10)
+    }
+    filter?.update(
+      initLongitude: element.longitude,
+      initLatitude: element.latitude,
+      prevSpeedAtLatitude: element.prevSpeedAtLatitude,
+      prevVSpeedAtLongitude: element.prevSpeedAtLongitude
+    )
+
+    return filter?.latestCensoredPosition
+  }
+}

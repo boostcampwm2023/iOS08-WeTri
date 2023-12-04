@@ -9,10 +9,9 @@
 import Foundation
 
 struct KalmanFilter {
-  
   /// 새로운 값을 입력하게 된다면, 에측을 통해서 값을 작성하게 되는 변수 입니다.
   var x = MatrixOfTwoDimension([[]])
-  
+
   /// 초기 확률입니다.
   /// 초기 값은 에러가 많기 떄문에 일단 항등 행렬로 설정
   private var p = MatrixOfTwoDimension([
@@ -21,7 +20,7 @@ struct KalmanFilter {
     [0, 0, 1, 0],
     [0, 0, 0, 1],
   ])
-  
+
   /// 센서에 관한 에러입니다.
   /// 에플에서 제공하는 5m~10m사이의 에러를 Paper에서 찾았습니다.
   /// 이를 통해서 위도 경도 최대 차이를 기술하였습니다.
@@ -52,7 +51,7 @@ struct KalmanFilter {
   var prevHeadingValue: Double
   var prevSpeedAtLatitude: Double = 0
   var prevVSpeedAtLongitude: Double = 0
-  
+
   /// 관계 식 입니다.
   lazy var A = MatrixOfTwoDimension([
     [1, cos(prevHeadingValue) * prevSpeedAtLatitude, 0, 0],
@@ -60,13 +59,13 @@ struct KalmanFilter {
     [0, 0, 1, sin(prevHeadingValue) * prevVSpeedAtLongitude],
     [0, 0, 0, 1],
   ])
-  
+
   /// 우리가 궁금한건 위도와 경도이기 때문에 필요한 부분만 기재했습니다.
   private var H = MatrixOfTwoDimension([
     [1, 0, 0, 0],
     [0, 0, 1, 0],
   ])
-  
+
   /// 공분산 값 입니다.
   var estimateErrorCovariance: Double = 3
 
@@ -85,7 +84,6 @@ struct KalmanFilter {
     prevHeadingValue = heading
   }
 
-  
   /// Update합니다.
   mutating func update(initLongitude: Double, initLatitude: Double, prevSpeedAtLatitude: Double, prevVSpeedAtLongitude: Double) {
     let mesure = MatrixOfTwoDimension(
@@ -116,5 +114,9 @@ struct KalmanFilter {
     }
     x = currentX
     p = currentPredictionErrorCovariance
+  }
+
+  var latestCensoredPosition: KalmanFilterCensored {
+    return .init(longitude: x.value[0][0], latitude: x.value[2][0])
   }
 }

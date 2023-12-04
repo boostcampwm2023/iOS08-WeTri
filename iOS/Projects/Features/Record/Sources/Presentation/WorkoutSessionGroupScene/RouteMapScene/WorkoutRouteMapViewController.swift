@@ -30,7 +30,8 @@ final class WorkoutRouteMapViewController: UIViewController {
 
   /// 사용자 위치 추적 배열
   @Published private var locations: [CLLocation] = []
-  var filter: KalmanFilter!
+  var kalmanFilterShouldUpdatePositionSubject: PassthroughSubject<KalmanFilterUpdateRequireElement, Never> = .init()
+  var kalmanFilterShouldUpdateHeadingSubject: PassthroughSubject<Double, Never> = .init()
 
   private var subscriptions: Set<AnyCancellable> = []
 
@@ -121,14 +122,40 @@ final class WorkoutRouteMapViewController: UIViewController {
   }
 
   private func bind() {
-    let output = viewModel.transform(input: .init())
-    output.sink { state in
-      switch state {
-      case .idle:
-        break
+    let input: WorkoutRouteMapViewModelInput = .init(
+      filterShouldUpdatePositionPublisher: kalmanFilterShouldUpdatePositionSubject.eraseToAnyPublisher(),
+      filterShouldUpdateHeadingPublisher: kalmanFilterShouldUpdateHeadingSubject.eraseToAnyPublisher()
+    )
+
+    viewModel
+      .transform(input: input)
+      .sink { [weak self] state in
+        switch state {
+        case .idle:
+          break
+        case let .censoredValue(value): self?.updatePolyLine(value)
+        }
       }
-    }
-    .store(in: &subscriptions)
+      .store(in: &subscriptions)
+  }
+
+  func updatePolyLine(_ value: KalmanFilterCensored?) {
+    guard let value else { return }
+
+    let currentLocation = CLLocation(latitude: value.latitude, longitude: value.longitude)
+    locations.append(currentLocation)
+    let coordinates = locations.map(\.coordinate)
+    Log.make().debug("\(coordinates.count), \(coordinates.map { String("\($0.latitude.description), \($0.longitude.description)") })")
+    let polyline = MKPolyline(coordinates: coordinates, count: coordinates.count)
+    mapView.addOverlay(polyline)
+
+    // 지도 뷰 업데이트
+    let region = MKCoordinateRegion(
+      center: currentLocation.coordinate,
+      latitudinalMeters: Metrics.mapDistance,
+      longitudinalMeters: Metrics.mapDistance
+    )
+    mapView.setRegion(region, animated: true)
   }
 
   private func setupLocationManager() {
@@ -168,38 +195,27 @@ extension WorkoutRouteMapViewController: CLLocationManagerDelegate {
       Log.make().error("location 값이 존재하지 않습니다.")
       return
     }
-    if filter == nil {
-      filter = .init(initLongitude: newLocation.coordinate.longitude, initLatitude: newLocation.coordinate.latitude,
-                     headingValue: 0, processNoiseCovariance: 1)
-    }
     let currentTime = Date.now
     let timeDistance = currentTime.distance(to: prevDate)
+
+    // 과거 위치와 현재 위치를 통해 위 경도에 관한 속력을 구합니다.
     let v = (
       (newLocation.coordinate.latitude - prevLocation.coordinate.latitude) / timeDistance,
       (newLocation.coordinate.longitude - prevLocation.coordinate.longitude) / timeDistance
     )
 
-    filter.update(initLongitude: newLocation.coordinate.longitude, initLatitude: newLocation.coordinate.latitude, prevSpeedAtLatitude: v.0, prevVSpeedAtLongitude: v.1)
-    let filterdLocation = CLLocation(latitude: filter.x.value[0][0], longitude: filter.x.value[2][0])
-    locations.append(filterdLocation)
-    let coordinates = locations.map(\.coordinate)
-    Log.make().debug("\(coordinates.count), \(coordinates.map { String("\($0.latitude.description), \($0.longitude.description)") })")
-    let polyline = MKPolyline(coordinates: coordinates, count: coordinates.count)
-    mapView.addOverlay(polyline)
-
-    // 지도 뷰 업데이트
-    let region = MKCoordinateRegion(
-      center: newLocation.coordinate,
-      latitudinalMeters: Metrics.mapDistance,
-      longitudinalMeters: Metrics.mapDistance
+    kalmanFilterShouldUpdatePositionSubject.send(
+      .init(
+        longitude: newLocation.coordinate.longitude,
+        latitude: newLocation.coordinate.latitude,
+        prevSpeedAtLongitude: v.0,
+        prevSpeedAtLatitude: v.1
+      )
     )
-    mapView.setRegion(region, animated: true)
   }
 
   func locationManager(_: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
-    if filter != nil {
-      filter.update(heading: newHeading.trueHeading)
-    }
+    kalmanFilterShouldUpdateHeadingSubject.send(newHeading.trueHeading)
   }
 
   func locationManager(_: CLLocationManager, didFailWithError error: Error) {
@@ -220,28 +236,6 @@ extension WorkoutRouteMapViewController: MKMapViewDelegate {
 
     return MKOverlayRenderer(overlay: overlay)
   }
-
-  func calculateDistanceBetweenPoints(prev: CLLocation, current: CLLocation) -> Double {
-    // 지구 반지름 (단위: 미터)
-    let earthRadius = 6_371_000.0
-
-    // 위도 및 경도를 라디안으로 변환
-    let lat1Rad = prev.coordinate.latitude * .pi / 180.0
-    let lon1Rad = prev.coordinate.longitude * .pi / 180.0
-    let lat2Rad = current.coordinate.latitude * .pi / 180.0
-    let lon2Rad = current.coordinate.longitude * .pi / 180.0
-
-    // 위도 및 경도의 차이 계산
-    let deltaLat = lat2Rad - lat1Rad
-    let deltaLon = lon2Rad - lon1Rad
-
-    // Haversine 공식을 이용하여 거리 계산
-    let a = sin(deltaLat / 2.0) * sin(deltaLat / 2.0) + cos(lat1Rad) * cos(lat2Rad) * sin(deltaLon / 2.0) * sin(deltaLon / 2.0)
-    let c = 2.0 * atan2(sqrt(a), sqrt(1.0 - a))
-    let distance = earthRadius * c
-
-    return distance
-  }
 }
 
 // MARK: WorkoutRouteMapViewController.Metrics
@@ -251,9 +245,4 @@ private extension WorkoutRouteMapViewController {
     static let mapDistance: CLLocationDistance = 500
     static let horizontal: CGFloat = 24
   }
-}
-
-@available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, xrOS 1.0, *)
-#Preview {
-  WorkoutRouteMapViewController(viewModel: WorkoutRouteMapViewModel())
 }
