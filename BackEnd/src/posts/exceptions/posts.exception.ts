@@ -10,3 +10,14 @@ export class ExistPostException extends HttpException {
     super(response, httpCode);
   }
 }
+
+export class NotFoundPostException extends HttpException {
+  constructor() {
+    const response = {
+      statusCode: 8000,
+      message: 'not found post error',
+    };
+    const httpCode = 404;
+    super(response, httpCode);
+  }
+}
