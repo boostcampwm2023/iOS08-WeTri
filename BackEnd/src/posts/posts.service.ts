@@ -5,7 +5,10 @@ import { FindManyOptions, Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { RecordsService } from 'src/records/records.service';
 import { Profile } from 'src/profiles/entities/profiles.entity';
-import { ExistPostException, NotFoundPostException } from './exceptions/posts.exception';
+import {
+  ExistPostException,
+  NotFoundPostException,
+} from './exceptions/posts.exception';
 import { PaginatePostDto } from './dto/paginate-post.dto';
 import { CommonService } from 'src/common/common.service';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -17,7 +20,7 @@ export class PostsService {
     private readonly postsRepository: Repository<Post>,
     private readonly recordService: RecordsService,
     private readonly commonService: CommonService,
-  ) { }
+  ) {}
 
   async createPost(postInfo: CreatePostDto, profile: Profile) {
     const record = await this.recordService.findById(postInfo.recordId);
@@ -48,8 +51,12 @@ export class PostsService {
 
   async paginateUserPosts(publicId: string, query: PaginatePostDto) {
     const findManyOptions: FindManyOptions<Post> = {};
-    findManyOptions.where = { publicId }
-    return await this.commonService.paginate<Post>(query, this.postsRepository, findManyOptions);
+    findManyOptions.where = { publicId };
+    return await this.commonService.paginate<Post>(
+      query,
+      this.postsRepository,
+      findManyOptions,
+    );
   }
 
   async updatePost(id: number, updatePostInfo: UpdatePostDto) {

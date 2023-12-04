@@ -3,17 +3,11 @@ import { UsersService } from './users.service';
 
 @Controller('api/v1/users')
 export class UsersController {
-  constructor(
-    private readonly usersService: UsersService) {
-  }
+  constructor(private readonly usersService: UsersService) {}
 
   @Get(':publicId/posts')
-  async getUserPosts() {
-
-  }
+  async getUserPosts() {}
 
   @Get('my/posts')
-  async getMyPosts() {
-
-  }
+  async getMyPosts() {}
 }

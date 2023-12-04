@@ -37,28 +37,28 @@ export class Post {
 
   @ApiProperty({
     example: '5',
-    description: '해당 게시글의 like 수를 의미합니다.'
+    description: '해당 게시글의 like 수를 의미합니다.',
   })
   @Column({ nullable: true })
   like: number;
 
   @ApiProperty({
     example: '2023-12-03T13:47:08.677Z',
-    description: '생성된 날짜를 의미합니다.'
+    description: '생성된 날짜를 의미합니다.',
   })
   @CreateDateColumn()
   createdAt: Date;
 
   @ApiProperty({
     example: '2023-12-03T13:47:08.677Z',
-    description: '업데이트된 날짜를 의미합니다.'
+    description: '업데이트된 날짜를 의미합니다.',
   })
   @UpdateDateColumn()
   updatedAt: Date;
 
   @ApiProperty({
     example: '5',
-    description: '삭제된 날짜를 의미합니다.'
+    description: '삭제된 날짜를 의미합니다.',
   })
   @DeleteDateColumn()
   deletedAt: Date;
