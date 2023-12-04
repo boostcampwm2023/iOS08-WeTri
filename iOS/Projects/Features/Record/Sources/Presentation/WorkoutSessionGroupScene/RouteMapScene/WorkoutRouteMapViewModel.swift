@@ -60,6 +60,7 @@ extension WorkoutRouteMapViewModel: WorkoutRouteMapViewModelRepresentable {
 
     let updateValue: WorkoutRouteMapViewModelOutput = input
       .filterShouldUpdatePositionPublisher
+      .dropFirst(5)
       .map { [useCase] element in
         let censoredValue = useCase.updateFilter(element)
         return WorkoutRouteMapState.censoredValue(censoredValue)

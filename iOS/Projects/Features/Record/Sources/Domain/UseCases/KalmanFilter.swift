@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Log
 
 struct KalmanFilter {
   /// 새로운 값을 입력하게 된다면, 에측을 통해서 값을 작성하게 되는 변수 입니다.
@@ -15,9 +16,9 @@ struct KalmanFilter {
   /// 초기 확률입니다.
   /// 초기 값은 에러가 많기 떄문에 일단 항등 행렬로 설정
   private var p = MatrixOfTwoDimension([
-    [1, 0, 0, 0],
+    [500, 0, 0, 0],
     [0, 1, 0, 0],
-    [0, 0, 1, 0],
+    [0, 0, 500, 0],
     [0, 0, 0, 1],
   ])
 
@@ -42,10 +43,10 @@ struct KalmanFilter {
   ])
 
   /// 사용자 경험을 통해 얻어진 값 입니다. (일단 대한민국 GPS환경이 좋다고 가정하여,
-  /// 애플 오차와 동일하게 가쳐갔습니다.)
+  /// 애플 오차의 1/2로 가져갔습니다.)
   private var r = MatrixOfTwoDimension([
-    [0.000899, 0],
-    [0, 0.000117],
+    [0.000455, 0],
+    [0, 0.000059],
   ])
 
   var prevHeadingValue: Double
@@ -67,7 +68,7 @@ struct KalmanFilter {
   ])
 
   /// 공분산 값 입니다.
-  var estimateErrorCovariance: Double = 3
+  var estimateErrorCovariance: Double = 0.00005
 
   init(initLongitude: Double, initLatitude: Double, headingValue: Double, processNoiseCovariance _: Double) {
     x = .init([

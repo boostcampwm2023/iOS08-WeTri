@@ -76,7 +76,7 @@ public final class HealthRepository {
         anchor: anchor,
         limit: HKObjectQueryNoLimit
       ) { _, samples, _, newAnchor, error in
-        Log.make(with: .healthKit).notice("\(samples ?? []), \(newAnchor)")
+        // Log.make(with: .healthKit).notice("\(samples ?? []), \(newAnchor)")
         if let error {
           continuation.resume(throwing: error)
         } else {
@@ -85,7 +85,7 @@ public final class HealthRepository {
         guard let samples,
               samples.isEmpty == false
         else {
-          Log.make(with: .healthKit).notice("\(identifier.rawValue) Samples are empty.")
+          // Log.make(with: .healthKit).notice("\(identifier.rawValue) Samples are empty.")
           return
         }
       }
@@ -95,7 +95,7 @@ public final class HealthRepository {
         guard let samples,
               samples.isEmpty == false
         else {
-          Log.make(with: .healthKit).notice("\(identifier.rawValue) Samples are empty.")
+          // Log.make(with: .healthKit).notice("\(identifier.rawValue) Samples are empty.")
           return
         }
       }

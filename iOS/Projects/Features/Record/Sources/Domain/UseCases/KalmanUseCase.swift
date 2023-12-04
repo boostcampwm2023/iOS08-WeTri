@@ -33,7 +33,8 @@ extension KalmanUseCase: KalmanUseCaseRepresentable {
 
   func updateFilter(_ element: KalmanFilterUpdateRequireElement) -> KalmanFilterCensored? {
     if filter == nil {
-      filter = .init(initLongitude: element.latitude, initLatitude: element.longitude, headingValue: 0, processNoiseCovariance: 10)
+      filter = .init(initLongitude: element.latitude, initLatitude: element.longitude, headingValue: 0, processNoiseCovariance: 1)
+      return nil
     }
     filter?.update(
       initLongitude: element.longitude,
