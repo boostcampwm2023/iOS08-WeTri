@@ -1,0 +1,17 @@
+{
+  "code": null,
+  "errorMessage": null,
+  "data": {
+    "items": [
+      {
+        "id": 1,
+        "content": "안녕하세요 누구 누구 입니다.",
+        "postUrl": "https://www.naver.com"
+      }
+    ],
+    "metaData": {
+      "after": 5,
+      "count": 10
+    }
+  }
+}
