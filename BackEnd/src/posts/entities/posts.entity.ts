@@ -7,10 +7,12 @@ import {
   ManyToOne,
   OneToOne,
   JoinColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 import { Record } from '../../records/entities/records.entity';
 import { Profile } from '../../profiles/entities/profiles.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsString } from 'class-validator';
 
 @Entity()
 export class Post {
@@ -21,6 +23,11 @@ export class Post {
   @Column()
   publicId: string;
 
+  @ApiProperty({
+    example: '안녕하세요 누구 누구 입니다.',
+    description: '게시글 내용을 의미합니다.',
+  })
+  @IsString()
   @Column()
   content: string;
 
@@ -33,7 +40,7 @@ export class Post {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column()
+  @DeleteDateColumn()
   deletedAt: Date;
 
   @ApiProperty({

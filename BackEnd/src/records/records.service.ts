@@ -5,18 +5,25 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateExerciseLogDto } from './dto/create-exerciseLog.dto';
 import { Profile } from 'src/profiles/entities/profiles.entity';
 import { NotFoundRecordException } from './exceptions/records.exception';
+import { WorkoutsService } from 'src/workouts/workouts.service';
 
 @Injectable()
 export class RecordsService {
   constructor(
     @InjectRepository(Record)
     private readonly recordsRepository: Repository<Record>,
+    private readonly workoutServices: WorkoutsService,
   ) {}
 
   async createWorkOutLog(exerciseLog: CreateExerciseLogDto, profile: Profile) {
+    const workout = await this.workoutServices.findByIdWorkout(
+      exerciseLog.workoutId,
+    );
+    const { workoutId, ...splitedExerciseLog } = exerciseLog;
     return await this.recordsRepository.save({
-      ...exerciseLog,
+      ...splitedExerciseLog,
       profile,
+      workout,
     });
   }
 
@@ -43,5 +50,10 @@ export class RecordsService {
     }
 
     return result;
+  }
+
+  async updateIsPostedTrue(record: Record) {
+    record.isPosted = true;
+    await this.recordsRepository.save(record);
   }
 }
