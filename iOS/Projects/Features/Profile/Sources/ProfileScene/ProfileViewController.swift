@@ -3,12 +3,31 @@ import DesignSystem
 import Log
 import UIKit
 
+// MARK: - ProfileViewController
+
 public final class ProfileViewController: UIViewController {
   // MARK: Properties
 
   private let viewModel: ProfileViewModelRepresentable
 
   // MARK: UI Components
+
+  private let profileButton: GWProfileButton = .init()
+
+  private let nicknameLabel: UILabel = {
+    let label = UILabel()
+    label.text = "..."
+    label.font = .preferredFont(forTextStyle: .title1, weight: .bold)
+    label.textColor = DesignSystemColor.primaryText
+    return label
+  }()
+
+  private let profileStackView: UIStackView = {
+    let stackView = UIStackView()
+    stackView.alignment = .center
+    stackView.spacing = 12
+    return stackView
+  }()
 
   // MARK: Initializations
 
@@ -31,9 +50,28 @@ public final class ProfileViewController: UIViewController {
     setupStyles()
   }
 
-  private func setupLayouts() {}
+  private func setupLayouts() {
+    view.addSubview(profileStackView)
+    for view in [profileButton, nicknameLabel] {
+      profileStackView.addArrangedSubview(view)
+    }
+  }
 
-  private func setupConstraints() {}
+  private func setupConstraints() {
+    let safeArea = view.safeAreaLayoutGuide
+    profileStackView.translatesAutoresizingMaskIntoConstraints = false
+    profileButton.translatesAutoresizingMaskIntoConstraints = false
+
+    NSLayoutConstraint.activate(
+      [
+        profileStackView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: Metrics.profileStackViewTop),
+        profileStackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.horizontal),
+
+        profileButton.widthAnchor.constraint(equalToConstant: Metrics.profileSize),
+        profileButton.heightAnchor.constraint(equalToConstant: Metrics.profileSize),
+      ]
+    )
+  }
 
   private func setupStyles() {
     view.backgroundColor = DesignSystemColor.primaryBackground
@@ -49,5 +87,15 @@ public final class ProfileViewController: UIViewController {
   @objc
   private func didTapSettingButton() {
     Log.make().debug("\(#function)")
+  }
+}
+
+// MARK: ProfileViewController.Metrics
+
+private extension ProfileViewController {
+  enum Metrics {
+    static let profileSize: CGFloat = 60
+    static let profileStackViewTop: CGFloat = 18
+    static let horizontal: CGFloat = 24
   }
 }
