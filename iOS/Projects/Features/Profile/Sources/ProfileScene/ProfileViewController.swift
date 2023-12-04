@@ -12,8 +12,6 @@ public final class ProfileViewController: UICollectionViewController {
 
   private let viewModel: ProfileViewModelRepresentable
 
-  // MARK: UI Components
-
   // MARK: Initializations
 
   public init(viewModel: ProfileViewModelRepresentable) {
@@ -31,7 +29,11 @@ public final class ProfileViewController: UICollectionViewController {
   override public func viewDidLoad() {
     super.viewDidLoad()
     setupStyles()
+    setupDataSource()
+    setupInitialSnapshots()
   }
+
+  // MARK: Configurations
 
   private func setupStyles() {
     view.backgroundColor = DesignSystemColor.primaryBackground
@@ -104,10 +106,48 @@ private extension ProfileViewController {
   }
 }
 
+// MARK: - Diffable DataSources
+
+private extension ProfileViewController {
+  private func setupDataSource() {
+    let registration = ProfileCellRegistration { collectionViewCell, _, itemIdentifier in
+      var configuration = collectionViewCell.defaultContentConfiguration()
+      configuration.text = itemIdentifier
+      collectionViewCell.contentView.backgroundColor = DesignSystemColor.gray03
+      collectionViewCell.contentConfiguration = configuration
+    }
+
+    let headerRegistration = ProfileReusableRegistration(elementKind: UICollectionView.elementKindSectionHeader) { _, _, _ in
+    }
+
+    let dataSource = ProfileDataSource(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in
+      collectionView.dequeueConfiguredReusableCell(using: registration, for: indexPath, item: itemIdentifier)
+    }
+
+    dataSource.supplementaryViewProvider = { collectionView, kind, indexPath in
+      // Header view 요청을 확인합니다.
+      guard kind == UICollectionView.elementKindSectionHeader else {
+        return nil
+      }
+      return collectionView.dequeueConfiguredReusableSupplementary(using: headerRegistration, for: indexPath)
+    }
+    self.dataSource = dataSource
+  }
+
+  /// 초기 스냅샷을 설정합니다.
+  private func setupInitialSnapshots() {
+    guard let dataSource else { return }
+    var snapshot = dataSource.snapshot()
+    snapshot.appendSections([.header, .main])
+    snapshot.appendItems(["A", "B", "C", "D", "E", "F", "G"], toSection: .main)
+    dataSource.apply(snapshot)
+  }
+}
+
 private extension ProfileViewController {
   typealias ProfileDataSource = UICollectionViewDiffableDataSource<Section, Item>
   typealias ProfileSnapshot = NSDiffableDataSourceSnapshot<Section, Item>
-  typealias ProfileCellRegistration = UICollectionView.CellRegistration<UICollectionViewCell, Item>
+  typealias ProfileCellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Item>
   typealias ProfileReusableRegistration = UICollectionView.SupplementaryRegistration<ProfileHeaderView>
 
   enum Section: Int {
