@@ -36,10 +36,12 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
   weak var finishDelegate: CoordinatorFinishDelegate?
   var flow: CoordinatorFlow = .workout
   private let isMockEnvironment: Bool
+  private let workoutSessionElement: WorkoutSessionElement
 
-  init(navigationController: UINavigationController, isMockEnvironment: Bool) {
+  init(navigationController: UINavigationController, isMockEnvironment: Bool, workoutSessionElement: WorkoutSessionElement) {
     self.navigationController = navigationController
     self.isMockEnvironment = isMockEnvironment
+    self.workoutSessionElement = workoutSessionElement
   }
 
   func start() {

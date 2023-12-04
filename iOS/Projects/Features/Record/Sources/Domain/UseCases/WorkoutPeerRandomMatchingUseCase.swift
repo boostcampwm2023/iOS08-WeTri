@@ -49,7 +49,7 @@ extension WorkoutPeerRandomMatchingUseCase: WorkoutPeerRandomMatchingUseCaseRepr
           if response?.matched == true {
             return .success(response)
           }
-          return .success(response)
+          return .success(nil)
         }
       }
       .eraseToAnyPublisher()
