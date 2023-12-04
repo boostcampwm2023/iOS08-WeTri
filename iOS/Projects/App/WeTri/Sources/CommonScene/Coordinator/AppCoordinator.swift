@@ -7,6 +7,7 @@
 //
 
 import Coordinator
+import SplashFeature
 import UIKit
 
 // MARK: - AppCoordinator
@@ -24,7 +25,17 @@ final class AppCoordinator: AppCoordinating {
   }
 
   func start() {
-    showTabBarFlow()
+    showSplashFlow()
+  }
+
+  private func showSplashFlow() {
+    let splashCoordinator = SplashCoordinator(
+      navigationController: navigationController,
+      finishDelegate: self,
+      splashCoordinatorFinishDelegate: self
+    )
+    childCoordinators.append(splashCoordinator)
+    splashCoordinator.start()
   }
 
   func showOnboardingFlow() {
@@ -37,11 +48,14 @@ final class AppCoordinator: AppCoordinating {
   }
 
   func showLoginFlow() {
-    // (LoginViewController 추가되면 로직 추가) (todo)
+    // TODO: LoginCoordinator 연결
+    let aCoordinator = ACoordinator(navigationController: navigationController)
+    childCoordinators.append(aCoordinator)
+    aCoordinator.start()
   }
 
   func showTabBarFlow() {
-    // (LoginFlow와 TabBarFlow 분기 처리) (todo)
+    navigationController.isNavigationBarHidden = true
     let tabBarCoordinator = TabBarCoordinator(navigationController: navigationController)
     childCoordinators.append(tabBarCoordinator)
     tabBarCoordinator.start()
@@ -51,7 +65,21 @@ final class AppCoordinator: AppCoordinating {
 // MARK: CoordinatorFinishDelegate
 
 extension AppCoordinator: CoordinatorFinishDelegate {
-  func flowDidFinished(childCoordinator _: Coordinating) {
-    // TODO: 로그아웃 Flow, 로그인 Flow (앱 실행 도중 발생되는 분기처리)
+  func flowDidFinished(childCoordinator: Coordinating) {
+    childCoordinators = childCoordinators.filter {
+      $0.flow != childCoordinator.flow
+    }
+  }
+}
+
+// MARK: SplashCoordinatorFinishDelegate
+
+extension AppCoordinator: SplashCoordinatorFinishDelegate {
+  func splashCoordinatorDidFinished(hasTokenExpired: Bool) {
+    if hasTokenExpired {
+      showLoginFlow()
+    } else {
+      showTabBarFlow()
+    }
   }
 }

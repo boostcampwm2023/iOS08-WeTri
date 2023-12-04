@@ -19,8 +19,11 @@ let projects = Project.makeModule(
       .coordinator,
       .feature(.record),
       .feature(.onboarding),
-      .keychain,
       .feature(.login),
+      .feature(.splash),
+      .feature(.signUp),
+      .feature(.profile),
+      .keychain,
     ],
     infoPlist: [
       "NSLocationAlwaysUsageDescription": "운동 경로를 보여줄 때 사용합니다",

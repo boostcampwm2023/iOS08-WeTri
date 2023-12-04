@@ -44,3 +44,19 @@ struct WorkoutHealthRealTimeModel: Codable {
   /// 현재 심박수
   let heartRate: Double?
 }
+
+// MARK: - WorkoutRealTimeModel + CustomStringConvertible
+
+extension WorkoutRealTimeModel: CustomStringConvertible {
+  var description: String {
+    return "id: \(id)\nroomID: \(roomID)\nnickname: \(nickname)\nhealth: \(health)"
+  }
+}
+
+// MARK: - WorkoutHealthRealTimeModel + CustomStringConvertible
+
+extension WorkoutHealthRealTimeModel: CustomStringConvertible {
+  var description: String {
+    return "distance: \(distance ?? 0)\ncalories: \(calories ?? 0)\nheartRate: \(heartRate ?? 0)"
+  }
+}

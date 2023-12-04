@@ -10,9 +10,12 @@ import ProjectDescription
 // MARK: - Feature
 
 public enum Feature: String {
+  case splash
+  case profile
   case login
   case onboarding
   case record
+  case signUp
 
   public var targetName: String {
     return rawValue.prefix(1).capitalized + rawValue.dropFirst()
@@ -28,6 +31,7 @@ public extension TargetDependency {
   static let combineExtension: TargetDependency = .project(target: "CombineExtension", path: .relativeToShared("CombineExtension"))
   static let log: TargetDependency = .project(target: "Log", path: .relativeToShared("Log"))
   static let keychain: TargetDependency = .project(target: "Keychain", path: .relativeToCore("Keychain"))
+  static let cacher: TargetDependency = .project(target: "Cacher", path: .relativeToCore("Cacher"))
 
   static func feature(_ feature: Feature) -> TargetDependency {
     return .project(

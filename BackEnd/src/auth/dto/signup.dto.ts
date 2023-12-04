@@ -8,6 +8,7 @@ class ProfileDto extends PickType(Profile, [
   'nickname',
   'gender',
   'birthdate',
+  'profileImage',
 ]) {}
 
 export class SignupDto extends IntersectionType(UserDto, ProfileDto) {

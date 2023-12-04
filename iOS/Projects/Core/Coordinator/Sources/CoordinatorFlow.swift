@@ -11,9 +11,11 @@ import Foundation
 // MARK: - CoordinatorFlow
 
 public enum CoordinatorFlow {
+  case splash
   case login
   case tabBar
   case workoutSetting
   case workout
   case onboarding
+  case profile
 }

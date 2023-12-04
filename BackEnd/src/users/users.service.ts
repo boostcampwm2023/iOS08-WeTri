@@ -15,21 +15,22 @@ export class UsersService {
     private readonly redisData: Redis,
   ) {}
 
-  async createUser(singupInfo: SignupDto) {
-    const userId = await this.redisData.get(singupInfo.mappedUserID);
+  async createUser(signupInfo: SignupDto) {
+    const userId = await this.redisData.get(signupInfo.mappedUserID);
     const profile = {
-      nickname: singupInfo.nickname,
-      gender: singupInfo.gender,
-      birthdate: singupInfo.birthdate,
+      nickname: signupInfo.nickname,
+      gender: signupInfo.gender,
+      birthdate: signupInfo.birthdate,
+      profileImage: signupInfo.profileImage,
     };
     const userObj = this.usersRepository.create({
       userId,
-      provider: singupInfo.provider,
+      provider: signupInfo.provider,
       profile,
     });
-    const newUesr = await this.usersRepository.save(userObj);
-    await this.redisData.del(singupInfo.mappedUserID);
-    return newUesr;
+    const newUser = await this.usersRepository.save(userObj);
+    await this.redisData.del(signupInfo.mappedUserID);
+    return newUser;
   }
 
   async getUserByUserIdAndProvider(userInfo: GetuserByUserIdAndProViderDto) {

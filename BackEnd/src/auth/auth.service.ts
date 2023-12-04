@@ -47,7 +47,9 @@ export class AuthService {
   }
 
   async registerWithUserIdAndProvider(signupInfo: SignupDto) {
-    if (await this.profilesService.existByNickname(signupInfo.nickname)) {
+    if (
+      await this.profilesService.validateProfileNickname(signupInfo.nickname)
+    ) {
       throw new NicknameDuplicateException();
     }
     const newUser = await this.usersService.createUser(signupInfo);
@@ -81,7 +83,7 @@ export class AuthService {
       return false;
     }
 
-    const profile = await this.profilesService.findByPublicId(decoded.sub);
+    const profile = await this.profilesService.getProfile(decoded.sub);
 
     if (!profile) {
       return false;

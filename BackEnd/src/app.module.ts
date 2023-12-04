@@ -14,6 +14,7 @@ import { AdminModule } from './admin/admin.module';
 import { ImagesModule } from './images/images.module';
 import { ConfigModule } from '@nestjs/config';
 import { RedisModule } from './common/redis.module';
+import { PostsModule } from './posts/posts.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { RedisModule } from './common/redis.module';
     EventsModule,
     AdminModule,
     ImagesModule,
+    PostsModule,
   ],
   controllers: [AppController],
 })

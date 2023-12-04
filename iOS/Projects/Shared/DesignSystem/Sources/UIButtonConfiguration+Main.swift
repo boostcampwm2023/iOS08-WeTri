@@ -58,6 +58,23 @@ public extension UIButton.Configuration {
     return plainConfiguration
   }
 
+  static func mainDeSelected(title: String) -> UIButton.Configuration {
+    var plainConfiguration = Self.plain()
+
+    var backgroundConfiguration = plainConfiguration.background
+    backgroundConfiguration.backgroundColor = .systemBackground
+    backgroundConfiguration.cornerRadius = 8
+    backgroundConfiguration.strokeColor = DesignSystemColor.gray03
+    backgroundConfiguration.strokeWidth = 1
+    plainConfiguration.background = backgroundConfiguration
+
+    plainConfiguration.titleAlignment = .center
+    plainConfiguration.baseForegroundColor = DesignSystemColor.gray03
+    plainConfiguration.title = title
+
+    return plainConfiguration
+  }
+
   // MARK: - ConfigurationUpdateHandler
 
   static func main(label text: String) -> UIButton.ConfigurationUpdateHandler {

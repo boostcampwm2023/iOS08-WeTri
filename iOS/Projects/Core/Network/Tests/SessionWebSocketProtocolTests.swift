@@ -11,7 +11,7 @@
 import XCTest
 
 final class SessionWebSocketProtocolTests: XCTestCase {
-  private var mockSession: MockWebSocketSession?
+  private var mockSession: MockWebSocketSession<TestModel>?
   private var socketProvider: TNSocketProvider<MockEndPoint>?
 
   struct TestModel: Codable, Equatable {
@@ -23,7 +23,7 @@ final class SessionWebSocketProtocolTests: XCTestCase {
 
   override func setUp() {
     super.setUp()
-    let mockSession = MockWebSocketSession()
+    let mockSession = MockWebSocketSession<TestModel>()
     self.mockSession = mockSession
     socketProvider = TNSocketProvider(session: mockSession, endPoint: MockEndPoint())
   }
@@ -43,14 +43,21 @@ final class SessionWebSocketProtocolTests: XCTestCase {
       try await self.socketProvider?.send(model: testModel)
     }
 
+    // assert
+
     // Receive 메서드를 비동기로 호출하여 결과 검증
     let receivedMessage = try await socketProvider?.receive()
-    guard case let .data(data) = receivedMessage else {
-      XCTFail("Received message is not of type .data")
+    guard case let .string(string) = receivedMessage else {
+      XCTFail("Received message is not of type .string")
       return
     }
 
-    let receivedModel = try JSONDecoder().decode(WebSocketFrame<TestModel>.self, from: data)
-    XCTAssertEqual(receivedModel.data, testModel, "Received model does not match sent model")
+    guard let jsonData = string.data(using: .utf8) else {
+      XCTFail("data cannot parse to data")
+      return
+    }
+
+    let receivedModel = try JSONDecoder().decode(TestModel.self, from: jsonData)
+    XCTAssertEqual(receivedModel, testModel, "Received model does not match sent model")
   }
 }

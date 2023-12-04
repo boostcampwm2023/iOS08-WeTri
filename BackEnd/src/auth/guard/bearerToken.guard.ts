@@ -26,7 +26,7 @@ export class BearerTokenGuard implements CanActivate {
 
     const decoded = await this.authService.verifyToken(token);
 
-    const profile = await this.profilesService.findByPublicId(decoded.sub);
+    const profile = await this.profilesService.getProfile(decoded.sub);
 
     const type = decoded.type;
 
