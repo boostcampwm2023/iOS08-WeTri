@@ -22,9 +22,9 @@ export class ProfilesService {
     if (await this.validateProfileNickname(updateProfileDto.nickname)) {
       throw new NicknameDuplicateException();
     }
-    this.profilesRepository.update({ publicId }, updateProfileDto);
+    await this.profilesRepository.update({ publicId }, updateProfileDto);
     return this.getProfile(publicId);
-  }
+  }  
 
   async deleteProfile(publicId: string) {
     return this.profilesRepository.delete({ publicId });
