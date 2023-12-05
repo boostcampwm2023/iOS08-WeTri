@@ -66,6 +66,15 @@ private extension SignUpContainerViewController {
       signUpGenderBirthView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
     ])
 
+    guard let signUpProfileView = signUpProfileViewController.view else { return }
+    signUpProfileView.translatesAutoresizingMaskIntoConstraints = false
+    add(child: signUpProfileViewController)
+    NSLayoutConstraint.activate([
+      signUpProfileView.topAnchor.constraint(equalTo: gwPageControl.bottomAnchor),
+      signUpProfileView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+      signUpProfileView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
+      signUpProfileView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
+    ])
   }
 
   func add(child viewController: UIViewController) {

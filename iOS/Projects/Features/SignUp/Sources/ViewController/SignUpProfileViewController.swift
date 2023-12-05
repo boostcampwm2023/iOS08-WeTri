@@ -72,7 +72,7 @@ public final class SignUpProfileViewController: UIViewController {
 
 private extension SignUpProfileViewController {
   func configureUI() {
-    view.backgroundColor = DesignSystemColor.primaryBackground
+    view.backgroundColor = DesignSystemColor.secondaryBackground
     view.addGestureRecognizer(tapGestureRecognizer)
 
     let safeArea = view.safeAreaLayoutGuide
