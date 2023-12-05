@@ -9,6 +9,7 @@
 import Coordinator
 import ProfileFeature
 import RecordFeature
+import HomeFeature
 import UIKit
 
 // MARK: - TabBarCoordinator

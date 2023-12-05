@@ -53,7 +53,6 @@ private extension HomeViewController {
   
   func setupHierarchyAndConstraints() {
     let safeArea = view.safeAreaLayoutGuide
-    
   }
   
   func setupStyles() {
