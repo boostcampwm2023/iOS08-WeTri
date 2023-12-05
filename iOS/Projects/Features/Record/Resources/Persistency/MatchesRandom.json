@@ -3,7 +3,7 @@
   "errorMessage": null,
   "data": {
     "matched": true,
-    "liveWorkoutStartTime": "yyyy-mm-dd hh:mm:ss",
+    "liveWorkoutStartTime": "2023-12-05 16:33:00",
     "roomId": "uuid",
     "peers": [
       {

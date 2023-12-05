@@ -19,10 +19,15 @@ struct WorkoutSessionElement {
     return formatter
   }()
 
-  /// 고민점 서버에서 만약 시간을 잘못 내려준다면, 3초 카운트 다운 타이머를 시작하도록 하였음
+  /// 스트링으로 데이터를 받았을 때 서버에서 내려준 값이
+  /// 현재 시간보다 과거거나, 서버에서 내려준 시간이 잘못되었을 경우
+  /// 현재시간 + 4 초 후에 운동을 시작하는 것으로 세팅했습니다.
   init(startDateString: String, peers: [Peer], roomID: String) {
-    let date = formatter.date(from: startDateString)
-    startDate = date ?? .now + 4
+    var date = formatter.date(from: startDateString) ?? .now + 4
+    if Date.now > date {
+      date = Date.now + 4
+    }
+    startDate = date
     self.peers = peers
     self.roomID = roomID
   }
