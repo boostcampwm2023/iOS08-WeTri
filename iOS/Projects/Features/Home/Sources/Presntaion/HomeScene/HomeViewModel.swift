@@ -1,4 +1,4 @@
-// 
+//
 //  HomeViewModel.swift
 //  HomeFeature
 //
@@ -27,17 +27,19 @@ protocol HomeViewModelRepresentable {
   func transform(input: HomeViewModelInput) -> HomeViewModelOutput
 }
 
-final class HomeViewModel {
+// MARK: - HomeViewModel
 
+final class HomeViewModel {
   // MARK: - Properties
 
   private var subscriptions: Set<AnyCancellable> = []
 }
 
-extension HomeViewModel: HomeViewModelRepresentable {
-  public func transform(input: HomeViewModelInput) -> HomeViewModelOutput {
-    subscriptions.removeAll()
+// MARK: HomeViewModelRepresentable
 
+extension HomeViewModel: HomeViewModelRepresentable {
+  public func transform(input _: HomeViewModelInput) -> HomeViewModelOutput {
+    subscriptions.removeAll()
 
     let initialState: HomeViewModelOutput = Just(.idle).eraseToAnyPublisher()
 

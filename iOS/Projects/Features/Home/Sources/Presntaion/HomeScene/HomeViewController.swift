@@ -1,4 +1,4 @@
-// 
+//
 //  HomeViewController.swift
 //  HomeFeature
 //
@@ -10,8 +10,9 @@ import Combine
 import DesignSystem
 import UIKit
 
-final class HomeViewController: UIViewController {
+// MARK: - HomeViewController
 
+final class HomeViewController: UIViewController {
   // MARK: Properties
 
   private let viewModel: HomeViewModelRepresentable
@@ -40,25 +41,24 @@ final class HomeViewController: UIViewController {
     super.viewDidLoad()
     setup()
   }
-
-
 }
 
 private extension HomeViewController {
   func setup() {
     setupStyles()
     setupHierarchyAndConstraints()
+    setNavigationItem()
     bind()
   }
-  
+
   func setupHierarchyAndConstraints() {
     let safeArea = view.safeAreaLayoutGuide
   }
-  
+
   func setupStyles() {
-    view.backgroundColor = DesignSystemColor.primaryBackground
+    view.backgroundColor = DesignSystemColor.gray03
   }
-  
+
   func bind() {
     let output = viewModel.transform(input: .init())
     output.sink { state in
@@ -69,8 +69,15 @@ private extension HomeViewController {
     }
     .store(in: &subscriptions)
   }
-  
-  enum Metrics {
-    
+
+  func setNavigationItem() {
+    navigationItem.title = Constants.navigationTitleText
+
   }
+
+  enum Constants {
+    static let navigationTitleText = "홈"
+  }
+
+  enum Metrics {}
 }

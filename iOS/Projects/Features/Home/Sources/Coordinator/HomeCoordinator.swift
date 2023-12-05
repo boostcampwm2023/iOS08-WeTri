@@ -1,37 +1,48 @@
 //
-//  HomeFeatureCoordinator.swift
+//  HomeCoordinator.swift
 //  HomeFeature
 //
 //  Created by MaraMincho on 12/5/23.
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
-import Foundation
 import Coordinator
+import Foundation
 import UIKit
 
-protocol HomeCoordinating: Coordinating {
-  
+// MARK: - HomeCoordinating
+
+public protocol HomeCoordinating: Coordinating {
+  func pushHome()
 }
 
-final class HomeCoordinator: HomeCoordinating {
-  var navigationController: UINavigationController
-  
-  var childCoordinators: [Coordinator.Coordinating] = []
-  
-  var finishDelegate: CoordinatorFinishDelegate?
-  
-  var flow: CoordinatorFlow
-  init(navigationController: UINavigationController, delegate: CoordinatorFinishDelegate) {
+// MARK: - HomeCoordinator
+
+public final class HomeCoordinator: HomeCoordinating {
+  public var navigationController: UINavigationController
+
+  public var childCoordinators: [Coordinator.Coordinating] = []
+
+  public var finishDelegate: CoordinatorFinishDelegate?
+
+  public var flow: CoordinatorFlow
+  public init(navigationController: UINavigationController, delegate: CoordinatorFinishDelegate) {
     self.navigationController = navigationController
-    self.finishDelegate = delegate
-    self.flow = .login
+    finishDelegate = delegate
+    flow = .login
   }
-  
-  func start() {
+
+  public func start() {
+    pushHome()
+  }
+
+  public func pushHome() {
     let viewModel = HomeViewModel()
+
     let viewController = HomeViewController(viewModel: viewModel)
+
+    navigationController.pushViewController(viewController, animated: true)
   }
-  
-  
+
+  public func pushBoardDetail() {}
 }
