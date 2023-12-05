@@ -30,8 +30,8 @@ final class NickNameCheckerView: UIView {
     return label
   }()
 
-  override init(frame _: CGRect) {
-    super.init(frame: .zero)
+  override init(frame: CGRect) {
+    super.init(frame: frame)
     configureUI()
     configureDisabled()
   }
