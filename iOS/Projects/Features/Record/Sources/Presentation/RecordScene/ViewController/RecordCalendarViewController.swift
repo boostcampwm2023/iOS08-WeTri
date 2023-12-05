@@ -46,6 +46,7 @@ final class RecordCalendarViewController: UIViewController {
     collectionView.translatesAutoresizingMaskIntoConstraints = false
     collectionView.delegate = self
     collectionView.showsHorizontalScrollIndicator = false
+    collectionView.backgroundColor = DesignSystemColor.secondaryBackground
     return collectionView
   }()
 
