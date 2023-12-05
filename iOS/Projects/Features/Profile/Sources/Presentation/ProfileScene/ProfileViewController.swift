@@ -146,8 +146,11 @@ private extension ProfileViewController {
   private func updatePostsSnapshots(with model: [Post]) {
     guard let dataSource else { return }
     var snapshot = dataSource.snapshot()
-    snapshot.deleteSections([.emptyState])
     snapshot.appendItems(model, toSection: .main)
+    // 아이템이 존재하면 Empty View 삭제
+    if snapshot.itemIdentifiers.isEmpty == false {
+      snapshot.deleteSections([.emptyState])
+    }
     dataSource.apply(snapshot)
   }
 }
