@@ -26,6 +26,7 @@ final class WorkoutInformationCollectionViewCell: UICollectionViewCell {
     let label = UILabel()
     label.font = .preferredFont(forTextStyle: .body)
     label.text = "운동: 사이클"
+    label.textColor = DesignSystemColor.primaryText
     return label
   }()
 
@@ -33,6 +34,7 @@ final class WorkoutInformationCollectionViewCell: UICollectionViewCell {
     let label = UILabel()
     label.font = .preferredFont(forTextStyle: .body)
     label.text = "시작: 07:00:00"
+    label.textColor = DesignSystemColor.primaryText
     return label
   }()
 
@@ -40,6 +42,7 @@ final class WorkoutInformationCollectionViewCell: UICollectionViewCell {
     let label = UILabel()
     label.font = .preferredFont(forTextStyle: .body)
     label.text = "끝: 08:00:00"
+    label.textColor = DesignSystemColor.primaryText
     return label
   }()
 
@@ -47,6 +50,7 @@ final class WorkoutInformationCollectionViewCell: UICollectionViewCell {
     let label = UILabel()
     label.font = .preferredFont(forTextStyle: .body)
     label.text = "거리: 12.43km"
+    label.textColor = DesignSystemColor.primaryText
     return label
   }()
 

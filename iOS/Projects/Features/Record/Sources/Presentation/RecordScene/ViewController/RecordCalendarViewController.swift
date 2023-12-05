@@ -100,6 +100,8 @@ private extension RecordCalendarViewController {
 
 private extension RecordCalendarViewController {
   func configureUI() {
+    view.backgroundColor = DesignSystemColor.primaryBackground
+
     view.addSubview(calendarCollectionView)
     NSLayoutConstraint.activate([
       calendarCollectionView.topAnchor.constraint(equalTo: view.topAnchor),

@@ -71,6 +71,8 @@ final class CalendarCollectionViewCell: UICollectionViewCell {
 
 private extension CalendarCollectionViewCell {
   func configureUI() {
+    contentView.backgroundColor = DesignSystemColor.secondaryBackground
+
     [dayOfWeekLabel, dateLabel].forEach {
       stackView.addArrangedSubview($0)
     }
