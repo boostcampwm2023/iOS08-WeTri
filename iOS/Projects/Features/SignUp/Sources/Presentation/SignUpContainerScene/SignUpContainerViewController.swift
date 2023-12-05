@@ -60,6 +60,12 @@ public final class SignUpContainerViewController: UIViewController {
 
 private extension SignUpContainerViewController {
   func bindUI() {
+    signUpGenderBirthViewController.genderBirthPublisher
+      .sink { genderBirth in
+        // TODO: genderBirth를 SignUpProfile까지 데이터를 넘겨줘서 User Entity로 합치기
+      }
+      .store(in: &subscriptions)
+    
     signUpGenderBirthViewController.nextButtonTapPublisher
       .sink { [weak self] _ in
       }
