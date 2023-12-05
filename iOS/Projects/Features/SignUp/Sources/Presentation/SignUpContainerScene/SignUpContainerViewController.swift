@@ -8,7 +8,6 @@
 
 import Combine
 import DesignSystem
-import Log
 import UIKit
 
 // MARK: - SignUpContainerViewController
@@ -66,7 +65,6 @@ private extension SignUpContainerViewController {
   func bindUI() {
     signUpGenderBirthViewController.genderBirthPublisher
       .sink { [weak self] _ in
-        Log.make().debug("여기")
         self?.scrollView(isEnabled: true)
         // TODO: genderBirth를 SignUpProfile까지 데이터를 넘겨줘서 User Entity로 합치기
       }
@@ -74,6 +72,7 @@ private extension SignUpContainerViewController {
 
     signUpGenderBirthViewController.nextButtonTapPublisher
       .sink { [weak self] _ in
+        self?.nextPage()
       }
       .store(in: &subscriptions)
   }
@@ -119,6 +118,19 @@ private extension SignUpContainerViewController {
       }
     }
   }
+
+  private func nextPage() {
+    guard let currentViewController = pageViewController.viewControllers?.first,
+          let currentIndex = viewControllers.firstIndex(of: currentViewController),
+          currentIndex + 1 < viewControllers.count
+    else {
+      return
+    }
+    let count = viewControllers.count
+    let nextViewController = viewControllers[currentIndex + 1]
+    pageViewController.setViewControllers([nextViewController], direction: .forward, animated: false)
+    gwPageControl.next()
+  }
 }
 
 // MARK: UIPageViewControllerDelegate
@@ -142,30 +154,22 @@ extension SignUpContainerViewController: UIPageViewControllerDelegate {
 
 extension SignUpContainerViewController: UIPageViewControllerDataSource {
   public func pageViewController(_: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-    guard let viewControllerIndex = viewControllers.firstIndex(of: viewController) else {
+    guard let viewControllerIndex = viewControllers.firstIndex(of: viewController),
+          viewControllerIndex - 1 >= 0
+    else {
       return nil
     }
-
     let previousIndex = viewControllerIndex - 1
-
-    guard previousIndex >= 0 else {
-      return nil
-    }
-
     return viewControllers[previousIndex]
   }
 
   public func pageViewController(_: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-    guard let viewContollerIndex = viewControllers.firstIndex(of: viewController) else {
+    guard let viewContollerIndex = viewControllers.firstIndex(of: viewController),
+          viewContollerIndex + 1 < viewControllers.count
+    else {
       return nil
     }
-
     let nextIndex = viewContollerIndex + 1
-
-    guard nextIndex < viewControllers.count else {
-      return nil
-    }
-
     return viewControllers[nextIndex]
   }
 }
