@@ -61,17 +61,17 @@ private extension NickNameBoxView {
 
     addSubview(textField)
     NSLayoutConstraint.activate([
-      textField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-      textField.topAnchor.constraint(equalTo: topAnchor, constant: 13),
-      textField.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -13),
+      textField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Metrics.parentViewInterval),
+      textField.topAnchor.constraint(equalTo: topAnchor, constant: Metrics.topBottomInteval),
+      textField.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Metrics.topBottomInteval),
     ])
 
     addSubview(cancelButton)
     NSLayoutConstraint.activate([
-      cancelButton.topAnchor.constraint(equalTo: topAnchor, constant: 13),
-      cancelButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
-      cancelButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -13),
-      cancelButton.widthAnchor.constraint(equalToConstant: 32),
+      cancelButton.topAnchor.constraint(equalTo: topAnchor, constant: Metrics.topBottomInteval),
+      cancelButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Metrics.parentViewInterval),
+      cancelButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Metrics.topBottomInteval),
+      cancelButton.widthAnchor.constraint(equalToConstant: Metrics.buttonWidth),
     ])
   }
 
@@ -103,4 +103,12 @@ private extension NickNameBoxView {
       }
       .store(in: &subscriptions)
   }
+}
+
+// MARK: - Metrics
+
+private enum Metrics {
+  static let parentViewInterval: CGFloat = 16
+  static let topBottomInteval: CGFloat = 13
+  static let buttonWidth: CGFloat = 32
 }

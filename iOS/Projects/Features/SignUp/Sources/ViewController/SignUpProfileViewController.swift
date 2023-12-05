@@ -87,8 +87,8 @@ private extension SignUpProfileViewController {
     NSLayoutConstraint.activate([
       profileImageButton.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: Metrics.sectionInterval),
       profileImageButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-      profileImageButton.widthAnchor.constraint(equalToConstant: 100),
-      profileImageButton.heightAnchor.constraint(equalToConstant: 100),
+      profileImageButton.widthAnchor.constraint(equalToConstant: Metrics.profileImageButtonSize),
+      profileImageButton.heightAnchor.constraint(equalToConstant: Metrics.profileImageButtonSize),
     ])
 
     view.addSubview(nickNameLabel)
@@ -108,14 +108,13 @@ private extension SignUpProfileViewController {
     NSLayoutConstraint.activate([
       nickNameCheckerView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.safeAreaInterval),
       nickNameCheckerView.topAnchor.constraint(equalTo: nickNameBoxView.bottomAnchor, constant: Metrics.componentInterval),
-      nickNameCheckerView.widthAnchor.constraint(equalToConstant: 175),
-//      nickNameCheckerView.heightAnchor.constraint(equalToConstant: 18),
+      nickNameCheckerView.widthAnchor.constraint(equalToConstant: Metrics.nickNameCheckerWidth),
     ])
 
     view.addSubview(completionButton)
     NSLayoutConstraint.activate([
       completionButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.safeAreaInterval),
-      completionButton.topAnchor.constraint(equalTo: nickNameBoxView.bottomAnchor, constant: 258),
+      completionButton.topAnchor.constraint(equalTo: nickNameBoxView.bottomAnchor, constant: Metrics.buttonInteval),
       completionButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.safeAreaInterval),
       completionButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -Metrics.safeAreaInterval),
     ])
@@ -147,4 +146,7 @@ private enum Metrics {
   static let topInterval: CGFloat = 81
   static let sectionInterval: CGFloat = 48
   static let componentInterval: CGFloat = 9
+  static let buttonInteval: CGFloat = 258
+  static let profileImageButtonSize: CGFloat = 100
+  static let nickNameCheckerWidth: CGFloat = 175
 }

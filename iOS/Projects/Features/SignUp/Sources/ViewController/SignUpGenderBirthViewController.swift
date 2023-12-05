@@ -155,7 +155,7 @@ private extension SignUpGenderBirthViewController {
     view.addSubview(nextButton)
     NSLayoutConstraint.activate([
       nextButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.safeAreaInterval),
-      nextButton.topAnchor.constraint(equalTo: datePicker.bottomAnchor, constant: 5),
+      nextButton.topAnchor.constraint(equalTo: datePicker.bottomAnchor, constant: Metrics.datePickerToNextButton),
       nextButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.safeAreaInterval),
       nextButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -Metrics.safeAreaInterval),
     ])
@@ -225,6 +225,7 @@ private enum Metrics {
   static let topInterval: CGFloat = 81
   static let sectionInterval: CGFloat = 48
   static let componentInterval: CGFloat = 9
+  static let datePickerToNextButton: CGFloat = 5
 }
 
 // MARK: - DateFormatter
