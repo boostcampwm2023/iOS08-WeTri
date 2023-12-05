@@ -12,6 +12,8 @@ import Trinet
 
 // MARK: - TNKeychainInterceptor
 
+/// 앱에서 사용되는 공통의 인터셉터 입니다.
+/// 인터셉터를 통해서 자동으로 Header에 토큰을 넣어주고, 토큰 만료시 리프레시 로직을 던저줍니다.
 public final class TNKeychainInterceptor {
   private let decoder = JSONDecoder()
   public static let shared = TNKeychainInterceptor()

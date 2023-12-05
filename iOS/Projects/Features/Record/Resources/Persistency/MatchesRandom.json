@@ -1,5 +1,21 @@
 {
-  "code": 201,
+  "code": null,
   "errorMessage": null,
-  "data": null
+  "data": {
+    "matched": true,
+    "liveWorkoutStartTime": "yyyy-mm-dd hh:mm:ss",
+    "roomId": "uuid",
+    "peers": [
+      {
+        "nickname": "nickname",
+        "publicId": "profileImage",
+        "etc": "그 외 나머지 모든 컬럼"
+      },
+      {
+        "nickname": "nickname",
+        "publicId": "profileImage",
+        "etc": "그 외 나머지 모든 컬럼"
+      }
+    ]
+  }
 }

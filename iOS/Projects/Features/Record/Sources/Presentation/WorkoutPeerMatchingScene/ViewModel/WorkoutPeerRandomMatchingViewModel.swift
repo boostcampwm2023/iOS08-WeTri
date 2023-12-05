@@ -8,6 +8,7 @@
 
 import Combine
 import Foundation
+import Log
 
 // MARK: - WorkoutPeerRandomMatchingViewModelInput
 
@@ -74,14 +75,17 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
   }
 
   private func bindUseCase() {
-    useCase.matchStart(workoutSetting: workoutSetting)
+    useCase
+      .matchStart(workoutSetting: workoutSetting)
       .receive(on: RunLoop.main)
       .sink { [weak self] results in
         switch results {
         case .failure:
+          Log.make().error("1단계 매칭 스타트 요청을 실패했습니다.")
           self?.cancelPeerRandomMatching()
         case .success:
-          self?.startIsMatchedRandomPeer(every: Constants.pollingPeroide)
+          Log.make().error("1단계 매칭 스타트 요청을 시작했습니다.")
+          self?.startIsMatchedRandomPeer(every: Constants.pollingPeriod)
           self?.cancelPeerRandomMatching(after: Constants.maximumCouldWaitTime)
         }
       }
@@ -99,24 +103,15 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
   }
 
   private func startIsMatchedRandomPeer(every time: Double) {
+    didMatchStartedDate = .now
     Timer.publish(every: time, on: .main, in: .common)
       .autoconnect()
       .sink { [weak self] _ in
-        self?.sendIsMatchedRandomPeer()
-      }
-      .store(in: &subscriptions)
-  }
-
-  private func sendIsMatchedRandomPeer() {
-    didMatchStartedDate = .now
-    Timer.publish(every: 2, on: .main, in: .common)
-      .autoconnect()
-      .sink { [weak self] date in
         guard let self else {
           return
         }
-        let waitingTime = Int(date.timeIntervalSince(didMatchStartedDate))
-        let request = IsMatchedRandomPeersRequest(workoutID: workoutSetting.workoutType.typeCode, waitingTime: waitingTime)
+        let waitingTime = Date.now.timeIntervalSince(didMatchStartedDate)
+        let request = IsMatchedRandomPeersRequest(workoutID: workoutSetting.workoutType.typeCode, waitingTime: Int(waitingTime))
         requestIsMatchedRandomPeers(request: request)
       }
       .store(in: &subscriptions)
@@ -137,7 +132,8 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
             return
           }
           self?.pushWorkoutSession(response: response)
-        case .failure:
+        case let .failure(error):
+          Log.make().error("\(error)")
           self?.coordinating?.popPeerRandomMatchingViewController()
         }
       }
@@ -145,6 +141,7 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
   }
 
   func pushWorkoutSession(response: IsMatchedRandomPeersResponse?) {
+    subscriptions.removeAll()
     guard
       let response,
       let peersResponse = response.peers,
@@ -163,7 +160,7 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
   }
 
   private enum Constants {
-    static let pollingPeroide: Double = 2
-    static let maximumCouldWaitTime: Double = 150
+    static let pollingPeriod: Double = 2
+    static let maximumCouldWaitTime: Double = 10
   }
 }

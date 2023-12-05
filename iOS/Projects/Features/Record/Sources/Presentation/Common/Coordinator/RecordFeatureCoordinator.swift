@@ -94,6 +94,7 @@ extension RecordFeatureCoordinator: CoordinatorFinishDelegate {
 
 extension RecordFeatureCoordinator: WorkoutSettingCoordinatorFinishDelegate {
   func workoutSettingCoordinatorDidFinished(workoutSessionElement: WorkoutSessionElement) {
+    navigationController.dismiss(animated: false)
     showWorkoutFlow(workoutSessionElement)
   }
 }

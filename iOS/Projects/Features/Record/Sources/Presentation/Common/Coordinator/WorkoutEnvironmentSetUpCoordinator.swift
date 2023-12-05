@@ -125,13 +125,13 @@ private extension WorkoutEnvironmentSetUpCoordinator {
     static let bundleIdentifier = "kr.codesquad.boostcamp8.RecordFeature"
 
     static let matchStart = "MatchesStart"
-    static let matchStartPath = "matches/start"
+    static let matchStartPath = "api/v1/matches/start"
 
     static let matchCancel = "matchesCancel"
-    static let matchCancelPath = "matches/cancle"
+    static let matchCancelPath = "api/v1/matches/cancel"
 
     static let matchesRandom = "MatchesRandom"
-    static let matchesRandomPath = "matches/random"
+    static let matchesRandomPath = "api/v1/matches/random"
 
     static let peerTypesFileNameOfType = "json"
   }
