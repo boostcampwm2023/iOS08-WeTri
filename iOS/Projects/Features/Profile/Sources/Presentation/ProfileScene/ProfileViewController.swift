@@ -10,6 +10,7 @@ public final class ProfileViewController: UICollectionViewController {
 
   private let viewDidLoadSubject: PassthroughSubject<Void, Never> = .init()
   private let didTapSettingButtonSubject: PassthroughSubject<Void, Never> = .init()
+  private let paginationEventSubject: PassthroughSubject<Void, Never> = .init()
 
   private var subscriptions: Set<AnyCancellable> = []
 
@@ -58,7 +59,8 @@ public final class ProfileViewController: UICollectionViewController {
     viewModel.transform(
       input: .init(
         viewDidLoadPublisher: viewDidLoadSubject.eraseToAnyPublisher(),
-        didTapSettingButtonPublisher: didTapSettingButtonSubject.eraseToAnyPublisher()
+        didTapSettingButtonPublisher: didTapSettingButtonSubject.eraseToAnyPublisher(),
+        paginationEventPublisher: paginationEventSubject.eraseToAnyPublisher()
       )
     )
     .receive(on: RunLoop.main)
@@ -156,4 +158,19 @@ private extension ProfileViewController {
   typealias ProfileCellRegistration = UICollectionView.CellRegistration<ProfilePostCell, ProfileItem>
   typealias ProfileReusableRegistration = UICollectionView.SupplementaryRegistration<ProfileHeaderView>
   typealias PostEmptyStateRegistration = UICollectionView.SupplementaryRegistration<PostsEmptyStateView>
+}
+
+// MARK: - Pagination
+
+public extension ProfileViewController {
+  override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    let offsetY = scrollView.contentOffset.y
+    let contentHeight = scrollView.contentSize.height
+    let height = scrollView.frame.size.height
+
+    // 스크롤이 보이는 뷰 정도의 높이 이전까지 도달했을 때 업데이트
+    if offsetY > contentHeight - height {
+      paginationEventSubject.send(())
+    }
+  }
 }

@@ -1,10 +1,12 @@
 import Combine
+import Log
 
 // MARK: - ProfileViewModelInput
 
 public struct ProfileViewModelInput {
   let viewDidLoadPublisher: AnyPublisher<Void, Never>
   let didTapSettingButtonPublisher: AnyPublisher<Void, Never>
+  let paginationEventPublisher: AnyPublisher<Void, Never>
 }
 
 public typealias ProfileViewModelOutput = AnyPublisher<ProfileViewModelState, Never>
@@ -58,8 +60,16 @@ extension ProfileViewModel: ProfileViewModelRepresentable {
     let profileInfoPublisher = input.viewDidLoadPublisher
       .flatMap(useCase.fetchProfile)
       .map(ProfileViewModelState.setupProfile)
-      .catch { Just(ProfileViewModelState.alert($0)) }
+      .catch { Just(.alert($0)) }
 
-    return Just(.idle).merge(with: profileInfoPublisher).eraseToAnyPublisher()
+    let updatePostsPublisher = input.paginationEventPublisher
+      .flatMap(maxPublishers: .max(1)) { [useCase] _ in
+        Log.make().debug("호출됨")
+        return useCase.fetchPosts(refresh: false)
+      }
+      .map(ProfileViewModelState.updatePosts)
+      .catch { Just(.alert($0)) }
+
+    return Just(.idle).merge(with: profileInfoPublisher, updatePostsPublisher).eraseToAnyPublisher()
   }
 }
