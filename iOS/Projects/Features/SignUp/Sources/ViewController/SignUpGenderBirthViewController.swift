@@ -102,7 +102,7 @@ public final class SignUpGenderBirthViewController: UIViewController {
 
 private extension SignUpGenderBirthViewController {
   func configureUI() {
-    view.backgroundColor = DesignSystemColor.primaryBackground
+    view.backgroundColor = DesignSystemColor.secondaryBackground
 
     [maleButton, femaleButton].forEach {
       genderStackView.addArrangedSubview($0)
@@ -115,7 +115,7 @@ private extension SignUpGenderBirthViewController {
     view.addSubview(titleLabel)
     NSLayoutConstraint.activate([
       titleLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.safeAreaInterval),
-      titleLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: Metrics.topInterval),
+      titleLabel.topAnchor.constraint(equalTo: safeArea.topAnchor),
     ])
 
     view.addSubview(genderLabel)
