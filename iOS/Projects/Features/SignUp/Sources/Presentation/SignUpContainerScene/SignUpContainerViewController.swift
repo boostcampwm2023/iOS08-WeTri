@@ -56,12 +56,18 @@ public final class SignUpContainerViewController: UIViewController {
     configureUI()
     bindUI()
   }
+
+  override public func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+  }
 }
 
 private extension SignUpContainerViewController {
   func bindUI() {
     signUpGenderBirthViewController.genderBirthPublisher
-      .sink { _ in
+      .sink { [weak self] _ in
+        Log.make().debug("여기")
+        self?.scrollView(isEnabled: true)
         // TODO: genderBirth를 SignUpProfile까지 데이터를 넘겨줘서 User Entity로 합치기
       }
       .store(in: &subscriptions)
@@ -77,6 +83,7 @@ private extension SignUpContainerViewController {
   func configureUI() {
     view.backgroundColor = DesignSystemColor.secondaryBackground
     navigationController?.navigationBar.isHidden = true
+    scrollView(isEnabled: false)
     let safeArea = view.safeAreaLayoutGuide
 
     view.addSubview(gwPageControl)
@@ -99,10 +106,18 @@ private extension SignUpContainerViewController {
     ])
   }
 
-  func add(child viewController: UIViewController) {
+  private func add(child viewController: UIViewController) {
     addChild(viewController)
     view.addSubview(viewController.view)
     viewController.didMove(toParent: viewController)
+  }
+
+  private func scrollView(isEnabled: Bool) {
+    for view in pageViewController.view.subviews {
+      if let scrollView = view as? UIScrollView {
+        scrollView.isScrollEnabled = isEnabled
+      }
+    }
   }
 }
 
