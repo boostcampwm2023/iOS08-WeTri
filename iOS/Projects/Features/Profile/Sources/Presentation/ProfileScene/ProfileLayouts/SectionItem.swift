@@ -16,4 +16,4 @@ enum ProfileSection: Int {
   case emptyState
 }
 
-typealias ProfileItem = String
+typealias ProfileItem = Post

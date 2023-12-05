@@ -26,7 +26,7 @@ struct PostsResponseDTO: Codable {
 // MARK: - Post
 
 /// 게시글
-public struct Post: Codable {
+public struct Post: Codable, Hashable {
   /// 게시글 Identifier
   let id: Int
 

@@ -14,6 +14,7 @@ public typealias ProfileViewModelOutput = AnyPublisher<ProfileViewModelState, Ne
 public enum ProfileViewModelState {
   case idle
   case setupProfile(Profile)
+  case updatePosts([Post])
   case alert(Error)
 }
 

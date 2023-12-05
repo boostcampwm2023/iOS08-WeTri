@@ -70,6 +70,8 @@ public final class ProfileViewController: UICollectionViewController {
         self?.updateHeaderSnapshots(with: profile)
       case let .alert(error):
         self?.showAlert(with: error)
+      case let .updatePosts(posts):
+        self?.updatePostsSnapshots(with: posts)
       }
     }
     .store(in: &subscriptions)
@@ -94,7 +96,8 @@ public final class ProfileViewController: UICollectionViewController {
 
 private extension ProfileViewController {
   private func setupDataSource() {
-    let registration = ProfileCellRegistration { _, _, _ in
+    let registration = ProfileCellRegistration { cell, _, post in
+      cell.configure(with: post)
     }
 
     let headerRegistration = ProfileReusableRegistration(elementKind: UICollectionView.elementKindSectionHeader) { [weak self] headerView, _, _ in
@@ -135,6 +138,14 @@ private extension ProfileViewController {
     headerInfo = model
     var snapshot = dataSource.snapshot()
     snapshot.reloadSections([.header])
+    dataSource.apply(snapshot)
+  }
+
+  private func updatePostsSnapshots(with model: [Post]) {
+    guard let dataSource else { return }
+    var snapshot = dataSource.snapshot()
+    snapshot.deleteSections([.emptyState])
+    snapshot.appendItems(model, toSection: .main)
     dataSource.apply(snapshot)
   }
 }
