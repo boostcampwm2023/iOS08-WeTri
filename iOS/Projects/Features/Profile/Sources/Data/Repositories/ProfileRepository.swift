@@ -57,12 +57,18 @@ extension ProfileRepository: ProfileRepositoryRepresentable {
     .eraseToAnyPublisher()
   }
 
-  public func fetchPosts(requestModel: PostsRequestDTO) -> AnyPublisher<[Post], Error> {
+  public func fetchPosts(resetPagination: Bool = false) -> AnyPublisher<[Post], Error> {
     return Deferred { [provider] in
       Future<Data, Error> { promise in
-        Task {
+        Task { [weak self] in
+          if resetPagination {
+            self?.nextID = nil
+          }
           do {
-            let data = try await provider.request(.fetchPosts(requestModel), interceptor: TNKeychainInterceptor.shared)
+            let data = try await provider.request(
+              .fetchPosts(.init(idLessThan: nil, idMoreThan: self?.nextID, orderCreatedAt: .descending, limit: 20)),
+              interceptor: TNKeychainInterceptor.shared
+            )
             promise(.success(data))
           } catch {
             promise(.failure(error))

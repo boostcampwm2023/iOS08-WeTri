@@ -11,4 +11,5 @@ import Foundation
 
 public protocol ProfileRepositoryRepresentable {
   func fetchProfiles() -> AnyPublisher<Profile, Error>
+  func fetchPosts(resetPagination: Bool) -> AnyPublisher<[Post], Error>
 }
