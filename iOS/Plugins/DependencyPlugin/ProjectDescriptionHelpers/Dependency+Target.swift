@@ -32,6 +32,7 @@ public extension TargetDependency {
   static let log: TargetDependency = .project(target: "Log", path: .relativeToShared("Log"))
   static let keychain: TargetDependency = .project(target: "Keychain", path: .relativeToCore("Keychain"))
   static let cacher: TargetDependency = .project(target: "Cacher", path: .relativeToCore("Cacher"))
+  static let userDefaultsManager: TargetDependency = .project(target: "UserDefaultsManager", path: .relativeToShared("UserDefaultsManager"))
 
   static func feature(_ feature: Feature) -> TargetDependency {
     return .project(
