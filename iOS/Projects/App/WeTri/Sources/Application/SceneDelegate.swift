@@ -10,18 +10,23 @@ import RecordFeature
 import SignUpFeature
 import UIKit
 
+import DesignSystem
+
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   var window: UIWindow?
   private var coordinating: AppCoordinating?
 
   func scene(_ scene: UIScene, willConnectTo _: UISceneSession, options _: UIScene.ConnectionOptions) {
     guard let windowScene = scene as? UIWindowScene else { return }
-    let navigationController = UINavigationController()
     window = UIWindow(windowScene: windowScene)
-    window?.rootViewController = navigationController
-    let coordinator = AppCoordinator(navigationController: navigationController)
-    coordinating = coordinator
-    coordinator.start()
+    let vc = SignUpContainerViewController(
+      signUpGenderBirthViewController: SignUpGenderBirthViewController(),
+      signUpProfileViewController: SignUpProfileViewController()
+    )
+    window?.rootViewController = vc
+//    let coordinator = AppCoordinator(navigationController: navigationController)
+//    coordinating = coordinator
+//    coordinator.start()
     window?.makeKeyAndVisible()
   }
 }

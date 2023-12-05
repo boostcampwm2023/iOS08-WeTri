@@ -18,6 +18,12 @@ public final class SignUpGenderBirthViewController: UIViewController {
   private var subscriptions: Set<AnyCancellable> = []
   private let dateFormatter = DateFormatter()
 
+  private let nextButtonTapSubject = PassthroughSubject<Void, Never>()
+
+  var nextButtonTapPublisher: AnyPublisher<Void, Never> {
+    return nextButtonTapSubject.eraseToAnyPublisher()
+  }
+
   private let titleLabel: UILabel = {
     let label = UILabel()
     label.translatesAutoresizingMaskIntoConstraints = false
@@ -102,7 +108,7 @@ public final class SignUpGenderBirthViewController: UIViewController {
 
 private extension SignUpGenderBirthViewController {
   func configureUI() {
-    view.backgroundColor = DesignSystemColor.primaryBackground
+    view.backgroundColor = DesignSystemColor.secondaryBackground
 
     [maleButton, femaleButton].forEach {
       genderStackView.addArrangedSubview($0)
@@ -115,7 +121,7 @@ private extension SignUpGenderBirthViewController {
     view.addSubview(titleLabel)
     NSLayoutConstraint.activate([
       titleLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.safeAreaInterval),
-      titleLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: Metrics.topInterval),
+      titleLabel.topAnchor.constraint(equalTo: safeArea.topAnchor),
     ])
 
     view.addSubview(genderLabel)
@@ -207,7 +213,7 @@ private extension SignUpGenderBirthViewController {
 
     nextButton.publisher(.touchUpInside)
       .sink { [weak self] _ in
-        //
+        self?.nextButtonTapSubject.send()
       }
       .store(in: &subscriptions)
   }
