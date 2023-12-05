@@ -43,8 +43,8 @@ final class CalendarCollectionViewCell: UICollectionViewCell {
   }
 
   override func prepareForReuse() {
-    dayOfWeekLabel.textColor = DesignSystemColor.gray03
-    dateLabel.textColor = DesignSystemColor.gray03
+    dayOfWeekLabel.textColor = DesignSystemColor.gray02
+    dateLabel.textColor = DesignSystemColor.gray02
   }
 
   @available(*, unavailable)
@@ -60,8 +60,8 @@ final class CalendarCollectionViewCell: UICollectionViewCell {
 
   func configureTextColor(isSelected: Bool) {
     guard isSelected else {
-      dayOfWeekLabel.textColor = DesignSystemColor.gray03
-      dateLabel.textColor = DesignSystemColor.gray03
+      dayOfWeekLabel.textColor = DesignSystemColor.gray02
+      dateLabel.textColor = DesignSystemColor.gray02
       return
     }
     dayOfWeekLabel.textColor = DesignSystemColor.main03
