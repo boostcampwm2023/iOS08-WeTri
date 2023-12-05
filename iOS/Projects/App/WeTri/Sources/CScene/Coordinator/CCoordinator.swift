@@ -22,7 +22,7 @@ final class CCoordinator: CCoordinating {
   }
 
   func start() {
-    let viewController = CViewController()
+    let viewController = ViewController()
     navigationController.pushViewController(viewController, animated: false)
   }
 }

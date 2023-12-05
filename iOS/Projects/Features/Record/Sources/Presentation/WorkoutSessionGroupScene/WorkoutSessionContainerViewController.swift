@@ -27,7 +27,7 @@ final class WorkoutSessionContainerViewController: UIViewController {
 
   private let sessionViewController: HealthDataProtocol
 
-  private let routeMapViewController: LocationTrackingProtocol = WorkoutRouteMapViewController(viewModel: WorkoutRouteMapViewModel())
+  private let routeMapViewController: LocationTrackingProtocol = WorkoutRouteMapViewController(viewModel: WorkoutRouteMapViewModel(useCase: KalmanUseCase()))
 
   private lazy var viewControllers: [UIViewController] = [
     sessionViewController,
@@ -83,6 +83,12 @@ final class WorkoutSessionContainerViewController: UIViewController {
     setupConstraints()
     setupStyles()
     bind()
+  }
+
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+
+    routeMapViewController.view.layoutIfNeeded()
   }
 
   // MARK: Configuration

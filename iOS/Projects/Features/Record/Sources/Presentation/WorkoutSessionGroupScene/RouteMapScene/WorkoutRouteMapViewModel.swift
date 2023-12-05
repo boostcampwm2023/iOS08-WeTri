@@ -11,7 +11,10 @@ import Foundation
 
 // MARK: - WorkoutRouteMapViewModelInput
 
-public struct WorkoutRouteMapViewModelInput {}
+public struct WorkoutRouteMapViewModelInput {
+  let filterShouldUpdatePositionPublisher: AnyPublisher<KalmanFilterUpdateRequireElement, Never>
+  let filterShouldUpdateHeadingPublisher: AnyPublisher<Double, Never>
+}
 
 public typealias WorkoutRouteMapViewModelOutput = AnyPublisher<WorkoutRouteMapState, Never>
 
@@ -19,6 +22,7 @@ public typealias WorkoutRouteMapViewModelOutput = AnyPublisher<WorkoutRouteMapSt
 
 public enum WorkoutRouteMapState {
   case idle
+  case censoredValue(KalmanFilterCensored?)
 }
 
 // MARK: - WorkoutRouteMapViewModelRepresentable
@@ -32,17 +36,40 @@ protocol WorkoutRouteMapViewModelRepresentable {
 final class WorkoutRouteMapViewModel {
   // MARK: - Properties
 
+  var useCase: KalmanUseCaseRepresentable
+
   private var subscriptions: Set<AnyCancellable> = []
+
+  init(useCase: KalmanUseCaseRepresentable) {
+    self.useCase = useCase
+  }
 }
 
 // MARK: WorkoutRouteMapViewModelRepresentable
 
 extension WorkoutRouteMapViewModel: WorkoutRouteMapViewModelRepresentable {
-  public func transform(input _: WorkoutRouteMapViewModelInput) -> WorkoutRouteMapViewModelOutput {
+  public func transform(input: WorkoutRouteMapViewModelInput) -> WorkoutRouteMapViewModelOutput {
     subscriptions.removeAll()
+
+    input
+      .filterShouldUpdateHeadingPublisher
+      .dropFirst(4)
+      .sink { [useCase] value in
+        useCase.updateHeading(value)
+      }
+      .store(in: &subscriptions)
+
+    let updateValue: WorkoutRouteMapViewModelOutput = input
+      .filterShouldUpdatePositionPublisher
+      .dropFirst(4)
+      .map { [useCase] element in
+        let censoredValue = useCase.updateFilter(element)
+        return WorkoutRouteMapState.censoredValue(censoredValue)
+      }
+      .eraseToAnyPublisher()
 
     let initialState: WorkoutRouteMapViewModelOutput = Just(.idle).eraseToAnyPublisher()
 
-    return initialState
+    return initialState.merge(with: updateValue).eraseToAnyPublisher()
   }
 }
