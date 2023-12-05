@@ -22,7 +22,7 @@ public final class ProfileViewController: UICollectionViewController {
 
   public init(viewModel: ProfileViewModelRepresentable) {
     self.viewModel = viewModel
-    super.init(collectionViewLayout: Self.createProfileLayout())
+    super.init(collectionViewLayout: .createProfileLayout())
   }
 
   @available(*, unavailable)
@@ -90,85 +90,6 @@ public final class ProfileViewController: UICollectionViewController {
   }
 }
 
-// MARK: - Compositional Layout Settings
-
-private extension ProfileViewController {
-  private static func createProfileLayout() -> UICollectionViewLayout {
-    return UICollectionViewCompositionalLayout { sectionNumber, _ in
-      switch sectionNumber {
-      case Section.header.rawValue:
-        return createHeaderSection()
-      case Section.main.rawValue:
-        return createMainSection()
-      case Section.emptyState.rawValue:
-        return createEmptyStateSection()
-      default:
-        return nil
-      }
-    }
-  }
-
-  private static func createHeaderSection() -> NSCollectionLayoutSection {
-    let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(1)) // 높이를 1으로 설정, 아무 값도 넣지 않을 예정임
-    let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
-    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(1)) // 높이를 1으로 설정, 아무 값도 넣지 않을 예정임
-    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-
-    let section = NSCollectionLayoutSection(group: group)
-
-    let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(300)) // 대략 300으로 설정함
-    let header = NSCollectionLayoutBoundarySupplementaryItem(
-      layoutSize: headerSize,
-      elementKind: UICollectionView.elementKindSectionHeader,
-      alignment: .top
-    )
-    section.boundarySupplementaryItems = [header]
-
-    return section
-  }
-
-  private static func createMainSection() -> NSCollectionLayoutSection {
-    // 각 아이템의 사이즈를 정의합니다.
-    let itemSize = NSCollectionLayoutSize(
-      widthDimension: .fractionalWidth(1 / 3),
-      heightDimension: .fractionalHeight(1)
-    )
-    let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    item.contentInsets = NSDirectionalEdgeInsets(top: 1, leading: 1, bottom: 1, trailing: 1)
-
-    let groupSize = NSCollectionLayoutSize(
-      widthDimension: .fractionalWidth(1),
-      heightDimension: .fractionalWidth(1 / 3)
-    )
-
-    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-
-    // 섹션 정의
-    return NSCollectionLayoutSection(group: group)
-  }
-
-  private static func createEmptyStateSection() -> NSCollectionLayoutSection {
-    let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(1)) // 높이를 1으로 설정, 아무 값도 넣지 않을 예정임
-    let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
-    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(1)) // 높이를 1으로 설정, 아무 값도 넣지 않을 예정임
-    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-
-    let section = NSCollectionLayoutSection(group: group)
-
-    let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(300))
-    let header = NSCollectionLayoutBoundarySupplementaryItem(
-      layoutSize: headerSize,
-      elementKind: UICollectionView.elementKindSectionFooter,
-      alignment: .top
-    )
-    section.boundarySupplementaryItems = [header]
-
-    return section
-  }
-}
-
 // MARK: - Diffable DataSources
 
 private extension ProfileViewController {
@@ -219,17 +140,9 @@ private extension ProfileViewController {
 }
 
 private extension ProfileViewController {
-  typealias ProfileDataSource = UICollectionViewDiffableDataSource<Section, Item>
-  typealias ProfileSnapshot = NSDiffableDataSourceSnapshot<Section, Item>
-  typealias ProfileCellRegistration = UICollectionView.CellRegistration<ProfilePostCell, Item>
+  typealias ProfileDataSource = UICollectionViewDiffableDataSource<ProfileSection, ProfileItem>
+  typealias ProfileSnapshot = NSDiffableDataSourceSnapshot<ProfileSection, ProfileItem>
+  typealias ProfileCellRegistration = UICollectionView.CellRegistration<ProfilePostCell, ProfileItem>
   typealias ProfileReusableRegistration = UICollectionView.SupplementaryRegistration<ProfileHeaderView>
   typealias PostEmptyStateRegistration = UICollectionView.SupplementaryRegistration<PostsEmptyStateView>
-
-  enum Section: Int {
-    case header
-    case main
-    case emptyState
-  }
-
-  typealias Item = String
 }
