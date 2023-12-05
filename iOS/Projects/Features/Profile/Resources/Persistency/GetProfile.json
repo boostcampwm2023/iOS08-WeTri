@@ -2,22 +2,10 @@
   "code": null,
   "errorMessage": null,
   "data": {
-    "profile": {
-      "nickname": "홍승현",
-      "gender": "남자",
-      "birthdate": "2021-01-01",
-      "publicId": "adsd2daw-ad2dawd-q1323123",
-      "profileImage": "https://gblafytgdduy20857289.cdn.ntruss.com/30ab314b-a59a-44c8-b9c5-44d94b4542f0.png"
-    },
-    "posts": [
-      {
-        "id": 1,
-        "postUrl": "https://www.naver.com"
-      },
-      {
-        "id": 2,
-        "postUrl": "https://www.naver.com"
-      }
-    ]
+    "nickname": "홍승현",
+    "gender": "남자",
+    "birthdate": "2021-01-01",
+    "publicId": "adsd2daw-ad2dawd-q1323123",
+    "profileImage": "https://gblafytgdduy20857289.cdn.ntruss.com/30ab314b-a59a-44c8-b9c5-44d94b4542f0.png"
   }
 }

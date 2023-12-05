@@ -51,7 +51,6 @@ extension ProfileRepository: ProfileRepositoryRepresentable {
     }
     .decode(type: GWResponse<ProfileDTO>.self, decoder: jsonDecoder)
     .compactMap(\.data)
-    .map(\.profile)
     .tryMap {
       try Profile(profileData: Data(contentsOf: $0.profileImage), nickname: $0.nickname)
     }
