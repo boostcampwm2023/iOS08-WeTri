@@ -19,6 +19,7 @@ final class NoRecordsView: UIView {
     label.numberOfLines = 0
     label.font = .preferredFont(forTextStyle: .title3)
     label.textAlignment = .center
+    label.textColor = DesignSystemColor.primaryText
     return label
   }()
 

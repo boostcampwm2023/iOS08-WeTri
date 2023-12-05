@@ -28,7 +28,8 @@ final class RecordListViewController: UIViewController {
     label.translatesAutoresizingMaskIntoConstraints = false
     label.text = "오늘\n ??월 ??일 ?요일"
     label.numberOfLines = 0
-    label.font = .preferredFont(forTextStyle: .title1, with: .traitBold)
+    label.font = .preferredFont(forTextStyle: .title1, weight: .bold)
+    label.textColor = DesignSystemColor.primaryText
     return label
   }()
 
@@ -40,12 +41,13 @@ final class RecordListViewController: UIViewController {
     collectionView.translatesAutoresizingMaskIntoConstraints = false
     collectionView.delegate = self
     collectionView.showsHorizontalScrollIndicator = false
+    collectionView.backgroundColor = DesignSystemColor.secondaryBackground
     return collectionView
   }()
 
   private let goRecordButton: UIButton = {
     var configuration = UIButton.Configuration.mainEnabled(title: "기록하러가기")
-    configuration.font = .preferredFont(forTextStyle: .headline, with: .traitBold)
+    configuration.font = .preferredFont(forTextStyle: .headline, weight: .bold)
     let button = UIButton(configuration: configuration)
     button.translatesAutoresizingMaskIntoConstraints = false
     return button
@@ -152,6 +154,8 @@ private extension RecordListViewController {
 
 private extension RecordListViewController {
   func configureUI() {
+    view.backgroundColor = DesignSystemColor.secondaryBackground
+
     view.addSubview(todayLabel)
     NSLayoutConstraint.activate([
       todayLabel.topAnchor.constraint(equalTo: view.topAnchor),
@@ -172,6 +176,7 @@ private extension RecordListViewController {
       goRecordButton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
       goRecordButton.trailingAnchor.constraint(equalTo: view.trailingAnchor),
       goRecordButton.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+      goRecordButton.heightAnchor.constraint(equalToConstant: Metrics.buttonHeight),
     ])
 
     view.addSubview(noRecordsView)
@@ -232,6 +237,7 @@ private enum Metrics {
   static let componentInterval: CGFloat = 24
   static let itemWidthRatio: CGFloat = 2.45
   static let itemHeightRatio: CGFloat = 1.5
+  static let buttonHeight: CGFloat = 44
 }
 
 // MARK: RecordViewController DiffableDataSource

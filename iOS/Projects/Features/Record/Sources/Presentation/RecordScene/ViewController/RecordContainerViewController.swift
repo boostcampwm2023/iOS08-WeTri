@@ -7,6 +7,7 @@
 //
 
 import Combine
+import DesignSystem
 import UIKit
 
 // MARK: - RecordContainerViewController
@@ -47,7 +48,7 @@ private extension RecordContainerViewController {
 
 private extension RecordContainerViewController {
   func configureUI() {
-    view.backgroundColor = .systemBackground
+    view.backgroundColor = DesignSystemColor.secondaryBackground
     navigationController?.navigationBar.isHidden = true
     let safeArea = view.safeAreaLayoutGuide
 
