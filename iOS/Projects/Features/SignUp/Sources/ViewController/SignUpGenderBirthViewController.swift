@@ -18,6 +18,12 @@ public final class SignUpGenderBirthViewController: UIViewController {
   private var subscriptions: Set<AnyCancellable> = []
   private let dateFormatter = DateFormatter()
 
+  private let nextButtonTapSubject = PassthroughSubject<Void, Never>()
+
+  var nextButtonTapPublisher: AnyPublisher<Void, Never> {
+    return nextButtonTapSubject.eraseToAnyPublisher()
+  }
+
   private let titleLabel: UILabel = {
     let label = UILabel()
     label.translatesAutoresizingMaskIntoConstraints = false
@@ -207,7 +213,7 @@ private extension SignUpGenderBirthViewController {
 
     nextButton.publisher(.touchUpInside)
       .sink { [weak self] _ in
-        //
+        self?.nextButtonTapSubject.send()
       }
       .store(in: &subscriptions)
   }

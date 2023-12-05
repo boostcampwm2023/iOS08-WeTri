@@ -18,6 +18,9 @@ public final class SignUpContainerViewController: UIViewController {
   private let signUpGenderBirthViewController: SignUpGenderBirthViewController
   private let signUpProfileViewController: SignUpProfileViewController
 
+  private lazy var signUpGenderBirthView = signUpGenderBirthViewController.view
+  private lazy var signUpProfileView = signUpProfileViewController.view
+
   private let gwPageControl: GWPageControl = {
     let gwPageControl = GWPageControl(count: 2)
     gwPageControl.translatesAutoresizingMaskIntoConstraints = false
@@ -41,6 +44,19 @@ public final class SignUpContainerViewController: UIViewController {
   override public func viewDidLoad() {
     super.viewDidLoad()
     configureUI()
+    bindUI()
+  }
+}
+
+private extension SignUpContainerViewController {
+  func bindUI() {
+    signUpGenderBirthViewController.nextButtonTapPublisher
+      .sink { [weak self] _ in
+        self?.signUpGenderBirthView?.isHidden = true
+        self?.signUpProfileView?.isHidden = false
+        self?.gwPageControl.next()
+      }
+      .store(in: &subscriptions)
   }
 }
 
@@ -56,7 +72,12 @@ private extension SignUpContainerViewController {
       gwPageControl.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.safeAreaInterval),
     ])
 
-    guard let signUpGenderBirthView = signUpGenderBirthViewController.view else { return }
+    guard let signUpGenderBirthView,
+          let signUpProfileView
+    else {
+      return
+    }
+
     signUpGenderBirthView.translatesAutoresizingMaskIntoConstraints = false
     add(child: signUpGenderBirthViewController)
     NSLayoutConstraint.activate([
@@ -66,7 +87,6 @@ private extension SignUpContainerViewController {
       signUpGenderBirthView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
     ])
 
-    guard let signUpProfileView = signUpProfileViewController.view else { return }
     signUpProfileView.translatesAutoresizingMaskIntoConstraints = false
     add(child: signUpProfileViewController)
     NSLayoutConstraint.activate([
@@ -75,6 +95,8 @@ private extension SignUpContainerViewController {
       signUpProfileView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
       signUpProfileView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
     ])
+
+    signUpProfileView.isHidden = true
   }
 
   func add(child viewController: UIViewController) {
