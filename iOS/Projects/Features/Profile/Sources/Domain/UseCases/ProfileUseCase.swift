@@ -29,4 +29,8 @@ extension ProfileUseCase: ProfileUseCaseRepresentable {
   public func fetchProfile() -> AnyPublisher<Profile, Error> {
     return repository.fetchProfiles()
   }
+
+  public func fetchPosts(refresh: Bool = false) -> AnyPublisher<[Post], Error> {
+    return repository.fetchPosts(resetPagination: refresh)
+  }
 }
