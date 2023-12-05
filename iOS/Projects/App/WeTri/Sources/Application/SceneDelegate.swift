@@ -19,9 +19,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     let navigationController = UINavigationController()
     window = UIWindow(windowScene: windowScene)
     window?.rootViewController = navigationController
-    let coordinator = RecordFeatureCoordinator(navigationController: navigationController, isMockEnvironment: true)
-
-//    coordinating = coordinator
+    let coordinator = AppCoordinator(navigationController: navigationController)
+    coordinating = coordinator
     coordinator.start()
     window?.makeKeyAndVisible()
   }
