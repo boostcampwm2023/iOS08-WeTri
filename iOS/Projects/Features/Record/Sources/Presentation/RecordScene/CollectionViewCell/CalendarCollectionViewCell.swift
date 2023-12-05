@@ -26,7 +26,7 @@ final class CalendarCollectionViewCell: UICollectionViewCell {
     let label = UILabel()
     label.font = .preferredFont(forTextStyle: .footnote)
     label.text = "월"
-    label.textColor = DesignSystemColor.gray03
+    label.textColor = DesignSystemColor.gray02
     return label
   }()
 
@@ -34,7 +34,7 @@ final class CalendarCollectionViewCell: UICollectionViewCell {
     let label = UILabel()
     label.font = .preferredFont(forTextStyle: .body, with: .traitBold)
     label.text = "16"
-    label.textColor = DesignSystemColor.gray03
+    label.textColor = DesignSystemColor.gray02
     return label
   }()
 

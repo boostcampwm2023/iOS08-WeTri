@@ -176,6 +176,7 @@ private extension RecordListViewController {
       goRecordButton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
       goRecordButton.trailingAnchor.constraint(equalTo: view.trailingAnchor),
       goRecordButton.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+      goRecordButton.heightAnchor.constraint(equalToConstant: Metrics.buttonHeight),
     ])
 
     view.addSubview(noRecordsView)
@@ -236,6 +237,7 @@ private enum Metrics {
   static let componentInterval: CGFloat = 24
   static let itemWidthRatio: CGFloat = 2.45
   static let itemHeightRatio: CGFloat = 1.5
+  static let buttonHeight: CGFloat = 44
 }
 
 // MARK: RecordViewController DiffableDataSource
