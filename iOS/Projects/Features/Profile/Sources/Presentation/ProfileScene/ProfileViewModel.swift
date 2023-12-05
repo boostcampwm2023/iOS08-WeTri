@@ -63,10 +63,8 @@ extension ProfileViewModel: ProfileViewModelRepresentable {
       .catch { Just(.alert($0)) }
 
     let updatePostsPublisher = input.paginationEventPublisher
-      .flatMap(maxPublishers: .max(1)) { [useCase] _ in
-        Log.make().debug("호출됨")
-        return useCase.fetchPosts(refresh: false)
-      }
+      .map { _ in return false } // 새로고침 안함
+      .flatMap(useCase.fetchPosts)
       .map(ProfileViewModelState.updatePosts)
       .catch { Just(.alert($0)) }
 

@@ -17,6 +17,9 @@ public final class ProfileViewController: UICollectionViewController {
   private var dataSource: ProfileDataSource?
   private var headerInfo: Profile?
 
+  /// 페이지네이션 로딩 설정
+  private var isLoading: Bool = false
+
   private let viewModel: ProfileViewModelRepresentable
 
   // MARK: Initializations
@@ -152,6 +155,7 @@ private extension ProfileViewController {
       snapshot.deleteSections([.emptyState])
     }
     dataSource.apply(snapshot)
+    isLoading = false
   }
 }
 
@@ -172,7 +176,8 @@ public extension ProfileViewController {
     let height = scrollView.frame.size.height
 
     // 스크롤이 보이는 뷰 정도의 높이 이전까지 도달했을 때 업데이트
-    if offsetY > contentHeight - height {
+    if offsetY > contentHeight - height && isLoading == false {
+      isLoading = true
       paginationEventSubject.send(())
     }
   }
