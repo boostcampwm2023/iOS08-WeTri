@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// RandomMatching에서 WorkoutSession으로 화면전환 할 때 넘겨주는 데이터 입니다.
 struct WorkoutSessionElement {
   let startDate: Date
   let peers: [Peer]

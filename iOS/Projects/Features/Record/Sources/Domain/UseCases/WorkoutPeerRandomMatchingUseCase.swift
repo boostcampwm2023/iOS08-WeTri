@@ -37,6 +37,8 @@ extension WorkoutPeerRandomMatchingUseCase: WorkoutPeerRandomMatchingUseCaseRepr
     return repository.matchCancel()
   }
 
+  /// 만약 매칭이 잡혔으면 response의 값을 내려주고,
+  /// 매칭에 관한 request가 제대로 전달 되었지만 매칭이 잡히지 않았을 경우 nil을 내려준다.
   func isMatchedRandomPeer(
     isMatchedRandomPeersRequest: IsMatchedRandomPeersRequest
   ) -> AnyPublisher<Result<IsMatchedRandomPeersResponse?, Error>, Never> {
@@ -47,7 +49,6 @@ extension WorkoutPeerRandomMatchingUseCase: WorkoutPeerRandomMatchingUseCaseRepr
         case let .failure(error):
           return .failure(error)
         case let .success(response):
-          // 만약 매칭이 잡혔으면
           if response?.matched == true {
             return .success(response)
           }
