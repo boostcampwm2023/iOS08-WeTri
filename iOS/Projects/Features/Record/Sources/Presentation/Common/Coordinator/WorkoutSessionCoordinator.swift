@@ -49,6 +49,8 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
   }
 
   func pushWorkoutSession(dependency: WorkoutSessionDependency) {
+    let oneSecondsTimerUseCase = OneSecondsTimerUseCase(initDate: .now)
+
     guard let jsonPath = Bundle(for: Self.self).path(forResource: "WorkoutSession", ofType: "json"),
           let jsonData = try? Data(contentsOf: .init(filePath: jsonPath))
     else {
@@ -75,6 +77,7 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
     let useCase = WorkoutRecordUseCase(repository: repository)
     let viewModel = WorkoutSessionContainerViewModel(
       workoutRecordUseCase: useCase,
+      oneSecondsTimerUseCase: oneSecondsTimerUseCase,
       coordinating: self,
       dependency: dependency
     )

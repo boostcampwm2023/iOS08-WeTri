@@ -30,7 +30,7 @@ public typealias WorkoutSessionContainerViewModelOutput = AnyPublisher<WorkoutSe
 
 public enum WorkoutSessionContainerState {
   case idle
-  case updateTime(TimeInterval)
+  case updateTime(Int)
   case alert(Error)
 }
 
@@ -47,6 +47,8 @@ final class WorkoutSessionContainerViewModel {
 
   private var subscriptions: Set<AnyCancellable> = []
 
+  private let oneSecondsTimerUseCase: OneSecondsTimerUseCaseRepresentable
+
   private let workoutRecordUseCase: WorkoutRecordUseCaseRepresentable
 
   private weak var coordinating: WorkoutSessionCoordinating?
@@ -55,12 +57,14 @@ final class WorkoutSessionContainerViewModel {
 
   init(
     workoutRecordUseCase: WorkoutRecordUseCaseRepresentable,
+    oneSecondsTimerUseCase: OneSecondsTimerUseCaseRepresentable,
     coordinating: WorkoutSessionCoordinating,
     dependency: WorkoutSessionViewModelDependency
   ) {
     self.workoutRecordUseCase = workoutRecordUseCase
     self.coordinating = coordinating
     self.dependency = dependency
+    self.oneSecondsTimerUseCase = oneSecondsTimerUseCase
   }
 }
 
@@ -106,9 +110,8 @@ extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepr
       .catch { return Just(.alert($0)) }
       .eraseToAnyPublisher()
 
-    let workoutTimerPublisher = Timer.publish(every: 1, on: .main, in: .common)
-      .autoconnect()
-      .map(dependency.startDate.timeIntervalSince(_:))
+    let workoutTimerPublisher = oneSecondsTimerUseCase
+      .oneSecondsTimerPublisher()
       .map { WorkoutSessionContainerState.updateTime($0) }
 
     return Just(WorkoutSessionContainerState.idle).merge(with: recordErrorPublisher, workoutTimerPublisher).eraseToAnyPublisher()

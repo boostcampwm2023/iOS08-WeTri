@@ -74,7 +74,7 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
   }
 
   private func bindUseCase() {
-    useCase.matcheStart(workoutSetting: workoutSetting)
+    useCase.matchStart(workoutSetting: workoutSetting)
       .receive(on: RunLoop.main)
       .sink { [weak self] results in
         switch results {

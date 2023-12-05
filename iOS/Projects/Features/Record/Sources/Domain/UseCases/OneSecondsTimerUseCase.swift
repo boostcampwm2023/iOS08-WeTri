@@ -8,6 +8,7 @@
 
 import Combine
 import Foundation
+import Log
 
 // MARK: - OneSecondsTimerUseCaseRepresentable
 
@@ -20,6 +21,7 @@ protocol OneSecondsTimerUseCaseRepresentable: TimerUseCaseRepresentable {
 final class OneSecondsTimerUseCase: TimerUseCase {
   override init(initDate: Date, timerPeriod: Double = 1) {
     super.init(initDate: initDate, timerPeriod: timerPeriod)
+    startTimer()
   }
 }
 
@@ -27,7 +29,6 @@ final class OneSecondsTimerUseCase: TimerUseCase {
 
 extension OneSecondsTimerUseCase: OneSecondsTimerUseCaseRepresentable {
   func oneSecondsTimerPublisher() -> AnyPublisher<Int, Never> {
-    startTimer()
     return intervalCurrentAndInitEverySecondsPublisher()
       .map { abs($0) }
       .eraseToAnyPublisher()

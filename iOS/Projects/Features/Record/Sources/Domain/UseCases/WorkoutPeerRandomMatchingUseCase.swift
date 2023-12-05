@@ -12,7 +12,7 @@ import Foundation
 // MARK: - WorkoutPeerRandomMatchingUseCaseRepresentable
 
 protocol WorkoutPeerRandomMatchingUseCaseRepresentable {
-  func matcheStart(workoutSetting: WorkoutSetting) -> AnyPublisher<Result<Void, Error>, Never>
+  func matchStart(workoutSetting: WorkoutSetting) -> AnyPublisher<Result<Void, Error>, Never>
   func matchCancel()
   func isMatchedRandomPeer(isMatchedRandomPeersRequest: IsMatchedRandomPeersRequest) -> AnyPublisher<Result<IsMatchedRandomPeersResponse?, Error>, Never>
 }
@@ -29,14 +29,14 @@ struct WorkoutPeerRandomMatchingUseCase {
 // MARK: WorkoutPeerRandomMatchingUseCaseRepresentable
 
 extension WorkoutPeerRandomMatchingUseCase: WorkoutPeerRandomMatchingUseCaseRepresentable {
-  func matcheStart(workoutSetting: WorkoutSetting) -> AnyPublisher<Result<Void, Error>, Never> {
+  func matchStart(workoutSetting: WorkoutSetting) -> AnyPublisher<Result<Void, Error>, Never> {
     return repository.matchStart(workoutTypeCode: workoutSetting.workoutType.typeCode)
   }
-  
+
   func matchCancel() {
     return repository.matchCancel()
   }
-  
+
   func isMatchedRandomPeer(
     isMatchedRandomPeersRequest: IsMatchedRandomPeersRequest
   ) -> AnyPublisher<Result<IsMatchedRandomPeersResponse?, Error>, Never> {
