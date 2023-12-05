@@ -24,7 +24,7 @@ typealias SignUpGenderBirthViewModelOutput = AnyPublisher<SignUpGenderBirthState
 
 enum SignUpGenderBirthState {
   case idle
-  case success
+  case success(GenderBirth)
   case customError(Error)
 }
 
@@ -32,6 +32,11 @@ enum SignUpGenderBirthState {
 
 final class SignUpGenderBirthViewModel {
   private var subscriptions: Set<AnyCancellable> = []
+  private let dateFormatUseCase: DateFormatUseCaseRepresentable
+
+  init(dateFormatUseCase: DateFormatUseCaseRepresentable) {
+    self.dateFormatUseCase = dateFormatUseCase
+  }
 }
 
 // MARK: SignUpGenderBirthViewModelRepresentable
@@ -52,7 +57,6 @@ extension SignUpGenderBirthViewModel: SignUpGenderBirthViewModelRepresentable {
 
     input.maleButtonTap
       .sink { _ in
-        //
         gender = .male
         isGenderSelected = true
         confirmSelected.send()
@@ -61,7 +65,6 @@ extension SignUpGenderBirthViewModel: SignUpGenderBirthViewModelRepresentable {
 
     input.femaleButtonTap
       .sink { _ in
-        //
         gender = .female
         isGenderSelected = true
         confirmSelected.send()
@@ -69,8 +72,8 @@ extension SignUpGenderBirthViewModel: SignUpGenderBirthViewModelRepresentable {
       .store(in: &subscriptions)
 
     input.birthSelect
-      .sink { _ in
-        //
+      .sink { [weak self] date in
+        birth = self?.dateFormatUseCase.formatyyyyMMdd(date: date)
         isBirthSelected = true
         confirmSelected.send()
       }
@@ -82,8 +85,17 @@ extension SignUpGenderBirthViewModel: SignUpGenderBirthViewModelRepresentable {
           return Just(.customError(SignUpGenderBirthViewModelError.eitherNotSelected))
             .eraseToAnyPublisher()
         }
-        return Just(.success)
-          .eraseToAnyPublisher()
+        guard let gender,
+              let birth
+        else {
+          return Just(.customError(SignUpGenderBirthViewModelError.invalidBinding))
+            .eraseToAnyPublisher()
+        }
+        return Just(.success(.init(
+          gender: gender,
+          birth: birth
+        )))
+        .eraseToAnyPublisher()
       }
       .eraseToAnyPublisher()
 
@@ -105,6 +117,7 @@ protocol SignUpGenderBirthViewModelRepresentable {
 // MARK: - SignUpGenderBirthViewModelError
 
 enum SignUpGenderBirthViewModelError: Error {
+  case invalidBinding
   case eitherNotSelected
 }
 
