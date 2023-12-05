@@ -22,7 +22,7 @@ final class NickNameBoxView: UIView {
     return nickNameDidChangedSubject.eraseToAnyPublisher()
   }
 
-  private let textField: UITextField = {
+  let textField: UITextField = {
     let textField = UITextField()
     textField.translatesAutoresizingMaskIntoConstraints = false
     textField.font = .systemFont(ofSize: 16, weight: .semibold)

@@ -124,7 +124,7 @@ private extension SignUpProfileViewController {
 
 private extension SignUpProfileViewController {
   @objc func viewTapped(gestureRecognizer _: UITapGestureRecognizer) {
-    view.endEditing(true)
+    nickNameBoxView.textField.resignFirstResponder()
   }
 }
 
