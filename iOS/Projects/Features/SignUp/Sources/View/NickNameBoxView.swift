@@ -26,7 +26,7 @@ final class NickNameBoxView: UIView {
     let textField = UITextField()
     textField.translatesAutoresizingMaskIntoConstraints = false
     textField.font = .systemFont(ofSize: 16, weight: .semibold)
-    textField.textColor = .black
+    textField.textColor = DesignSystemColor.primaryText
     textField.placeholder = "닉네임을 입력해주세요!"
     return textField
   }()
@@ -76,7 +76,7 @@ private extension NickNameBoxView {
   }
 
   func enabledNickName() {
-    textField.textColor = .black
+    textField.textColor = DesignSystemColor.primaryText
     layer.borderColor = DesignSystemColor.main03.cgColor
     cancelButton.tintColor = DesignSystemColor.main03
   }

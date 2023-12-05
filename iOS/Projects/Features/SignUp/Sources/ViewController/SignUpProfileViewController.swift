@@ -22,6 +22,7 @@ public final class SignUpProfileViewController: UIViewController {
     label.translatesAutoresizingMaskIntoConstraints = false
     label.font = .preferredFont(forTextStyle: .title2, weight: .semibold)
     label.text = "프로필을 만들어 볼까요?"
+    label.textColor = DesignSystemColor.primaryText
     return label
   }()
 
@@ -36,6 +37,7 @@ public final class SignUpProfileViewController: UIViewController {
     label.translatesAutoresizingMaskIntoConstraints = false
     label.font = .preferredFont(forTextStyle: .body, weight: .semibold)
     label.text = "닉네임"
+    label.textColor = DesignSystemColor.primaryText
     return label
   }()
 

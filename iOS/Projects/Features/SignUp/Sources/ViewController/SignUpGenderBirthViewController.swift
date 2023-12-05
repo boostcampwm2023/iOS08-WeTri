@@ -23,6 +23,7 @@ public final class SignUpGenderBirthViewController: UIViewController {
     label.translatesAutoresizingMaskIntoConstraints = false
     label.font = .preferredFont(forTextStyle: .title2, weight: .semibold)
     label.text = "먼저, 성별과 태어난 날을 알려주세요."
+    label.textColor = DesignSystemColor.primaryText
     return label
   }()
 
@@ -31,6 +32,7 @@ public final class SignUpGenderBirthViewController: UIViewController {
     label.translatesAutoresizingMaskIntoConstraints = false
     label.font = .preferredFont(forTextStyle: .body, weight: .semibold)
     label.text = "성별"
+    label.textColor = DesignSystemColor.primaryText
     return label
   }()
 
@@ -60,6 +62,7 @@ public final class SignUpGenderBirthViewController: UIViewController {
     label.translatesAutoresizingMaskIntoConstraints = false
     label.font = .preferredFont(forTextStyle: .body, weight: .semibold)
     label.text = "생년월일"
+    label.textColor = DesignSystemColor.primaryText
     return label
   }()
 

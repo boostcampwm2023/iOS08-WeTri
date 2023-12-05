@@ -29,6 +29,7 @@ final class DatePickerBoxView: UIView {
     label.translatesAutoresizingMaskIntoConstraints = false
     label.font = .preferredFont(forTextStyle: .body, weight: .semibold)
     label.text = "1998년 06월 15일"
+    label.textColor = DesignSystemColor.primaryText
     return label
   }()
 
