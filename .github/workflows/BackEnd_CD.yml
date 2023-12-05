@@ -28,3 +28,14 @@ jobs:
           push: true
           tags: ${{ secrets.NCP_CONTAINER_REGISTRY }}/my-app:latest
           platforms: linux/amd64
+
+      - name: SSH to Internal Server and Deploy
+        run: |
+          sshpass -p ${{ secrets.BASTION_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.BASTION_USER }}@${{ secrets.BASTION_HOST }} -tt "
+            sshpass -p ${{ secrets.SERVER_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.INTERNAL_SERVER_IP }} '
+              docker pull ${{ secrets.NCP_CONTAINER_REGISTRY }}/my-app:latest;
+              docker stop my-app || true;
+              docker rm my-app || true;
+              docker run --name my-app -d -p 3000:3000 -p 3003:3003 ${{ secrets.NCP_CONTAINER_REGISTRY }}/my-app:latest;
+              docker cp /var/env/.env my-app:/app/.env;
+            '"
