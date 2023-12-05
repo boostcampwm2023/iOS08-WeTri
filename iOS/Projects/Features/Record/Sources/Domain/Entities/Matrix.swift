@@ -17,28 +17,28 @@ struct MatrixOfTwoDimension {
     self.value = value
   }
 
-  func add(_ beAdded: MatrixOfTwoDimension) -> Self? {
+  func add(_ secondMatrix: MatrixOfTwoDimension) -> Self? {
     guard
-      countOfRow == beAdded.countOfRow,
-      countOfColumn == beAdded.countOfColumn
+      countOfRow == secondMatrix.countOfRow,
+      countOfColumn == secondMatrix.countOfColumn
     else {
       return nil
     }
-    return .init(zip(value, beAdded.value)
+    return .init(zip(value, secondMatrix.value)
       .map { value1, value2 in
         return zip(value1, value2).map { $0.0 + $0.1 }
       }
     )
   }
 
-  func sub(_ besubbed: MatrixOfTwoDimension) -> Self? {
+  func sub(_ secondMatrix: MatrixOfTwoDimension) -> Self? {
     guard
-      countOfRow == besubbed.countOfRow,
-      countOfColumn == besubbed.countOfColumn
+      countOfRow == secondMatrix.countOfRow,
+      countOfColumn == secondMatrix.countOfColumn
     else {
       return nil
     }
-    return .init(zip(value, besubbed.value)
+    return .init(zip(value, secondMatrix.value)
       .map { value1, value2 in
         return zip(value1, value2).map { $0.0 - $0.1 }
       }
