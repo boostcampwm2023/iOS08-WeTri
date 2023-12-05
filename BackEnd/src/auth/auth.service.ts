@@ -132,7 +132,7 @@ export class AuthService {
       const mappedUserID = uuidv4();
       await this.redisData.set(mappedUserID, userId, 'EX', 600);
       return {
-        redirectUrl: 'api/v1/auth/signup',
+        isFirstLogined: true,
         mappedUserID,
         provider: 'apple',
       };

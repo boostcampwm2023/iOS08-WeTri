@@ -2,13 +2,13 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 import { SuccessResDto } from 'src/common/dto/SuccessRes.dto';
 
-class SigninRedirectRes {
+class SigninFirstRes {
   @ApiProperty({
-    example: 'api/v1/...',
-    description: 'Redirect url',
+    example: true,
+    description: '첫 로그인이면 true',
   })
   @IsString()
-  redirectUrl: string;
+  isFirstLogined: boolean;
 
   @ApiProperty({
     example: '1233498sdafksdjhfk...',
@@ -26,7 +26,7 @@ class SigninRedirectRes {
   provider: string;
 }
 
-export class SigninRedirectResDto extends SuccessResDto {
-  @ApiProperty({ type: () => SigninRedirectRes })
-  data: SigninRedirectRes;
+export class SigninFirstResDto extends SuccessResDto {
+  @ApiProperty({ type: () => SigninFirstRes })
+  data: SigninFirstRes;
 }

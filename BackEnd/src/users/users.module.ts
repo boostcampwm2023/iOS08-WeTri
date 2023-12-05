@@ -8,7 +8,11 @@ import { ProfilesModule } from 'src/profiles/profiles.module';
 import { PostsModule } from 'src/posts/posts.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [
+    TypeOrmModule.forFeature([User]),
+    forwardRef(() => AuthModule),
+    ProfilesModule,
+  ],
   exports: [UsersService], //exports 해야 다른 모듈에서 사용 가능
   controllers: [UsersController],
   providers: [UsersService],
