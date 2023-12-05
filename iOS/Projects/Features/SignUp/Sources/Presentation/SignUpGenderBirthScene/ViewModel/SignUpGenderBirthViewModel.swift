@@ -12,17 +12,17 @@ import Log
 
 // MARK: - SignUpGenderBirthViewModelInput
 
-struct SignUpGenderBirthViewModelInput {
+public struct SignUpGenderBirthViewModelInput {
   let maleButtonTap: AnyPublisher<Void, Never>
   let femaleButtonTap: AnyPublisher<Void, Never>
   let birthSelect: AnyPublisher<Date, Never>
 }
 
-typealias SignUpGenderBirthViewModelOutput = AnyPublisher<SignUpGenderBirthState, Never>
+public typealias SignUpGenderBirthViewModelOutput = AnyPublisher<SignUpGenderBirthState, Never>
 
 // MARK: - SignUpGenderBirthState
 
-enum SignUpGenderBirthState {
+public enum SignUpGenderBirthState {
   case idle
   case success(GenderBirth)
   case customError(Error)
@@ -30,11 +30,11 @@ enum SignUpGenderBirthState {
 
 // MARK: - SignUpGenderBirthViewModel
 
-final class SignUpGenderBirthViewModel {
+public final class SignUpGenderBirthViewModel {
   private var subscriptions: Set<AnyCancellable> = []
   private let dateFormatUseCase: DateFormatUseCaseRepresentable
 
-  init(dateFormatUseCase: DateFormatUseCaseRepresentable) {
+  public init(dateFormatUseCase: DateFormatUseCaseRepresentable) {
     self.dateFormatUseCase = dateFormatUseCase
   }
 }
@@ -42,7 +42,7 @@ final class SignUpGenderBirthViewModel {
 // MARK: SignUpGenderBirthViewModelRepresentable
 
 extension SignUpGenderBirthViewModel: SignUpGenderBirthViewModelRepresentable {
-  func transform(input: SignUpGenderBirthViewModelInput) -> SignUpGenderBirthViewModelOutput {
+  public func transform(input: SignUpGenderBirthViewModelInput) -> SignUpGenderBirthViewModelOutput {
     for subscription in subscriptions {
       subscription.cancel()
     }
@@ -91,6 +91,8 @@ extension SignUpGenderBirthViewModel: SignUpGenderBirthViewModelRepresentable {
           return Just(.customError(SignUpGenderBirthViewModelError.invalidBinding))
             .eraseToAnyPublisher()
         }
+        Log.make().debug("\(gender.rawValue)")
+        Log.make().debug("\(birth)")
         return Just(.success(.init(
           gender: gender,
           birth: birth
@@ -110,7 +112,7 @@ extension SignUpGenderBirthViewModel: SignUpGenderBirthViewModelRepresentable {
 
 // MARK: - SignUpGenderBirthViewModelRepresentable
 
-protocol SignUpGenderBirthViewModelRepresentable {
+public protocol SignUpGenderBirthViewModelRepresentable {
   func transform(input: SignUpGenderBirthViewModelInput) -> SignUpGenderBirthViewModelOutput
 }
 
@@ -123,7 +125,7 @@ enum SignUpGenderBirthViewModelError: Error {
 
 // MARK: - GenderBirth
 
-struct GenderBirth {
+public struct GenderBirth {
   let gender: Gender
   let birth: String
 }

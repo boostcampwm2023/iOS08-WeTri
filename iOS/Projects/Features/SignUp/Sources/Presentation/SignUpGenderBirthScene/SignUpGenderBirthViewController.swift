@@ -33,7 +33,7 @@ public final class SignUpGenderBirthViewController: UIViewController {
     return genderBirthSubject.eraseToAnyPublisher()
   }
 
-  init(viewModel: SignUpGenderBirthViewModelRepresentable) {
+  public init(viewModel: SignUpGenderBirthViewModelRepresentable) {
     self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
   }
@@ -206,6 +206,7 @@ private extension SignUpGenderBirthViewController {
         else {
           return
         }
+        self?.datePickSubject.send(date)
         self?.datePickerBoxView.configureComponent(text: "\(year)년 \(month)월 \(day)일")
       }
       .store(in: &subscriptions)
@@ -221,6 +222,7 @@ private extension SignUpGenderBirthViewController {
         self?.maleButton.isSelected = true
         self?.femaleButton.isSelected = false
         self?.buttonUpdate()
+        self?.maleButtonTapSubject.send()
       }
       .store(in: &subscriptions)
 
@@ -229,6 +231,7 @@ private extension SignUpGenderBirthViewController {
         self?.maleButton.isSelected = false
         self?.femaleButton.isSelected = true
         self?.buttonUpdate()
+        self?.femaleButtonTapSubject.send()
       }
       .store(in: &subscriptions)
 
@@ -259,6 +262,7 @@ private extension SignUpGenderBirthViewController {
       break
     case let .success(genderBirth):
       genderBirthSubject.send(genderBirth)
+      nextButton.configuration = UIButton.Configuration.mainEnabled(title: "다음")
       nextButton.isEnabled = true
     case let .customError(error):
       Log.make().error("\(error)")

@@ -20,7 +20,9 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     guard let windowScene = scene as? UIWindowScene else { return }
     window = UIWindow(windowScene: windowScene)
     let vc = SignUpContainerViewController(
-      signUpGenderBirthViewController: SignUpGenderBirthViewController(),
+      signUpGenderBirthViewController: SignUpGenderBirthViewController(
+        viewModel: SignUpGenderBirthViewModel(dateFormatUseCase: DateFormatUseCase())
+      ),
       signUpProfileViewController: SignUpProfileViewController()
     )
     window?.rootViewController = vc

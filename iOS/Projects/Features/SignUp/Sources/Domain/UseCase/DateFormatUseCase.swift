@@ -10,16 +10,18 @@ import Foundation
 
 // MARK: - DateFormatUseCaseRepresentable
 
-protocol DateFormatUseCaseRepresentable {
+public protocol DateFormatUseCaseRepresentable {
   func formatyyyyMMdd(date: Date) -> String
 }
 
 // MARK: - DateFormatUseCase
 
-final class DateFormatUseCase: DateFormatUseCaseRepresentable {
-  func formatyyyyMMdd(date: Date) -> String {
+public final class DateFormatUseCase: DateFormatUseCaseRepresentable {
+  public init() {}
+
+  public func formatyyyyMMdd(date: Date) -> String {
     let dateFormatter = DateFormatter()
-    dateFormatter.dateFormat = "yyyy-MM-dd-"
+    dateFormatter.dateFormat = "yyyy-MM-dd"
     return dateFormatter.string(from: date)
   }
 }
