@@ -60,6 +60,8 @@ extension NickNameCheckerView {
 
 private extension NickNameCheckerView {
   func configureUI() {
+    backgroundColor = DesignSystemColor.primaryBackground
+    
     addSubview(imageView)
     NSLayoutConstraint.activate([
       imageView.leadingAnchor.constraint(equalTo: leadingAnchor),

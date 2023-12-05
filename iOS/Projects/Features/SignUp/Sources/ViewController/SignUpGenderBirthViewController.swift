@@ -102,7 +102,7 @@ public final class SignUpGenderBirthViewController: UIViewController {
 
 private extension SignUpGenderBirthViewController {
   func configureUI() {
-    view.backgroundColor = .systemBackground
+    view.backgroundColor = DesignSystemColor.primaryBackground
 
     [maleButton, femaleButton].forEach {
       genderStackView.addArrangedSubview($0)

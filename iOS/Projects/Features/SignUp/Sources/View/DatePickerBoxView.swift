@@ -61,7 +61,7 @@ extension DatePickerBoxView {
 
 private extension DatePickerBoxView {
   func configureUI() {
-    backgroundColor = .systemBackground
+    backgroundColor = DesignSystemColor.primaryBackground
     layer.borderColor = DesignSystemColor.main03.cgColor
     layer.borderWidth = 1.5
     layer.cornerRadius = 10.0
