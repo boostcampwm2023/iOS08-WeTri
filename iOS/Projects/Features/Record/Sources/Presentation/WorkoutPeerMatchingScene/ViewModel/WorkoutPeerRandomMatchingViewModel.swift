@@ -81,7 +81,7 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
         case .failure:
           self?.cancelPeerRandomMatching()
         case .success:
-          self?.startIsMatchedRandomPeer(every: Constants.pollingPeroid)
+          self?.startIsMatchedRandomPeer(every: Constants.pollingPeroide)
           self?.cancelPeerRandomMatching(after: Constants.maximumCouldWaitTime)
         }
       }
@@ -122,6 +122,10 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
       .store(in: &subscriptions)
   }
 
+  /// matche를 한다고 계속 요청을 보냅니다.
+  /// UseCase쪽에서 매치가 되었다고 한다면,
+  ///   매치 성사 되었을 떄:  pushWorkoutSession 함수로 coordinator를 통해서 다음 화면으로 넘어갑니다.
+  ///   매치 성사가 안 되었을 때: 2초마다 계속해서 요청을 보냅니다.
   func requestIsMatchedRandomPeers(request: IsMatchedRandomPeersRequest) {
     useCase
       .isMatchedRandomPeer(isMatchedRandomPeersRequest: request)
@@ -150,7 +154,7 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
       return
     }
     let peers = peersResponse.map { Peer(nickname: $0.nickname, imageURL: $0.publicID) }
-    coordinating?.finish(workoutSessionElement: .init(startDate: startDate, peers: peers, roomID: roomID))
+    coordinating?.finish(workoutSessionElement: .init(startDateString: startDate, peers: peers, roomID: roomID))
   }
 
   private func cancelPeerRandomMatching() {
@@ -159,7 +163,7 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
   }
 
   private enum Constants {
-    static let pollingPeroid: Double = 2
+    static let pollingPeroide: Double = 2
     static let maximumCouldWaitTime: Double = 150
   }
 }

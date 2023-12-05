@@ -32,12 +32,14 @@ extension WorkoutPeerRandomMatchingUseCase: WorkoutPeerRandomMatchingUseCaseRepr
   func matcheStart(workoutSetting: WorkoutSetting) -> AnyPublisher<Result<Void, Error>, Never> {
     return repository.matchStart(workoutTypeCode: workoutSetting.workoutType.typeCode)
   }
-
+  
   func matchCancel() {
     return repository.matchCancel()
   }
-
-  func isMatchedRandomPeer(isMatchedRandomPeersRequest: IsMatchedRandomPeersRequest) -> AnyPublisher<Result<IsMatchedRandomPeersResponse?, Error>, Never> {
+  
+  func isMatchedRandomPeer(
+    isMatchedRandomPeersRequest: IsMatchedRandomPeersRequest
+  ) -> AnyPublisher<Result<IsMatchedRandomPeersResponse?, Error>, Never> {
     return repository
       .isMatchedRandomPeer(isMatchedRandomPeersRequest: isMatchedRandomPeersRequest)
       .map { result -> Result<IsMatchedRandomPeersResponse?, Error> in

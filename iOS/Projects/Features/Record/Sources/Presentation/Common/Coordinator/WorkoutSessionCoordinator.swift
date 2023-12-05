@@ -101,7 +101,7 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
 
   func pushCountDownBeforeWorkout() {
     // TODO: CountDown 관련 ViewController 생성
-    let useCase = CountDownBeforeWorkoutStartTimerUseCase(initDate: .now + 8)
+    let useCase = CountDownBeforeWorkoutStartTimerUseCase(initDate: workoutSessionElement.startDate)
 
     let viewModel = CountDownBeforeWorkoutViewModel(coordinator: self, useCase: useCase)
 
