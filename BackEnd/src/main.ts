@@ -15,6 +15,7 @@ async function bootstrap() {
       transformOptions: {
         enableImplicitConversion: true,
       },
+      whitelist: true
     }),
   );
   app.useGlobalFilters(new HttpExceptionFilter());
