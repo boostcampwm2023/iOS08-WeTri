@@ -23,6 +23,7 @@ public final class SignUpGenderBirthViewController: UIViewController {
     label.translatesAutoresizingMaskIntoConstraints = false
     label.font = .preferredFont(forTextStyle: .title2, weight: .semibold)
     label.text = "먼저, 성별과 태어난 날을 알려주세요."
+    label.textColor = DesignSystemColor.primaryText
     return label
   }()
 
@@ -31,6 +32,7 @@ public final class SignUpGenderBirthViewController: UIViewController {
     label.translatesAutoresizingMaskIntoConstraints = false
     label.font = .preferredFont(forTextStyle: .body, weight: .semibold)
     label.text = "성별"
+    label.textColor = DesignSystemColor.primaryText
     return label
   }()
 
@@ -60,6 +62,7 @@ public final class SignUpGenderBirthViewController: UIViewController {
     label.translatesAutoresizingMaskIntoConstraints = false
     label.font = .preferredFont(forTextStyle: .body, weight: .semibold)
     label.text = "생년월일"
+    label.textColor = DesignSystemColor.primaryText
     return label
   }()
 
@@ -99,7 +102,7 @@ public final class SignUpGenderBirthViewController: UIViewController {
 
 private extension SignUpGenderBirthViewController {
   func configureUI() {
-    view.backgroundColor = .systemBackground
+    view.backgroundColor = DesignSystemColor.primaryBackground
 
     [maleButton, femaleButton].forEach {
       genderStackView.addArrangedSubview($0)
@@ -152,7 +155,7 @@ private extension SignUpGenderBirthViewController {
     view.addSubview(nextButton)
     NSLayoutConstraint.activate([
       nextButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.safeAreaInterval),
-      nextButton.topAnchor.constraint(equalTo: datePicker.bottomAnchor, constant: 5),
+      nextButton.topAnchor.constraint(equalTo: datePicker.bottomAnchor, constant: Metrics.datePickerToNextButton),
       nextButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.safeAreaInterval),
       nextButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -Metrics.safeAreaInterval),
     ])
@@ -222,6 +225,7 @@ private enum Metrics {
   static let topInterval: CGFloat = 81
   static let sectionInterval: CGFloat = 48
   static let componentInterval: CGFloat = 9
+  static let datePickerToNextButton: CGFloat = 5
 }
 
 // MARK: - DateFormatter

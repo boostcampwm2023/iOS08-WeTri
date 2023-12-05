@@ -29,6 +29,7 @@ final class DatePickerBoxView: UIView {
     label.translatesAutoresizingMaskIntoConstraints = false
     label.font = .preferredFont(forTextStyle: .body, weight: .semibold)
     label.text = "1998년 06월 15일"
+    label.textColor = DesignSystemColor.primaryText
     return label
   }()
 
@@ -60,24 +61,24 @@ extension DatePickerBoxView {
 
 private extension DatePickerBoxView {
   func configureUI() {
-    backgroundColor = .systemBackground
+    backgroundColor = DesignSystemColor.primaryBackground
     layer.borderColor = DesignSystemColor.main03.cgColor
     layer.borderWidth = 1.5
     layer.cornerRadius = 10.0
 
     addSubview(birthLabel)
     NSLayoutConstraint.activate([
-      birthLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-      birthLabel.topAnchor.constraint(equalTo: topAnchor, constant: 13),
-      birthLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -13),
+      birthLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Metrics.parentViewInterval),
+      birthLabel.topAnchor.constraint(equalTo: topAnchor, constant: Metrics.topBottomInteval),
+      birthLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Metrics.topBottomInteval),
     ])
 
     addSubview(calendarButton)
     NSLayoutConstraint.activate([
-      calendarButton.topAnchor.constraint(equalTo: topAnchor, constant: 13),
-      calendarButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
-      calendarButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -13),
-      calendarButton.widthAnchor.constraint(equalToConstant: 32),
+      calendarButton.topAnchor.constraint(equalTo: topAnchor, constant: Metrics.topBottomInteval),
+      calendarButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Metrics.parentViewInterval),
+      calendarButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Metrics.topBottomInteval),
+      calendarButton.widthAnchor.constraint(equalToConstant: Metrics.buttonWidth),
     ])
   }
 
@@ -89,4 +90,12 @@ private extension DatePickerBoxView {
       }
       .store(in: &subscriptions)
   }
+}
+
+// MARK: - Metrics
+
+private enum Metrics {
+  static let parentViewInterval: CGFloat = 16
+  static let topBottomInteval: CGFloat = 13
+  static let buttonWidth: CGFloat = 32
 }
