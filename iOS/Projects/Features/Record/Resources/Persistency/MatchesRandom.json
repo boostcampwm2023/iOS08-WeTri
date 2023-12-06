@@ -5,17 +5,17 @@
     "matched": true,
     "liveWorkoutStartTime": "2023-12-05 16:33:00",
     "roomId": "uuid",
-    "publicId": "someString",
+    "publicId": "someStringss",
     "peers": [
       {
-        "nickname": "nickname",
+        "nickname": "나는 1번 타자",
         "publicId": "someString",
         "profileImage": "SomeURL",
         "etc": "그 외 나머지 모든 컬럼"
       },
       {
-        "nickname": "nickname",
-        "publicId": "someString",
+        "nickname": "나는 2번타자",
+        "publicId": "someStringw",
         "profileImage": "SomeURL",
         "etc": "그 외 나머지 모든 컬럼"
       }

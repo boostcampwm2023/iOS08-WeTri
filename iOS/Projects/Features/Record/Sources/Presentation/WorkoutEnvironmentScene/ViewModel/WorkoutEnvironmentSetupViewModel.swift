@@ -160,9 +160,14 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
 
     switch mode {
     case .solo:
+      let sessionPeerTypeOfMe = SessionPeerType(
+        nickname: userInformationUseCase.userNickName(),
+        id: "",
+        profileImageURL: userInformationUseCase.userProfileImageURL()
+      )
       coordinator?.finish(
         workoutSessionComponents: .init(
-          participants: [],
+          participants: [sessionPeerTypeOfMe],
           startDate: .now + 3,
           roomID: "",
           id: "",

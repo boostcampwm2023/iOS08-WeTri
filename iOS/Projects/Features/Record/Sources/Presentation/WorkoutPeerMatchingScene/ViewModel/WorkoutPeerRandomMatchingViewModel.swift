@@ -155,14 +155,20 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
       return
     }
     let peers = peersResponse.map { SessionPeerType(nickname: $0.nickname, id: $0.publicID, profileImageURL: URL(string: $0.profileImage)) }
+    let sessionPeerTypeOfMe = SessionPeerType(
+      nickname: userInformationUseCase.userNickName(),
+      id: id,
+      profileImageURL: userInformationUseCase.userProfileImageURL()
+    )
+
     let workoutSessionComponents = WorkoutSessionComponents(
-      participants: peers,
+      participants: [sessionPeerTypeOfMe] + peers,
       startDate: startDate,
       roomID: roomID,
       id: id,
       workoutTypeCode: workoutSetting.workoutType,
-      nickname: userInformationUseCase.userNickName(),
-      userProfileImage: userInformationUseCase.userProfileImageURL()
+      nickname: sessionPeerTypeOfMe.nickname,
+      userProfileImage: sessionPeerTypeOfMe.profileImageURL
     )
     coordinating?.finish(workoutSessionComponents: workoutSessionComponents)
   }
