@@ -36,15 +36,11 @@ describe('ImagesService', () => {
   const mockMulterFile = (filename: string): Express.Multer.File => ({
     fieldname: 'images',
     originalname: filename,
-    encoding: '7bit',
     mimetype: 'image/png',
-    destination: '/ncp',
     filename: filename,
-    path: '/abc' + filename,
     size: 1024,
     buffer: Buffer.from('abc'),
-    stream: {} as any,
-  });
+  } as Express.Multer.File);
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
