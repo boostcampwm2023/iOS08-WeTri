@@ -2,33 +2,32 @@ import {
   Controller,
   Post,
   UploadedFiles,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ImagesService } from './images.service';
-import { AccessTokenGuard } from '../auth/guard/bearerToken.guard';
-import { FilesInterceptor } from '@nestjs/platform-express';
 import { MAX_IMAGE_SIZE } from './constant/images.constant';
 import { ValidateFilesPipe } from './pipe/validate-files.pip';
-import { ImagesResponse } from './dto/images.response';
+import { ImageRequestDto, ImageResponseDto } from './dto/images.response';
+import { WetriFilesInterceptor } from './intercepters/wetri-files.interceptor';
 
 @ApiTags('이미지 업로드 API')
-@UseGuards(AccessTokenGuard)
 @Controller('api/v1/images')
 export class ImagesController {
   constructor(private readonly imagesService: ImagesService) {}
 
-  @ApiOperation({
-    summary: '이미지를 최대 5개까지 업로드 가능하다.',
-  })
-  @ApiResponse({
-    status: 200,
-    description: '성공',
-    schema: ImagesResponse(),
-  })
+  @ApiOperation({ summary: '이미지를 최대 5개까지 업로드 가능하다.' })
+  @ApiResponse({ type: ImageResponseDto })
   @Post()
-  @UseInterceptors(FilesInterceptor('images', 5))
+  @UseInterceptors(WetriFilesInterceptor)
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: ImageRequestDto })
   async uploadImage(
     @UploadedFiles(
       new ValidateFilesPipe({
