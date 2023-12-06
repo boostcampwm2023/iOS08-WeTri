@@ -15,6 +15,7 @@ final class ProfilePostCell: UICollectionViewCell {
   private let imageView: UIImageView = {
     let imageView = UIImageView(image: .logoImage)
     imageView.contentMode = .scaleAspectFill
+    imageView.clipsToBounds = true
     return imageView
   }()
 
@@ -30,6 +31,8 @@ final class ProfilePostCell: UICollectionViewCell {
     setupViews()
   }
 
+  // MARK: - Configurations
+
   private func setupViews() {
     contentView.backgroundColor = DesignSystemColor.secondaryBackground
     contentView.addSubview(imageView)
@@ -43,5 +46,14 @@ final class ProfilePostCell: UICollectionViewCell {
         imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
       ]
     )
+  }
+
+  func configure(with model: Post) {
+    DispatchQueue.global().async {
+      guard let data = try? Data(contentsOf: model.postURL) else { return }
+      DispatchQueue.main.async { [weak self] in
+        self?.imageView.image = UIImage(data: data)
+      }
+    }
   }
 }
