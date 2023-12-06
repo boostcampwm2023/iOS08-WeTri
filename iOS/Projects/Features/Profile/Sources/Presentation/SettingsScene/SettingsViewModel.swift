@@ -8,6 +8,7 @@
 
 import Combine
 import Foundation
+import Log
 
 // MARK: - SettingsViewModelInput
 
@@ -32,10 +33,14 @@ protocol SettingsViewModelRepresentable {
 final class SettingsViewModel {
   // MARK: - Properties
 
-  private weak var coordinating: SettingsCoordinating?
+  private weak var coordinating: ProfileCoordinating?
   private var subscriptions: Set<AnyCancellable> = []
 
-  init(coordinating: SettingsCoordinating?) {
+  deinit {
+    Log.make().debug("\(Self.self) deinitialized")
+  }
+
+  init(coordinating: ProfileCoordinating?) {
     self.coordinating = coordinating
   }
 }

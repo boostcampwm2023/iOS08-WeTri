@@ -8,6 +8,7 @@
 
 import Combine
 import DesignSystem
+import Log
 import UIKit
 
 final class SettingsViewController: UIViewController {
@@ -22,6 +23,10 @@ final class SettingsViewController: UIViewController {
   private let button: UIButton = .init(configuration: .mainEnabled(title: "test button"))
 
   // MARK: Initializations
+
+  deinit {
+    Log.make().debug("\(Self.self) deinitialized")
+  }
 
   init(viewModel: SettingsViewModelRepresentable) {
     self.viewModel = viewModel
@@ -41,6 +46,10 @@ final class SettingsViewController: UIViewController {
     setupConstraints()
     setupStyles()
     bind()
+  }
+
+  override public func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
   }
 
   // MARK: Configuration
@@ -74,9 +83,4 @@ final class SettingsViewController: UIViewController {
     }
     .store(in: &subscriptions)
   }
-}
-
-@available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, xrOS 1.0, *)
-#Preview {
-  SettingsViewController(viewModel: SettingsViewModel())
 }

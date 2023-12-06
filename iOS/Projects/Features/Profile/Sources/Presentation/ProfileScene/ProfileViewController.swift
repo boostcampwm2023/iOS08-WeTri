@@ -48,6 +48,10 @@ public final class ProfileViewController: UICollectionViewController {
     viewDidLoadSubject.send(())
   }
 
+  override public func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+  }
+
   // MARK: Configurations
 
   private func setupLayouts() {
