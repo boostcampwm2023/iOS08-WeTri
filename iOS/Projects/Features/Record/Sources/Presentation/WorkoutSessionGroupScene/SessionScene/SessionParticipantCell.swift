@@ -189,7 +189,12 @@ final class SessionParticipantCell: UICollectionViewCell {
     guard let url = model.profileImageURL else {
       return
     }
-    profileImageView.image = try? UIImage(data: Data(contentsOf: url)) ?? .init(systemName: "person")
+    DispatchQueue.global().async { [weak self] in
+      let image = try? UIImage(data: Data(contentsOf: url))
+      DispatchQueue.main.async { [weak self] in
+        self?.profileImageView.image = image ?? .init(systemName: "person")
+      }
+    }
   }
 
   func configure(with model: WorkoutHealthRealTimeModel?) {
