@@ -11,16 +11,14 @@ import DesignSystem
 import Log
 import UIKit
 
-final class SettingsViewController: UIViewController {
+// MARK: - SettingsViewController
+
+final class SettingsViewController: UICollectionViewController {
   // MARK: Properties
 
   private let viewModel: SettingsViewModelRepresentable
 
   private var subscriptions: Set<AnyCancellable> = []
-
-  // MARK: UI Components
-
-  private let button: UIButton = .init(configuration: .mainEnabled(title: "test button"))
 
   // MARK: Initializations
 
@@ -30,7 +28,7 @@ final class SettingsViewController: UIViewController {
 
   init(viewModel: SettingsViewModelRepresentable) {
     self.viewModel = viewModel
-    super.init(nibName: nil, bundle: nil)
+    super.init(collectionViewLayout: UICollectionViewCompositionalLayout.list(using: .init(appearance: .insetGrouped)))
   }
 
   @available(*, unavailable)
