@@ -28,7 +28,7 @@ final class DatePickerBoxView: UIView {
     let label = UILabel()
     label.translatesAutoresizingMaskIntoConstraints = false
     label.font = .preferredFont(forTextStyle: .body, weight: .semibold)
-    label.text = "1998년 06월 15일"
+    label.text = ""
     label.textColor = DesignSystemColor.primaryText
     return label
   }()
@@ -86,7 +86,6 @@ private extension DatePickerBoxView {
     calendarButton.publisher(.touchUpInside)
       .sink { [weak self] _ in
         self?.datePickerHiddenSubject.send()
-        Log.make().debug("DatePickerBoxView에서 눌림")
       }
       .store(in: &subscriptions)
   }

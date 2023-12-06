@@ -17,11 +17,30 @@ import UIKit
 public final class SignUpGenderBirthViewController: UIViewController {
   private var subscriptions: Set<AnyCancellable> = []
   private let dateFormatter = DateFormatter()
+  private let viewModel: SignUpGenderBirthViewModelRepresentable
 
   private let nextButtonTapSubject = PassthroughSubject<Void, Never>()
+  private let maleButtonTapSubject = PassthroughSubject<Void, Never>()
+  private let femaleButtonTapSubject = PassthroughSubject<Void, Never>()
+  private let datePickSubject = PassthroughSubject<Date, Never>()
+  private let genderBirthSubject = PassthroughSubject<GenderBirth, Never>()
 
   var nextButtonTapPublisher: AnyPublisher<Void, Never> {
     return nextButtonTapSubject.eraseToAnyPublisher()
+  }
+
+  var genderBirthPublisher: AnyPublisher<GenderBirth, Never> {
+    return genderBirthSubject.eraseToAnyPublisher()
+  }
+
+  public init(viewModel: SignUpGenderBirthViewModelRepresentable) {
+    self.viewModel = viewModel
+    super.init(nibName: nil, bundle: nil)
+  }
+
+  @available(*, unavailable)
+  required init?(coder _: NSCoder) {
+    fatalError("NO Xib")
   }
 
   private let titleLabel: UILabel = {
@@ -94,6 +113,7 @@ public final class SignUpGenderBirthViewController: UIViewController {
     configuration.titleAlignment = .center
     let button = UIButton(configuration: configuration)
     button.translatesAutoresizingMaskIntoConstraints = false
+    button.isEnabled = false
     return button
   }()
 
@@ -103,6 +123,7 @@ public final class SignUpGenderBirthViewController: UIViewController {
     super.viewDidLoad()
     configureUI()
     bindUI()
+    bindViewModel()
   }
 }
 
@@ -185,6 +206,7 @@ private extension SignUpGenderBirthViewController {
         else {
           return
         }
+        self?.datePickSubject.send(date)
         self?.datePickerBoxView.configureComponent(text: "\(year)년 \(month)월 \(day)일")
       }
       .store(in: &subscriptions)
@@ -200,6 +222,7 @@ private extension SignUpGenderBirthViewController {
         self?.maleButton.isSelected = true
         self?.femaleButton.isSelected = false
         self?.buttonUpdate()
+        self?.maleButtonTapSubject.send()
       }
       .store(in: &subscriptions)
 
@@ -208,6 +231,7 @@ private extension SignUpGenderBirthViewController {
         self?.maleButton.isSelected = false
         self?.femaleButton.isSelected = true
         self?.buttonUpdate()
+        self?.femaleButtonTapSubject.send()
       }
       .store(in: &subscriptions)
 
@@ -216,6 +240,33 @@ private extension SignUpGenderBirthViewController {
         self?.nextButtonTapSubject.send()
       }
       .store(in: &subscriptions)
+  }
+
+  func bindViewModel() {
+    let input = SignUpGenderBirthViewModelInput(
+      maleButtonTap: maleButtonTapSubject.eraseToAnyPublisher(),
+      femaleButtonTap: femaleButtonTapSubject.eraseToAnyPublisher(),
+      birthSelect: datePickSubject.eraseToAnyPublisher()
+    )
+    let output = viewModel.transform(input: input)
+
+    output.sink { [weak self] state in
+      self?.render(state: state)
+    }
+    .store(in: &subscriptions)
+  }
+
+  private func render(state: SignUpGenderBirthState) {
+    switch state {
+    case .idle:
+      break
+    case let .success(genderBirth):
+      genderBirthSubject.send(genderBirth)
+      nextButton.configuration = UIButton.Configuration.mainEnabled(title: "다음")
+      nextButton.isEnabled = true
+    case let .customError(error):
+      Log.make().error("\(error)")
+    }
   }
 
   func buttonUpdate() {
