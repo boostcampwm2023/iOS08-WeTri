@@ -16,34 +16,20 @@ public final class UserInformationManager {
 
   private init() {
     setFakeData()
-    setMemoryCacheUserInformation()
   }
 
   private let defaults = UserDefaults.standard
-  private let memoryCacheManager = MemoryCacheManager.shared
   private let dateFormatter = {
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy-MM-dd"
     return formatter
   }()
 
-  private func setMemoryCacheUserInformation() {
-    UserInformation
-      .allCases
-      .forEach { userInformation in
-        let key = userInformation.rawValue
-        guard let data = defaults.data(forKey: key) else {
-          return
-        }
-        memoryCacheManager.set(cacheKey: key, data: data)
-      }
-  }
-
   /// Memory Cache에 있는 데이터를 리턴합니다.
   ///
   /// 중요: birthDayDate의 경우 yyyy-MM-dd의 포멧을 사용하는 String의 Data를 리턴합니다.
   func data(_ key: UserInformation) -> Data? {
-    return memoryCacheManager.fetch(cacheKey: key.rawValue)
+    return defaults.data(forKey: key.rawValue)
   }
 
   public enum UserInformation: String, CaseIterable {
@@ -75,9 +61,15 @@ import UIKit
 // TODO: 토큰 연결이 완성되면 무조건 지울 예정
 private extension UserInformationManager {
   func setFakeData() {
-    let configure = UIImage.SymbolConfiguration(font: .boldSystemFont(ofSize: 45))
-    let image = UIImage(systemName: "figure.run", withConfiguration: configure)!.pngData()!
-    defaults.setValue(image, forKey: UserInformation.userProfileImage.rawValue)
+    
+    guard 
+      let path = Bundle(for: Self.self).path(forResource: DefaultsKey.imageKey, ofType: DefaultsKey.imageType),
+      let imageData = try? Data(contentsOf: URL(filePath: path))
+    else {
+      return
+    }
+    
+    defaults.setValue(imageData, forKey: UserInformation.userProfileImage.rawValue)
 
     let date = Date.now
     let formatter = DateFormatter()
@@ -88,5 +80,10 @@ private extension UserInformationManager {
 
     let name = Data("김무드".utf8)
     defaults.setValue(name, forKey: UserInformation.userName.rawValue)
+  }
+  
+  private enum DefaultsKey {
+    static let imageKey = "DefaultsProfileImage"
+    static let imageType = "png"
   }
 }

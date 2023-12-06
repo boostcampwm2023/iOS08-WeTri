@@ -8,6 +8,7 @@ let project = Project.makeModule(
     product: .framework,
     testingOptions: [.unitTest],
     dependencies: [.cacher],
-    testDependencies: [.cacher]
+    testDependencies: [.cacher],
+    resources: "Resources/**"
   )
 )
