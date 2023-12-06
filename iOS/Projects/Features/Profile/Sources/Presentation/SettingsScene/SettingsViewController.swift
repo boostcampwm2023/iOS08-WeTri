@@ -42,35 +42,19 @@ final class SettingsViewController: UIViewController {
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    setupLayouts()
-    setupConstraints()
     setupStyles()
     bind()
   }
 
-  override public func viewWillAppear(_ animated: Bool) {
-    super.viewWillAppear(animated)
-  }
-
   // MARK: Configuration
-
-  private func setupLayouts() {
-    view.addSubview(button)
-  }
-
-  private func setupConstraints() {
-    button.translatesAutoresizingMaskIntoConstraints = false
-
-    NSLayoutConstraint.activate(
-      [
-        button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-        button.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-      ]
-    )
-  }
 
   private func setupStyles() {
     view.backgroundColor = DesignSystemColor.primaryBackground
+    navigationController?.navigationBar.prefersLargeTitles = true
+    navigationController?.navigationBar.tintColor = DesignSystemColor.primaryText
+    navigationItem.largeTitleDisplayMode = .always
+    navigationItem.backButtonDisplayMode = .minimal
+    navigationItem.title = "설정"
   }
 
   private func bind() {

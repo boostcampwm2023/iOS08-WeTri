@@ -60,6 +60,7 @@ public final class ProfileViewController: UICollectionViewController {
 
   private func setupStyles() {
     collectionView.backgroundColor = DesignSystemColor.primaryBackground
+    navigationItem.backButtonDisplayMode = .minimal
     navigationItem.rightBarButtonItem = .init(
       image: .init(systemName: "gearshape"),
       style: .plain,
