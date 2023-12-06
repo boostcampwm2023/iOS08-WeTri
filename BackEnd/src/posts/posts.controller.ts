@@ -5,7 +5,6 @@ import {
   Get,
   Param,
   ParseIntPipe,
-  Patch,
   Post,
   Put,
   Query,
@@ -24,7 +23,7 @@ import { Profile } from '../profiles/entities/profiles.entity';
 import { ProfileDeco } from '../profiles/decorator/profile.decorator';
 import { PaginatePostDto } from './dto/paginate-post.dto';
 import { GetPostsResponseDto } from './dto/get-posts-response.dto';
-import { GetPostResponseDto } from './dto/get-post-response.dto';
+import { GetPostResponseDto } from './dto/get-create-update-post-response.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { DeletePostResponseDto } from './dto/delete-post-response.dto';
 
@@ -36,6 +35,7 @@ export class PostsController {
   @UseGuards(AccessTokenGuard)
   @Post()
   @ApiOperation({ summary: '게시글 생성' })
+  @ApiCreatedResponse({ type: GetPostResponseDto })
   @ApiBody({ type: CreatePostDto })
   async createPost(
     @Body() body: CreatePostDto,

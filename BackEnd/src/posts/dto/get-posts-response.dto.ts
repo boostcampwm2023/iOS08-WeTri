@@ -1,6 +1,20 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
 import { SuccessResDto } from '../../common/dto/SuccessRes.dto';
 import { Post } from '../entities/posts.entity';
+import { Record } from '../../records/entities/records.entity';
+import { Profile } from '../../profiles/entities/profiles.entity';
+
+class PostRecordDto extends PickType(Record, [
+  'id',
+  'workoutTime',
+  'distance',
+  'calorie',
+  'avgHeartRate',
+  'minHeartRate',
+  'maxHeartRate',
+]) {}
+
+class PostProfileDto extends PickType(Profile, ['nickname']) {}
 
 export class PostDto extends PickType(Post, [
   'id',
@@ -11,7 +25,13 @@ export class PostDto extends PickType(Post, [
   'updatedAt',
   'deletedAt',
   'postUrl',
-]) {}
+]) {
+  @ApiProperty({ type: () => PostRecordDto })
+  record: PostRecordDto;
+
+  @ApiProperty({ type: () => PostProfileDto })
+  profile: PostProfileDto;
+}
 
 export class MetaDataDto {
   @ApiProperty({

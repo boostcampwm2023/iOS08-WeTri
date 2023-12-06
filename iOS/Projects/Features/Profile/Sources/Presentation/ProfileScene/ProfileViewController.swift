@@ -1,4 +1,5 @@
 import Combine
+import CombineCocoa
 import DesignSystem
 import Log
 import UIKit
@@ -10,6 +11,7 @@ public final class ProfileViewController: UICollectionViewController {
 
   private let viewDidLoadSubject: PassthroughSubject<Void, Never> = .init()
   private let didTapSettingButtonSubject: PassthroughSubject<Void, Never> = .init()
+  private let paginationEventSubject: PassthroughSubject<ProfileItem, Never> = .init()
 
   private var subscriptions: Set<AnyCancellable> = []
 
@@ -18,11 +20,15 @@ public final class ProfileViewController: UICollectionViewController {
 
   private let viewModel: ProfileViewModelRepresentable
 
+  // MARK: UI Components
+
+  private let refreshControl: UIRefreshControl = .init()
+
   // MARK: Initializations
 
   public init(viewModel: ProfileViewModelRepresentable) {
     self.viewModel = viewModel
-    super.init(collectionViewLayout: Self.createProfileLayout())
+    super.init(collectionViewLayout: .createProfileLayout())
   }
 
   @available(*, unavailable)
@@ -34,6 +40,7 @@ public final class ProfileViewController: UICollectionViewController {
 
   override public func viewDidLoad() {
     super.viewDidLoad()
+    setupLayouts()
     setupStyles()
     bind()
     setupDataSource()
@@ -42,6 +49,10 @@ public final class ProfileViewController: UICollectionViewController {
   }
 
   // MARK: Configurations
+
+  private func setupLayouts() {
+    collectionView.refreshControl = refreshControl
+  }
 
   private func setupStyles() {
     collectionView.backgroundColor = DesignSystemColor.primaryBackground
@@ -58,7 +69,9 @@ public final class ProfileViewController: UICollectionViewController {
     viewModel.transform(
       input: .init(
         viewDidLoadPublisher: viewDidLoadSubject.eraseToAnyPublisher(),
-        didTapSettingButtonPublisher: didTapSettingButtonSubject.eraseToAnyPublisher()
+        didTapSettingButtonPublisher: didTapSettingButtonSubject.eraseToAnyPublisher(),
+        paginationEventPublisher: paginationEventSubject.eraseToAnyPublisher(),
+        refreshPostsPublisher: refreshControl.publisher(.valueChanged).map { _ in () }.eraseToAnyPublisher()
       )
     )
     .receive(on: RunLoop.main)
@@ -70,6 +83,10 @@ public final class ProfileViewController: UICollectionViewController {
         self?.updateHeaderSnapshots(with: profile)
       case let .alert(error):
         self?.showAlert(with: error)
+      case let .updatePosts(posts):
+        self?.updatePostsSnapshots(with: posts)
+      case let .setupPosts(posts):
+        self?.setupPostsSnapshots(with: posts)
       }
     }
     .store(in: &subscriptions)
@@ -90,65 +107,12 @@ public final class ProfileViewController: UICollectionViewController {
   }
 }
 
-// MARK: - Compositional Layout Settings
-
-private extension ProfileViewController {
-  private static func createProfileLayout() -> UICollectionViewLayout {
-    return UICollectionViewCompositionalLayout { sectionNumber, _ in
-      if sectionNumber == Section.header.rawValue {
-        return createHeaderSection()
-      } else {
-        return createMainSection()
-      }
-    }
-  }
-
-  private static func createHeaderSection() -> NSCollectionLayoutSection {
-    let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(1)) // 높이를 1으로 설정, 아무 값도 넣지 않을 예정임
-    let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
-    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(1)) // 높이를 1으로 설정, 아무 값도 넣지 않을 예정임
-    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-
-    let section = NSCollectionLayoutSection(group: group)
-
-    let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(300)) // 대략 300으로 설정함
-    let header = NSCollectionLayoutBoundarySupplementaryItem(
-      layoutSize: headerSize,
-      elementKind: UICollectionView.elementKindSectionHeader,
-      alignment: .top
-    )
-    section.boundarySupplementaryItems = [header]
-
-    return section
-  }
-
-  private static func createMainSection() -> NSCollectionLayoutSection {
-    // 각 아이템의 사이즈를 정의합니다.
-    let itemSize = NSCollectionLayoutSize(
-      widthDimension: .fractionalWidth(1 / 3),
-      heightDimension: .fractionalHeight(1)
-    )
-    let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    item.contentInsets = NSDirectionalEdgeInsets(top: 1, leading: 1, bottom: 1, trailing: 1)
-
-    let groupSize = NSCollectionLayoutSize(
-      widthDimension: .fractionalWidth(1),
-      heightDimension: .fractionalWidth(1 / 3)
-    )
-
-    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-
-    // 섹션 정의
-    return NSCollectionLayoutSection(group: group)
-  }
-}
-
 // MARK: - Diffable DataSources
 
 private extension ProfileViewController {
   private func setupDataSource() {
-    let registration = ProfileCellRegistration { _, _, _ in
+    let registration = ProfileCellRegistration { cell, _, post in
+      cell.configure(with: post)
     }
 
     let headerRegistration = ProfileReusableRegistration(elementKind: UICollectionView.elementKindSectionHeader) { [weak self] headerView, _, _ in
@@ -157,16 +121,21 @@ private extension ProfileViewController {
       }
     }
 
+    let footerRegistration = PostEmptyStateRegistration(elementKind: UICollectionView.elementKindSectionFooter) { _, _, _ in
+    }
+
     let dataSource = ProfileDataSource(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in
       collectionView.dequeueConfiguredReusableCell(using: registration, for: indexPath, item: itemIdentifier)
     }
 
     dataSource.supplementaryViewProvider = { collectionView, kind, indexPath in
       // Header view 요청을 확인합니다.
-      guard kind == UICollectionView.elementKindSectionHeader else {
-        return nil
+      if kind == UICollectionView.elementKindSectionHeader {
+        return collectionView.dequeueConfiguredReusableSupplementary(using: headerRegistration, for: indexPath)
+      } else if kind == UICollectionView.elementKindSectionFooter {
+        return collectionView.dequeueConfiguredReusableSupplementary(using: footerRegistration, for: indexPath)
       }
-      return collectionView.dequeueConfiguredReusableSupplementary(using: headerRegistration, for: indexPath)
+      return nil
     }
     self.dataSource = dataSource
   }
@@ -174,9 +143,8 @@ private extension ProfileViewController {
   /// 초기 스냅샷을 설정합니다.
   private func setupInitialSnapshots() {
     guard let dataSource else { return }
-    var snapshot = dataSource.snapshot()
-    snapshot.appendSections([.header, .main])
-    snapshot.appendItems(["A", "B", "C", "D", "E", "F", "G"], toSection: .main)
+    var snapshot = ProfileSnapshot()
+    snapshot.appendSections([.header, .main, .emptyState])
     dataSource.apply(snapshot)
   }
 
@@ -187,18 +155,47 @@ private extension ProfileViewController {
     snapshot.reloadSections([.header])
     dataSource.apply(snapshot)
   }
+
+  private func setupPostsSnapshots(with model: [ProfileItem]) {
+    setupInitialSnapshots()
+    updatePostsSnapshots(with: model)
+    if refreshControl.isRefreshing {
+      refreshControl.endRefreshing()
+    }
+  }
+
+  private func updatePostsSnapshots(with model: [Post]) {
+    guard let dataSource else { return }
+    var snapshot = dataSource.snapshot()
+    snapshot.appendItems(model, toSection: .main)
+    // 아이템이 존재하면 Empty View 삭제
+    if snapshot.itemIdentifiers.isEmpty == false {
+      snapshot.deleteSections([.emptyState])
+    }
+    dataSource.apply(snapshot)
+  }
 }
 
 private extension ProfileViewController {
-  typealias ProfileDataSource = UICollectionViewDiffableDataSource<Section, Item>
-  typealias ProfileSnapshot = NSDiffableDataSourceSnapshot<Section, Item>
-  typealias ProfileCellRegistration = UICollectionView.CellRegistration<ProfilePostCell, Item>
+  typealias ProfileDataSource = UICollectionViewDiffableDataSource<ProfileSection, ProfileItem>
+  typealias ProfileSnapshot = NSDiffableDataSourceSnapshot<ProfileSection, ProfileItem>
+  typealias ProfileCellRegistration = UICollectionView.CellRegistration<ProfilePostCell, ProfileItem>
   typealias ProfileReusableRegistration = UICollectionView.SupplementaryRegistration<ProfileHeaderView>
+  typealias PostEmptyStateRegistration = UICollectionView.SupplementaryRegistration<PostsEmptyStateView>
+}
 
-  enum Section: Int {
-    case header
-    case main
+// MARK: - Pagination
+
+public extension ProfileViewController {
+  override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    guard let lastItem = dataSource?.snapshot().itemIdentifiers.min(by: { $0.id < $1.id }) else { return }
+    let offsetY = scrollView.contentOffset.y
+    let contentHeight = scrollView.contentSize.height
+    let height = scrollView.frame.size.height
+
+    // 스크롤이 보이는 뷰 정도의 높이 이전까지 도달했을 때 업데이트
+    if offsetY > contentHeight - height {
+      paginationEventSubject.send(lastItem)
+    }
   }
-
-  typealias Item = String
 }
