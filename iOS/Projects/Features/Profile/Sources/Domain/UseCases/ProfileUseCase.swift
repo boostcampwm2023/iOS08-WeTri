@@ -21,13 +21,43 @@ public final class ProfileUseCase {
   private var isLast: Bool = false
 
   /// 요청한 커서 id로 데이터를 가져왔는지 확인하기 위한 캐싱 변수
-  private var isFetchedByCacheID: [Int?: Bool] = [nil: true]
+  private var hasFetchedForRequestID: Set<Int?> = []
   private let repository: ProfileRepositoryRepresentable
 
   // MARK: Initializations
 
   public init(repository: ProfileRepositoryRepresentable) {
     self.repository = repository
+  }
+
+  /// 처음부터 새롭게 가져오기 위해 데이터를 리셋합니다.
+  private func resetDataForNewFetch() {
+    nextRequestID = nil
+    isLast = false
+    hasFetchedForRequestID.removeAll()
+  }
+
+  /// 게시물을 가져올 수 있는지 확인합니다.
+  private func shouldFetchPosts(lastItem: ProfileItem?) -> Bool {
+    return nextRequestID != lastItem?.id && hasFetchedForRequestID.contains(lastItem?.id) == false
+  }
+
+  /// 가져온 메타데이터를 이용해서 UseCase가 관리하는 pagination 프로퍼티를 설정합니다.
+  private func updateFetchStatus(from metaData: MetaData) {
+    nextRequestID = metaData.lastID
+    isLast = metaData.isLastCursor
+  }
+
+  /// 요청할 requestID를 캐시에 저장하고, repository에게 ID를 동봉하여 게시글을 요청합니다.
+  private func fetchAndProcessPosts() -> AnyPublisher<[Post], Error> {
+    hasFetchedForRequestID.insert(nextRequestID)
+
+    return repository.fetchPosts(nextID: nextRequestID)
+      .map { [weak self] in
+        self?.updateFetchStatus(from: $0.metaData)
+        return $0.posts
+      }
+      .eraseToAnyPublisher()
   }
 }
 
@@ -46,31 +76,15 @@ extension ProfileUseCase: ProfileUseCaseRepresentable {
 
     // 다시 새롭게 데이터를 가져오는 경우
     if refresh {
-      isFetchedByCacheID = [nil: true]
-      nextRequestID = nil
-      return repository.fetchPosts(nextID: nextRequestID)
-        .map { [weak self] in
-          self?.nextRequestID = $0.metaData.lastID
-          return $0.posts
-        }
-        .eraseToAnyPublisher()
+      resetDataForNewFetch()
+      return fetchAndProcessPosts()
     }
 
     // 보내준 item의 id값이 동일해야하고, 주어진 커서ID로 이미 로딩된 경우
-    guard
-      nextRequestID == lastItem?.id,
-      isFetchedByCacheID[nextRequestID, default: false] == false
-    else {
+    guard shouldFetchPosts(lastItem: lastItem) else {
       return Empty<[Post], Error>().eraseToAnyPublisher()
     }
 
-    isFetchedByCacheID[nextRequestID] = true
-
-    return repository.fetchPosts(nextID: nextRequestID)
-      .map { [weak self] in
-        self?.nextRequestID = $0.metaData.lastID
-        return $0.posts
-      }
-      .eraseToAnyPublisher()
+    return fetchAndProcessPosts()
   }
 }
