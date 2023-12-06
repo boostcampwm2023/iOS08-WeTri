@@ -14,7 +14,7 @@ public final class UserInformationManager {
   public static let shared = UserInformationManager()
 
   private init() {
-    setFakeData()
+    setDefaultsData()
   }
 
   private let defaults = UserDefaults.standard
@@ -35,6 +35,7 @@ public final class UserInformationManager {
     case userName = "UserNickName"
     case userProfileImage = "UserProfileImage"
     case birthDayDate = "BirthDayDate"
+    case userProfileImageURL = "UserImageURL"
   }
 }
 
@@ -55,9 +56,20 @@ public extension UserInformationManager {
   }
 }
 
-// TODO: 토큰 연결이 완성되면 무조건 지울 예정
+/// Defaults이미지를 저장합니다.
 private extension UserInformationManager {
-  func setFakeData() {
+  
+  /// 만약 userDefaults에 값이 존재한다면 fakeData를 설정합니다.
+  func setDefaultsData() {
+    guard
+      data(.userName) == nil,
+      data(.birthDayDate) == nil,
+      data(.userProfileImage) == nil,
+      data(.userProfileImageURL) == nil
+    else{
+      return
+    }
+    
     let date = Date.now
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy-MM-dd"
@@ -67,6 +79,11 @@ private extension UserInformationManager {
 
     let name = Data("김무드".utf8)
     defaults.setValue(name, forKey: UserInformation.userName.rawValue)
+    
+    guard let imageURL = URL(string: "https://www.catster.com/wp-content/uploads/2017/08/Pixiebob-cat.jpg") else {
+      return
+    }
+    defaults.setValue(imageURL, forKey: UserInformation.userProfileImageURL.rawValue)
 
     guard
       let path = Bundle(for: Self.self).path(forResource: DefaultsKey.imageKey, ofType: DefaultsKey.imageType),
