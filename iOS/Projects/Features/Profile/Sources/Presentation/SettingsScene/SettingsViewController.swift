@@ -18,6 +18,8 @@ final class SettingsViewController: UICollectionViewController {
 
   private let viewModel: SettingsViewModelRepresentable
 
+  private var dataSource: SettingsDataSource?
+
   private var subscriptions: Set<AnyCancellable> = []
 
   // MARK: Initializations
@@ -42,6 +44,8 @@ final class SettingsViewController: UICollectionViewController {
     super.viewDidLoad()
     setupStyles()
     bind()
+    setupDataSource()
+    setupInitialSnapshots()
   }
 
   // MARK: Configuration
@@ -64,5 +68,45 @@ final class SettingsViewController: UICollectionViewController {
       }
     }
     .store(in: &subscriptions)
+  }
+}
+
+// MARK: - Diffable DataSource Settings
+
+private extension SettingsViewController {
+  typealias SettingsDataSource = UICollectionViewDiffableDataSource<Section, Item>
+  typealias SettingsSnapshot = NSDiffableDataSourceSnapshot<Section, Item>
+  typealias ListCellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Item>
+  enum Section {
+    case main
+  }
+
+  enum Item: String {
+    case profileSetting = "프로필 설정"
+    case contact = "문의하기"
+    case logout = "로그아웃"
+    case signOut = "회원탈퇴"
+  }
+
+  private func setupDataSource() {
+    let registration = ListCellRegistration { cell, _, itemIdentifier in
+      var configuration = cell.defaultContentConfiguration()
+      configuration.text = itemIdentifier.rawValue
+      cell.contentConfiguration = configuration
+    }
+
+    let dataSource = SettingsDataSource(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in
+      collectionView.dequeueConfiguredReusableCell(using: registration, for: indexPath, item: itemIdentifier)
+    }
+
+    self.dataSource = dataSource
+  }
+
+  private func setupInitialSnapshots() {
+    guard let dataSource else { return }
+    var snapshot = SettingsSnapshot()
+    snapshot.appendSections([.main])
+    snapshot.appendItems([.profileSetting, .contact, .logout, .signOut], toSection: .main)
+    dataSource.apply(snapshot, animatingDifferences: false)
   }
 }
