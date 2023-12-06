@@ -4,7 +4,10 @@ import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import { ADULT_RATIO, PORN_RATIO } from './constant/images.constant';
-import {NotAccessToGreenEyeException, NotAccessToNCPException} from "./exceptions/images.exception";
+import {
+  NotAccessToGreenEyeException,
+  NotAccessToNCPException,
+} from './exceptions/images.exception';
 
 @Injectable()
 export class ImagesService {
@@ -44,15 +47,19 @@ export class ImagesService {
     return imageURL;
   }
 
-  private async sendToObjectStorage(imageId: string, imageBuffer: Buffer, image: Express.Multer.File) {
+  private async sendToObjectStorage(
+    imageId: string,
+    imageBuffer: Buffer,
+    image: Express.Multer.File,
+  ) {
     try {
       await this.s3Client.send(
-          new PutObjectCommand({
-            Bucket: this.configService.getOrThrow('NCP_BUCKET_NAME'),
-            Key: imageId,
-            Body: imageBuffer,
-            ContentType: image.mimetype,
-          }),
+        new PutObjectCommand({
+          Bucket: this.configService.getOrThrow('NCP_BUCKET_NAME'),
+          Key: imageId,
+          Body: imageBuffer,
+          ContentType: image.mimetype,
+        }),
       );
     } catch (error) {
       Logger.log(error);
@@ -61,8 +68,10 @@ export class ImagesService {
   }
 
   private getExtension(imageName: string) {
-    return imageName.split('.').pop();
+    const extension = imageName.split('.');
+    return extension[extension.length - 1];
   }
+
   private async isGreenEye(
     imageBuffer: Buffer,
     imageId: string,
