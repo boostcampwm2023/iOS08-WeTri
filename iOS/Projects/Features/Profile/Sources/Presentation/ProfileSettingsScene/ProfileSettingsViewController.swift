@@ -25,7 +25,28 @@ final class ProfileSettingsViewController: UICollectionViewController {
 
   init(viewModel: ProfileSettingsViewModelRepresentable) {
     self.viewModel = viewModel
-    super.init(nibName: nil, bundle: nil)
+
+    let layout = UICollectionViewCompositionalLayout { _, environment in
+      // Section을 위한 리스트 configuration 생성
+      var configuration = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
+      configuration.headerMode = .supplementary
+
+      // Header를 위한 Supplementary Item 등록
+      let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(44))
+      let header = NSCollectionLayoutBoundarySupplementaryItem(
+        layoutSize: headerSize,
+        elementKind: UICollectionView.elementKindSectionHeader,
+        alignment: .top
+      )
+
+      // Section에 header 추가
+      let section = NSCollectionLayoutSection.list(using: configuration, layoutEnvironment: environment)
+      section.boundarySupplementaryItems = [header]
+
+      return section
+    }
+
+    super.init(collectionViewLayout: layout)
   }
 
   @available(*, unavailable)
