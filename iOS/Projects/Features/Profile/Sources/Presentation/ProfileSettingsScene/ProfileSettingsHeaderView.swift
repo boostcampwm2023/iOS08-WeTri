@@ -15,10 +15,13 @@ final class ProfileSettingsHeaderView: UICollectionReusableView {
   // MARK: UI Components
 
   private let imageView: UIImageView = {
-    let imageView = UIImageView()
+    let imageView = UIImageView(image: .logoImage)
     imageView.contentMode = .scaleAspectFill
     imageView.clipsToBounds = true
     imageView.layer.cornerRadius = Metrics.imageViewSize * 0.5
+    imageView.backgroundColor = DesignSystemColor.gray01
+    imageView.layer.borderWidth = 2
+    imageView.layer.borderColor = DesignSystemColor.main03.cgColor
     return imageView
   }()
 
@@ -44,14 +47,12 @@ final class ProfileSettingsHeaderView: UICollectionReusableView {
     super.init(frame: frame)
     setupLayouts()
     setupConstraints()
-    setupStyles()
   }
 
   required init?(coder: NSCoder) {
     super.init(coder: coder)
     setupLayouts()
     setupConstraints()
-    setupStyles()
   }
 
   // MARK: Configurations
@@ -82,10 +83,6 @@ final class ProfileSettingsHeaderView: UICollectionReusableView {
         birthLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Metrics.birthLabelBottom),
       ]
     )
-  }
-
-  private func setupStyles() {
-    backgroundColor = DesignSystemColor.primaryBackground
   }
 }
 
