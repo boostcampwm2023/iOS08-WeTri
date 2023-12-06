@@ -32,6 +32,7 @@ let projects = Project.makeModule(
       "NSHealthShareUsageDescription": "운동 시 건강 데이터를 공유합니다",
       "NSHealthUpdateUsageDescription": "운동 시 건강 데이터를 업데이트합니다",
       "NSPhotoLibraryUsageDescription": "앨범에 접근합니다",
+      "NSCameraUsageDescription": "카메라에 접근합니다",
     ]
   )
 )

@@ -203,7 +203,7 @@ private extension SignUpProfileViewController {
     case let .customError(error):
       Log.make().error("\(error)")
     case .image:
-      albumAuth()
+      showAlertSelect()
     }
   }
 }
@@ -211,6 +211,24 @@ private extension SignUpProfileViewController {
 // MARK: PHPhotoLibrary
 
 private extension SignUpProfileViewController {
+  /// 버튼을 눌렀을 때, 카메라로 찍을지 앨범에서 고를지 선택하기 위한 얼럿
+  func showAlertSelect() {
+    let alertVC = UIAlertController(
+      title: "프로필 이미지 설정",
+      message: "선택해주세요.",
+      preferredStyle: .alert
+    )
+    let cameraAction = UIAlertAction(title: "카메라", style: .default) { [weak self] _ in
+      self?.cameraAuth()
+    }
+    let albumAction = UIAlertAction(title: "앨범", style: .default) { [weak self] _ in
+      self?.albumAuth()
+    }
+    alertVC.addAction(cameraAction)
+    alertVC.addAction(albumAction)
+    present(alertVC, animated: true, completion: nil)
+  }
+
   /// 앨범 접근 권한 판별하는 함수
   func albumAuth() {
     switch PHPhotoLibrary.authorizationStatus() {
@@ -229,6 +247,17 @@ private extension SignUpProfileViewController {
       }
     default:
       break
+    }
+  }
+
+  /// 카메라 접근 권한 팔별하는 함수
+  func cameraAuth() {
+    AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
+      if granted {
+        self?.openCamera()
+      } else {
+        self?.showAlertAuth("카메라")
+      }
     }
   }
 
@@ -264,6 +293,20 @@ private extension SignUpProfileViewController {
           return
         }
         imagePicker.sourceType = .photoLibrary
+        imagePicker.modalPresentationStyle = .currentContext
+        present(imagePicker, animated: true, completion: nil)
+      }
+    }
+  }
+
+  /// 아이폰에서 카메라에 접근하는 함수
+  func openCamera() {
+    if UIImagePickerController.isSourceTypeAvailable(.camera) {
+      DispatchQueue.main.async { [weak self] in
+        guard let self else {
+          return
+        }
+        imagePicker.sourceType = .camera
         imagePicker.modalPresentationStyle = .currentContext
         present(imagePicker, animated: true, completion: nil)
       }
