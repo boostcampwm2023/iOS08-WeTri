@@ -40,7 +40,6 @@ public final class UserInformationManager {
 }
 
 public extension UserInformationManager {
-  
   func setUserName(_ name: String) {
     let nameData = Data(name.utf8)
     defaults.setValue(nameData, forKey: UserInformation.userName.rawValue)
@@ -49,30 +48,17 @@ public extension UserInformationManager {
   func setUserProfileImageData(_ imageData: Data) {
     defaults.setValue(imageData, forKey: UserInformation.userName.rawValue)
   }
-  
+
   func setBirthDayDate(_ date: Date) {
     let dateString = dateFormatter.string(from: date)
     let data = Data(dateString.utf8)
     defaults.setValue(data, forKey: UserInformation.birthDayDate.rawValue)
   }
-  
 }
-
-import UIKit
 
 // TODO: 토큰 연결이 완성되면 무조건 지울 예정
 private extension UserInformationManager {
   func setFakeData() {
-    
-    guard 
-      let path = Bundle(for: Self.self).path(forResource: DefaultsKey.imageKey, ofType: DefaultsKey.imageType),
-      let imageData = try? Data(contentsOf: URL(filePath: path))
-    else {
-      return
-    }
-    
-    defaults.setValue(imageData, forKey: UserInformation.userProfileImage.rawValue)
-
     let date = Date.now
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy-MM-dd"
@@ -82,8 +68,16 @@ private extension UserInformationManager {
 
     let name = Data("김무드".utf8)
     defaults.setValue(name, forKey: UserInformation.userName.rawValue)
+
+    guard
+      let path = Bundle(for: Self.self).path(forResource: DefaultsKey.imageKey, ofType: DefaultsKey.imageType),
+      let imageData = try? Data(contentsOf: URL(filePath: path))
+    else {
+      return
+    }
+    defaults.setValue(imageData, forKey: UserInformation.userProfileImage.rawValue)
   }
-  
+
   private enum DefaultsKey {
     static let imageKey = "DefaultsProfileImage"
     static let imageType = "png"

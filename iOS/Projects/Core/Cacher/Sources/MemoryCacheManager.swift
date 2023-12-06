@@ -1,5 +1,5 @@
 //
-//  MemoryCacher.swift
+//  MemoryCacheManager.swift
 //  Cacher
 //
 //  Created by MaraMincho on 12/6/23.
