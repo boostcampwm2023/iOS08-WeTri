@@ -253,9 +253,9 @@ private extension SignUpGenderBirthViewController {
     output
       .subscribe(on: DispatchQueue.main)
       .sink { [weak self] state in
-      self?.render(state: state)
-    }
-    .store(in: &subscriptions)
+        self?.render(state: state)
+      }
+      .store(in: &subscriptions)
   }
 
   private func render(state: SignUpGenderBirthState) {

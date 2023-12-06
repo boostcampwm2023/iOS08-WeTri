@@ -10,7 +10,7 @@ import UIKit
 
 // MARK: - GWProfileButton
 
-public final class GWProfileButton: UIControl {
+public final class GWProfileButton: UIButton {
   // MARK: Properties
 
   /// 사용자의 프로필 이미지를 설정합니다. 만약 nil인경우 사람모양의 기본 이미지로 대체됩니다.
