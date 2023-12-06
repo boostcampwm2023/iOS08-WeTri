@@ -80,25 +80,23 @@ extension SignUpGenderBirthViewModel: SignUpGenderBirthViewModelRepresentable {
       .store(in: &subscriptions)
 
     let success = confirmSelected
-      .flatMap { _ -> SignUpGenderBirthViewModelOutput in
+      .tryMap {
         guard isGenderSelected && isBirthSelected else {
-          return Just(.customError(SignUpGenderBirthViewModelError.eitherNotSelected))
-            .eraseToAnyPublisher()
+          throw SignUpGenderBirthViewModelError.eitherNotSelected
         }
         guard let gender,
               let birth
         else {
-          return Just(.customError(SignUpGenderBirthViewModelError.invalidBinding))
-            .eraseToAnyPublisher()
+          throw SignUpGenderBirthViewModelError.invalidBinding
         }
-        Log.make().debug("\(gender.rawValue)")
-        Log.make().debug("\(birth)")
-        return Just(.success(.init(
-          gender: gender,
-          birth: birth
-        )))
-        .eraseToAnyPublisher()
+        return SignUpGenderBirthState.success(
+          GenderBirth(
+            gender: gender,
+            birth: birth
+          )
+        )
       }
+      .catch { Just(.customError($0)) }
       .eraseToAnyPublisher()
 
     let initialState: SignUpGenderBirthViewModelOutput = Just(.idle)
@@ -107,6 +105,12 @@ extension SignUpGenderBirthViewModel: SignUpGenderBirthViewModelRepresentable {
     return Publishers
       .Merge(initialState, success)
       .eraseToAnyPublisher()
+  }
+}
+
+private extension SignUpGenderBirthViewModel {
+  func selectedGender() {
+    
   }
 }
 
