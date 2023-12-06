@@ -7,6 +7,7 @@ public struct ProfileViewModelInput {
   let viewDidLoadPublisher: AnyPublisher<Void, Never>
   let didTapSettingButtonPublisher: AnyPublisher<Void, Never>
   let paginationEventPublisher: AnyPublisher<ProfileItem, Never>
+  let refreshPostsPublisher: AnyPublisher<Void, Never>
 }
 
 public typealias ProfileViewModelOutput = AnyPublisher<ProfileViewModelState, Never>
@@ -16,6 +17,7 @@ public typealias ProfileViewModelOutput = AnyPublisher<ProfileViewModelState, Ne
 public enum ProfileViewModelState {
   case idle
   case setupProfile(Profile)
+  case setupPosts([Post])
   case updatePosts([Post])
   case alert(Error)
 }
@@ -63,9 +65,10 @@ extension ProfileViewModel: ProfileViewModelRepresentable {
       .catch { Just(.alert($0)) }
 
     let postInfoPublisher = input.viewDidLoadPublisher
+      .merge(with: input.refreshPostsPublisher)
       .map { _ in (nil, true) }
       .flatMap(useCase.fetchPosts)
-      .map(ProfileViewModelState.updatePosts)
+      .map(ProfileViewModelState.setupPosts)
       .catch { Just(.alert($0)) }
 
     let updatePostsPublisher = input.paginationEventPublisher

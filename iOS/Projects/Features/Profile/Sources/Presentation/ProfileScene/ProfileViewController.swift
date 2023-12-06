@@ -1,4 +1,5 @@
 import Combine
+import CombineCocoa
 import DesignSystem
 import Log
 import UIKit
@@ -19,6 +20,10 @@ public final class ProfileViewController: UICollectionViewController {
 
   private let viewModel: ProfileViewModelRepresentable
 
+  // MARK: UI Components
+
+  private let refreshControl: UIRefreshControl = .init()
+
   // MARK: Initializations
 
   public init(viewModel: ProfileViewModelRepresentable) {
@@ -35,6 +40,7 @@ public final class ProfileViewController: UICollectionViewController {
 
   override public func viewDidLoad() {
     super.viewDidLoad()
+    setupLayouts()
     setupStyles()
     bind()
     setupDataSource()
@@ -43,6 +49,10 @@ public final class ProfileViewController: UICollectionViewController {
   }
 
   // MARK: Configurations
+
+  private func setupLayouts() {
+    collectionView.refreshControl = refreshControl
+  }
 
   private func setupStyles() {
     collectionView.backgroundColor = DesignSystemColor.primaryBackground
@@ -60,7 +70,8 @@ public final class ProfileViewController: UICollectionViewController {
       input: .init(
         viewDidLoadPublisher: viewDidLoadSubject.eraseToAnyPublisher(),
         didTapSettingButtonPublisher: didTapSettingButtonSubject.eraseToAnyPublisher(),
-        paginationEventPublisher: paginationEventSubject.eraseToAnyPublisher()
+        paginationEventPublisher: paginationEventSubject.eraseToAnyPublisher(),
+        refreshPostsPublisher: refreshControl.publisher(.valueChanged).map { _ in () }.eraseToAnyPublisher()
       )
     )
     .receive(on: RunLoop.main)
@@ -74,6 +85,8 @@ public final class ProfileViewController: UICollectionViewController {
         self?.showAlert(with: error)
       case let .updatePosts(posts):
         self?.updatePostsSnapshots(with: posts)
+      case let .setupPosts(posts):
+        self?.setupPostsSnapshots(with: posts)
       }
     }
     .store(in: &subscriptions)
@@ -130,7 +143,7 @@ private extension ProfileViewController {
   /// 초기 스냅샷을 설정합니다.
   private func setupInitialSnapshots() {
     guard let dataSource else { return }
-    var snapshot = dataSource.snapshot()
+    var snapshot = ProfileSnapshot()
     snapshot.appendSections([.header, .main, .emptyState])
     dataSource.apply(snapshot)
   }
@@ -141,6 +154,14 @@ private extension ProfileViewController {
     var snapshot = dataSource.snapshot()
     snapshot.reloadSections([.header])
     dataSource.apply(snapshot)
+  }
+
+  private func setupPostsSnapshots(with model: [ProfileItem]) {
+    setupInitialSnapshots()
+    updatePostsSnapshots(with: model)
+    if refreshControl.isRefreshing {
+      refreshControl.endRefreshing()
+    }
   }
 
   private func updatePostsSnapshots(with model: [Post]) {
