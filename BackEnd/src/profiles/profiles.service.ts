@@ -5,8 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { Post } from '../posts/entities/posts.entity';
 import { PaginateProfilePostDto } from './dto/paginate-profile-post.dto';
-import { CommonService } from 'src/common/common.service';
-import { NicknameDuplicateException } from 'src/auth/exceptions/auth.exception';
+import { CommonService } from '../common/common.service';
+import { NicknameDuplicateException } from '../auth/exceptions/auth.exception';
 
 @Injectable()
 export class ProfilesService {

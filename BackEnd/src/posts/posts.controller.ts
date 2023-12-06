@@ -12,7 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
-import { AccessTokenGuard } from 'src/auth/guard/bearerToken.guard';
+import { AccessTokenGuard } from '../auth/guard/bearerToken.guard';
 import {
   ApiBody,
   ApiCreatedResponse,
@@ -20,8 +20,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CreatePostDto } from './dto/create-post.dto';
-import { Profile } from 'src/profiles/entities/profiles.entity';
-import { ProfileDeco } from 'src/profiles/decorator/profile.decorator';
+import { Profile } from '../profiles/entities/profiles.entity';
+import { ProfileDeco } from '../profiles/decorator/profile.decorator';
 import { PaginatePostDto } from './dto/paginate-post.dto';
 import { GetPostsResponseDto } from './dto/get-posts-response.dto';
 import { GetPostResponseDto } from './dto/get-post-response.dto';

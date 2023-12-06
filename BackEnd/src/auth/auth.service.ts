@@ -12,7 +12,7 @@ import {
   NotRefreshTokenException,
 } from './exceptions/auth.exception';
 import * as process from 'process';
-import { WetriWebSocket } from 'src/live-workouts/events/types/custom-websocket.type';
+import { WetriWebSocket } from '../live-workouts/events/types/custom-websocket.type';
 import { GetuserByUserIdAndProViderDto } from './dto/getUserByUserIdAndProvider.dto';
 
 @Injectable()

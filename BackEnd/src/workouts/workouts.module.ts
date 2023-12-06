@@ -6,7 +6,7 @@ import { Workout } from './entities/workout.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersModule } from '../users/users.module';
 import { ProfilesModule } from '../profiles/profiles.module';
-import { AuthModule } from 'src/auth/auth.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [

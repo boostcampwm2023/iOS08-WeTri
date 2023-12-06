@@ -9,9 +9,9 @@ import {
 } from '@nestjs/common';
 import { RecordsService } from './records.service';
 import { CreateExerciseLogDto } from './dto/create-exerciseLog.dto';
-import { AccessTokenGuard } from 'src/auth/guard/bearerToken.guard';
-import { ProfileDeco } from 'src/profiles/decorator/profile.decorator';
-import { Profile } from 'src/profiles/entities/profiles.entity';
+import { AccessTokenGuard } from '../auth/guard/bearerToken.guard';
+import { ProfileDeco } from '../profiles/decorator/profile.decorator';
+import { Profile } from '../profiles/entities/profiles.entity';
 import {
   ApiBody,
   ApiCreatedResponse,
