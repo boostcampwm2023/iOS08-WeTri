@@ -1,7 +1,7 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
-import { SuccessResDto } from '../common/dto/SuccessRes.dto';
-import { MetaDataDto } from '../posts/dto/get-posts-response.dto';
-import { Post } from '../posts/entities/posts.entity';
+import { SuccessResDto } from '../../common/dto/SuccessRes.dto';
+import { MetaDataDto } from '../../posts/dto/get-posts-response.dto';
+import { Post } from '../../posts/entities/posts.entity';
 
 export class ItemDto extends PickType(Post, ['id', 'postUrl']) {}
 

@@ -1,5 +1,5 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
-import { SuccessResDto } from '../common/dto/SuccessRes.dto';
+import { SuccessResDto } from '../../common/dto/SuccessRes.dto';
 import { Record } from '../entities/records.entity';
 
 class GetRecord extends PickType(Record, [

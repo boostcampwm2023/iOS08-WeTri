@@ -1,3 +1,3 @@
-import { BasePaginationDto } from '../common/dto/base-pagination.dto';
+import { BasePaginationDto } from '../../common/dto/base-pagination.dto';
 
 export class PaginateProfilePostDto extends BasePaginationDto {}

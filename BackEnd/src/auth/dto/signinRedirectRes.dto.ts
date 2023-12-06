@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
-import { SuccessResDto } from '../common/dto/SuccessRes.dto';
+import { SuccessResDto } from '../../common/dto/SuccessRes.dto';
 
 class SigninFirstRes {
   @ApiProperty({

@@ -1,6 +1,6 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
 import { Profile } from '../entities/profiles.entity';
-import { SuccessResDto } from '../common/dto/SuccessRes.dto';
+import { SuccessResDto } from '../../common/dto/SuccessRes.dto';
 
 class GetProfileDto extends PickType(Profile, [
   'nickname',
