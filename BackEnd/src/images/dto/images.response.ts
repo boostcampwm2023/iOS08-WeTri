@@ -1,6 +1,6 @@
-import {ApiProperty} from "@nestjs/swagger";
-import {SuccessResDto} from "../../common/dto/SuccessRes.dto";
-import {IsNotEmpty, IsString} from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { SuccessResDto } from '../../common/dto/SuccessRes.dto';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class ImageRequestDto {
   @ApiProperty({
@@ -37,7 +37,7 @@ export class ImageResponse {
   }
 }
 
-export class ImageResponseDto extends SuccessResDto{
+export class ImageResponseDto extends SuccessResDto {
   @ApiProperty({ type: () => [ImageResponse] })
   data: ImageResponse[];
 }
