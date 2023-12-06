@@ -60,7 +60,12 @@ public final class ProfileCoordinator {
 extension ProfileCoordinator: ProfileCoordinating {
   public func moveToLogin() {}
 
-  public func moveToProfileSettings() {}
+  public func moveToProfileSettings() {
+    let viewModel = ProfileSettingsViewModel(coordinating: self)
+    let viewController = ProfileSettingsViewController(viewModel: viewModel)
+    viewController.hidesBottomBarWhenPushed = true
+    navigationController.pushViewController(viewController, animated: true)
+  }
 
   public func pushToSettings() {
     let viewModel = SettingsViewModel(coordinating: self)
