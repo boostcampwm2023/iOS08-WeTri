@@ -4,14 +4,60 @@
   "data": {
     "items": [
       {
-        "id": 1,
+        "id": 16,
+        "publicId": "d5cd7b66-7ee6-4453-a73e-026126861e96",
         "content": "안녕하세요 누구 누구 입니다.",
+        "like": null,
+        "createdAt": "2023-12-04T05:14:39.679Z",
+        "updatedAt": "2023-12-04T05:14:39.679Z",
+        "deletedAt": null,
+        "postUrl": "https://www.naver.com"
+      },
+      {
+        "id": 15,
+        "publicId": "d5cd7b66-7ee6-4453-a73e-026126861e96",
+        "content": "안녕하세요 누구 누구 입니다.",
+        "like": null,
+        "createdAt": "2023-12-04T05:14:37.996Z",
+        "updatedAt": "2023-12-04T05:14:37.996Z",
+        "deletedAt": null,
+        "postUrl": "https://www.naver.com"
+      },
+      {
+        "id": 14,
+        "publicId": "d5cd7b66-7ee6-4453-a73e-026126861e96",
+        "content": "안녕하세요 누구 누구 입니다.",
+        "like": null,
+        "createdAt": "2023-12-04T05:14:35.312Z",
+        "updatedAt": "2023-12-04T05:14:35.312Z",
+        "deletedAt": null,
+        "postUrl": "https://www.naver.com"
+      },
+      {
+        "id": 13,
+        "publicId": "d5cd7b66-7ee6-4453-a73e-026126861e96",
+        "content": "안녕하세요 누구 누구 입니다.",
+        "like": null,
+        "createdAt": "2023-12-04T05:14:33.071Z",
+        "updatedAt": "2023-12-04T05:14:33.071Z",
+        "deletedAt": null,
+        "postUrl": "https://www.naver.com"
+      },
+      {
+        "id": 12,
+        "publicId": "d5cd7b66-7ee6-4453-a73e-026126861e96",
+        "content": "안녕하세요 누구 누구 입니다.",
+        "like": null,
+        "createdAt": "2023-12-04T05:14:30.528Z",
+        "updatedAt": "2023-12-04T05:14:30.528Z",
+        "deletedAt": null,
         "postUrl": "https://www.naver.com"
       }
     ],
     "metaData": {
-      "after": 5,
-      "count": 10
+      "lastItemId": 12,
+      "isLastCursor": false,
+      "count": 5
     }
   }
 }
