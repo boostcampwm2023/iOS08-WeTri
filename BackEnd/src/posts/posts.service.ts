@@ -3,14 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './entities/posts.entity';
 import { FindManyOptions, Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
-import { RecordsService } from 'src/records/records.service';
-import { Profile } from 'src/profiles/entities/profiles.entity';
+import { RecordsService } from '../records/records.service';
+import { Profile } from '../profiles/entities/profiles.entity';
 import {
   ExistPostException,
   NotFoundPostException,
 } from './exceptions/posts.exception';
 import { PaginatePostDto } from './dto/paginate-post.dto';
-import { CommonService } from 'src/common/common.service';
+import { CommonService } from '../common/common.service';
 import { UpdatePostDto } from './dto/update-post.dto';
 
 @Injectable()

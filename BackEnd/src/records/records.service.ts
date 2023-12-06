@@ -3,9 +3,9 @@ import { Repository } from 'typeorm';
 import { Record } from './entities/records.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateExerciseLogDto } from './dto/create-exerciseLog.dto';
-import { Profile } from 'src/profiles/entities/profiles.entity';
+import { Profile } from '../profiles/entities/profiles.entity';
 import { NotFoundRecordException } from './exceptions/records.exception';
-import { WorkoutsService } from 'src/workouts/workouts.service';
+import { WorkoutsService } from '../workouts/workouts.service';
 
 @Injectable()
 export class RecordsService {
