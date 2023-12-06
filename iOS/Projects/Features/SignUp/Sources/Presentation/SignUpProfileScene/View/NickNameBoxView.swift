@@ -79,17 +79,22 @@ private extension NickNameBoxView {
     cancelButton.publisher(.touchUpInside)
       .sink { [weak self] _ in
         self?.textField.text = ""
+        self?.send(with: self?.textField.text)
       }
       .store(in: &subscriptions)
 
     textField.publisher(.editingChanged)
       .sink { [weak self] _ in
-        guard let text = self?.textField.text else {
-          return
-        }
-        self?.nickNameDidChangedSubject.send(text)
+        self?.send(with: self?.textField.text)
       }
       .store(in: &subscriptions)
+  }
+
+  func send(with text: String?) {
+    guard let text else {
+      return
+    }
+    nickNameDidChangedSubject.send(text)
   }
 }
 

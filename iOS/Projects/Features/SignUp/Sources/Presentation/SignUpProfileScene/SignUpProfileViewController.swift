@@ -133,6 +133,16 @@ private extension SignUpProfileViewController {
       completionButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -Metrics.safeAreaInterval),
     ])
   }
+
+  func nickNameEnabled() {
+    nickNameBoxView.configureEnabled()
+    nickNameCheckerView.configureEnabled()
+  }
+
+  func nickNameDisabled() {
+    nickNameBoxView.configureDisabled()
+    nickNameCheckerView.configureDisabled()
+  }
 }
 
 private extension SignUpProfileViewController {
@@ -167,11 +177,9 @@ private extension SignUpProfileViewController {
       break
     case let .checking(isChecked):
       if isChecked {
-        nickNameBoxView.configureEnabled()
-        nickNameCheckerView.configureEnabled()
+        nickNameEnabled()
       } else {
-        nickNameBoxView.configureDisabled()
-        nickNameCheckerView.configureDisabled()
+        nickNameDisabled()
       }
     case let .customError(error):
       Log.make().error("\(error)")
