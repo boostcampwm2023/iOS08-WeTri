@@ -4,6 +4,7 @@ import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import { ADULT_RATIO, PORN_RATIO } from './constant/images.constant';
+import {NotAccessToGreenEyeException, NotAccessToNCPException} from "./exceptions/images.exception";
 
 @Injectable()
 export class ImagesService {
@@ -33,14 +34,7 @@ export class ImagesService {
         return;
       }
 
-      await this.s3Client.send(
-        new PutObjectCommand({
-          Bucket: this.configService.getOrThrow('NCP_BUCKET_NAME'),
-          Key: imageId,
-          Body: imageBuffer,
-          ContentType: image.mimetype,
-        }),
-      );
+      await this.sendToObjectStorage(imageId, imageBuffer, image);
 
       imageURL.push({
         imageName: image.originalname,
@@ -48,6 +42,22 @@ export class ImagesService {
       });
     }
     return imageURL;
+  }
+
+  private async sendToObjectStorage(imageId: string, imageBuffer: Buffer, image: Express.Multer.File) {
+    try {
+      await this.s3Client.send(
+          new PutObjectCommand({
+            Bucket: this.configService.getOrThrow('NCP_BUCKET_NAME'),
+            Key: imageId,
+            Body: imageBuffer,
+            ContentType: image.mimetype,
+          }),
+      );
+    } catch (error) {
+      Logger.log(error);
+      throw new NotAccessToNCPException();
+    }
   }
 
   private getExtension(imageName: string) {
@@ -85,7 +95,7 @@ export class ImagesService {
       }
     } catch (error) {
       Logger.log(error);
-      return false;
+      throw new NotAccessToGreenEyeException();
     }
     return true;
   }
