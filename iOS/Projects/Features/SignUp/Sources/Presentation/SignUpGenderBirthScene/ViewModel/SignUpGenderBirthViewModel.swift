@@ -108,12 +108,6 @@ extension SignUpGenderBirthViewModel: SignUpGenderBirthViewModelRepresentable {
   }
 }
 
-private extension SignUpGenderBirthViewModel {
-  func selectedGender() {
-    
-  }
-}
-
 // MARK: - SignUpGenderBirthViewModelRepresentable
 
 public protocol SignUpGenderBirthViewModelRepresentable {
