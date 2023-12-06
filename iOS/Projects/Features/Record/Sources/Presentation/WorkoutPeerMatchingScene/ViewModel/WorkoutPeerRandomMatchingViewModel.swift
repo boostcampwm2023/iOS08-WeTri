@@ -146,12 +146,24 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
       let response,
       let peersResponse = response.peers,
       let roomID = response.roomID,
-      let startDate = response.liveWorkoutStartTime
+      let startDate = response.liveWorkoutStartTime,
+      let id = response.publicID
     else {
       return
     }
-    let peers = peersResponse.map { Peer(nickname: $0.nickname, imageURL: $0.publicID) }
-    coordinating?.finish(workoutSessionElement: .init(startDateString: startDate, peers: peers, roomID: roomID))
+    let peers = peersResponse.map { SessionPeerType(nickname: $0.nickname, id: $0.publicID, profileImageURL: URL(string: $0.profileImage)) }
+    let workoutSessionComponents = WorkoutSessionComponents(
+      participants: peers,
+      startDate: startDate,
+      roomID: roomID,
+      id: id,
+      workoutTypeCode: workoutSetting.workoutType,
+      // TODO: 닉네임은 UserDefaults를 통해 가져올 예정
+      nickname: "",
+      // TODO: 프로필은 UserDefaults를 통해 가져올 예정
+      userProfileImage: URL(string: "")
+    )
+    coordinating?.finish(workoutSessionComponents: workoutSessionComponents)
   }
 
   private func cancelPeerRandomMatching() {

@@ -156,13 +156,25 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
       return
     }
 
-    let workoutSettiong = WorkoutSetting(workoutType: didSelectWorkoutType, workoutPeerType: didSelectWorkoutPeerType)
+    let workoutSetting = WorkoutSetting(workoutType: didSelectWorkoutType, workoutPeerType: didSelectWorkoutPeerType)
 
     switch mode {
     case .solo:
-      coordinator?.finish(workoutSessionElement: .init(startDate: .now + 4, peers: [], roomID: ""))
+      coordinator?.finish(
+        workoutSessionComponents: .init(
+          participants: [],
+          startDate: .now + 3,
+          roomID: "",
+          id: "",
+          workoutTypeCode: workoutSetting.workoutType,
+          // TODO: UserDefaults를 활용해 가져올 예정
+          nickname: "",
+          // TODO: UserDefaults를 활용해 가져올 예정
+          userProfileImage: URL(string: "")
+        )
+      )
     case .random:
-      coordinator?.pushPeerRandomMatchingViewController(workoutSetting: workoutSettiong)
+      coordinator?.pushPeerRandomMatchingViewController(workoutSetting: workoutSetting)
     }
   }
 

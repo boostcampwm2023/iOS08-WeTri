@@ -63,8 +63,8 @@ final class WorkoutEnvironmentSetUpCoordinator: WorkoutEnvironmentSetUpCoordinat
     navigationController.dismiss(animated: true)
   }
 
-  func finish(workoutSessionElement: WorkoutSessionElement) {
-    settingDidFinishedDelegate?.workoutSettingCoordinatorDidFinished(workoutSessionElement: workoutSessionElement)
+  func finish(workoutSessionComponents: WorkoutSessionComponents) {
+    settingDidFinishedDelegate?.workoutSettingCoordinatorDidFinished(workoutSessionComponents: workoutSessionComponents)
   }
 }
 

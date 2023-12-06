@@ -15,7 +15,7 @@ protocol WorkoutSessionCoordinating: Coordinating {
   func pushWorkoutSummaryViewController(recordID: Int)
 
   /// 운동 화면으로 이동합니다.
-  func pushWorkoutSession(dependency: WorkoutSessionDependency)
+  func pushWorkoutSession()
 
   /// 운동전 카운트 다운 화면으로 이동합니다.
   func pushCountDownBeforeWorkout()

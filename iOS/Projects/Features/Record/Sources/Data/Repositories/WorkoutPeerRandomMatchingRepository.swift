@@ -32,7 +32,7 @@ extension WorkoutPeerRandomMatchingRepository: WorkoutPeerRandomMatchingReposito
             .matchStart(matchStartRequest: .init(workoutID: workoutTypeCode)),
             interceptor: TNKeychainInterceptor.shared
           )
-          let response = try decoder.decode(GWResponse<NullDTO>.self, from: data)
+          _ = try decoder.decode(GWResponse<NullDTO>.self, from: data)
           promise(.success(.success(())))
         } catch {
           promise(.success(.failure(error)))

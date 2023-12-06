@@ -14,12 +14,14 @@ struct IsMatchedRandomPeersResponse: Decodable {
   let matched: Bool
   let liveWorkoutStartTime: String?
   let roomID: String?
+  let publicID: String?
   let peers: [IsMatchedRandomPeersForPeerResponse]?
 
   enum CodingKeys: String, CodingKey {
     case matched
     case liveWorkoutStartTime
     case roomID = "roomId"
+    case publicID = "publicId"
     case peers
   }
 }
@@ -29,11 +31,13 @@ struct IsMatchedRandomPeersResponse: Decodable {
 struct IsMatchedRandomPeersForPeerResponse: Decodable {
   let nickname: String
   let publicID: String
+  let profileImage: String
   let etc: String?
 
   enum CodingKeys: String, CodingKey {
     case nickname
     case publicID = "publicId"
+    case profileImage
     case etc
   }
 }
