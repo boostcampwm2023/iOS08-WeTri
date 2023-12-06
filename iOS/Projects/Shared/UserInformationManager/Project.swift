@@ -6,9 +6,7 @@ let project = Project.makeModule(
   targets: .custom(
     name: "UserInformationManager",
     product: .framework,
-    testingOptions: [.unitTest],
     dependencies: [.cacher],
-    testDependencies: [.cacher],
     resources: "Resources/**"
   )
 )
