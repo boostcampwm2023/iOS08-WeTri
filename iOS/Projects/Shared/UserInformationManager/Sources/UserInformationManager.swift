@@ -21,7 +21,7 @@ public final class UserInformationManager {
 
   private let defaults = UserDefaults.standard
   private let memoryCacheManager = MemoryCacheManager.shared
-  private let dateFormatter =  {
+  private let dateFormatter = {
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy-MM-dd"
     return formatter
@@ -39,8 +39,9 @@ public final class UserInformationManager {
       }
   }
 
-  // UserInformation에 있는 데이터를 리턴합니다.
-  // birthDayDate의 경우 yyyy-MM-dd의 포멧을 사용하는 String의 Data를 리턴합니다.
+  /// Memory Cache에 있는 데이터를 리턴합니다.
+  ///
+  /// 중요: birthDayDate의 경우 yyyy-MM-dd의 포멧을 사용하는 String의 Data를 리턴합니다.
   func data(_ key: UserInformation) -> Data? {
     return memoryCacheManager.fetch(cacheKey: key.rawValue)
   }
@@ -58,12 +59,12 @@ public extension UserInformationManager {
     let data = Data(dateString.utf8)
     defaults.setValue(data, forKey: UserInformation.birthDayDate.rawValue)
   }
-  
+
   func setUserName(_ name: String) {
     let nameData = Data(name.utf8)
     defaults.setValue(nameData, forKey: UserInformation.userName.rawValue)
   }
-  
+
   func setUserProfileImageData(_ imageData: Data) {
     defaults.setValue(imageData, forKey: UserInformation.userName.rawValue)
   }
