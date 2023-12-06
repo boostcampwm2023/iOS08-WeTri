@@ -27,7 +27,7 @@ export class PostsService {
     if (record.isPosted) {
       throw new ExistPostException();
     }
-    this.recordService.updateIsPostedTrue(record);
+    await this.recordService.updateIsPostedTrue(record);
     return await this.postsRepository.save({
       publicId: profile.publicId,
       content: postInfo.content,

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
-import { jwksApple } from 'src/config/jwksApple.config';
+import { jwksApple } from '../config/jwksApple.config';
 import { VerificationFailedIdentityToken } from './exceptions/auth.exception';
 
 @Injectable()
