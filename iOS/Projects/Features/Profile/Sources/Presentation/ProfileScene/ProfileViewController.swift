@@ -10,15 +10,12 @@ public final class ProfileViewController: UICollectionViewController {
 
   private let viewDidLoadSubject: PassthroughSubject<Void, Never> = .init()
   private let didTapSettingButtonSubject: PassthroughSubject<Void, Never> = .init()
-  private let paginationEventSubject: PassthroughSubject<Void, Never> = .init()
+  private let paginationEventSubject: PassthroughSubject<ProfileItem, Never> = .init()
 
   private var subscriptions: Set<AnyCancellable> = []
 
   private var dataSource: ProfileDataSource?
   private var headerInfo: Profile?
-
-  /// 페이지네이션 로딩 설정
-  private var isLoading: Bool = false
 
   private let viewModel: ProfileViewModelRepresentable
 
@@ -155,7 +152,6 @@ private extension ProfileViewController {
       snapshot.deleteSections([.emptyState])
     }
     dataSource.apply(snapshot)
-    isLoading = false
   }
 }
 
@@ -171,14 +167,14 @@ private extension ProfileViewController {
 
 public extension ProfileViewController {
   override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    guard let lastItem = dataSource?.snapshot().itemIdentifiers.min(by: { $0.id < $1.id }) else { return }
     let offsetY = scrollView.contentOffset.y
     let contentHeight = scrollView.contentSize.height
     let height = scrollView.frame.size.height
 
     // 스크롤이 보이는 뷰 정도의 높이 이전까지 도달했을 때 업데이트
-    if offsetY > contentHeight - height && isLoading == false {
-      isLoading = true
-      paginationEventSubject.send(())
+    if offsetY > contentHeight - height {
+      paginationEventSubject.send(lastItem)
     }
   }
 }

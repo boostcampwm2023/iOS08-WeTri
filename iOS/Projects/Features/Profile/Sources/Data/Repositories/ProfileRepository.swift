@@ -15,7 +15,6 @@ import Trinet
 
 public final class ProfileRepository {
   private let provider: TNProvider<ProfileEndPoint>
-  private var nextID: Int?
   private let jsonDecoder: JSONDecoder = {
     let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = "yyyy-MM-dd" // JSON의 날짜 형식에 맞춰 설정합니다.
@@ -57,16 +56,13 @@ extension ProfileRepository: ProfileRepositoryRepresentable {
     .eraseToAnyPublisher()
   }
 
-  public func fetchPosts(resetPagination: Bool = false) -> AnyPublisher<[Post], Error> {
+  public func fetchPosts(nextID: Int?) -> AnyPublisher<PostsResponseDTO, Error> {
     return Deferred { [provider] in
       Future<Data, Error> { promise in
-        Task { [weak self] in
-          if resetPagination {
-            self?.nextID = nil
-          }
+        Task {
           do {
             let data = try await provider.request(
-              .fetchPosts(.init(idLessThan: nil, idMoreThan: self?.nextID, orderCreatedAt: .descending, limit: 20)),
+              .fetchPosts(.init(idLessThan: nil, idMoreThan: nextID, orderCreatedAt: .descending, limit: 20)),
               interceptor: TNKeychainInterceptor.shared
             )
             promise(.success(data))
@@ -78,10 +74,6 @@ extension ProfileRepository: ProfileRepositoryRepresentable {
     }
     .decode(type: GWResponse<PostsResponseDTO>.self, decoder: jsonDecoder)
     .compactMap(\.data)
-    .map { [weak self] in
-      self?.nextID = $0.metaData.nextID
-      return $0.posts
-    }
     .eraseToAnyPublisher()
   }
 }

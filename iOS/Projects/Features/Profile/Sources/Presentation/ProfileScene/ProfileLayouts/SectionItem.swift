@@ -10,10 +10,10 @@ import Foundation
 
 // MARK: - ProfileSection
 
-enum ProfileSection: Int {
+public enum ProfileSection: Int {
   case header
   case main
   case emptyState
 }
 
-typealias ProfileItem = Post
+public typealias ProfileItem = Post

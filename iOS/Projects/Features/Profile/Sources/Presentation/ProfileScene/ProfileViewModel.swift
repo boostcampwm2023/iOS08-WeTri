@@ -6,7 +6,7 @@ import Log
 public struct ProfileViewModelInput {
   let viewDidLoadPublisher: AnyPublisher<Void, Never>
   let didTapSettingButtonPublisher: AnyPublisher<Void, Never>
-  let paginationEventPublisher: AnyPublisher<Void, Never>
+  let paginationEventPublisher: AnyPublisher<ProfileItem, Never>
 }
 
 public typealias ProfileViewModelOutput = AnyPublisher<ProfileViewModelState, Never>
@@ -62,12 +62,18 @@ extension ProfileViewModel: ProfileViewModelRepresentable {
       .map(ProfileViewModelState.setupProfile)
       .catch { Just(.alert($0)) }
 
-    let updatePostsPublisher = input.paginationEventPublisher
-      .map { _ in return false } // 새로고침 안함
+    let postInfoPublisher = input.viewDidLoadPublisher
+      .map { _ in (nil, true) }
       .flatMap(useCase.fetchPosts)
       .map(ProfileViewModelState.updatePosts)
       .catch { Just(.alert($0)) }
 
-    return Just(.idle).merge(with: profileInfoPublisher, updatePostsPublisher).eraseToAnyPublisher()
+    let updatePostsPublisher = input.paginationEventPublisher
+      .map { return ($0, false) } // 새로고침 안함
+      .flatMap(useCase.fetchPosts)
+      .map(ProfileViewModelState.updatePosts)
+      .catch { Just(.alert($0)) }
+
+    return Just(.idle).merge(with: profileInfoPublisher, postInfoPublisher, updatePostsPublisher).eraseToAnyPublisher()
   }
 }

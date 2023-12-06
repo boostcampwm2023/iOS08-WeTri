@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - PostsResponseDTO
 
-struct PostsResponseDTO: Codable {
+public struct PostsResponseDTO: Codable {
   /// 게시글 목록
   let posts: [Post]
 
@@ -46,14 +46,20 @@ public struct Post: Codable, Hashable {
 // MARK: - MetaData
 
 struct MetaData: Codable {
-  /// 다음에 요청으로 보낼 id값
-  let nextID: Int
+  /// 받아온 데이터 중 제일 마지막의 ID값
+  ///
+  /// 다음에 요청으로 보낼 id값입니다.
+  let lastID: Int
 
   /// 받아온 데이터 개수
   let count: Int
 
+  /// 마지막 커서 여부
+  let isLastCursor: Bool
+
   enum CodingKeys: String, CodingKey {
-    case nextID = "after"
+    case lastID = "lastItemId"
+    case isLastCursor
     case count
   }
 }

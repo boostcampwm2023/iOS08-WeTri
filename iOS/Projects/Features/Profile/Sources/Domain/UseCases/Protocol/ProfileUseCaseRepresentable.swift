@@ -11,5 +11,5 @@ import Foundation
 
 public protocol ProfileUseCaseRepresentable {
   func fetchProfile() -> AnyPublisher<Profile, Error>
-  func fetchPosts(refresh: Bool) -> AnyPublisher<[Post], Error>
+  func fetchPosts(lastItem: ProfileItem?, refresh: Bool) -> AnyPublisher<[Post], Error>
 }
