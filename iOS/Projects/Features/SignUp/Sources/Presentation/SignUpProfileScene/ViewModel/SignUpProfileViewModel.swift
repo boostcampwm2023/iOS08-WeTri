@@ -73,8 +73,7 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
 
     input.completeButtonTap
       .sink { _ in
-        /// 이미지 데이터를 서버에 보낸다.
-        
+        // 이미지 데이터를 서버에 보낸다.
       }
       .store(in: &subscriptions)
 

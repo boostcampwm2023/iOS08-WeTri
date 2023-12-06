@@ -7,3 +7,5 @@
 //
 
 import Foundation
+
+final class ImageFormRepository: ImageFormRepositoryRepresentable {}
