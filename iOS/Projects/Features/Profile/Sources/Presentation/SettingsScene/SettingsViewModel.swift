@@ -50,11 +50,17 @@ final class SettingsViewModel {
 // MARK: SettingsViewModelRepresentable
 
 extension SettingsViewModel: SettingsViewModelRepresentable {
-  public func transform(input _: SettingsViewModelInput) -> SettingsViewModelOutput {
+  public func transform(input: SettingsViewModelInput) -> SettingsViewModelOutput {
     for subscription in subscriptions {
       subscription.cancel()
     }
     subscriptions.removeAll()
+
+    input.profileSettingsPublisher
+      .sink { [coordinating] in
+        coordinating?.moveToProfileSettings()
+      }
+      .store(in: &subscriptions)
 
     let initialState: SettingsViewModelOutput = Just(.idle).eraseToAnyPublisher()
 
