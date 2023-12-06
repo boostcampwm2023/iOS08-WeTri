@@ -20,3 +20,25 @@ export class NotAccessToGreenEyeException extends HttpException {
     super(response, httpCode);
   }
 }
+
+export class FileSizeTooLargeException extends HttpException {
+  constructor() {
+    const response = {
+      statusCode: 9200,
+      message: 'file size too large',
+    };
+    const httpCode = 400;
+    super(response, httpCode);
+  }
+}
+
+export class InvalidFileTypeException extends HttpException {
+  constructor() {
+    const response = {
+      statusCode: 9300,
+      message: 'invalid file type',
+    };
+    const httpCode = 400;
+    super(response, httpCode);
+  }
+}
