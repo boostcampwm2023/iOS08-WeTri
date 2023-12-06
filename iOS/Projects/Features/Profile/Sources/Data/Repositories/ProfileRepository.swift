@@ -13,7 +13,7 @@ import Trinet
 
 // MARK: - ProfileRepository
 
-public final class ProfileRepository {
+public struct ProfileRepository {
   private let provider: TNProvider<ProfileEndPoint>
   private let jsonDecoder: JSONDecoder = {
     let dateFormatter = DateFormatter()
@@ -36,7 +36,7 @@ public final class ProfileRepository {
 
 extension ProfileRepository: ProfileRepositoryRepresentable {
   public func fetchProfiles() -> AnyPublisher<Profile, Error> {
-    return Deferred { [provider] in
+    return Deferred {
       Future<Data, Error> { promise in
         Task {
           do {
@@ -57,7 +57,7 @@ extension ProfileRepository: ProfileRepositoryRepresentable {
   }
 
   public func fetchPosts(nextID: Int?) -> AnyPublisher<PostsResponseDTO, Error> {
-    return Deferred { [provider] in
+    return Deferred {
       Future<Data, Error> { promise in
         Task {
           do {
