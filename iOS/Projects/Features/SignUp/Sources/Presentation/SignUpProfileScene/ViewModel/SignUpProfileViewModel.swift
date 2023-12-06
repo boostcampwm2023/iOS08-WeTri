@@ -14,6 +14,7 @@ import Log
 
 public struct SignUpProfileViewModelInput {
   let nickNameTextFieldEditting: AnyPublisher<String, Never>
+  let imageButtonTap: AnyPublisher<Void, Never>
 }
 
 public typealias SignUpProfileViewModelOutput = AnyPublisher<SignUpProfileState, Never>
@@ -24,6 +25,7 @@ public enum SignUpProfileState {
   case idle
   case checking(Bool)
   case customError(Error)
+  case image
 }
 
 // MARK: - SignUpProfileViewModel
@@ -56,11 +58,15 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
       .catch { Just(.customError($0)) }
       .eraseToAnyPublisher()
 
+    let image = input.imageButtonTap
+      .flatMap { Just(SignUpProfileState.image) }
+      .eraseToAnyPublisher()
+
     let initialState: SignUpProfileViewModelOutput = Just(.idle)
       .eraseToAnyPublisher()
 
     return Publishers
-      .Merge(initialState, checkedResult)
+      .Merge3(initialState, checkedResult, image)
       .eraseToAnyPublisher()
   }
 }

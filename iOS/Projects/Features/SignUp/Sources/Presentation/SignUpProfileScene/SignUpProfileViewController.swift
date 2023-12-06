@@ -10,15 +10,18 @@ import Combine
 import CombineCocoa
 import DesignSystem
 import Log
+import Photos
 import UIKit
 
 // MARK: - SignUpProfileViewController
 
 public final class SignUpProfileViewController: UIViewController {
   private var subscriptions: Set<AnyCancellable> = []
+  private let imagePicker = UIImagePickerController()
   private let viewModel: SignUpProfileViewModelRepresentable
 
   private let textFieldEdittingSubject = PassthroughSubject<String, Never>()
+  private let imageButtonTapSubject = PassthroughSubject<Void, Never>()
 
   public init(viewModel: SignUpProfileViewModelRepresentable) {
     self.viewModel = viewModel
@@ -159,10 +162,19 @@ private extension SignUpProfileViewController {
         self?.textFieldEdittingSubject.send(text)
       }
       .store(in: &subscriptions)
+
+    profileImageButton.publisher(.touchUpInside)
+      .sink { [weak self] _ in
+        self?.imageButtonTapSubject.send()
+      }
+      .store(in: &subscriptions)
   }
 
   func bindViewModel() {
-    let input = SignUpProfileViewModelInput(nickNameTextFieldEditting: textFieldEdittingSubject.eraseToAnyPublisher())
+    let input = SignUpProfileViewModelInput(
+      nickNameTextFieldEditting: textFieldEdittingSubject.eraseToAnyPublisher(),
+      imageButtonTap: imageButtonTapSubject.eraseToAnyPublisher()
+    )
     let output = viewModel.transform(input: input)
     output
       .sink { [weak self] state in
@@ -183,7 +195,81 @@ private extension SignUpProfileViewController {
       }
     case let .customError(error):
       Log.make().error("\(error)")
+    case .image:
+      albumAuth()
     }
+  }
+}
+
+// MARK: PHPhotoLibrary
+
+private extension SignUpProfileViewController {
+  /// 앨범 접근 권한 판별하는 함수
+  func albumAuth() {
+    switch PHPhotoLibrary.authorizationStatus() {
+    case .denied:
+      showAlertAuth("앨범")
+    case .authorized:
+      openPhotoLibrary()
+    case .notDetermined,
+         .restricted:
+      PHPhotoLibrary.requestAuthorization { [weak self] state in
+        if state == .authorized {
+          self?.openPhotoLibrary()
+        } else {
+          self?.dismiss(animated: true)
+        }
+      }
+    default:
+      break
+    }
+  }
+
+  /// 권한을 거부했을 때 띄워주는 Alert 함수
+  func showAlertAuth(
+    _ type: String
+  ) {
+    if let appName = Bundle.main.infoDictionary!["CFBundleDisplayName"] as? String {
+      let alertVC = UIAlertController(
+        title: "설정",
+        message: "\(appName)이(가) \(type) 접근 허용되어 있지 않습니다. 설정화면으로 가시겠습니까?",
+        preferredStyle: .alert
+      )
+      let cancelAction = UIAlertAction(
+        title: "취소",
+        style: .cancel,
+        handler: nil
+      )
+      let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
+        UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:], completionHandler: nil)
+      }
+      alertVC.addAction(cancelAction)
+      alertVC.addAction(confirmAction)
+      present(alertVC, animated: true, completion: nil)
+    }
+  }
+
+  /// 아이폰에서 앨범에 접근하는 함수
+  func openPhotoLibrary() {
+    if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
+      imagePicker.sourceType = .photoLibrary
+      imagePicker.modalPresentationStyle = .currentContext
+      present(imagePicker, animated: true, completion: nil)
+    }
+  }
+}
+
+// MARK: UIImagePickerControllerDelegate
+
+extension SignUpProfileViewController: UIImagePickerControllerDelegate {
+  public func imagePickerController(
+    _: UIImagePickerController,
+    didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+  ) {
+    if let image = info[.originalImage] as? UIImage {
+      profileImageButton.image = image
+    }
+    dismiss(animated: true)
   }
 }
 
