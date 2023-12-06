@@ -6,7 +6,6 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
-import Cacher
 import Foundation
 
 // MARK: - UserInformationManager
