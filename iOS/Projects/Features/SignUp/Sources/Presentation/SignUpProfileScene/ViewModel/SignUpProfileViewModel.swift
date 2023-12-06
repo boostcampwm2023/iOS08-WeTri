@@ -82,24 +82,16 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
       .store(in: &subscriptions)
 
     input.completeButtonTap
-      .sink { [weak self] _ in
-        // 이미지 데이터를 서버에 보낸다.
-        guard let imageData,
-              let imageforms = self?.imageTransmitUseCase.transmit(imageData: imageData)
-        else {
-          return
+      .compactMap { imageData }
+      .flatMap(imageTransmitUseCase.transmit)
+      .sink { completion in
+        switch completion {
+        case .finished: break
+        case let .failure(error):
+          Log.make().error("\(error)")
         }
-        imageforms
-          .sink { completion in
-            switch completion {
-            case .finished: break
-            case let .failure(error):
-              Log.make().error("\(error)")
-            }
-          } receiveValue: { imageforms in
-            Log.make().debug("이미지 폼스 : \(imageforms)")
-          }
-          .store(in: &self!.subscriptions)
+      } receiveValue: { imageforms in
+        Log.make().debug("이미지 폼스 : \(imageforms)")
       }
       .store(in: &subscriptions)
 
