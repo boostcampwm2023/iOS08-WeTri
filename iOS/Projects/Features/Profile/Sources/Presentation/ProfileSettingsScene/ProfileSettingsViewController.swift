@@ -10,16 +10,12 @@ import Combine
 import DesignSystem
 import UIKit
 
-final class ProfileSettingsViewController: UIViewController {
+final class ProfileSettingsViewController: UICollectionViewController {
   // MARK: Properties
 
   private let viewModel: ProfileSettingsViewModelRepresentable
 
   private var subscriptions: Set<AnyCancellable> = []
-
-  // MARK: UI Components
-
-  private let button: UIButton = .init(configuration: .mainEnabled(title: "test button"))
 
   // MARK: Initializations
 
@@ -37,28 +33,11 @@ final class ProfileSettingsViewController: UIViewController {
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    setupLayouts()
-    setupConstraints()
     setupStyles()
     bind()
   }
 
   // MARK: Configuration
-
-  private func setupLayouts() {
-    view.addSubview(button)
-  }
-
-  private func setupConstraints() {
-    button.translatesAutoresizingMaskIntoConstraints = false
-
-    NSLayoutConstraint.activate(
-      [
-        button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-        button.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-      ]
-    )
-  }
 
   private func setupStyles() {
     view.backgroundColor = DesignSystemColor.primaryBackground
@@ -74,9 +53,4 @@ final class ProfileSettingsViewController: UIViewController {
     }
     .store(in: &subscriptions)
   }
-}
-
-@available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, xrOS 1.0, *)
-#Preview {
-  ProfileSettingsViewController(viewModel: ProfileSettingsViewModel())
 }
