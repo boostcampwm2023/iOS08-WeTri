@@ -46,7 +46,8 @@ final class WorkoutEnvironmentSetUpCoordinator: WorkoutEnvironmentSetUpCoordinat
   }
 
   func pushPeerRandomMatchingViewController(workoutSetting: WorkoutSetting) {
-    let repository = WorkoutPeerRandomMatchingRepository(session: makeMockDataFromRandomMatching())
+    let repository = WorkoutPeerRandomMatchingRepository(session: makeMockDataFromRandomMatching()
+    )
 
     let useCase = WorkoutPeerRandomMatchingUseCase(repository: repository)
 
