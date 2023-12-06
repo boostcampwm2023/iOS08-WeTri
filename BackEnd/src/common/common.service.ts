@@ -16,14 +16,13 @@ export class CommonService {
     };
     this.composeFindManyOptions(paginationDto, findManyOptions);
     const results: Array<T> = await repository.find(findManyOptions);
-    const lastItem: T =
-      results.length > 0 && results.length === paginationDto.take
-        ? results[results.length - 1]
-        : null;
+    const lastItemId: number = results.length > 0 ? results[results.length - 1].id : null;
+    const isLastCursor: boolean = results.length === paginationDto.take ? false : true;
     return {
       items: results,
       metaData: {
-        lastItemId: !lastItem ? null : lastItem.id,
+        lastItemId,
+        isLastCursor,
         count: results.length,
       },
     };
