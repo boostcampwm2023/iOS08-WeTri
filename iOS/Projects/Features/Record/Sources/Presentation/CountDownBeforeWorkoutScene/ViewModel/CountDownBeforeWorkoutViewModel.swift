@@ -39,7 +39,6 @@ final class CountDownBeforeWorkoutViewModel {
 
   weak var coordinator: WorkoutSessionCoordinating?
   var timerUseCase: CountDownBeforeWorkoutStartTimerUseCaseRepresentable
-  // TODO: 차후 생성 시점에서 시작 시간을 넘길 예정
   private var subscriptions: Set<AnyCancellable> = []
   private var beforeWorkoutTimerSubject: CurrentValueSubject<String, Never> = .init("")
   init(coordinator: WorkoutSessionCoordinating, useCase: CountDownBeforeWorkoutStartTimerUseCaseRepresentable) {
@@ -56,8 +55,8 @@ extension CountDownBeforeWorkoutViewModel: CountDownBeforeWorkoutViewModelRepres
 
     input
       .viewDidAppearPublisher
-      .sink { [weak self] _ in
-        self?.timerUseCase.startTimer()
+      .sink { [timerUseCase] _ in
+        timerUseCase.startTimer()
       }
       .store(in: &subscriptions)
 

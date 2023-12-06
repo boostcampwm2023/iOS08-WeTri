@@ -79,10 +79,7 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
 
     let workoutTypes: WorkoutEnvironmentSetupViewModelOutput = input
       .requestWorkoutTypes
-      .flatMap { [weak self] _ -> AnyPublisher<Result<[WorkoutType], Error>, Never> in
-        guard let self else {
-          return Just(Result.success([])).eraseToAnyPublisher()
-        }
+      .flatMap { [workoutEnvironmentSetupUseCase] _ -> AnyPublisher<Result<[WorkoutType], Error>, Never> in
         return workoutEnvironmentSetupUseCase.workoutTypes()
       }
       .map { results -> WorkoutEnvironmentState in
