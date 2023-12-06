@@ -21,6 +21,7 @@ public final class SignUpProfileViewController: UIViewController {
 
   private let textFieldEdittingSubject = PassthroughSubject<String, Never>()
   private let imageButtonTapSubject = PassthroughSubject<Void, Never>()
+  private let imageSetSubject = PassthroughSubject<Data, Never>()
 
   public init(viewModel: SignUpProfileViewModelRepresentable) {
     self.viewModel = viewModel
@@ -79,6 +80,7 @@ public final class SignUpProfileViewController: UIViewController {
     let button = UIButton(configuration: configuration)
     button.translatesAutoresizingMaskIntoConstraints = false
     button.titleLabel?.font = .preferredFont(forTextStyle: .headline, weight: .bold)
+    button.isEnabled = false
     return button
   }()
 
@@ -179,7 +181,8 @@ private extension SignUpProfileViewController {
   func bindViewModel() {
     let input = SignUpProfileViewModelInput(
       nickNameTextFieldEditting: textFieldEdittingSubject.eraseToAnyPublisher(),
-      imageButtonTap: imageButtonTapSubject.eraseToAnyPublisher()
+      imageButtonTap: imageButtonTapSubject.eraseToAnyPublisher(),
+      imageSetting: imageSetSubject.eraseToAnyPublisher()
     )
     let output = viewModel.transform(input: input)
     output
@@ -200,10 +203,16 @@ private extension SignUpProfileViewController {
       } else {
         nickNameDisabled()
       }
+    case .imageButtonTap:
+      showAlertSelect()
+    case .success:
+      completionButton.isEnabled = true
+    case .failure:
+      completionButton.isEnabled = false
     case let .customError(error):
       Log.make().error("\(error)")
-    case .image:
-      showAlertSelect()
+    default:
+      break
     }
   }
 }
@@ -321,8 +330,10 @@ extension SignUpProfileViewController: UIImagePickerControllerDelegate {
     _: UIImagePickerController,
     didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
   ) {
-    if let image = info[.originalImage] as? UIImage {
+    if let image = info[.originalImage] as? UIImage,
+       let imageData = image.pngData() {
       profileImageButton.image = image
+      imageSetSubject.send(imageData)
     }
     dismiss(animated: true)
   }

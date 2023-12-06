@@ -15,6 +15,7 @@ import Log
 public struct SignUpProfileViewModelInput {
   let nickNameTextFieldEditting: AnyPublisher<String, Never>
   let imageButtonTap: AnyPublisher<Void, Never>
+  let imageSetting: AnyPublisher<Data, Never>
 }
 
 public typealias SignUpProfileViewModelOutput = AnyPublisher<SignUpProfileState, Never>
@@ -25,7 +26,10 @@ public enum SignUpProfileState {
   case idle
   case checking(Bool)
   case customError(Error)
-  case image
+  case imageButtonTap
+  case image(Data)
+  case success
+  case failure
 }
 
 // MARK: - SignUpProfileViewModel
@@ -48,7 +52,7 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
     }
     subscriptions.removeAll()
 
-    let checkedResult = input.nickNameTextFieldEditting
+    let nickNameCheckedResult = input.nickNameTextFieldEditting
       .tryMap { [weak self] nickName in
         guard let result = self?.nickNameCheckUseCase.check(nickName: nickName) else {
           throw SignUpProfileViewModelError.invalidBinding
@@ -59,14 +63,29 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
       .eraseToAnyPublisher()
 
     let image = input.imageButtonTap
-      .flatMap { Just(SignUpProfileState.image) }
+      .flatMap { Just(SignUpProfileState.imageButtonTap) }
+      .eraseToAnyPublisher()
+
+    let imageSettingResult = input.imageSetting
+      .flatMap { Just(SignUpProfileState.image($0)) }
       .eraseToAnyPublisher()
 
     let initialState: SignUpProfileViewModelOutput = Just(.idle)
       .eraseToAnyPublisher()
 
+    let success = Publishers
+      .CombineLatest(nickNameCheckedResult, imageSettingResult)
+      .print()
+      .flatMap { nickNameCheckState, _ in
+        if case let .checking(isChecked) = nickNameCheckState, isChecked {
+          return Just(SignUpProfileState.success)
+        }
+        return Just(SignUpProfileState.failure)
+      }
+      .eraseToAnyPublisher()
+
     return Publishers
-      .Merge3(initialState, checkedResult, image)
+      .Merge4(initialState, nickNameCheckedResult, image, success)
       .eraseToAnyPublisher()
   }
 }
@@ -81,4 +100,5 @@ public protocol SignUpProfileViewModelRepresentable {
 
 enum SignUpProfileViewModelError: Error {
   case invalidBinding
+  case invalidNickNameCheck
 }
