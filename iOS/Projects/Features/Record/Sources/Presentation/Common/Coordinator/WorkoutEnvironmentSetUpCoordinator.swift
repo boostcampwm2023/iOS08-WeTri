@@ -37,8 +37,13 @@ final class WorkoutEnvironmentSetUpCoordinator: WorkoutEnvironmentSetUpCoordinat
     let repository = WorkoutEnvironmentSetupNetworkRepository(session: URLSession.shared)
 
     let useCase = WorkoutEnvironmentSetupUseCase(repository: repository)
+    let userInfoUseCase = UserInformationUseCase()
 
-    let viewModel = WorkoutEnvironmentSetupViewModel(useCase: useCase, coordinator: self)
+    let viewModel = WorkoutEnvironmentSetupViewModel(
+      workoutEnvironmentSetupUseCase: useCase,
+      userInformationUseCase: userInfoUseCase,
+      coordinator: self
+    )
 
     let viewController = WorkoutEnvironmentSetupViewController(viewModel: viewModel)
 
@@ -49,9 +54,15 @@ final class WorkoutEnvironmentSetUpCoordinator: WorkoutEnvironmentSetUpCoordinat
     let repository = WorkoutPeerRandomMatchingRepository(session: makeMockDataFromRandomMatching()
     )
 
-    let useCase = WorkoutPeerRandomMatchingUseCase(repository: repository)
+    let workoutPeerRandomMatchingUseCase = WorkoutPeerRandomMatchingUseCase(repository: repository)
+    let userInformationUseCase = UserInformationUseCase()
 
-    let viewModel = WorkoutPeerRandomMatchingViewModel(workoutSetting: workoutSetting, coordinating: self, useCase: useCase)
+    let viewModel = WorkoutPeerRandomMatchingViewModel(
+      workoutSetting: workoutSetting,
+      coordinating: self,
+      workoutPeerRandomMatchingUseCase: workoutPeerRandomMatchingUseCase,
+      userInformationUseCase: userInformationUseCase
+    )
 
     let viewController = WorkoutPeerRandomMatchingViewController(viewModel: viewModel)
 

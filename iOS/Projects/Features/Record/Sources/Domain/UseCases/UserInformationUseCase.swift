@@ -9,11 +9,22 @@
 import Foundation
 import UserInformationManager
 
+// MARK: - UserInformationUseCaseRepresentable
+
+protocol UserInformationUseCaseRepresentable {
+  func userNickName() -> String
+  func userProfileImageData() -> Data?
+  func userProfileImageURL() -> URL?
+  func userProfileBirthDay() -> Date
+}
+
+// MARK: - UserInformationUseCase
+
 /// 유저디폴트 매니저를 활용하여, 사용자의 개인정보를 가져옵니다.
-struct UserInformationUseCase {
-  let manager = UserInformationManager.shared
-  
-  let formatter: DateFormatter = {
+struct UserInformationUseCase: UserInformationUseCaseRepresentable {
+  private let manager = UserInformationManager.shared
+
+  private let formatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy-MM-dd"
     return formatter

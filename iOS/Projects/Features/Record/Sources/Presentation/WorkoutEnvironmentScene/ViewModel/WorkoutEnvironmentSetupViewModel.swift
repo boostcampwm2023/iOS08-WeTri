@@ -50,7 +50,8 @@ protocol WorkoutEnvironmentSetupViewModelRepresentable {
 
 final class WorkoutEnvironmentSetupViewModel {
   private var subscriptions = Set<AnyCancellable>()
-  private var useCase: WorkoutEnvironmentSetupUseCaseRepresentable
+  private let workoutEnvironmentSetupUseCase: WorkoutEnvironmentSetupUseCaseRepresentable
+  private let userInformationUseCase: UserInformationUseCaseRepresentable
 
   private weak var coordinator: WorkoutEnvironmentSetUpCoordinating?
 
@@ -60,11 +61,13 @@ final class WorkoutEnvironmentSetupViewModel {
   var workoutTypes: [WorkoutType] = []
 
   init(
-    useCase: WorkoutEnvironmentSetupUseCaseRepresentable,
+    workoutEnvironmentSetupUseCase: WorkoutEnvironmentSetupUseCaseRepresentable,
+    userInformationUseCase: UserInformationUseCaseRepresentable,
     coordinator: WorkoutEnvironmentSetUpCoordinator?
   ) {
-    self.useCase = useCase
+    self.workoutEnvironmentSetupUseCase = workoutEnvironmentSetupUseCase
     self.coordinator = coordinator
+    self.userInformationUseCase = userInformationUseCase
   }
 }
 
@@ -80,7 +83,7 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
         guard let self else {
           return Just(Result.success([])).eraseToAnyPublisher()
         }
-        return useCase.workoutTypes()
+        return workoutEnvironmentSetupUseCase.workoutTypes()
       }
       .map { results -> WorkoutEnvironmentState in
         switch results {
@@ -94,11 +97,8 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
 
     let workoutPeerType: WorkoutEnvironmentSetupViewModelOutput = input
       .requestWorkoutPeerTypes
-      .flatMap { [weak self] _ -> AnyPublisher<Result<[PeerType], Error>, Never> in
-        guard let self else {
-          return Just(Result.success([])).eraseToAnyPublisher()
-        }
-        return useCase.peerTypes()
+      .flatMap { [workoutEnvironmentSetupUseCase] _ -> AnyPublisher<Result<[PeerType], Error>, Never> in
+        return workoutEnvironmentSetupUseCase.peerTypes()
       }
       .map { results -> WorkoutEnvironmentState in
         switch results {
@@ -167,10 +167,8 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
           roomID: "",
           id: "",
           workoutTypeCode: workoutSetting.workoutType,
-          // TODO: UserDefaults를 활용해 가져올 예정
-          nickname: "",
-          // TODO: UserDefaults를 활용해 가져올 예정
-          userProfileImage: URL(string: "")
+          nickname: userInformationUseCase.userNickName(),
+          userProfileImage: userInformationUseCase.userProfileImageURL()
         )
       )
     case .random:

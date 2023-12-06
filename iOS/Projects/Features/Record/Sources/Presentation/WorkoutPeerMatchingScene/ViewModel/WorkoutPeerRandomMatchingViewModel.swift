@@ -36,17 +36,20 @@ final class WorkoutPeerRandomMatchingViewModel {
   // MARK: - Properties
 
   private weak var coordinating: WorkoutEnvironmentSetUpCoordinating?
-  private var useCase: WorkoutPeerRandomMatchingUseCaseRepresentable
+  private let workoutPeerRandomMatchingUseCase: WorkoutPeerRandomMatchingUseCaseRepresentable
+  private let userInformationUseCase: UserInformationUseCaseRepresentable
   private let workoutSetting: WorkoutSetting
   private var timerInitDate: Date?
 
   init(
     workoutSetting: WorkoutSetting,
     coordinating: WorkoutEnvironmentSetUpCoordinating,
-    useCase: WorkoutPeerRandomMatchingUseCaseRepresentable
+    workoutPeerRandomMatchingUseCase: WorkoutPeerRandomMatchingUseCaseRepresentable,
+    userInformationUseCase: UserInformationUseCaseRepresentable
   ) {
     self.coordinating = coordinating
-    self.useCase = useCase
+    self.workoutPeerRandomMatchingUseCase = workoutPeerRandomMatchingUseCase
+    self.userInformationUseCase = userInformationUseCase
     self.workoutSetting = workoutSetting
   }
 
@@ -75,7 +78,7 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
   }
 
   private func bindUseCase() {
-    useCase
+    workoutPeerRandomMatchingUseCase
       .matchStart(workoutSetting: workoutSetting)
       .receive(on: RunLoop.main)
       .sink { [weak self] results in
@@ -122,7 +125,7 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
   ///   매치 성사 되었을 떄:  pushWorkoutSession 함수로 coordinator를 통해서 다음 화면으로 넘어갑니다.
   ///   매치 성사가 안 되었을 때: 2초마다 계속해서 요청을 보냅니다.
   func requestIsMatchedRandomPeers(request: IsMatchedRandomPeersRequest) {
-    useCase
+    workoutPeerRandomMatchingUseCase
       .isMatchedRandomPeer(isMatchedRandomPeersRequest: request)
       .receive(on: RunLoop.main)
       .sink { [weak self] result in
@@ -158,16 +161,14 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
       roomID: roomID,
       id: id,
       workoutTypeCode: workoutSetting.workoutType,
-      // TODO: 닉네임은 UserDefaults를 통해 가져올 예정
-      nickname: "",
-      // TODO: 프로필은 UserDefaults를 통해 가져올 예정
-      userProfileImage: URL(string: "")
+      nickname: userInformationUseCase.userNickName(),
+      userProfileImage: userInformationUseCase.userProfileImageURL()
     )
     coordinating?.finish(workoutSessionComponents: workoutSessionComponents)
   }
 
   private func cancelPeerRandomMatching() {
-    useCase.matchCancel()
+    workoutPeerRandomMatchingUseCase.matchCancel()
     coordinating?.popPeerRandomMatchingViewController()
   }
 
