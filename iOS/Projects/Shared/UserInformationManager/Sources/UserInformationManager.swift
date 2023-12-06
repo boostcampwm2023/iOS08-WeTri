@@ -58,7 +58,6 @@ public extension UserInformationManager {
 
 /// Defaults이미지를 저장합니다.
 private extension UserInformationManager {
-  
   /// 만약 userDefaults에 값이 존재한다면 fakeData를 설정합니다.
   func setDefaultsData() {
     guard
@@ -66,10 +65,10 @@ private extension UserInformationManager {
       data(.birthDayDate) == nil,
       data(.userProfileImage) == nil,
       data(.userProfileImageURL) == nil
-    else{
+    else {
       return
     }
-    
+
     let date = Date.now
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy-MM-dd"
@@ -79,7 +78,7 @@ private extension UserInformationManager {
 
     let name = Data("김무드".utf8)
     defaults.setValue(name, forKey: UserInformation.userName.rawValue)
-    
+
     guard let imageURL = URL(string: "https://www.catster.com/wp-content/uploads/2017/08/Pixiebob-cat.jpg") else {
       return
     }
