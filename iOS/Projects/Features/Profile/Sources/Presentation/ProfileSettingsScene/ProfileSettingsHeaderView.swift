@@ -1,5 +1,5 @@
 //
-//  UserProfileHeaderView.swift
+//  ProfileSettingsHeaderView.swift
 //  ProfileFeature
 //
 //  Created by 홍승현 on 12/6/23.
@@ -9,9 +9,9 @@
 import DesignSystem
 import UIKit
 
-// MARK: - UserProfileHeaderView
+// MARK: - ProfileSettingsHeaderView
 
-final class UserProfileHeaderView: UICollectionReusableView {
+final class ProfileSettingsHeaderView: UICollectionReusableView {
   // MARK: UI Components
 
   private let imageView: UIImageView = {
@@ -88,9 +88,9 @@ final class UserProfileHeaderView: UICollectionReusableView {
   }
 }
 
-// MARK: UserProfileHeaderView.Metrics
+// MARK: ProfileSettingsHeaderView.Metrics
 
-private extension UserProfileHeaderView {
+private extension ProfileSettingsHeaderView {
   enum Metrics {
     static let imageViewSize: CGFloat = 80
 
