@@ -13,17 +13,17 @@ import Log
 // MARK: - SignUpProfileViewModelInput
 
 public struct SignUpProfileViewModelInput {
-  let maleButtonTap: AnyPublisher<Void, Never>
-  let femaleButtonTap: AnyPublisher<Void, Never>
-  let birthSelect: AnyPublisher<Date, Never>
+  let nickNameTextFieldEditting: AnyPublisher<String, Never>
 }
 
-public typealias SignUpProfileViewModelOutput = AnyPublisher<SignUpGenderBirthState, Never>
+public typealias SignUpProfileViewModelOutput = AnyPublisher<SignUpProfileState, Never>
 
 // MARK: - SignUpProfileState
 
 public enum SignUpProfileState {
   case idle
+  case checking(Bool)
+  case customError(Error)
 }
 
 // MARK: - SignUpProfileViewModel
@@ -40,16 +40,27 @@ public final class SignUpProfileViewModel {
 // MARK: SignUpProfileViewModelRepresentable
 
 extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
-  public func transform(input _: SignUpGenderBirthViewModelInput) -> SignUpGenderBirthViewModelOutput {
+  public func transform(input: SignUpProfileViewModelInput) -> SignUpProfileViewModelOutput {
     for subscription in subscriptions {
       subscription.cancel()
     }
     subscriptions.removeAll()
 
-    let initialState: SignUpGenderBirthViewModelOutput = Just(.idle)
+    let checkedResult = input.nickNameTextFieldEditting
+      .tryMap { [weak self] nickName in
+        guard let result = self?.nickNameCheckUseCase.check(nickName: nickName) else {
+          throw SignUpProfileViewModelError.invalidBinding
+        }
+        return SignUpProfileState.checking(result)
+      }
+      .catch { Just(.customError($0)) }
       .eraseToAnyPublisher()
 
-    return initialState
+    let initialState: SignUpProfileViewModelOutput = Just(.idle)
+      .eraseToAnyPublisher()
+
+    return Publishers
+      .Merge(initialState, checkedResult)
       .eraseToAnyPublisher()
   }
 }
@@ -57,7 +68,7 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
 // MARK: - SignUpProfileViewModelRepresentable
 
 public protocol SignUpProfileViewModelRepresentable {
-  func transform(input: SignUpGenderBirthViewModelInput) -> SignUpGenderBirthViewModelOutput
+  func transform(input: SignUpProfileViewModelInput) -> SignUpProfileViewModelOutput
 }
 
 // MARK: - SignUpProfileViewModelError

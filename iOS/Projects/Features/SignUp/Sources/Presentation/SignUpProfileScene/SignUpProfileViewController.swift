@@ -18,6 +18,8 @@ public final class SignUpProfileViewController: UIViewController {
   private var subscriptions: Set<AnyCancellable> = []
   private let viewModel: SignUpProfileViewModelRepresentable
 
+  private let textFieldEdittingSubject = PassthroughSubject<String, Never>()
+
   public init(viewModel: SignUpProfileViewModelRepresentable) {
     self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
@@ -78,6 +80,7 @@ public final class SignUpProfileViewController: UIViewController {
     super.viewDidLoad()
     configureUI()
     bindUI()
+    bindViewModel()
   }
 }
 
@@ -141,12 +144,38 @@ private extension SignUpProfileViewController {
 private extension SignUpProfileViewController {
   func bindUI() {
     nickNameBoxView.nickNameDidChangedPublisher
-      .sink { _ in
-        // TODO: ViewModel로 닉네임 넘겨서 사용가능한닉인지 아닌지 받아와서 사용가능하면 true/false
-        // TODO: NickNameBoxView 사용가능, 불가능
-        // TODO: NickNameCheckerView 사용가능, 불가능
+      .sink { [weak self] text in
+        Log.make().debug("\(text)")
+        self?.textFieldEdittingSubject.send(text)
       }
       .store(in: &subscriptions)
+  }
+
+  func bindViewModel() {
+    let input = SignUpProfileViewModelInput(nickNameTextFieldEditting: textFieldEdittingSubject.eraseToAnyPublisher())
+    let output = viewModel.transform(input: input)
+    output
+      .sink { [weak self] state in
+        self?.render(state: state)
+      }
+      .store(in: &subscriptions)
+  }
+
+  func render(state: SignUpProfileState) {
+    switch state {
+    case .idle:
+      break
+    case let .checking(isChecked):
+      if isChecked {
+        nickNameBoxView.configureEnabled()
+        nickNameCheckerView.configureEnabled()
+      } else {
+        nickNameBoxView.configureDisabled()
+        nickNameCheckerView.configureDisabled()
+      }
+    case let .customError(error):
+      Log.make().error("\(error)")
+    }
   }
 }
 

@@ -43,7 +43,7 @@ final class NickNameBoxView: UIView {
     super.init(frame: frame)
     configureUI()
     bindUI()
-    disabledNickName()
+    configureDisabled()
   }
 
   @available(*, unavailable)
@@ -75,18 +75,6 @@ private extension NickNameBoxView {
     ])
   }
 
-  func enabledNickName() {
-    textField.textColor = DesignSystemColor.primaryText
-    layer.borderColor = DesignSystemColor.main03.cgColor
-    cancelButton.tintColor = DesignSystemColor.main03
-  }
-
-  func disabledNickName() {
-    layer.borderColor = DesignSystemColor.error.cgColor
-    textField.textColor = DesignSystemColor.error
-    cancelButton.tintColor = DesignSystemColor.error
-  }
-
   func bindUI() {
     cancelButton.publisher(.touchUpInside)
       .sink { [weak self] _ in
@@ -94,7 +82,7 @@ private extension NickNameBoxView {
       }
       .store(in: &subscriptions)
 
-    textField.publisher(.valueChanged)
+    textField.publisher(.editingChanged)
       .sink { [weak self] _ in
         guard let text = self?.textField.text else {
           return
@@ -102,6 +90,20 @@ private extension NickNameBoxView {
         self?.nickNameDidChangedSubject.send(text)
       }
       .store(in: &subscriptions)
+  }
+}
+
+extension NickNameBoxView {
+  func configureEnabled() {
+    textField.textColor = DesignSystemColor.primaryText
+    layer.borderColor = DesignSystemColor.main03.cgColor
+    cancelButton.tintColor = DesignSystemColor.main03
+  }
+
+  func configureDisabled() {
+    layer.borderColor = DesignSystemColor.error.cgColor
+    textField.textColor = DesignSystemColor.error
+    cancelButton.tintColor = DesignSystemColor.error
   }
 }
 
