@@ -17,7 +17,6 @@ import UIKit
 
 public final class SignUpProfileViewController: UIViewController {
   private var subscriptions: Set<AnyCancellable> = []
-  private let imagePicker = UIImagePickerController()
   private let viewModel: SignUpProfileViewModelRepresentable
 
   private let textFieldEdittingSubject = PassthroughSubject<String, Never>()
@@ -32,6 +31,12 @@ public final class SignUpProfileViewController: UIViewController {
   required init?(coder _: NSCoder) {
     fatalError("NO Xib")
   }
+
+  private lazy var imagePicker: UIImagePickerController = {
+    let imagePicker = UIImagePickerController()
+    imagePicker.delegate = self
+    return imagePicker
+  }()
 
   private let titleLabel: UILabel = {
     let label = UILabel()
@@ -254,9 +259,14 @@ private extension SignUpProfileViewController {
   /// 아이폰에서 앨범에 접근하는 함수
   func openPhotoLibrary() {
     if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
-      imagePicker.sourceType = .photoLibrary
-      imagePicker.modalPresentationStyle = .currentContext
-      present(imagePicker, animated: true, completion: nil)
+      DispatchQueue.main.async { [weak self] in
+        guard let self else {
+          return
+        }
+        imagePicker.sourceType = .photoLibrary
+        imagePicker.modalPresentationStyle = .currentContext
+        present(imagePicker, animated: true, completion: nil)
+      }
     }
   }
 }
@@ -274,6 +284,10 @@ extension SignUpProfileViewController: UIImagePickerControllerDelegate {
     dismiss(animated: true)
   }
 }
+
+// MARK: UINavigationControllerDelegate
+
+extension SignUpProfileViewController: UINavigationControllerDelegate {}
 
 // MARK: - Metrics
 
