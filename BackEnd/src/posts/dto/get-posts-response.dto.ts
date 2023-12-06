@@ -1,8 +1,8 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
 import { SuccessResDto } from '../../common/dto/SuccessRes.dto';
 import { Post } from '../entities/posts.entity';
-import { Record } from 'src/records/entities/records.entity';
-import { Profile } from 'src/profiles/entities/profiles.entity';
+import { Record } from '../../records/entities/records.entity';
+import { Profile } from '../../profiles/entities/profiles.entity';
 
 class PostRecordDto extends PickType(Record, [
   'id',
