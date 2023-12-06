@@ -10,9 +10,9 @@ export class WorkoutsService {
     @InjectRepository(Workout)
     private readonly workoutModelRepository: Repository<Workout>,
   ) {}
-  findAllWorkouts(): Promise<Workout[]> {
-    const workouts = this.workoutModelRepository.find();
-    if (!workouts) {
+  async findAllWorkouts(): Promise<Workout[]> {
+    const workouts = await this.workoutModelRepository.find();
+    if (workouts.length === 0) {
       throw new NotFoundAllWorkoutsException();
     }
     return workouts;
