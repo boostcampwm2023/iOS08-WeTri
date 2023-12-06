@@ -1,11 +1,3 @@
-//
-//  ImageFormRepository.swift
-//  SignUpFeature
-//
-//  Created by 안종표 on 12/6/23.
-//  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
-//
-
 import Combine
 import Foundation
 import Log
@@ -33,7 +25,7 @@ public final class ImageFormRepository: ImageFormRepositoryRepresentable {
         return promise(.failure(ImageFormRepositoryError.invalidImageFormRepository))
       }
       let boundary = "Boundary-\(UUID().uuidString)"
-      let body = createBody(parameters: [:], boundary: boundary, data: imageData, mimeType: "image/png", filename: "임의설정")
+      let body = createBody(boundary: boundary, imageDataArray: [imageData], mimeType: "image/png")
       let endPoint = ImageFormEndPoint.image(body, boundary)
       Task {
         do {
@@ -49,29 +41,26 @@ public final class ImageFormRepository: ImageFormRepositoryRepresentable {
     .eraseToAnyPublisher()
   }
 
-  private func createBody(parameters _: [String: String],
-                          boundary: String,
-                          data: Data,
-                          mimeType: String,
-                          filename: String) -> Data {
+  private func createBody(boundary: String, imageDataArray: [Data], mimeType: String) -> Data {
     var body = Data()
-    let imgDataKey = "images"
     let boundaryPrefix = "--\(boundary)\r\n"
 
-//    for (key, value) in parameters {
-//      body.append(boundaryPrefix.data(using: .utf8)!)
-//      body.append("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n".data(using: .utf8)!)
-//      body.append("\(value)\r\n".data(using: .utf8)!)
-//    }
+    // 각 이미지 데이터를 멀티파트 형식으로 추가
+    for (index, imageData) in imageDataArray.enumerated() {
+      let imgDataKey = "images"
+      let filename = "image.png"
 
-    body.append(boundaryPrefix.data(using: .utf8)!)
-    body.append("Content-Disposition: form-data; name=\"\(imgDataKey)\"; filename=\"\(filename)\"\r\n".data(using: .utf8)!)
-    body.append("Content-Type: \(mimeType)\r\n\r\n".data(using: .utf8)!)
-    body.append(data)
-    body.append("\r\n".data(using: .utf8)!)
-    body.append("--".appending(boundary.appending("--")).data(using: .utf8)!)
+      body.append(boundaryPrefix.data(using: .utf8)!)
+      body.append("Content-Disposition: form-data; name=\"\(imgDataKey)\"; filename=\"\(filename)\"\r\n".data(using: .utf8)!)
+      body.append("Content-Type: \(mimeType)\r\n\r\n".data(using: .utf8)!)
+      body.append(imageData)
+      body.append("\r\n".data(using: .utf8)!)
+    }
 
-    return body as Data
+    // 종결 바운더리 추가
+    body.append("--\(boundary)--\r\n".data(using: .utf8)!)
+
+    return body
   }
 }
 
@@ -83,6 +72,7 @@ enum ImageFormEndPoint: TNEndPoint {
   var boundary: String {
     switch self {
     case let .image(_, providedBoundary):
+      Log.make().debug("EndPoint boundary: \(providedBoundary)")
       return providedBoundary
     }
   }
@@ -108,13 +98,17 @@ enum ImageFormEndPoint: TNEndPoint {
   var body: Encodable? {
     switch self {
     case let .image(formData, _):
+      Log.make().debug("EndPoint formData: \(formData)")
       return formData
     }
   }
 
   var headers: TNHeaders {
     TNHeaders(headers: [
-      TNHeader(key: "Content-Type", value: "multipart/form-data; boundary\(boundary)"),
+      TNHeader(key: "Content-Type", value: "multipart/form-data; boundary=\(boundary)"),
+      TNHeader(key: "Accept-Encoding", value: "gzip"),
+      TNHeader(key: "Accept", value: "*/*"),
+      TNHeader(key: "Connection", value: "keep-alive"),
     ])
   }
 }
