@@ -21,6 +21,7 @@ describe('WorkoutsService', () => {
 
     mockRepository = {
       find: jest.fn().mockResolvedValue(mockWorkouts),
+      findOne: jest.fn().mockResolvedValue(mockWorkouts[0]),
     };
 
     const module: TestingModule = await Test.createTestingModule({
