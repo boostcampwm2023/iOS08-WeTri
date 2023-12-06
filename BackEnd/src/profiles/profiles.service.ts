@@ -17,7 +17,7 @@ export class ProfilesService {
     @InjectRepository(Profile)
     private readonly profilesRepository: Repository<Profile>,
     private readonly commonService: CommonService,
-  ) { }
+  ) {}
 
   async updateProfile(publicId: string, updateProfileDto: UpdateProfileDto) {
     if (await this.validateProfileNickname(updateProfileDto.nickname)) {

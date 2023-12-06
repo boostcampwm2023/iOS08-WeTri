@@ -1,5 +1,5 @@
-import { QueryOptions } from "../../common/type/query-options.type";
+import { QueryOptions } from '../../common/type/query-options.type';
 
 export const getProfilePostsQueryOptions: QueryOptions = {
-    mainAlias: 'profile'
-}
+  mainAlias: 'profile',
+};

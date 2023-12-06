@@ -36,7 +36,7 @@ export class PostsController {
   @UseGuards(AccessTokenGuard)
   @Post()
   @ApiOperation({ summary: '게시글 생성' })
-  @ApiCreatedResponse({type: GetPostResponseDto})
+  @ApiCreatedResponse({ type: GetPostResponseDto })
   @ApiBody({ type: CreatePostDto })
   async createPost(
     @Body() body: CreatePostDto,

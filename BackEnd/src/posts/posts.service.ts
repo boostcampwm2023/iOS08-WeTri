@@ -35,16 +35,24 @@ export class PostsService {
       postUrl: postInfo.postUrl,
       record,
       profile,
-    }); 
+    });
     return await this.findOneById(post.id);
   }
 
   async paginatePosts(query: PaginatePostDto) {
-    return await this.commonService.paginate<Post>(query, this.postsRepository, getCreateUpdateQueryOptions);
+    return await this.commonService.paginate<Post>(
+      query,
+      this.postsRepository,
+      getCreateUpdateQueryOptions,
+    );
   }
 
   async findOneById(id: number) {
-    const queryBuilder = this.commonService.makeQueryBuilder(this.postsRepository, getCreateUpdateQueryOptions, {where: {id}});
+    const queryBuilder = this.commonService.makeQueryBuilder(
+      this.postsRepository,
+      getCreateUpdateQueryOptions,
+      { where: { id } },
+    );
     const post = await queryBuilder.getOne();
     if (!post) {
       throw new NotFoundPostException();
@@ -57,7 +65,7 @@ export class PostsService {
       query,
       this.postsRepository,
       getCreateUpdateQueryOptions,
-      {where: {publicId}},
+      { where: { publicId } },
     );
   }
 

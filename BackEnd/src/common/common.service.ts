@@ -7,7 +7,6 @@ import { JoinType, QueryOptions } from './type/query-options.type';
 
 @Injectable()
 export class CommonService {
-
   async paginate<T extends BaseModel>(
     paginationDto: BasePaginationDto,
     repository: Repository<T>,
@@ -18,10 +17,16 @@ export class CommonService {
       ...overrideFindOptions,
     };
     this.composeFindManyOptions(paginationDto, findManyOptions);
-    const queryBuilder= this.makeQueryBuilder<T>(repository, queryOptions, findManyOptions); 
+    const queryBuilder = this.makeQueryBuilder<T>(
+      repository,
+      queryOptions,
+      findManyOptions,
+    );
     const results: Array<T> = await queryBuilder.getMany();
-    const lastItemId: number = results.length > 0 ? results[results.length - 1].id : null;
-    const isLastCursor: boolean = results.length === paginationDto.take ? false : true;
+    const lastItemId: number =
+      results.length > 0 ? results[results.length - 1].id : null;
+    const isLastCursor: boolean =
+      results.length === paginationDto.take ? false : true;
     return {
       items: results,
       metaData: {
@@ -56,15 +61,19 @@ export class CommonService {
     }
   }
 
-  makeQueryBuilder<T>(repository: Repository<T>, queryOptions: QueryOptions, findManyOptions: FindManyOptions<T> = {}) {
+  makeQueryBuilder<T>(
+    repository: Repository<T>,
+    queryOptions: QueryOptions,
+    findManyOptions: FindManyOptions<T> = {},
+  ) {
     let queryBilder = repository.createQueryBuilder(queryOptions.mainAlias);
     queryBilder = queryBilder.setFindOptions(findManyOptions);
-    if(queryOptions.join) {
+    if (queryOptions.join) {
       queryOptions.join.forEach((value: JoinType) => {
         queryBilder = queryBilder.leftJoin(value.joinColumn, value.joinAlias);
       });
     }
-    if(queryOptions.select) {
+    if (queryOptions.select) {
       queryBilder = queryBilder.select(queryOptions.select);
     }
     return queryBilder;
