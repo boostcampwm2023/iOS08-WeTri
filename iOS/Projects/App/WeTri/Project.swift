@@ -31,6 +31,7 @@ let projects = Project.makeModule(
       "NSLocationWhenInUseUsageDescription": "운동 경로를 보여줄 때 사용합니다",
       "NSHealthShareUsageDescription": "운동 시 건강 데이터를 공유합니다",
       "NSHealthUpdateUsageDescription": "운동 시 건강 데이터를 업데이트합니다",
+      "Privacy - Photo Library Usage Description": "앨범 접근 권한"
     ]
   )
 )
