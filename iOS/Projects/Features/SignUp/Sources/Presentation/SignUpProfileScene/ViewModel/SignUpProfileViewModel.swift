@@ -53,6 +53,8 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
     }
     subscriptions.removeAll()
 
+    var imageData: Data?
+
     let nickNameCheckedResult = input.nickNameTextFieldEditting
       .tryMap { [weak self] nickName in
         guard let result = self?.nickNameCheckUseCase.check(nickName: nickName) else {
@@ -71,9 +73,20 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
       .flatMap { Just(SignUpProfileState.image($0)) }
       .eraseToAnyPublisher()
 
+    input.imageSetting
+      .sink { data in
+        imageData = data
+      }
+      .store(in: &subscriptions)
+
     input.completeButtonTap
-      .sink { _ in
+      .sink { [weak self] _ in
         // 이미지 데이터를 서버에 보낸다.
+        guard let imageData else {
+          return
+        }
+        
+        
       }
       .store(in: &subscriptions)
 

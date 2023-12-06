@@ -8,8 +8,10 @@
 
 import Foundation
 
+// MARK: - ImageTransmitUseCaseRepresentable
+
 protocol ImageTransmitUseCaseRepresentable {}
 
-final class ImageTransmitUseCase: ImageTransmitUseCaseRepresentable {
-  
-}
+// MARK: - ImageTransmitUseCase
+
+final class ImageTransmitUseCase: ImageTransmitUseCaseRepresentable {}
