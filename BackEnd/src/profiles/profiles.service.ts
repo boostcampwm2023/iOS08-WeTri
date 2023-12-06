@@ -24,7 +24,7 @@ export class ProfilesService {
     }
     await this.profilesRepository.update({ publicId }, updateProfileDto);
     return this.getProfile(publicId);
-  }  
+  }
 
   async deleteProfile(publicId: string) {
     return this.profilesRepository.delete({ publicId });

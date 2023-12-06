@@ -1,7 +1,7 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { WorkoutsService } from './workouts.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import {WorkoutResDto} from './dto/workout-response.dto';
+import { WorkoutResDto } from './dto/workout-response.dto';
 import { AccessTokenGuard } from '../auth/guard/bearerToken.guard';
 import { Workout } from './entities/workout.entity';
 
