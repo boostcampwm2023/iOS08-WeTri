@@ -79,6 +79,7 @@ final class ProfileSettingsHeaderView: UICollectionReusableView {
 
         birthLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
         birthLabel.topAnchor.constraint(equalTo: nicknameLabel.bottomAnchor, constant: Metrics.birthLabelTop),
+        birthLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Metrics.birthLabelBottom),
       ]
     )
   }
@@ -97,5 +98,6 @@ private extension ProfileSettingsHeaderView {
     static let imageViewTop: CGFloat = 24
     static let nicknameLabelTop: CGFloat = 16
     static let birthLabelTop: CGFloat = 8
+    static let birthLabelBottom: CGFloat = 24
   }
 }
