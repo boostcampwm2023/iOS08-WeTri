@@ -15,6 +15,7 @@ final class ProfilePostCell: UICollectionViewCell {
   private let imageView: UIImageView = {
     let imageView = UIImageView(image: .logoImage)
     imageView.contentMode = .scaleAspectFill
+    imageView.clipsToBounds = true
     return imageView
   }()
 
