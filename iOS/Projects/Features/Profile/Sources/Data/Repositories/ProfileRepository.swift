@@ -50,10 +50,30 @@ extension ProfileRepository: ProfileRepositoryRepresentable {
     }
     .decode(type: GWResponse<ProfileDTO>.self, decoder: jsonDecoder)
     .compactMap(\.data)
-    .map(\.profile)
     .tryMap {
       try Profile(profileData: Data(contentsOf: $0.profileImage), nickname: $0.nickname)
     }
+    .eraseToAnyPublisher()
+  }
+
+  public func fetchPosts(nextID: Int?) -> AnyPublisher<PostsResponseDTO, Error> {
+    return Deferred {
+      Future<Data, Error> { promise in
+        Task {
+          do {
+            let data = try await provider.request(
+              .fetchPosts(.init(idLessThan: nil, idMoreThan: nextID, orderCreatedAt: .descending, limit: 20)),
+              interceptor: TNKeychainInterceptor.shared
+            )
+            promise(.success(data))
+          } catch {
+            promise(.failure(error))
+          }
+        }
+      }
+    }
+    .decode(type: GWResponse<PostsResponseDTO>.self, decoder: jsonDecoder)
+    .compactMap(\.data)
     .eraseToAnyPublisher()
   }
 }
@@ -62,7 +82,7 @@ extension ProfileRepository: ProfileRepositoryRepresentable {
 
 private enum ProfileEndPoint {
   case fetchProfile
-  case fetchPosts
+  case fetchPosts(PostsRequestDTO)
 }
 
 // MARK: TNEndPoint
@@ -82,7 +102,12 @@ extension ProfileEndPoint: TNEndPoint {
   }
 
   var query: Encodable? {
-    nil
+    switch self {
+    case .fetchProfile:
+      return nil
+    case let .fetchPosts(model):
+      return model
+    }
   }
 
   var body: Encodable? {

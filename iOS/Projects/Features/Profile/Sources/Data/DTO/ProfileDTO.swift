@@ -12,12 +12,6 @@ import Foundation
 
 /// 프로필 정보를 갖습니다.
 public struct ProfileDTO: Decodable {
-  let profile: ProfileInfo
-}
-
-// MARK: - ProfileInfo
-
-public struct ProfileInfo: Decodable, Hashable {
   /// 닉네임
   let nickname: String
 

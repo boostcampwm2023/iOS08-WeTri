@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { FindManyOptions, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Profile } from './entities/profiles.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { Post } from '../posts/entities/posts.entity';
 import { PaginateProfilePostDto } from './dto/paginate-profile-post.dto';
-import { CommonService } from 'src/common/common.service';
-import { NicknameDuplicateException } from 'src/auth/exceptions/auth.exception';
+import { CommonService } from '../common/common.service';
+import { NicknameDuplicateException } from '../auth/exceptions/auth.exception';
+import { getProfilePostsQueryOptions } from './queryOptions/get-profilePosts-queryOptions';
 
 @Injectable()
 export class ProfilesService {
@@ -24,7 +25,7 @@ export class ProfilesService {
     }
     await this.profilesRepository.update({ publicId }, updateProfileDto);
     return this.getProfile(publicId);
-  }  
+  }
 
   async deleteProfile(publicId: string) {
     return this.profilesRepository.delete({ publicId });
@@ -47,14 +48,14 @@ export class ProfilesService {
   }
 
   async getProfilePosts(publicId: string, query: PaginateProfilePostDto) {
-    const findManyOptions: FindManyOptions<Post> = {
-      where: { publicId },
-      select: ['id', 'postUrl'],
-    };
     return await this.commonService.paginate<Post>(
       query,
       this.postsRepository,
-      findManyOptions,
+      getProfilePostsQueryOptions,
+      {
+        where: { publicId },
+        select: ['id', 'postUrl'],
+      },
     );
   }
 }

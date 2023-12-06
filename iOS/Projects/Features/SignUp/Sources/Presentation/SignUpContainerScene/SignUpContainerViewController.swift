@@ -8,7 +8,6 @@
 
 import Combine
 import DesignSystem
-import Log
 import UIKit
 
 // MARK: - SignUpContainerViewController
@@ -56,12 +55,24 @@ public final class SignUpContainerViewController: UIViewController {
     configureUI()
     bindUI()
   }
+
+  override public func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+  }
 }
 
 private extension SignUpContainerViewController {
   func bindUI() {
+    signUpGenderBirthViewController.genderBirthPublisher
+      .sink { [weak self] _ in
+        self?.scrollView(isEnabled: true)
+        // TODO: genderBirth를 SignUpProfile까지 데이터를 넘겨줘서 User Entity로 합치기
+      }
+      .store(in: &subscriptions)
+
     signUpGenderBirthViewController.nextButtonTapPublisher
       .sink { [weak self] _ in
+        self?.nextPage()
       }
       .store(in: &subscriptions)
   }
@@ -71,6 +82,7 @@ private extension SignUpContainerViewController {
   func configureUI() {
     view.backgroundColor = DesignSystemColor.secondaryBackground
     navigationController?.navigationBar.isHidden = true
+    scrollView(isEnabled: false)
     let safeArea = view.safeAreaLayoutGuide
 
     view.addSubview(gwPageControl)
@@ -93,10 +105,31 @@ private extension SignUpContainerViewController {
     ])
   }
 
-  func add(child viewController: UIViewController) {
+  private func add(child viewController: UIViewController) {
     addChild(viewController)
     view.addSubview(viewController.view)
     viewController.didMove(toParent: viewController)
+  }
+
+  private func scrollView(isEnabled: Bool) {
+    for view in pageViewController.view.subviews {
+      if let scrollView = view as? UIScrollView {
+        scrollView.isScrollEnabled = isEnabled
+      }
+    }
+  }
+
+  private func nextPage() {
+    guard let currentViewController = pageViewController.viewControllers?.first,
+          let currentIndex = viewControllers.firstIndex(of: currentViewController),
+          currentIndex + 1 < viewControllers.count
+    else {
+      return
+    }
+    let count = viewControllers.count
+    let nextViewController = viewControllers[currentIndex + 1]
+    pageViewController.setViewControllers([nextViewController], direction: .forward, animated: false)
+    gwPageControl.next()
   }
 }
 
@@ -121,30 +154,22 @@ extension SignUpContainerViewController: UIPageViewControllerDelegate {
 
 extension SignUpContainerViewController: UIPageViewControllerDataSource {
   public func pageViewController(_: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-    guard let viewControllerIndex = viewControllers.firstIndex(of: viewController) else {
+    guard let viewControllerIndex = viewControllers.firstIndex(of: viewController),
+          viewControllerIndex - 1 >= 0
+    else {
       return nil
     }
-
     let previousIndex = viewControllerIndex - 1
-
-    guard previousIndex >= 0 else {
-      return nil
-    }
-
     return viewControllers[previousIndex]
   }
 
   public func pageViewController(_: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-    guard let viewContollerIndex = viewControllers.firstIndex(of: viewController) else {
+    guard let viewContollerIndex = viewControllers.firstIndex(of: viewController),
+          viewContollerIndex + 1 < viewControllers.count
+    else {
       return nil
     }
-
     let nextIndex = viewContollerIndex + 1
-
-    guard nextIndex < viewControllers.count else {
-      return nil
-    }
-
     return viewControllers[nextIndex]
   }
 }
