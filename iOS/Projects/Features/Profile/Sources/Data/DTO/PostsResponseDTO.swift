@@ -15,7 +15,7 @@ public struct PostsResponseDTO: Codable {
   let posts: [Post]
 
   /// 받아온 게시글의 메타데이터
-  let metaData: MetaData
+  let metaData: PagingMetaData
 
   enum CodingKeys: String, CodingKey {
     case posts = "items"
@@ -43,9 +43,9 @@ public struct Post: Codable, Hashable {
   }
 }
 
-// MARK: - MetaData
+// MARK: - PagingMetaData
 
-struct MetaData: Codable {
+struct PagingMetaData: Codable {
   /// 받아온 데이터 중 제일 마지막의 ID값
   ///
   /// 다음에 요청으로 보낼 id값입니다.

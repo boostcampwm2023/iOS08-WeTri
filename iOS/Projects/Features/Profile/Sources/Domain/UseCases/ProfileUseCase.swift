@@ -43,7 +43,7 @@ public final class ProfileUseCase {
   }
 
   /// 가져온 메타데이터를 이용해서 UseCase가 관리하는 pagination 프로퍼티를 설정합니다.
-  private func updateFetchStatus(from metaData: MetaData) {
+  private func updateFetchStatus(from metaData: PagingMetaData) {
     nextRequestID = metaData.lastID
     isLast = metaData.isLastCursor
   }
