@@ -51,10 +51,10 @@ export class ProfilesService {
       where: { publicId },
       select: ['id', 'postUrl'],
     };
-    return await this.commonService.paginate<Post>(
-      query,
-      this.postsRepository,
-      findManyOptions,
-    );
+    // return await this.commonService.paginate<Post>(
+    //   query,
+    //   this.postsRepository,
+    //   findManyOptions,
+    // );
   }
 }
