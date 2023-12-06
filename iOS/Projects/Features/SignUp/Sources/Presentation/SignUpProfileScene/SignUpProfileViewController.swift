@@ -157,6 +157,7 @@ private extension SignUpProfileViewController {
 private extension SignUpProfileViewController {
   func bindUI() {
     nickNameBoxView.nickNameDidChangedPublisher
+      .subscribe(on: DispatchQueue.main)
       .sink { [weak self] text in
         Log.make().debug("\(text)")
         self?.textFieldEdittingSubject.send(text)
@@ -177,6 +178,7 @@ private extension SignUpProfileViewController {
     )
     let output = viewModel.transform(input: input)
     output
+      .subscribe(on: DispatchQueue.main)
       .sink { [weak self] state in
         self?.render(state: state)
       }
