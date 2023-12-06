@@ -42,3 +42,14 @@ export class InvalidFileTypeException extends HttpException {
     super(response, httpCode);
   }
 }
+
+export class InvalidFileCountOrFieldNameException extends HttpException {
+  constructor() {
+    const response = {
+      statusCode: 9400,
+      message: 'invalid file count or field name',
+    };
+    const httpCode = 400;
+    super(response, httpCode);
+  }
+}

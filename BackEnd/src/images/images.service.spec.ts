@@ -33,14 +33,15 @@ describe('ImagesService', () => {
     NCP_CDN_URL: 'https://시디엔사이트.com/',
   };
 
-  const mockMulterFile = (filename: string): Express.Multer.File => ({
-    fieldname: 'images',
-    originalname: filename,
-    mimetype: 'image/png',
-    filename: filename,
-    size: 1024,
-    buffer: Buffer.from('abc'),
-  } as Express.Multer.File);
+  const mockMulterFile = (filename: string): Express.Multer.File =>
+    ({
+      fieldname: 'images',
+      originalname: filename,
+      mimetype: 'image/png',
+      filename: filename,
+      size: 1024,
+      buffer: Buffer.from('abc'),
+    }) as Express.Multer.File;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({

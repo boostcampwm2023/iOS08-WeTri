@@ -1,6 +1,9 @@
 import { Injectable, BadRequestException, PipeTransform } from '@nestjs/common';
 import { FileUploadOptions } from '../interface/images.interface';
-import {FileSizeTooLargeException, InvalidFileTypeException} from "../exceptions/images.exception";
+import {
+  FileSizeTooLargeException,
+  InvalidFileTypeException,
+} from '../exceptions/images.exception';
 
 @Injectable()
 export class ValidateFilesPipe implements PipeTransform {
