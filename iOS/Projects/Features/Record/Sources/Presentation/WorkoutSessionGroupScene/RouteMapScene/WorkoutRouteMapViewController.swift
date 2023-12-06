@@ -30,18 +30,38 @@ final class WorkoutRouteMapViewController: UIViewController {
 
   /// 사용자 위치 추적 배열
   @Published private var locations: [CLLocation] = []
+  var kalmanFilterShouldUpdatePositionSubject: PassthroughSubject<KalmanFilterUpdateRequireElement, Never> = .init()
+  var kalmanFilterShouldUpdateHeadingSubject: PassthroughSubject<Double, Never> = .init()
 
   private var subscriptions: Set<AnyCancellable> = []
 
-  private let locationManager: CLLocationManager = .init()
+  lazy var locationManager: CLLocationManager = {
+    let manager = CLLocationManager()
+    manager.startMonitoringSignificantLocationChanges()
+    manager.distanceFilter = 10
+    manager.startUpdatingLocation()
+
+    manager.delegate = self
+    return manager
+  }()
 
   // MARK: UI Components
 
   private lazy var mapView: MKMapView = {
     let mapView = MKMapView()
-    mapView.showsUserLocation = true
     mapView.delegate = self
     mapView.setUserTrackingMode(.follow, animated: true)
+
+    // Set MKMapView Property
+    mapView.isZoomEnabled = false
+    mapView.isScrollEnabled = false
+
+    // 각도 조절 가능 여부 (두 손가락으로 위/아래 슬라이드
+    mapView.isPitchEnabled = false
+    mapView.isRotateEnabled = false
+    mapView.showsCompass = true
+    mapView.showsUserLocation = true
+
     return mapView
   }()
 
@@ -59,6 +79,8 @@ final class WorkoutRouteMapViewController: UIViewController {
 
   deinit {
     locationManager.stopUpdatingLocation()
+    locationManager.stopMonitoringSignificantLocationChanges()
+
     Log.make().debug("\(Self.self) deinitialized")
   }
 
@@ -98,21 +120,49 @@ final class WorkoutRouteMapViewController: UIViewController {
   }
 
   private func bind() {
-    let output = viewModel.transform(input: .init())
-    output.sink { state in
-      switch state {
-      case .idle:
-        break
+    let input: WorkoutRouteMapViewModelInput = .init(
+      filterShouldUpdatePositionPublisher: kalmanFilterShouldUpdatePositionSubject.eraseToAnyPublisher(),
+      filterShouldUpdateHeadingPublisher: kalmanFilterShouldUpdateHeadingSubject.eraseToAnyPublisher()
+    )
+
+    viewModel
+      .transform(input: input)
+      .sink { [weak self] state in
+        switch state {
+        case .idle:
+          break
+        case let .censoredValue(value): self?.updatePolyLine(value)
+        }
       }
-    }
-    .store(in: &subscriptions)
+      .store(in: &subscriptions)
+  }
+
+  func updatePolyLine(_ value: KalmanFilterCensored?) {
+    guard let value else { return }
+
+    let currentLocation = CLLocation(latitude: value.latitude, longitude: value.longitude)
+    locations.append(currentLocation)
+    let coordinates = locations.map(\.coordinate)
+    let polyline = MKPolyline(coordinates: coordinates, count: coordinates.count)
+
+    mapView.removeOverlays(mapView.overlays)
+    mapView.addOverlay(polyline)
+    // 지도 뷰 업데이트
+    let region = MKCoordinateRegion(
+      center: currentLocation.coordinate,
+      latitudinalMeters: Metrics.mapDistance,
+      longitudinalMeters: Metrics.mapDistance
+    )
+    mapView.setRegion(region, animated: true)
   }
 
   private func setupLocationManager() {
     locationManager.delegate = self
     locationManager.requestWhenInUseAuthorization()
-    locationManager.startUpdatingLocation()
   }
+
+  private var prevLocation: CLLocation = .init(latitude: 37.5519, longitude: 126.9918)
+  private var prevDate = Date.now
 }
 
 // MARK: LocationTrackingProtocol
@@ -144,18 +194,27 @@ extension WorkoutRouteMapViewController: CLLocationManagerDelegate {
       return
     }
 
-    locations.append(newLocation)
-    let coordinates = locations.map(\.coordinate)
-    let polyline = MKPolyline(coordinates: coordinates, count: coordinates.count)
-    mapView.addOverlay(polyline)
+    let currentTime = Date.now
+    let timeDistance = currentTime.distance(to: prevDate)
 
-    // 지도 뷰 업데이트
-    let region = MKCoordinateRegion(
-      center: newLocation.coordinate,
-      latitudinalMeters: Metrics.mapDistance,
-      longitudinalMeters: Metrics.mapDistance
+    // 과거 위치와 현재 위치를 통해 위 경도에 관한 속력을 구합니다.
+    let v = (
+      (newLocation.coordinate.latitude - prevLocation.coordinate.latitude) / timeDistance,
+      (newLocation.coordinate.longitude - prevLocation.coordinate.longitude) / timeDistance
     )
-    mapView.setRegion(region, animated: true)
+
+    kalmanFilterShouldUpdatePositionSubject.send(
+      .init(
+        longitude: newLocation.coordinate.longitude,
+        latitude: newLocation.coordinate.latitude,
+        prevSpeedAtLongitude: v.1,
+        prevSpeedAtLatitude: v.0
+      )
+    )
+  }
+
+  func locationManager(_: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
+    kalmanFilterShouldUpdateHeadingSubject.send(newHeading.trueHeading)
   }
 
   func locationManager(_: CLLocationManager, didFailWithError error: Error) {

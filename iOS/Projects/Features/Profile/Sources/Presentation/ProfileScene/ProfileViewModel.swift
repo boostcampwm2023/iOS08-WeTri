@@ -1,10 +1,13 @@
 import Combine
+import Log
 
 // MARK: - ProfileViewModelInput
 
 public struct ProfileViewModelInput {
   let viewDidLoadPublisher: AnyPublisher<Void, Never>
   let didTapSettingButtonPublisher: AnyPublisher<Void, Never>
+  let paginationEventPublisher: AnyPublisher<ProfileItem, Never>
+  let refreshPostsPublisher: AnyPublisher<Void, Never>
 }
 
 public typealias ProfileViewModelOutput = AnyPublisher<ProfileViewModelState, Never>
@@ -14,6 +17,8 @@ public typealias ProfileViewModelOutput = AnyPublisher<ProfileViewModelState, Ne
 public enum ProfileViewModelState {
   case idle
   case setupProfile(Profile)
+  case setupPosts([Post])
+  case updatePosts([Post])
   case alert(Error)
 }
 
@@ -57,8 +62,21 @@ extension ProfileViewModel: ProfileViewModelRepresentable {
     let profileInfoPublisher = input.viewDidLoadPublisher
       .flatMap(useCase.fetchProfile)
       .map(ProfileViewModelState.setupProfile)
-      .catch { Just(ProfileViewModelState.alert($0)) }
+      .catch { Just(.alert($0)) }
 
-    return Just(.idle).merge(with: profileInfoPublisher).eraseToAnyPublisher()
+    let postInfoPublisher = input.viewDidLoadPublisher
+      .merge(with: input.refreshPostsPublisher)
+      .map { _ in (nil, true) }
+      .flatMap(useCase.fetchPosts)
+      .map(ProfileViewModelState.setupPosts)
+      .catch { Just(.alert($0)) }
+
+    let updatePostsPublisher = input.paginationEventPublisher
+      .map { return ($0, false) } // 새로고침 안함
+      .flatMap(useCase.fetchPosts)
+      .map(ProfileViewModelState.updatePosts)
+      .catch { Just(.alert($0)) }
+
+    return Just(.idle).merge(with: profileInfoPublisher, postInfoPublisher, updatePostsPublisher).eraseToAnyPublisher()
   }
 }

@@ -46,6 +46,7 @@ final class RecordCalendarViewController: UIViewController {
     collectionView.translatesAutoresizingMaskIntoConstraints = false
     collectionView.delegate = self
     collectionView.showsHorizontalScrollIndicator = false
+    collectionView.backgroundColor = DesignSystemColor.secondaryBackground
     return collectionView
   }()
 
@@ -100,6 +101,8 @@ private extension RecordCalendarViewController {
 
 private extension RecordCalendarViewController {
   func configureUI() {
+    view.backgroundColor = DesignSystemColor.primaryBackground
+
     view.addSubview(calendarCollectionView)
     NSLayoutConstraint.activate([
       calendarCollectionView.topAnchor.constraint(equalTo: view.topAnchor),

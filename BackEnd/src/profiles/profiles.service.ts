@@ -3,8 +3,11 @@ import { Repository } from 'typeorm';
 import { Profile } from './entities/profiles.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateProfileDto } from './dto/update-profile.dto';
-import { PublicIdMismatchException } from './exception/profile.exception';
 import { Post } from '../posts/entities/posts.entity';
+import { PaginateProfilePostDto } from './dto/paginate-profile-post.dto';
+import { CommonService } from '../common/common.service';
+import { NicknameDuplicateException } from '../auth/exceptions/auth.exception';
+import { getProfilePostsQueryOptions } from './queryOptions/get-profilePosts-queryOptions';
 
 @Injectable()
 export class ProfilesService {
@@ -13,54 +16,23 @@ export class ProfilesService {
     private readonly postsRepository: Repository<Post>,
     @InjectRepository(Profile)
     private readonly profilesRepository: Repository<Profile>,
+    private readonly commonService: CommonService,
   ) {}
 
-  async getProfileAndPost(publicId: string) {
-    const posts = await this.postsRepository.find({
-      where: {
-        publicId: publicId,
-      },
-      order: {
-        createdAt: 'DESC',
-      },
-      take: 9,
-      select: ['id', 'postUrl'],
-    });
-    const profile = await this.profilesRepository.findOne({
-      where: {
-        publicId,
-      },
-      select: ['nickname', 'gender', 'birthdate', 'publicId', 'profileImage'],
-    });
-    return {
-      profile,
-      posts,
-    };
+  async updateProfile(publicId: string, updateProfileDto: UpdateProfileDto) {
+    if (await this.validateProfileNickname(updateProfileDto.nickname)) {
+      throw new NicknameDuplicateException();
+    }
+    await this.profilesRepository.update({ publicId }, updateProfileDto);
+    return this.getProfile(publicId);
   }
 
-  async updateProfile(
-    profileId: string,
-    publicId: string,
-    updateProfileDto: UpdateProfileDto,
-  ) {
-    if (!this.validateProfileId(profileId, publicId)) {
-      throw new PublicIdMismatchException();
-    }
-    return this.profilesRepository.update({ publicId }, updateProfileDto);
-  }
-
-  async deleteProfile(profileId: string, publicId: string) {
-    if (!this.validateProfileId(profileId, publicId)) {
-      throw new PublicIdMismatchException();
-    }
+  async deleteProfile(publicId: string) {
     return this.profilesRepository.delete({ publicId });
   }
 
-  private validateProfileId(profileId: string, publicId: string) {
-    return profileId === publicId;
-  }
   async validateProfileNickname(nickname: string) {
-    return this.profilesRepository.exist({
+    return await this.profilesRepository.exist({
       where: {
         nickname,
       },
@@ -68,10 +40,22 @@ export class ProfilesService {
   }
 
   async getProfile(publicId: string) {
-    return this.profilesRepository.findOne({
+    return await this.profilesRepository.findOne({
       where: {
         publicId,
       },
     });
+  }
+
+  async getProfilePosts(publicId: string, query: PaginateProfilePostDto) {
+    return await this.commonService.paginate<Post>(
+      query,
+      this.postsRepository,
+      getProfilePostsQueryOptions,
+      {
+        where: { publicId },
+        select: ['id', 'postUrl'],
+      },
+    );
   }
 }

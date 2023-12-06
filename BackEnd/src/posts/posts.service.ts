@@ -1,17 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './entities/posts.entity';
-import { FindManyOptions, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
-import { RecordsService } from 'src/records/records.service';
-import { Profile } from 'src/profiles/entities/profiles.entity';
+import { RecordsService } from '../records/records.service';
+import { Profile } from '../profiles/entities/profiles.entity';
 import {
   ExistPostException,
   NotFoundPostException,
 } from './exceptions/posts.exception';
 import { PaginatePostDto } from './dto/paginate-post.dto';
-import { CommonService } from 'src/common/common.service';
+import { CommonService } from '../common/common.service';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { getCreateUpdateQueryOptions } from './queryOptions/get-create-update.queryOptions';
 
 @Injectable()
 export class PostsService {
@@ -28,21 +29,31 @@ export class PostsService {
       throw new ExistPostException();
     }
     this.recordService.updateIsPostedTrue(record);
-    return await this.postsRepository.save({
+    const post = await this.postsRepository.save({
       publicId: profile.publicId,
       content: postInfo.content,
       postUrl: postInfo.postUrl,
       record,
       profile,
     });
+    return await this.findOneById(post.id);
   }
 
   async paginatePosts(query: PaginatePostDto) {
-    return await this.commonService.paginate<Post>(query, this.postsRepository);
+    return await this.commonService.paginate<Post>(
+      query,
+      this.postsRepository,
+      getCreateUpdateQueryOptions,
+    );
   }
 
   async findOneById(id: number) {
-    const post = await this.postsRepository.findOneBy({ id });
+    const queryBuilder = this.commonService.makeQueryBuilder(
+      this.postsRepository,
+      getCreateUpdateQueryOptions,
+      { where: { id } },
+    );
+    const post = await queryBuilder.getOne();
     if (!post) {
       throw new NotFoundPostException();
     }
@@ -50,19 +61,18 @@ export class PostsService {
   }
 
   async paginateUserPosts(publicId: string, query: PaginatePostDto) {
-    const findManyOptions: FindManyOptions<Post> = {};
-    findManyOptions.where = { publicId };
     return await this.commonService.paginate<Post>(
       query,
       this.postsRepository,
-      findManyOptions,
+      getCreateUpdateQueryOptions,
+      { where: { publicId } },
     );
   }
 
   async updatePost(id: number, updatePostInfo: UpdatePostDto) {
     await this.findOneById(id);
     await this.postsRepository.update(id, updatePostInfo);
-    return await this.postsRepository.findOneBy({ id });
+    return await this.findOneById(id);
   }
 
   async deletePost(id: number) {

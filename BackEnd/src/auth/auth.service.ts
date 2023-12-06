@@ -12,7 +12,7 @@ import {
   NotRefreshTokenException,
 } from './exceptions/auth.exception';
 import * as process from 'process';
-import { WetriWebSocket } from 'src/live-workouts/events/types/custom-websocket.type';
+import { WetriWebSocket } from '../live-workouts/events/types/custom-websocket.type';
 import { GetuserByUserIdAndProViderDto } from './dto/getUserByUserIdAndProvider.dto';
 
 @Injectable()
@@ -132,7 +132,7 @@ export class AuthService {
       const mappedUserID = uuidv4();
       await this.redisData.set(mappedUserID, userId, 'EX', 600);
       return {
-        redirectUrl: 'api/v1/auth/signup',
+        isFirstLogined: true,
         mappedUserID,
         provider: 'apple',
       };

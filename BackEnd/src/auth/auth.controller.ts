@@ -10,7 +10,7 @@ import {
   SignupResDto,
 } from './dto/auth-response.dto';
 import { SignInDto } from './dto/signin.dto';
-import { SigninRedirectResDto } from './dto/signinRedirectRes.dto';
+import { SigninFirstResDto } from './dto/signinRedirectRes.dto';
 
 @ApiTags('Authentication')
 @Controller('api/v1/auth')
@@ -81,7 +81,7 @@ export class AuthController {
   @ApiResponse({
     status: 201,
     description: '첫 로그인 회원가입 페이지로 이동',
-    type: SigninRedirectResDto,
+    type: SigninFirstResDto,
   })
   @Post('apple/signin')
   async appleSignIn(@IdentityToken() token: string) {

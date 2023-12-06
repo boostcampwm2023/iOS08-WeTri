@@ -5,6 +5,9 @@ import { User } from './entities/users.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SignupDto } from '../auth/dto/signup.dto';
+import { ProfilesService } from '../profiles/profiles.service';
+import { Profile } from '../profiles/entities/profiles.entity';
+import { NotFoundUserException } from './exceptions/users.exception';
 
 @Injectable()
 export class UsersService {
@@ -13,6 +16,7 @@ export class UsersService {
     private readonly usersRepository: Repository<User>,
     @Inject('DATA_REDIS')
     private readonly redisData: Redis,
+    private readonly profilesService: ProfilesService,
   ) {}
 
   async createUser(signupInfo: SignupDto) {
@@ -40,5 +44,10 @@ export class UsersService {
         provider: userInfo.provider,
       },
     });
+  }
+
+  async deleteUser(user: User, publicId: string) {
+    await this.profilesService.deleteProfile(publicId);
+    await this.usersRepository.delete(user);
   }
 }

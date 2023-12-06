@@ -9,10 +9,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { AuthAppleService } from '../auth/auth-apple.service';
 import { User } from '../users/entities/users.entity';
+import { CommonModule } from '../common/common.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Profile, Post, User]),
     JwtModule.register({}),
+    CommonModule,
   ],
   exports: [ProfilesService],
   controllers: [ProfilesController],

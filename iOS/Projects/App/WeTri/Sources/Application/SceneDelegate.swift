@@ -10,12 +10,15 @@ import RecordFeature
 import SignUpFeature
 import UIKit
 
+import DesignSystem
+
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   var window: UIWindow?
   private var coordinating: AppCoordinating?
 
   func scene(_ scene: UIScene, willConnectTo _: UISceneSession, options _: UIScene.ConnectionOptions) {
     guard let windowScene = scene as? UIWindowScene else { return }
+    window = UIWindow(windowScene: windowScene)
     let navigationController = UINavigationController()
     window = UIWindow(windowScene: windowScene)
     let coordinator = AppCoordinator(navigationController: navigationController)
