@@ -1,4 +1,4 @@
-import {Injectable, ExecutionContext, CallHandler, Logger} from '@nestjs/common';
+import { Injectable, ExecutionContext, CallHandler, Logger } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
