@@ -18,14 +18,17 @@ final class SettingsViewController: UICollectionViewController {
 
   private let viewModel: SettingsViewModelRepresentable
 
+  private let profileSettings: PassthroughSubject<Void, Never> = .init()
+
   private var dataSource: SettingsDataSource?
 
+  private let logger = Log.make()
   private var subscriptions: Set<AnyCancellable> = []
 
   // MARK: Initializations
 
   deinit {
-    Log.make().debug("\(Self.self) deinitialized")
+    logger.debug("\(Self.self) deinitialized")
   }
 
   init(viewModel: SettingsViewModelRepresentable) {
@@ -60,7 +63,7 @@ final class SettingsViewController: UICollectionViewController {
   }
 
   private func bind() {
-    let output = viewModel.transform(input: .init())
+    let output = viewModel.transform(input: .init(profileSettingsPublisher: profileSettings.eraseToAnyPublisher()))
     output.sink { state in
       switch state {
       case .idle:
@@ -81,7 +84,7 @@ private extension SettingsViewController {
     case main
   }
 
-  enum Item: String {
+  enum Item: String, CaseIterable {
     case profileSetting = "프로필 설정"
     case contact = "문의하기"
     case logout = "로그아웃"
@@ -114,5 +117,14 @@ private extension SettingsViewController {
 extension SettingsViewController {
   override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     collectionView.deselectItem(at: indexPath, animated: true)
+
+    // 배열 out of index 방어
+    guard Item.allCases.indices ~= indexPath.item else {
+      return
+    }
+
+    if Item.allCases[indexPath.item] == .profileSetting {
+      profileSettings.send(())
+    }
   }
 }

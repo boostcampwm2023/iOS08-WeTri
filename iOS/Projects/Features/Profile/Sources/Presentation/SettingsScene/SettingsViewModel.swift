@@ -12,7 +12,9 @@ import Log
 
 // MARK: - SettingsViewModelInput
 
-public struct SettingsViewModelInput {}
+public struct SettingsViewModelInput {
+  let profileSettingsPublisher: AnyPublisher<Void, Never>
+}
 
 public typealias SettingsViewModelOutput = AnyPublisher<SettingsState, Never>
 
