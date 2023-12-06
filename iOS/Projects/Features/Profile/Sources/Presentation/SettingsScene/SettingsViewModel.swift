@@ -32,7 +32,12 @@ protocol SettingsViewModelRepresentable {
 final class SettingsViewModel {
   // MARK: - Properties
 
+  private weak var coordinating: SettingsCoordinating?
   private var subscriptions: Set<AnyCancellable> = []
+
+  init(coordinating: SettingsCoordinating?) {
+    self.coordinating = coordinating
+  }
 }
 
 // MARK: SettingsViewModelRepresentable
