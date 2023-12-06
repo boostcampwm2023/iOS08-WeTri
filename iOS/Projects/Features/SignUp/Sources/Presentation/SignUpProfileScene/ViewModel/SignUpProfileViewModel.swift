@@ -85,8 +85,6 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
         guard let imageData else {
           return
         }
-        
-        
       }
       .store(in: &subscriptions)
 

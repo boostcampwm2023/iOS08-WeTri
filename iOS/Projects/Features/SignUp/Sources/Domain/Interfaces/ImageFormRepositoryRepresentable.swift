@@ -8,4 +8,6 @@
 
 import Foundation
 
-protocol ImageFormRepositoryRepresentable {}
+protocol ImageFormRepositoryRepresentable {
+  func send(imageData: Data) -> String
+}
