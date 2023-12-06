@@ -51,8 +51,8 @@ final class ProfilePostCell: UICollectionViewCell {
   func configure(with model: Post) {
     DispatchQueue.global().async {
       guard let data = try? Data(contentsOf: model.postURL) else { return }
-      DispatchQueue.main.async {
-        self.imageView.image = UIImage(data: data)
+      DispatchQueue.main.async { [weak self] in
+        self?.imageView.image = UIImage(data: data)
       }
     }
   }
