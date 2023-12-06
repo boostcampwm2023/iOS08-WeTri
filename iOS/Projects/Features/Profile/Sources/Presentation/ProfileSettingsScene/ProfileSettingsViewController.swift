@@ -60,12 +60,15 @@ final class ProfileSettingsViewController: UICollectionViewController {
     super.viewDidLoad()
     setupStyles()
     bind()
+    setupDataSource()
+    setupInitialSnapshots()
   }
 
   // MARK: Configuration
 
   private func setupStyles() {
     view.backgroundColor = DesignSystemColor.primaryBackground
+    collectionView.backgroundColor = DesignSystemColor.primaryBackground
   }
 
   private func bind() {
@@ -84,6 +87,8 @@ private extension ProfileSettingsViewController {
   typealias ProfileSettingsDataSource = UICollectionViewDiffableDataSource<Section, Item>
   typealias ProfileSettingsSnapshot = NSDiffableDataSourceSnapshot<Section, Item>
   typealias ListCellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Item>
+  typealias HeaderRegistration = UICollectionView.SupplementaryRegistration<ProfileSettingsHeaderView>
+
   enum Section {
     case main
   }
@@ -100,8 +105,19 @@ private extension ProfileSettingsViewController {
       cell.contentConfiguration = configuration
     }
 
+    let headerRegistration = HeaderRegistration(elementKind: UICollectionView.elementKindSectionHeader) { _, _, _ in
+    }
+
     let dataSource = ProfileSettingsDataSource(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in
       collectionView.dequeueConfiguredReusableCell(using: registration, for: indexPath, item: itemIdentifier)
+    }
+
+    dataSource.supplementaryViewProvider = { collectionView, kind, indexPath in
+      // Header view 요청을 확인합니다.
+      if kind == UICollectionView.elementKindSectionHeader {
+        return collectionView.dequeueConfiguredReusableSupplementary(using: headerRegistration, for: indexPath)
+      }
+      return nil
     }
 
     self.dataSource = dataSource
