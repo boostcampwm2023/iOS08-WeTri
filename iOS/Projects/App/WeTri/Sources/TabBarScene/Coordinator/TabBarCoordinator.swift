@@ -48,7 +48,7 @@ final class TabBarCoordinator: TabBarCoordinating {
   private func startTabBarCoordinator(page: TabBarPage, pageNavigationViewController: UINavigationController) {
     switch page {
     case .home:
-      let homeCoordinator = HomeCoordinator(navigationController: navigationController, delegate: self)
+      let homeCoordinator = HomeCoordinator(navigationController: pageNavigationViewController, delegate: self)
       childCoordinators.append(homeCoordinator)
       homeCoordinator.finishDelegate = self
       homeCoordinator.start()
