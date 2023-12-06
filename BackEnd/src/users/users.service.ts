@@ -5,8 +5,8 @@ import { User } from './entities/users.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SignupDto } from '../auth/dto/signup.dto';
-import { ProfilesService } from 'src/profiles/profiles.service';
-import { Profile } from 'src/profiles/entities/profiles.entity';
+import { ProfilesService } from '../profiles/profiles.service';
+import { Profile } from '../profiles/entities/profiles.entity';
 import { NotFoundUserException } from './exceptions/users.exception';
 
 @Injectable()

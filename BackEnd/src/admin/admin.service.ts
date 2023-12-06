@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Admin } from './entities/admin.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AuthService } from 'src/auth/auth.service';
+import { AuthService } from '../auth/auth.service';
 import * as bcrypt from 'bcrypt';
 import {
   IncorrectPasswordException,

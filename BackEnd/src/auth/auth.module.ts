@@ -8,7 +8,7 @@ import { AuthAppleService } from './auth-apple.service';
 
 @Module({
   imports: [JwtModule.register({}), UsersModule, ProfilesModule],
-  exports: [AuthService],
+  exports: [AuthService, AuthAppleService],
   controllers: [AuthController],
   providers: [AuthService, AuthAppleService],
 })

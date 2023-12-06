@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Record } from '../../records/entities/records.entity';
-import { IsString } from 'class-validator';
+import {IsNotEmpty, IsString} from 'class-validator';
 
 @Entity()
 export class Workout {
@@ -18,6 +18,7 @@ export class Workout {
   })
   @Column()
   @IsString()
+  @IsNotEmpty()
   name: string;
 
   @ApiProperty({
@@ -26,6 +27,7 @@ export class Workout {
   })
   @Column()
   @IsString()
+  @IsNotEmpty()
   icon: string;
 
   @OneToMany(() => Record, (record) => record.workout)
