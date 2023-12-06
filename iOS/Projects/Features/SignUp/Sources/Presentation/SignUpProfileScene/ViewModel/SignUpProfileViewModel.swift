@@ -16,6 +16,7 @@ public struct SignUpProfileViewModelInput {
   let nickNameTextFieldEditting: AnyPublisher<String, Never>
   let imageButtonTap: AnyPublisher<Void, Never>
   let imageSetting: AnyPublisher<Data, Never>
+  let completeButtonTap: AnyPublisher<Void, Never>
 }
 
 public typealias SignUpProfileViewModelOutput = AnyPublisher<SignUpProfileState, Never>
@@ -69,6 +70,13 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
     let imageSettingResult = input.imageSetting
       .flatMap { Just(SignUpProfileState.image($0)) }
       .eraseToAnyPublisher()
+
+    input.completeButtonTap
+      .sink { _ in
+        /// 이미지 데이터를 서버에 보낸다.
+        
+      }
+      .store(in: &subscriptions)
 
     let initialState: SignUpProfileViewModelOutput = Just(.idle)
       .eraseToAnyPublisher()

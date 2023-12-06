@@ -22,6 +22,7 @@ public final class SignUpProfileViewController: UIViewController {
   private let textFieldEdittingSubject = PassthroughSubject<String, Never>()
   private let imageButtonTapSubject = PassthroughSubject<Void, Never>()
   private let imageSetSubject = PassthroughSubject<Data, Never>()
+  private let completeButtonTapSubject = PassthroughSubject<Void, Never>()
 
   public init(viewModel: SignUpProfileViewModelRepresentable) {
     self.viewModel = viewModel
@@ -176,13 +177,20 @@ private extension SignUpProfileViewController {
         self?.imageButtonTapSubject.send()
       }
       .store(in: &subscriptions)
+
+    completionButton.publisher(.touchUpInside)
+      .sink { [weak self] _ in
+        self?.completeButtonTapSubject.send()
+      }
+      .store(in: &subscriptions)
   }
 
   func bindViewModel() {
     let input = SignUpProfileViewModelInput(
       nickNameTextFieldEditting: textFieldEdittingSubject.eraseToAnyPublisher(),
       imageButtonTap: imageButtonTapSubject.eraseToAnyPublisher(),
-      imageSetting: imageSetSubject.eraseToAnyPublisher()
+      imageSetting: imageSetSubject.eraseToAnyPublisher(),
+      completeButtonTap: completeButtonTapSubject.eraseToAnyPublisher()
     )
     let output = viewModel.transform(input: input)
     output
