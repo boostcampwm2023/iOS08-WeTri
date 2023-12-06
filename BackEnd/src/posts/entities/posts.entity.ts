@@ -65,7 +65,7 @@ export class Post {
 
   @ApiProperty({
     example: 'https://www.naver.com',
-    description: '게시물 url을 의미합니다.',
+    description: '게시글 이미지 url을 의미합니다.',
   })
   @IsString()
   @Column()
