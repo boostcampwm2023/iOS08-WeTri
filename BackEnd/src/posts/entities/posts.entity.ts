@@ -67,6 +67,7 @@ export class Post {
     example: 'https://www.naver.com',
     description: '게시물 url을 의미합니다.',
   })
+  @IsString()
   @Column()
   postUrl: string;
 

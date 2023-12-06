@@ -2,7 +2,7 @@ import { ApiProperty, PickType } from '@nestjs/swagger';
 import { SuccessResDto } from 'src/common/dto/SuccessRes.dto';
 import { Post } from '../entities/posts.entity';
 
-export class ItemDto extends PickType(Post, [
+export class PostDto extends PickType(Post, [
   'id',
   'publicId',
   'content',
@@ -34,8 +34,8 @@ export class MetaDataDto {
 }
 
 class PostsPaginateResDto {
-  @ApiProperty({ type: () => [ItemDto] })
-  items: ItemDto[];
+  @ApiProperty({ type: () => [PostDto] })
+  items: PostDto[];
 
   @ApiProperty({ type: () => MetaDataDto })
   metaData: MetaDataDto;
