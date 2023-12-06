@@ -43,7 +43,15 @@ struct WorkoutSessionComponents: WorkoutSessionDependency {
   /// 실제 사용자(기기 사용자)의 프로필 이미지 URL 입니다.
   let userProfileImage: URL?
 
-  init(participants: [SessionPeerType], startDate: Date, roomID: String, id: String, workoutTypeCode: WorkoutType, nickname: String, userProfileImage: URL?) {
+  init(
+    participants: [SessionPeerType],
+    startDate: Date,
+    roomID: String,
+    id: String,
+    workoutTypeCode: WorkoutType,
+    nickname: String,
+    userProfileImage: URL?
+  ) {
     self.participants = participants
     self.startDate = startDate
     self.roomID = roomID
@@ -54,7 +62,15 @@ struct WorkoutSessionComponents: WorkoutSessionDependency {
   }
 
   /// 서버에서 받아오는 String String으로 만들어진 Date값을 Formatter을 활용하여 Date로 바꾸었습니다.
-  init(participants: [SessionPeerType], startDate: String, roomID: String, id: String, workoutTypeCode: WorkoutType, nickname: String, userProfileImage: URL?) {
+  init(
+    participants: [SessionPeerType],
+    startDate: String,
+    roomID: String,
+    id: String,
+    workoutTypeCode: WorkoutType,
+    nickname: String,
+    userProfileImage: URL?
+  ) {
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy-mm-dd hh:mm:ss"
     let date = formatter.date(from: startDate)
