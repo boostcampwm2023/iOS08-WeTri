@@ -22,7 +22,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     let navigationController = UINavigationController()
     let viewController = SignUpContainerViewController(
       signUpGenderBirthViewController: SignUpGenderBirthViewController(viewModel: SignUpGenderBirthViewModel(dateFormatUseCase: DateFormatUseCase())),
-      signUpProfileViewController: SignUpProfileViewController()
+      signUpProfileViewController: SignUpProfileViewController(viewModel: SignUpProfileViewModel(nickNameCheckUseCase: NickNameCheckUseCase()))
     )
     window?.rootViewController = viewController
 //    let coordinator = AppCoordinator(navigationController: navigationController)

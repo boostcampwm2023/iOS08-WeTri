@@ -10,14 +10,16 @@ import Foundation
 
 // MARK: - NickNameCheckUseCaseRepresentable
 
-protocol NickNameCheckUseCaseRepresentable {
+public protocol NickNameCheckUseCaseRepresentable {
   func check(nickName: String) -> Bool
 }
 
 // MARK: - NickNameCheckUseCase
 
-struct NickNameCheckUseCase: NickNameCheckUseCaseRepresentable {
-  func check(nickName: String) -> Bool {
+public struct NickNameCheckUseCase: NickNameCheckUseCaseRepresentable {
+  public init() {}
+
+  public func check(nickName: String) -> Bool {
     let regex = "^[^\\W_]{2,20}$"
     let check = NSPredicate(format: "SELF MATCHES %@", regex)
     return check.evaluate(with: nickName)

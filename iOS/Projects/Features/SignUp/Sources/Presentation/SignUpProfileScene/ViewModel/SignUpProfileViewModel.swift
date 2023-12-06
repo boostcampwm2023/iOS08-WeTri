@@ -30,10 +30,10 @@ public enum SignUpProfileState {
 
 public final class SignUpProfileViewModel {
   private var subscriptions: Set<AnyCancellable> = []
-  private let dateFormatUseCase: DateFormatUseCaseRepresentable
+  private let nickNameCheckUseCase: NickNameCheckUseCaseRepresentable
 
-  public init(dateFormatUseCase: DateFormatUseCaseRepresentable) {
-    self.dateFormatUseCase = dateFormatUseCase
+  public init(nickNameCheckUseCase: NickNameCheckUseCaseRepresentable) {
+    self.nickNameCheckUseCase = nickNameCheckUseCase
   }
 }
 

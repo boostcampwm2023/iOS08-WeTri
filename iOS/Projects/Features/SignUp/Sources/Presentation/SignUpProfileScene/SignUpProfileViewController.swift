@@ -16,6 +16,17 @@ import UIKit
 
 public final class SignUpProfileViewController: UIViewController {
   private var subscriptions: Set<AnyCancellable> = []
+  private let viewModel: SignUpProfileViewModelRepresentable
+
+  public init(viewModel: SignUpProfileViewModelRepresentable) {
+    self.viewModel = viewModel
+    super.init(nibName: nil, bundle: nil)
+  }
+
+  @available(*, unavailable)
+  required init?(coder _: NSCoder) {
+    fatalError("NO Xib")
+  }
 
   private let titleLabel: UILabel = {
     let label = UILabel()
