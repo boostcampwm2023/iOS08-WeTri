@@ -131,3 +131,9 @@ private extension ProfileSettingsViewController {
     dataSource.apply(snapshot, animatingDifferences: false)
   }
 }
+
+extension ProfileSettingsViewController {
+  override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    collectionView.deselectItem(at: indexPath, animated: true)
+  }
+}
