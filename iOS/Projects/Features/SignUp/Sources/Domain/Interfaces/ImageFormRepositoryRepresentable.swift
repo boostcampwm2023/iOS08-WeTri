@@ -9,6 +9,6 @@
 import Combine
 import Foundation
 
-protocol ImageFormRepositoryRepresentable {
+public protocol ImageFormRepositoryRepresentable {
   func send(imageData: Data) -> AnyPublisher<[ImageForm], Error>
 }

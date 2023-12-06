@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - ImageForm
 
-struct ImageForm {
+public struct ImageForm {
   let imageName: String
   let imageURL: String
 }

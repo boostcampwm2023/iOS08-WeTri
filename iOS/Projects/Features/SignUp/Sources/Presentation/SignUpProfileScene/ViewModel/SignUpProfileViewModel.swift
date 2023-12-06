@@ -38,9 +38,11 @@ public enum SignUpProfileState {
 public final class SignUpProfileViewModel {
   private var subscriptions: Set<AnyCancellable> = []
   private let nickNameCheckUseCase: NickNameCheckUseCaseRepresentable
+  private let imageTransmitUseCase: ImageTransmitUseCaseRepresentable
 
-  public init(nickNameCheckUseCase: NickNameCheckUseCaseRepresentable) {
+  public init(nickNameCheckUseCase: NickNameCheckUseCaseRepresentable, imageTransmitUseCase: ImageTransmitUseCaseRepresentable) {
     self.nickNameCheckUseCase = nickNameCheckUseCase
+    self.imageTransmitUseCase = imageTransmitUseCase
   }
 }
 
@@ -82,9 +84,22 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
     input.completeButtonTap
       .sink { [weak self] _ in
         // 이미지 데이터를 서버에 보낸다.
-        guard let imageData else {
+        guard let imageData,
+              let imageforms = self?.imageTransmitUseCase.transmit(imageData: imageData)
+        else {
           return
         }
+        imageforms
+          .sink { completion in
+            switch completion {
+            case .finished: break
+            case let .failure(error):
+              Log.make().error("\(error)")
+            }
+          } receiveValue: { imageforms in
+            Log.make().debug("이미지 폼스 : \(imageforms)")
+          }
+          .store(in: &self!.subscriptions)
       }
       .store(in: &subscriptions)
 

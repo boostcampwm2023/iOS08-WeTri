@@ -8,6 +8,7 @@
 
 import Combine
 import Foundation
+import Log
 import Trinet
 
 // MARK: - ImageFormRepositoryError
@@ -18,14 +19,15 @@ enum ImageFormRepositoryError: Error {
 
 // MARK: - ImageFormRepository
 
-final class ImageFormRepository: ImageFormRepositoryRepresentable {
+public final class ImageFormRepository: ImageFormRepositoryRepresentable {
   private let provider: TNProvider<ImageFormEndPoint>
 
-  init(urlSession: URLSessionProtocol) {
+  public init(urlSession: URLSessionProtocol) {
     provider = TNProvider(session: urlSession)
   }
 
-  func send(imageData: Data) -> AnyPublisher<[ImageForm], Error> {
+  public func send(imageData: Data) -> AnyPublisher<[ImageForm], Error> {
+    Log.make().debug("\(imageData)")
     return Future<Data, Error> { [weak self] promise in
       guard let self else {
         return promise(.failure(ImageFormRepositoryError.invalidImageFormRepository))
@@ -47,20 +49,20 @@ final class ImageFormRepository: ImageFormRepositoryRepresentable {
     .eraseToAnyPublisher()
   }
 
-  private func createBody(parameters: [String: String],
+  private func createBody(parameters _: [String: String],
                           boundary: String,
                           data: Data,
                           mimeType: String,
                           filename: String) -> Data {
     var body = Data()
-    let imgDataKey = "img"
+    let imgDataKey = "images"
     let boundaryPrefix = "--\(boundary)\r\n"
 
-    for (key, value) in parameters {
-      body.append(boundaryPrefix.data(using: .utf8)!)
-      body.append("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n".data(using: .utf8)!)
-      body.append("\(value)\r\n".data(using: .utf8)!)
-    }
+//    for (key, value) in parameters {
+//      body.append(boundaryPrefix.data(using: .utf8)!)
+//      body.append("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n".data(using: .utf8)!)
+//      body.append("\(value)\r\n".data(using: .utf8)!)
+//    }
 
     body.append(boundaryPrefix.data(using: .utf8)!)
     body.append("Content-Disposition: form-data; name=\"\(imgDataKey)\"; filename=\"\(filename)\"\r\n".data(using: .utf8)!)
@@ -88,8 +90,7 @@ enum ImageFormEndPoint: TNEndPoint {
   var path: String {
     switch self {
     case .image:
-      // TODO: Path
-      return ""
+      return "/api/v1/images"
     }
   }
 

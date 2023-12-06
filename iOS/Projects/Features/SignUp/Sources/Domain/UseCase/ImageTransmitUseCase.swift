@@ -6,12 +6,26 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import Combine
 import Foundation
 
 // MARK: - ImageTransmitUseCaseRepresentable
 
-protocol ImageTransmitUseCaseRepresentable {}
+public protocol ImageTransmitUseCaseRepresentable {
+  func transmit(imageData: Data) -> AnyPublisher<[ImageForm], Error>
+}
 
 // MARK: - ImageTransmitUseCase
 
-final class ImageTransmitUseCase: ImageTransmitUseCaseRepresentable {}
+public final class ImageTransmitUseCase: ImageTransmitUseCaseRepresentable {
+  private let imageFormRepository: ImageFormRepositoryRepresentable
+
+  public init(imageFormRepository: ImageFormRepositoryRepresentable) {
+    self.imageFormRepository = imageFormRepository
+  }
+
+  public func transmit(imageData: Data) -> AnyPublisher<[ImageForm], Error> {
+    return imageFormRepository.send(imageData: imageData)
+      .eraseToAnyPublisher()
+  }
+}
