@@ -40,12 +40,7 @@ public final class UserInformationManager {
 }
 
 public extension UserInformationManager {
-  func setBirthDayDate(_ date: Date) {
-    let dateString = dateFormatter.string(from: date)
-    let data = Data(dateString.utf8)
-    defaults.setValue(data, forKey: UserInformation.birthDayDate.rawValue)
-  }
-
+  
   func setUserName(_ name: String) {
     let nameData = Data(name.utf8)
     defaults.setValue(nameData, forKey: UserInformation.userName.rawValue)
@@ -54,6 +49,13 @@ public extension UserInformationManager {
   func setUserProfileImageData(_ imageData: Data) {
     defaults.setValue(imageData, forKey: UserInformation.userName.rawValue)
   }
+  
+  func setBirthDayDate(_ date: Date) {
+    let dateString = dateFormatter.string(from: date)
+    let data = Data(dateString.utf8)
+    defaults.setValue(data, forKey: UserInformation.birthDayDate.rawValue)
+  }
+  
 }
 
 import UIKit
