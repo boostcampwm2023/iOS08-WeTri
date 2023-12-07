@@ -12,25 +12,25 @@ import Foundation
 // MARK: - SignUpUseCaseRepresentable
 
 protocol SignUpUseCaseRepresentable {
-  func signUp(signUpUser: SignUpUser) -> AnyPublisher<Token, Never>
+  func signUp(signUpUser: SignUpUser) -> AnyPublisher<Token, Error>
 }
 
 // MARK: - SignUpUseCase
 
 final class SignUpUseCase: SignUpUseCaseRepresentable {
-  private let authorizationRepository: AuthorizationRepositoryRepresentable
+  private let signUpRepository: SignUpRepositoryRepresentable
   private let keychainRepository: KeychainRepositoryRepresentable
 
   init(
-    authorizationRepository: AuthorizationRepositoryRepresentable,
+    signUpRepository: SignUpRepositoryRepresentable,
     keychainRepository: KeychainRepositoryRepresentable
   ) {
-    self.authorizationRepository = authorizationRepository
+    self.signUpRepository = signUpRepository
     self.keychainRepository = keychainRepository
   }
 
-  func authorize(authorizationInfo: AuthorizationInfo) -> AnyPublisher<Token, Never> {
-    return authorizationRepository.fetch(authorizationInfo: authorizationInfo)
+  func signUp(signUpUser: SignUpUser) -> AnyPublisher<Token, Error> {
+    return signUpRepository.signUp(signUpUser: signUpUser)
       .eraseToAnyPublisher()
   }
 
