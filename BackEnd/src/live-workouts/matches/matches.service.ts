@@ -125,7 +125,7 @@ export class MatchesService {
     );
     multi.set(
       `matchStartTime:${roomId}`,
-      JSON.stringify(liveWorkoutStartTimeUTC),
+      liveWorkoutStartTimeUTC,
     );
     multi.expire(`matchStartTime:${roomId}`, UTC_REMOVE_TIME);
     multi.ltrim(`matching:${workoutId}`, waitingUsers, -1);
