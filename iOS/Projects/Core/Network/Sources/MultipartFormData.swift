@@ -14,12 +14,12 @@ public struct MultipartFormData {
   private let boundary: String
   public let imageDataList: [Data]
 
-  init(uuid: UUID = UUID(), imageDataList: [Data]) {
+  public init(uuid: UUID = UUID(), imageDataList: [Data]) {
     boundary = "Boundary-\(uuid.uuidString)"
     self.imageDataList = imageDataList
   }
 
-  private func makeBody(imageDataList: [Data], mimeType: String) -> Data {
+  public func makeBody(imageDataList: [Data], mimeType: String) -> Data {
     let lineBreak = "\r\n"
     let boundaryPrefix = "--\(boundary)\(lineBreak)"
 
