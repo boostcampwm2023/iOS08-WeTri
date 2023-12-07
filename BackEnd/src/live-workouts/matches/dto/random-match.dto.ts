@@ -32,14 +32,14 @@ export class RandomMatch {
   @ApiProperty({
     example: [
       {
-        nickname: 'nickname',
-        publicId: 'profileImage',
-        etc: '그 외 나머지 모든 컬럼',
+        nickname: '닌자',
+        publicId: 'aaa-bbb-ccc',
+        profileImage: 'https://cdn.com/asdasd.png',
       },
       {
-        nickname: 'nickname',
-        publicId: 'profileImage',
-        etc: '그 외 나머지 모든 컬럼',
+        nickname: '닌자2',
+        publicId: 'aaa-bbb-111',
+        profileImage: 'https://cdn.com/asdasd.png',
       },
     ],
   })
