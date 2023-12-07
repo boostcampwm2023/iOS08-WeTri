@@ -35,11 +35,19 @@ export class RandomMatch {
         nickname: '닌자',
         publicId: 'aaa-bbb-ccc',
         profileImage: 'https://cdn.com/asdasd.png',
+        birthdate: '1999-01-01',
+        createdAt: '2021-01-01 00:00:00',
+        updatedAt: '2021-01-01 00:00:00',
+        gender: 'male'
       },
       {
         nickname: '닌자2',
         publicId: 'aaa-bbb-111',
         profileImage: 'https://cdn.com/asdasd.png',
+        birthdate: '1999-01-01',
+        createdAt: '2021-01-01 00:00:00',
+        updatedAt: '2021-01-01 00:00:00',
+        gender: 'male'
       },
     ],
   })
