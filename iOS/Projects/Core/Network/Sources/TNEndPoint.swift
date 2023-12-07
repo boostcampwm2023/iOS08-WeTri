@@ -36,7 +36,6 @@ public extension TNEndPoint {
     request.httpMethod = method.rawValue
     request.allHTTPHeaderFields = headers.dictionary
     request.httpBody = body?.data
-
     return request
   }
 }

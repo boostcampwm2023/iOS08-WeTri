@@ -75,7 +75,6 @@ public final class ImageFormRepository: ImageFormRepositoryRepresentable {
       return
     }
     var request = URLRequest(url: url)
-//    request.addValue("Bearer your_token_here", forHTTPHeaderField: "Authorization")
     request.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
     request.httpMethod = "POST"
     request.httpBody = body
