@@ -10,7 +10,9 @@ import Combine
 import Foundation
 
 protocol AuthorizeUseCaseRepresentable {
-  func authorize(authorizationInfo: AuthorizationInfo) -> AnyPublisher<Token, Never>
+  typealias LoginResponse = (token: Token?, initialUser: InitialUser?)
+
+  func authorize(authorizationInfo: AuthorizationInfo) -> AnyPublisher<LoginResponse, Never>
   func accessTokenSave(_ token: String)
   func refreshTokenSave(_ token: String)
 }

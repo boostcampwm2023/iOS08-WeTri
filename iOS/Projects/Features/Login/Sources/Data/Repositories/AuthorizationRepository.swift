@@ -28,33 +28,35 @@ struct AuthorizationRepository: AuthorizationRepositoryRepresentable {
     provider = .init(session: session)
   }
 
-  func fetch(authorizationInfo: AuthorizationInfo) -> AnyPublisher<Token, Never> {
-    return Future<Data, Never> { promise in
+  func fetch(authorizationInfo: AuthorizationInfo) -> AnyPublisher<LoginResponse, Never> {
+    return Future<LoginResponse, Never> { promise in
       Task {
-        let identityToken = try decoder.decode(String.self, from: authorizationInfo.identityToken)
-        let authorizationCode = try decoder.decode(String.self, from: authorizationInfo.authorizationCode)
-        let authorizationInfoRequestDTO = AuthorizationInfoRequestDTO(identityToken: identityToken, authorizationCode: authorizationCode)
+        do {
+          guard let token = String(data: authorizationInfo.identityToken, encoding: .utf8),
+                let authorizationCode = String(data: authorizationInfo.authorizationCode, encoding: .utf8)
+          else {
+            return
+          }
+          let authorizationInfoRequestDTO = AuthorizationInfoRequestDTO(identityToken: token, authorizationCode: authorizationCode)
 
-        let data = try await provider.request(.signIn(authorizationInfoRequestDTO))
-        promise(.success(data))
-      }
-    }
-    .decode(type: GWResponse<Token>.self, decoder: decoder)
-    .tryMap { response in
-      if response.code == 200 {
-        guard let token = response.data else {
-          throw AuthorizationRepositoryError.invalidData
+          let data = try await provider.request(.signIn(authorizationInfoRequestDTO))
+
+          guard let responseCode = try decoder.decode(Response.self, from: data).code else {
+            return
+          }
+          switch responseCode {
+          case AuthorizationRepositoryResponseCode.token.code:
+            let token = try decoder.decode(GWResponse<Token>.self, from: data).data
+            promise(.success((token, nil)))
+          case AuthorizationRepositoryResponseCode.firstLogin.code:
+            let initialUser = try decoder.decode(GWResponse<InitialUser>.self, from: data).data
+            promise(.success((nil, initialUser)))
+          default: break
+          }
+        } catch {
+          Log.make().error("\(error)")
         }
-        return token
-      } else {
-        // TODO: 백엔드와 상의 후 에러코드 처리
-        throw AuthorizationRepositoryError.invalidData
       }
-    }
-    .catch { error -> AnyPublisher<Token, Never> in
-      Log.make().error("\(error)")
-      return Just(Token())
-        .eraseToAnyPublisher()
     }
     .eraseToAnyPublisher()
   }
@@ -95,5 +97,21 @@ enum AuthorizationRepositoryEndPoint: TNEndPoint {
     return .init(headers: [
       // TODO: 헤더 설정
     ])
+  }
+}
+
+// MARK: - AuthorizationRepositoryResponseCode
+
+enum AuthorizationRepositoryResponseCode: Int {
+  case token
+  case firstLogin
+
+  var code: Int {
+    switch self {
+    case .token:
+      return 200
+    case .firstLogin:
+      return 201
+    }
   }
 }

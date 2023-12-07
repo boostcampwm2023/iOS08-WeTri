@@ -8,6 +8,7 @@
 
 import Combine
 import Foundation
+import Log
 
 // MARK: - AuthorizeUseCase
 
@@ -23,7 +24,7 @@ final class AuthorizeUseCase: AuthorizeUseCaseRepresentable {
     self.keychainRepository = keychainRepository
   }
 
-  func authorize(authorizationInfo: AuthorizationInfo) -> AnyPublisher<Token, Never> {
+  func authorize(authorizationInfo: AuthorizationInfo) -> AnyPublisher<LoginResponse, Never> {
     return authorizationRepository.fetch(authorizationInfo: authorizationInfo)
       .eraseToAnyPublisher()
   }

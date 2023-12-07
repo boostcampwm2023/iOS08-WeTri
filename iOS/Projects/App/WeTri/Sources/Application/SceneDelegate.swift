@@ -6,6 +6,7 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import LoginFeature
 import RecordFeature
 import SignUpFeature
 import UIKit
@@ -25,6 +26,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     let coordinator = AppCoordinator(navigationController: navigationController)
     coordinating = coordinator
     coordinator.start()
+    window?.rootViewController = navigationController
     window?.makeKeyAndVisible()
   }
 }
