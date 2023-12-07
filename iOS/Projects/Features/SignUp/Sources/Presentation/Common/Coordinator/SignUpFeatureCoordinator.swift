@@ -17,14 +17,14 @@ public final class SignUpFeatureCoordinator: SignUpFeatureCoordinating {
   public weak var finishDelegate: CoordinatorFinishDelegate?
   public var flow: CoordinatorFlow = .signup
 
-  private let userBit: NewUserInformation
+  private let newUserInformation: NewUserInformation
 
   public init(
     navigationController: UINavigationController,
-    userBit: NewUserInformation
+    newUserInformation: NewUserInformation
   ) {
     self.navigationController = navigationController
-    self.userBit = userBit
+    self.newUserInformation = newUserInformation
   }
 
   public func start() {
@@ -32,7 +32,7 @@ public final class SignUpFeatureCoordinator: SignUpFeatureCoordinating {
   }
 
   public func showSignUpFlow() {
-    let coordinator = SignUpCoordinator(navigationController: navigationController, isMockEnvironment: true, userBit: userBit)
+    let coordinator = SignUpCoordinator(navigationController: navigationController, isMockEnvironment: true, userBit: newUserInformation)
     childCoordinators.append(coordinator)
     coordinator.finishDelegate = self
     coordinator.start()

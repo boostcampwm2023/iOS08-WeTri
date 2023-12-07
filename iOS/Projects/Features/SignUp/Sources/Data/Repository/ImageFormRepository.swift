@@ -29,7 +29,7 @@ public final class ImageFormRepository: ImageFormRepositoryRepresentable {
       let endPoint = ImageFormEndPoint.image(body, boundary)
       Task {
         do {
-          let data = try await self.provider.request(endPoint)
+          let data = try await self.provider.uploadRequest(endPoint)
           let response = try JSONDecoder().decode(Response.self, from: data)
           Log.make().debug("\(response.code!)")
           Log.make().debug("\(response.errorMessage!)")
