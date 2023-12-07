@@ -19,7 +19,7 @@ final class HomeViewController: UIViewController {
 
   private var subscriptions: Set<AnyCancellable> = []
 
-  var dataSource: UICollectionViewDiffableDataSource<Int, UUID>? = nil
+  var dataSource: UICollectionViewDiffableDataSource<Int, FeedElement>? = nil
 
   // MARK: UI Components
 
@@ -48,6 +48,7 @@ final class HomeViewController: UIViewController {
   private let feedListCollectionView: UICollectionView = {
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeFeedCollectionViewLayout())
     collectionView.register(FeedItemCollectionViewCell.self, forCellWithReuseIdentifier: FeedItemCollectionViewCell.identifier)
+    collectionView.backgroundColor = .clear
 
     collectionView.translatesAutoresizingMaskIntoConstraints = false
     return collectionView
@@ -84,13 +85,13 @@ private extension HomeViewController {
   }
 
   func setDataSource() {
-    dataSource = .init(collectionView: feedListCollectionView) { collectionView, indexPath, _ in
+    dataSource = .init(collectionView: feedListCollectionView) { collectionView, indexPath, item in
       let dequeuedCell = collectionView.dequeueReusableCell(withReuseIdentifier: FeedItemCollectionViewCell.identifier, for: indexPath)
       guard let cell = dequeuedCell as? FeedItemCollectionViewCell
       else {
         return UICollectionViewCell()
       }
-
+      cell.configure(item)
       return cell
     }
   }
@@ -131,7 +132,7 @@ private extension HomeViewController {
     }
     var snapshot = dataSource.snapshot()
     snapshot.appendSections([0])
-    snapshot.appendItems([.init(), .init(), .init()], toSection: 0)
+    snapshot.appendItems(fakeData(), toSection: 0)
     dataSource.apply(snapshot)
   }
 
@@ -154,5 +155,41 @@ private extension HomeViewController {
     let section = NSCollectionLayoutSection(group: group)
 
     return UICollectionViewCompositionalLayout(section: section)
+  }
+
+  func fakeData() -> [FeedElement] {
+    return [
+      .init(
+        ID: 1,
+        publicID: "",
+        nickName: "정다함",
+        publishDate: .now,
+        profileImage: URL(string: "https://i.ytimg.com/vi/fzzjgBAaWZw/hqdefault.jpg"),
+        sportText: "달리기",
+        content: "오운완. 오늘도 운동 조졌음. 기분은 좋네 ^^",
+        postImages: [
+          URL(string: "https://cdn.seniordaily.co.kr/news/photo/202108/2444_1812_1557.jpg"),
+          URL(string: "https://t1.daumcdn.net/thumb/R1280x0/?fname=http://t1.daumcdn.net/brunch/service/guest/image/7MpZeU0-hBKjmb4tKFHR-Skd7bA.JPG"),
+          URL(string: "https://t1.daumcdn.net/brunch/service/guest/image/9xI2XnpJpggfVZV6l1opHBwyeqU.JPG"),
+        ],
+        like: 2
+      ),
+
+      .init(
+        ID: 2,
+        publicID: "",
+        nickName: "고양이 애호가",
+        publishDate: .now,
+        profileImage: URL(string: "https://ca.slack-edge.com/T05N9HAKPFW-U05PCNTCV9N-8bbbd8736a14-512"),
+        sportText: "수영",
+        content: "고양이 애호가입니다. 차린건 없지만 고양이 보고가세요",
+        postImages: [
+          URL(string: "https://i.ytimg.com/vi/YCaGYUIfdy4/maxresdefault.jpg")!,
+          URL(string: "https://www.cats.org.uk/uploads/images/featurebox_sidebar_kids/grief-and-loss.jpg")!,
+          URL(string: "https://www.telegraph.co.uk/content/dam/pets/2017/01/06/1-JS117202740-yana-two-face-cat-news_trans_NvBQzQNjv4BqJNqHJA5DVIMqgv_1zKR2kxRY9bnFVTp4QZlQjJfe6H0.jpg?imwidth=450")!,
+        ],
+        like: 2
+      ),
+    ]
   }
 }
