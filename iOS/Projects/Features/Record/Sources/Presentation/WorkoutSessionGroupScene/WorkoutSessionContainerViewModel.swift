@@ -95,16 +95,17 @@ extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepr
         return ($0, $1)
       }
       .withLatestFrom(input.healthPublisher) { [dependency] tuple, health in
-        let healthData = WorkoutDataForm(
+        let workoutData = WorkoutDataForm(
           workoutTime: Int(dependency.startDate.timeIntervalSince1970.rounded(.down)),
           distance: Int(health.distance?.rounded(.toNearestOrAwayFromZero) ?? 0),
           calorie: Int(health.calorie?.rounded(.toNearestOrAwayFromZero) ?? 0),
           imageURL: tuple.1,
+          locations: tuple.0.map(\.description).joined(separator: ","),
           averageHeartRate: Int(health.averageHeartRate?.rounded(.toNearestOrAwayFromZero) ?? 0),
           minimumHeartRate: Int(health.minimumHeartRate?.rounded(.toNearestOrAwayFromZero) ?? 0),
           maximumHeartRate: Int(health.maximumHeartRate?.rounded(.toNearestOrAwayFromZero) ?? 0)
         )
-        return (tuple.0, healthData)
+        return workoutData
       }
       .flatMap(workoutRecordUseCase.record)
 
