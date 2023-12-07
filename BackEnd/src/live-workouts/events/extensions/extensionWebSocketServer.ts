@@ -110,7 +110,7 @@ export class ExtensionWebSocketServer {
           client.send(
             JSON.stringify({
               event: jsonMessage.event,
-              data: jsonMessage.message,
+              data: JSON.parse(jsonMessage.message),
             }),
           );
         }
