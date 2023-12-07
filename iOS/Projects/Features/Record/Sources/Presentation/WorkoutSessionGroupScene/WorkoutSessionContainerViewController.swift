@@ -160,6 +160,7 @@ final class WorkoutSessionContainerViewController: UIViewController {
       input: .init(
         endWorkoutPublisher: endWorkoutSubject.eraseToAnyPublisher(),
         locationPublisher: routeMapViewController.locationPublisher,
+        mapCaptureImageDataPublisher: routeMapViewController.mapCaptureData,
         healthPublisher: sessionViewController.healthDataPublisher
       )
     )
@@ -173,6 +174,10 @@ final class WorkoutSessionContainerViewController: UIViewController {
         case let .alert(error): self?.showAlert(with: error)
         }
       }
+      .store(in: &subscriptions)
+
+    endWorkoutSubject
+      .sink(receiveValue: routeMapViewController.requestCapture)
       .store(in: &subscriptions)
   }
 

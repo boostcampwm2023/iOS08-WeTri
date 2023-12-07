@@ -21,6 +21,7 @@ protocol WorkoutSessionViewModelDependency {
 public struct WorkoutSessionContainerViewModelInput {
   let endWorkoutPublisher: AnyPublisher<Void, Never>
   let locationPublisher: AnyPublisher<[CLLocation], Never>
+  let mapCaptureImageDataPublisher: AnyPublisher<Data?, Never>
   let healthPublisher: AnyPublisher<WorkoutHealthForm, Never>
 }
 
