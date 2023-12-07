@@ -50,7 +50,7 @@ export class MatchesController {
     description: '매칭이 안되었을 경우',
     schema: randomNoMatchingResDto(),
   })
-  @Get('random')
+  @Post('random')
   isRandomMatched(
     @ProfileDeco() profile: Profile,
     @Body() randomMatchDto: RandomMatchDto,

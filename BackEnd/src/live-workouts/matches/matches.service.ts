@@ -16,6 +16,7 @@ import {
   ALONE_USER,
   MATCHING_DELAY,
   UTC_REMOVE_TIME,
+  MATCHES_API_TIME_OUT,
 } from './constant/matches.constant';
 
 @Injectable()
@@ -32,7 +33,12 @@ export class MatchesService {
     this.logger.log(`startMatch: ${publicId} ${workoutId}`);
 
     await this.initMatch(profile, workoutId);
-    await this.redis.rpush(`matching:${workoutId}`, JSON.stringify(profile));
+    await this.redis.rpush(
+      `matching:${workoutId}`,
+      JSON.stringify(profile),
+      'EX',
+      MATCHES_API_TIME_OUT,
+    );
   }
 
   async cancelMatch(
@@ -102,10 +108,15 @@ export class MatchesService {
 
     const multi = this.redis.multi();
     for (const { publicId } of profiles) {
-      multi.set(`userMatch:${publicId}`, roomId);
+      multi.set(`userMatch:${publicId}`, roomId, 'EX', MATCHES_API_TIME_OUT);
     }
 
-    multi.set(`matchProfiles:${roomId}`, JSON.stringify(profiles));
+    multi.set(
+      `matchProfiles:${roomId}`,
+      JSON.stringify(profiles),
+      'EX',
+      MATCHES_API_TIME_OUT,
+    );
     multi.set(
       `matchStartTime:${roomId}`,
       JSON.stringify(liveWorkoutStartTimeUTC),
