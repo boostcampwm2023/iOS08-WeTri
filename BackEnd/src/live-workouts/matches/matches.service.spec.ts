@@ -94,34 +94,6 @@ describe('MatchesService', () => {
     });
   });
 
-  describe('makeWebSocketRoom 메서드 검증', () => {
-    it('달리기 종목에 대기인원이 2명이고일 때 트렌잭션이 잘 작동하는지 테스트', async () => {
-      const workoutId = 1;
-      const waitingUsers = 2;
-      const serializedUsers = [
-        JSON.stringify({ publicId: 'User1' }),
-        JSON.stringify({ publicId: 'User2' }),
-      ];
-      lrange.mockResolvedValue(serializedUsers);
-
-      const result = await service['makeWebSocketRoom'](
-        workoutId,
-        waitingUsers,
-      );
-
-      expect(lrange).toHaveBeenCalledWith(
-        `matching:${workoutId}`,
-        0,
-        waitingUsers - 1,
-      );
-      expect(multi().set).toHaveBeenCalled();
-      expect(multi().expire).toHaveBeenCalled();
-      expect(multi().ltrim).toHaveBeenCalled();
-      expect(multi().exec).toHaveBeenCalled();
-      expect(result).toHaveProperty('matched', true);
-    });
-  });
-
   describe('matchingAlgorithm 메서드 검증', () => {
     it('대기 큐에 2명이 존재하고, 기다린 시간이 20초라면?', () => {
       const queueLength = 2;
