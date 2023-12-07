@@ -129,6 +129,11 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
     let sessionViewModel = WorkoutSessionViewModel(useCase: sessionUseCase)
     let sessionViewController = WorkoutSessionViewController(viewModel: sessionViewModel, dependency: workoutSessionComponents)
 
+    let kalmanUseCase = KalmanUseCase()
+    let locationPathUseCase = LocationPathUseCase()
+    let routeMapViewModel = WorkoutRouteMapViewModel(kalmanUseCase: kalmanUseCase, locationPathUseCase: locationPathUseCase)
+    let routeMapViewController = WorkoutRouteMapViewController(viewModel: routeMapViewModel)
+
     let session: URLSessionProtocol = isMockEnvironment ? MockURLSession(mockData: jsonData) : URLSession.shared
     let repository = WorkoutRecordRepository(session: session)
     let useCase = WorkoutRecordUseCase(repository: repository)
@@ -139,7 +144,11 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
       dependency: workoutSessionComponents
     )
 
-    let viewController = WorkoutSessionContainerViewController(viewModel: viewModel, healthDataProtocol: sessionViewController)
+    let viewController = WorkoutSessionContainerViewController(
+      viewModel: viewModel,
+      healthDataProtocol: sessionViewController,
+      locationTrackingProtocol: routeMapViewController
+    )
     navigationController.pushViewController(viewController, animated: true)
   }
 

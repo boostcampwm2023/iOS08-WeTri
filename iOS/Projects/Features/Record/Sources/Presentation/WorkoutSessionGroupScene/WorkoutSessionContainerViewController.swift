@@ -27,7 +27,7 @@ final class WorkoutSessionContainerViewController: UIViewController {
 
   private let sessionViewController: HealthDataProtocol
 
-  private let routeMapViewController: LocationTrackingProtocol = WorkoutRouteMapViewController(viewModel: WorkoutRouteMapViewModel(kalmanUseCase: KalmanUseCase(), locationPathUseCase: LocationPathUseCase()))
+  private let routeMapViewController: LocationTrackingProtocol
 
   private lazy var viewControllers: [UIViewController] = [
     sessionViewController,
@@ -60,9 +60,14 @@ final class WorkoutSessionContainerViewController: UIViewController {
 
   // MARK: Initializations
 
-  init(viewModel: WorkoutSessionContainerViewModelRepresentable, healthDataProtocol: HealthDataProtocol) {
+  init(
+    viewModel: WorkoutSessionContainerViewModelRepresentable,
+    healthDataProtocol: HealthDataProtocol,
+    locationTrackingProtocol: LocationTrackingProtocol
+  ) {
     self.viewModel = viewModel
     sessionViewController = healthDataProtocol
+    routeMapViewController = locationTrackingProtocol
     super.init(nibName: nil, bundle: nil)
   }
 
