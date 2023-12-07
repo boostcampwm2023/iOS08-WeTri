@@ -114,6 +114,13 @@ enum ImageFormEndPoint: TNEndPoint {
       TNHeader(key: "Connection", value: "keep-alive"),
     ])
   }
+
+  var multipart: MultipartFormData? {
+    switch self {
+    case let .image(imageData, _):
+      return MultipartFormData(mimeType: "image/png", imageDataList: [imageData])
+    }
+  }
 }
 
 // MARK: - Response
