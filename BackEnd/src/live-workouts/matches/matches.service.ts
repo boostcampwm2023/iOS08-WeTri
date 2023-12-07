@@ -36,8 +36,6 @@ export class MatchesService {
     await this.redis.rpush(
       `matching:${workoutId}`,
       JSON.stringify(profile),
-      'EX',
-      MATCHES_API_TIME_OUT,
     );
   }
 
@@ -83,6 +81,9 @@ export class MatchesService {
     if (waitingUsers >= MIN_USERS) {
       return await this.makeWebSocketRoom(workoutId, waitingUsers);
     }
+    return {
+      matched: false
+    };
   }
 
   private async makeWebSocketRoom(

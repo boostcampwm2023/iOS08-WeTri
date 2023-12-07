@@ -66,7 +66,7 @@ describe('MatchesService', () => {
 
     it('매칭을 시작하면 redis에는 직렬화된 profile를 matching:1 key에 value로 저장한다.', async () => {
       await service.startMatch(profile, createMatchDto);
-      expect(rpush).toHaveBeenCalledWith(`matching:1`, JSON.stringify(profile), 'EX', MATCHES_API_TIME_OUT);
+      expect(rpush).toHaveBeenCalledWith(`matching:1`, JSON.stringify(profile));
     });
 
     it('매칭을 취소하면, maching:1에 있는 value는 삭제가 되어야 한다.', async () => {
