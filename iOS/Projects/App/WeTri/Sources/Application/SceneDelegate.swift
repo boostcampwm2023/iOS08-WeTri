@@ -22,9 +22,9 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     window = UIWindow(windowScene: windowScene)
     let navigationController = UINavigationController()
     window?.rootViewController = navigationController
-    let coordinator = LoginFeatureCoordinator(navigationController: navigationController)
-//    coordinating = coordinator
+    let coordinator = AppCoordinator(navigationController: navigationController)
+    coordinating = coordinator
     coordinator.start()
-    window?.makeKeyAndVisible()
+    window?.rootViewController = navigationController
   }
 }
