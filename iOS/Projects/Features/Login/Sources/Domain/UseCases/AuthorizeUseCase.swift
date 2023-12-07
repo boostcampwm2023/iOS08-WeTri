@@ -8,6 +8,7 @@
 
 import Combine
 import Foundation
+import Log
 
 // MARK: - AuthorizeUseCase
 

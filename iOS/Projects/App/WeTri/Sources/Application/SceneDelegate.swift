@@ -6,6 +6,7 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import LoginFeature
 import RecordFeature
 import SignUpFeature
 import UIKit
@@ -20,14 +21,10 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     guard let windowScene = scene as? UIWindowScene else { return }
     window = UIWindow(windowScene: windowScene)
     let navigationController = UINavigationController()
-    let viewController = SignUpContainerViewController(
-      signUpGenderBirthViewController: SignUpGenderBirthViewController(viewModel: SignUpGenderBirthViewModel(dateFormatUseCase: DateFormatUseCase())),
-      signUpProfileViewController: SignUpProfileViewController()
-    )
-    window?.rootViewController = viewController
-//    let coordinator = AppCoordinator(navigationController: navigationController)
+    window?.rootViewController = navigationController
+    let coordinator = LoginFeatureCoordinator(navigationController: navigationController)
 //    coordinating = coordinator
-//    coordinator.start()
+    coordinator.start()
     window?.makeKeyAndVisible()
   }
 }

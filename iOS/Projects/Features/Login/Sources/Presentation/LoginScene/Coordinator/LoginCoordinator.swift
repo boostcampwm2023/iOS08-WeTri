@@ -37,7 +37,7 @@ final class LoginCoordinator: LoginCoordinating {
       Bundle(for: Self.self).path(forResource: "Token", ofType: "json") : Bundle(for: Self.self).path(forResource: "InitialUser", ofType: "json"),
       let jsonData = try? Data(contentsOf: .init(filePath: jsonPath))
     else {
-      Log.make().error("Records Mock 데이터를 생성할 수 없습니다.")
+      Log.make().error("Login Mock 데이터를 생성할 수 없습니다.")
       return
     }
 

@@ -31,22 +31,30 @@ struct AuthorizationRepository: AuthorizationRepositoryRepresentable {
   func fetch(authorizationInfo: AuthorizationInfo) -> AnyPublisher<LoginResponse, Never> {
     return Future<LoginResponse, Never> { promise in
       Task {
-        let identityToken = try decoder.decode(String.self, from: authorizationInfo.identityToken)
-        let authorizationCode = try decoder.decode(String.self, from: authorizationInfo.authorizationCode)
-        let authorizationInfoRequestDTO = AuthorizationInfoRequestDTO(identityToken: identityToken, authorizationCode: authorizationCode)
+        do {
+          guard let token = String(data: authorizationInfo.identityToken, encoding: .utf8),
+                let authorizationCode = String(data: authorizationInfo.authorizationCode, encoding: .utf8)
+          else {
+            return
+          }
+          let authorizationInfoRequestDTO = AuthorizationInfoRequestDTO(identityToken: token, authorizationCode: authorizationCode)
 
-        let data = try await provider.request(.signIn(authorizationInfoRequestDTO))
-        guard let responseCode = try decoder.decode(Response.self, from: data).code else {
-          return
-        }
-        switch responseCode {
-        case AuthorizationRepositoryResponseCode.token.code:
-          let token = try decoder.decode(GWResponse<Token>.self, from: data).data
-          promise(.success((token, nil)))
-        case AuthorizationRepositoryResponseCode.firstLogin.code:
-          let initialUser = try decoder.decode(GWResponse<InitialUser>.self, from: data).data
-          promise(.success((nil, initialUser)))
-        default: break
+          let data = try await provider.request(.signIn(authorizationInfoRequestDTO))
+
+          guard let responseCode = try decoder.decode(Response.self, from: data).code else {
+            return
+          }
+          switch responseCode {
+          case AuthorizationRepositoryResponseCode.token.code:
+            let token = try decoder.decode(GWResponse<Token>.self, from: data).data
+            promise(.success((token, nil)))
+          case AuthorizationRepositoryResponseCode.firstLogin.code:
+            let initialUser = try decoder.decode(GWResponse<InitialUser>.self, from: data).data
+            promise(.success((nil, initialUser)))
+          default: break
+          }
+        } catch {
+          Log.make().error("\(error)")
         }
       }
     }

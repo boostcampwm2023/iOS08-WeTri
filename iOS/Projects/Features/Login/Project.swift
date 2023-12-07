@@ -7,7 +7,7 @@ let project = Project.makeModule(
   targets: .feature(
     .login,
     testingOptions: [.unitTest],
-    dependencies: [.trinet, .keychain, .combineCocoa],
+    dependencies: [.trinet, .keychain, .combineCocoa, .log, TargetDependency.feature(.signUp)],
     testDependencies: [],
     resources: "Resources/**"
   )
