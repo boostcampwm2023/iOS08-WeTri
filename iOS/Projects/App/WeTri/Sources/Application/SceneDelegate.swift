@@ -6,6 +6,7 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import LoginFeature
 import RecordFeature
 import SignUpFeature
 import UIKit
@@ -21,7 +22,10 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     window = UIWindow(windowScene: windowScene)
     let navigationController = UINavigationController()
     window?.rootViewController = navigationController
-    let coordinator = SignUpFeatureCoordinator(navigationController: navigationController)
+    let coordinator = SignUpFeatureCoordinator(
+      navigationController: navigationController,
+      initialUser: InitialUser(isFirstLogined: true, mappedUserID: "???", provider: .apple)
+    )
 //    let coordinator = AppCoordinator(navigationController: navigationController)
 //    coordinating = coordinator
     coordinator.start()

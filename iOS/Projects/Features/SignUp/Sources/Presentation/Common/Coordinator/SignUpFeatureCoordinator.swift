@@ -7,6 +7,7 @@
 //
 
 import Coordinator
+import LoginFeature
 import UIKit
 
 public final class SignUpFeatureCoordinator: SignUpFeatureCoordinating {
@@ -15,8 +16,14 @@ public final class SignUpFeatureCoordinator: SignUpFeatureCoordinating {
   public weak var finishDelegate: CoordinatorFinishDelegate?
   public var flow: CoordinatorFlow = .signup
 
-  public init(navigationController: UINavigationController) {
+  private let initialUser: InitialUser
+
+  public init(
+    navigationController: UINavigationController,
+    initialUser: InitialUser
+  ) {
     self.navigationController = navigationController
+    self.initialUser = initialUser
   }
 
   public func start() {
