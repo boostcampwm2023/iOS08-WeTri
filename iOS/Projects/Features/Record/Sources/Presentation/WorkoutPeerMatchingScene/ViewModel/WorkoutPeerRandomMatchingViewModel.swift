@@ -160,6 +160,7 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
       id: id,
       profileImageURL: userInformationUseCase.userProfileImageURL()
     )
+    Log.make().debug("\(startDate)")
 
     let workoutSessionComponents = WorkoutSessionComponents(
       participants: [sessionPeerTypeOfMe] + peers,
