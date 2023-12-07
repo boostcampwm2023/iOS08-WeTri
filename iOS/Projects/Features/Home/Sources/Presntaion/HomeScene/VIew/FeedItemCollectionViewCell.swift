@@ -24,9 +24,10 @@ class FeedItemCollectionViewCell: UICollectionViewCell {
     fatalError("생성할 수 없습니다.")
   }
 
-  //MARK: - Property
-  //MARK: - 프로필 이미지와 정보들을 알 수 있는 Property들의 모음입니다.
-  
+  // MARK: - Property
+
+  // MARK: - 프로필 이미지와 정보들을 알 수 있는 Property들의 모음입니다.
+
   private let profileImage: UIImageView = {
     let imageView = UIImageView()
 
@@ -75,33 +76,32 @@ class FeedItemCollectionViewCell: UICollectionViewCell {
     stackView.translatesAutoresizingMaskIntoConstraints = false
     return stackView
   }()
-  
+
   lazy var nickNameLabelAndSportDateLabelStackView: UIStackView = {
     let stackView = UIStackView(arrangedSubviews: [
       nickNameLabel,
-      sportLabelAndNickdateLabelStackView
+      sportLabelAndNickdateLabelStackView,
     ])
     stackView.axis = .vertical
-    stackView.spacing = 4
-    
+    stackView.spacing = Metrics.nickNameLabelAndSportDateLabelSpacing
+
     stackView.translatesAutoresizingMaskIntoConstraints = false
     return stackView
   }()
-  
+
   lazy var cardHeaderStackView: UIStackView = {
     let stackView = UIStackView(arrangedSubviews: [
       profileImage,
-      nickNameLabelAndSportDateLabelStackView
+      nickNameLabelAndSportDateLabelStackView,
     ])
     stackView.axis = .horizontal
-    stackView.spacing = 12
-    
+    stackView.spacing = Metrics.profileImageAndUserInformationLabelStackViewSpacing
+
     stackView.translatesAutoresizingMaskIntoConstraints = false
     return stackView
   }()
-  
-  //MARK: - 본문 내용에 관한 Property입니다.
-  
+
+  // MARK: - 본문 내용에 관한 Property입니다.
 }
 
 private extension FeedItemCollectionViewCell {
@@ -112,8 +112,10 @@ private extension FeedItemCollectionViewCell {
   func setStyle() {
     backgroundColor = .red
   }
-  
+
   enum Metrics {
     static let sportLabelAndNickdateLabelSpacing: CGFloat = 3
+    static let nickNameLabelAndSportDateLabelSpacing: CGFloat = 4
+    static let profileImageAndUserInformationLabelStackViewSpacing: CGFloat = 12
   }
 }
