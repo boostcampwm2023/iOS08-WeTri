@@ -8,6 +8,8 @@
 
 import Coordinator
 import Keychain
+import Log
+import Trinet
 import UIKit
 
 final class LoginCoordinator: LoginCoordinating {
@@ -17,13 +19,32 @@ final class LoginCoordinator: LoginCoordinating {
   weak var loginFinishDelegate: LoginDidFinishedDelegate?
   var flow: CoordinatorFlow = .login
 
-  init(navigationController: UINavigationController) {
+  private let isMockEnvironment: Bool
+  private let isMockFirst: Bool
+
+  init(
+    navigationController: UINavigationController,
+    isMockEnvironment: Bool,
+    isMockFirst: Bool
+  ) {
     self.navigationController = navigationController
+    self.isMockEnvironment = isMockEnvironment
+    self.isMockFirst = isMockFirst
   }
 
   func start() {
+    guard let jsonPath = isMockFirst ?
+      Bundle(for: Self.self).path(forResource: "Token", ofType: "json") : Bundle(for: Self.self).path(forResource: "InitialUser", ofType: "json"),
+      let jsonData = try? Data(contentsOf: .init(filePath: jsonPath))
+    else {
+      Log.make().error("Records Mock 데이터를 생성할 수 없습니다.")
+      return
+    }
+
+    let urlSession: URLSessionProtocol = isMockEnvironment ? MockURLSession(mockData: jsonData) : URLSession.shared
+
     let authorizeUseCase = AuthorizeUseCase(
-      authorizationRepository: AuthorizationRepository(session: URLSession.shared),
+      authorizationRepository: AuthorizationRepository(session: urlSession),
       keychainRepository: KeychainRepository(keychain: Keychain.shared)
     )
     let loginViewModel = LoginViewModel(coordinator: self, authorizeUseCase: authorizeUseCase)

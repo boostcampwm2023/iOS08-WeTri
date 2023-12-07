@@ -28,7 +28,11 @@ public final class LoginFeatureCoordinator: LoginFeatureCoordinating {
   }
 
   func showLoginFlow() {
-    let coordinator = LoginCoordinator(navigationController: navigationController)
+    let coordinator = LoginCoordinator(
+      navigationController: navigationController,
+      isMockEnvironment: true,
+      isMockFirst: true
+    )
     childCoordinators.append(coordinator)
     coordinator.finishDelegate = self
     coordinator.loginFinishDelegate = self
