@@ -15,7 +15,7 @@ import {
   WAITING_20_TIME,
   ALONE_USER,
   MATCHING_DELAY,
-  UTC_REMOVE_TIME,
+  UTC_REMOVE_TIME, MATCHES_API_TIME_OUT,
 } from './constant/matches.constant';
 
 @Injectable()
@@ -118,7 +118,7 @@ export class MatchesService {
 
     multi.set(
       `matchProfiles:${roomId}`,
-      JSON.stringify(profiles),);
+      JSON.stringify(profiles), 'EX', MATCHES_API_TIME_OUT);
     multi.set(
       `matchStartTime:${roomId}`,
       liveWorkoutStartTimeUTC,
