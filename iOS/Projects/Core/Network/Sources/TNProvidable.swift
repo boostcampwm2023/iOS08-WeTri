@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Log
 
 // MARK: - TNProvidable
 
@@ -64,4 +65,11 @@ private extension TNProvider {
       throw TNError.unknownError
     }
   }
+}
+
+// MARK: - Response
+
+private struct Response: Codable {
+  let code: Int?
+  let errorMessage: String?
 }

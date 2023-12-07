@@ -9,6 +9,8 @@
 import Coordinator
 import UIKit
 
+// MARK: - SignUpFeatureCoordinator
+
 public final class SignUpFeatureCoordinator: SignUpFeatureCoordinating {
   public var navigationController: UINavigationController
   public var childCoordinators: [Coordinating] = []
@@ -56,5 +58,15 @@ public final class SignUpFeatureCoordinator: SignUpFeatureCoordinating {
     )
 
     navigationController.pushViewController(signUpContainerViewController, animated: false)
+  }
+}
+
+// MARK: CoordinatorFinishDelegate
+
+extension SignUpFeatureCoordinator: CoordinatorFinishDelegate {
+  public func flowDidFinished(childCoordinator: Coordinating) {
+    childCoordinators = childCoordinators.filter {
+      $0.flow != childCoordinator.flow
+    }
   }
 }
