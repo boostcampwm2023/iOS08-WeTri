@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
-import { FindManyOptions, Repository } from 'typeorm';
+import { BaseEntity, FindManyOptions, QueryBuilder, Repository, SelectQueryBuilder } from 'typeorm';
 import { BasePaginationDto } from './dto/base-pagination.dto';
 import { ORM_OPERATION } from './const/orm-operation.const';
 import { BaseModel } from './type/base-model.type';
@@ -71,7 +71,7 @@ export class CommonService {
     repository: Repository<T>,
     queryOptions: QueryOptions,
     findManyOptions: FindManyOptions<T> = {},
-  ) {
+  ): SelectQueryBuilder<T> {
     let queryBuilder = repository.createQueryBuilder(queryOptions.mainAlias);
     queryBuilder = queryBuilder.setFindOptions(findManyOptions);
     if (queryOptions.joins) {
