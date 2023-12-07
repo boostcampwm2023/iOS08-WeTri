@@ -8,6 +8,8 @@
 
 import Coordinator
 import Keychain
+import Log
+import Trinet
 import UIKit
 
 final class SignUpCoordinator: SignUpCoordinating {
@@ -18,8 +20,15 @@ final class SignUpCoordinator: SignUpCoordinating {
 
   private let userBit: UserBit
 
-  init(navigationController: UINavigationController, userBit: UserBit) {
+  private let isMockEnvironment: Bool
+
+  init(
+    navigationController: UINavigationController,
+    isMockEnvironment: Bool,
+    userBit: UserBit
+  ) {
     self.navigationController = navigationController
+    self.isMockEnvironment = isMockEnvironment
     self.userBit = userBit
   }
 
@@ -28,6 +37,15 @@ final class SignUpCoordinator: SignUpCoordinating {
   }
 
   func pushSingUpContainerViewController() {
+    guard let jsonPath = Bundle(for: Self.self).path(forResource: "Token", ofType: "json"),
+          let jsonData = try? Data(contentsOf: .init(filePath: jsonPath))
+    else {
+      Log.make().error("Token 데이터를 생성할 수 없습니다.")
+      return
+    }
+
+    let urlSession: URLSessionProtocol = isMockEnvironment ? MockURLSession(mockData: jsonData) : URLSession.shared
+
     let dateFormatUseCase = DateFormatUseCase()
 
     let signUpGenderBirthViewModel = SignUpGenderBirthViewModel(dateFormatUseCase: dateFormatUseCase)
@@ -36,11 +54,11 @@ final class SignUpCoordinator: SignUpCoordinating {
 
     let nickNameCheckUseCase = NickNameCheckUseCase()
 
-    let imageFormRepository = ImageFormRepository(urlSession: URLSession.shared)
+    let imageFormRepository = ImageFormRepository(urlSession: urlSession)
 
     let imageTransmitUseCase = ImageTransmitUseCase(imageFormRepository: imageFormRepository)
 
-    let signUpRepository = SignUpRepository(urlSession: URLSession.shared)
+    let signUpRepository = SignUpRepository(urlSession: urlSession)
 
     let keyChainRepository = KeychainRepository(keychain: Keychain.shared)
 

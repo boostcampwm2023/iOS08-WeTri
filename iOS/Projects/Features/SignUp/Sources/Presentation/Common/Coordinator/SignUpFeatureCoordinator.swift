@@ -32,7 +32,7 @@ public final class SignUpFeatureCoordinator: SignUpFeatureCoordinating {
   }
 
   public func showSignUpFlow() {
-    let coordinator = SignUpCoordinator(navigationController: navigationController, userBit: userBit)
+    let coordinator = SignUpCoordinator(navigationController: navigationController, isMockEnvironment: true, userBit: userBit)
     childCoordinators.append(coordinator)
     coordinator.finishDelegate = self
     coordinator.start()
