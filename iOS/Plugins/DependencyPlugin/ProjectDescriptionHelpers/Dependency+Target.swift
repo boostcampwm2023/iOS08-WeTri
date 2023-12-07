@@ -10,6 +10,7 @@ import ProjectDescription
 // MARK: - Feature
 
 public enum Feature: String {
+  case home
   case splash
   case profile
   case login
@@ -32,6 +33,7 @@ public extension TargetDependency {
   static let log: TargetDependency = .project(target: "Log", path: .relativeToShared("Log"))
   static let keychain: TargetDependency = .project(target: "Keychain", path: .relativeToCore("Keychain"))
   static let cacher: TargetDependency = .project(target: "Cacher", path: .relativeToCore("Cacher"))
+  static let userInformationManager: TargetDependency = .project(target: "UserInformationManager", path: .relativeToShared("UserInformationManager"))
 
   static func feature(_ feature: Feature) -> TargetDependency {
     return .project(

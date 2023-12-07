@@ -5,14 +5,13 @@ import {
   Get,
   Param,
   ParseIntPipe,
-  Patch,
   Post,
   Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
-import { AccessTokenGuard } from 'src/auth/guard/bearerToken.guard';
+import { AccessTokenGuard } from '../auth/guard/bearerToken.guard';
 import {
   ApiBody,
   ApiCreatedResponse,
@@ -20,11 +19,15 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CreatePostDto } from './dto/create-post.dto';
-import { Profile } from 'src/profiles/entities/profiles.entity';
-import { ProfileDeco } from 'src/profiles/decorator/profile.decorator';
+import { Profile } from '../profiles/entities/profiles.entity';
+import { ProfileDeco } from '../profiles/decorator/profile.decorator';
 import { PaginatePostDto } from './dto/paginate-post.dto';
-import { GetPostsResponseDto } from './dto/get-posts-response.dto';
-import { GetPostResponseDto } from './dto/get-post-response.dto';
+import {
+  GetPostsResponseDto,
+  PostDto,
+  PostsPaginateResDto,
+} from './dto/get-posts-response.dto';
+import { GetPostResponseDto } from './dto/get-create-update-post-response.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { DeletePostResponseDto } from './dto/delete-post-response.dto';
 
@@ -36,25 +39,28 @@ export class PostsController {
   @UseGuards(AccessTokenGuard)
   @Post()
   @ApiOperation({ summary: '게시글 생성' })
+  @ApiCreatedResponse({ type: GetPostResponseDto })
   @ApiBody({ type: CreatePostDto })
   async createPost(
     @Body() body: CreatePostDto,
     @ProfileDeco() profile: Profile,
-  ) {
-    return await this.postsService.createPost(body, profile);
+  ): Promise<PostDto> {
+    return this.postsService.createPost(body, profile);
   }
 
   @Get()
   @ApiOperation({ summary: '게시글 가져오기' })
   @ApiCreatedResponse({ type: GetPostsResponseDto })
-  async getPosts(@Query() query: PaginatePostDto) {
+  async getPosts(
+    @Query() query: PaginatePostDto,
+  ): Promise<PostsPaginateResDto> {
     return this.postsService.paginatePosts(query);
   }
 
   @Get(':id')
   @ApiOperation({ summary: '특정 게시글 가져오기' })
   @ApiCreatedResponse({ type: GetPostResponseDto })
-  async getPostById(@Param('id', ParseIntPipe) id: number) {
+  async getPostById(@Param('id', ParseIntPipe) id: number): Promise<PostDto> {
     return this.postsService.findOneById(id);
   }
 
@@ -64,7 +70,7 @@ export class PostsController {
   async getUserPosts(
     @Param('publicId') publicId: string,
     @Query() query: PaginatePostDto,
-  ) {
+  ): Promise<PostsPaginateResDto> {
     return this.postsService.paginateUserPosts(publicId, query);
   }
 
@@ -75,7 +81,7 @@ export class PostsController {
   async getMyPosts(
     @ProfileDeco() profile: Profile,
     @Query() query: PaginatePostDto,
-  ) {
+  ): Promise<PostsPaginateResDto> {
     return this.postsService.paginateUserPosts(profile.publicId, query);
   }
 
@@ -86,7 +92,7 @@ export class PostsController {
   async updateMyPost(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdatePostDto,
-  ) {
+  ): Promise<PostDto> {
     return this.postsService.updatePost(id, body);
   }
 

@@ -8,6 +8,7 @@
 
 import Combine
 import Foundation
+import Log
 
 // MARK: - LoginViewModelInput
 
@@ -31,9 +32,14 @@ enum LoginState {
 final class LoginViewModel {
   private var subscriptions: Set<AnyCancellable> = []
 
+  private let coordinator: LoginCoordinating
   private let authorizeUseCase: AuthorizeUseCaseRepresentable
 
-  init(authorizeUseCase: AuthorizeUseCaseRepresentable) {
+  init(
+    coordinator: LoginCoordinating,
+    authorizeUseCase: AuthorizeUseCaseRepresentable
+  ) {
+    self.coordinator = coordinator
     self.authorizeUseCase = authorizeUseCase
   }
 }
@@ -44,14 +50,23 @@ extension LoginViewModel: LoginViewModelRepresentable {
   func transform(input: LoginViewModelInput) -> LoginViewModelOutput {
     input.credential
       .flatMap(authorizeUseCase.authorize(authorizationInfo:))
-      .sink(receiveValue: { [weak self] token in
-        guard let accessToken = token.accesToken,
-              let refreshToken = token.refreshToken
-        else {
-          return
+      .sink(receiveValue: { [weak self] loginResponse in
+
+        if let token = loginResponse.token {
+          guard let accessToken = token.accessToken,
+                let refreshToken = token.refreshToken
+          else {
+            return
+          }
+          self?.authorizeUseCase.accessTokenSave(accessToken)
+          self?.authorizeUseCase.refreshTokenSave(refreshToken)
+          self?.coordinator.finish(initialUser: nil, token: token)
         }
-        self?.authorizeUseCase.accessTokenSave(accessToken)
-        self?.authorizeUseCase.refreshTokenSave(refreshToken)
+
+        if let initialUser = loginResponse.initialUser {
+          Log.make().debug("\(initialUser.mappedUserID)")
+          self?.coordinator.finish(initialUser: initialUser, token: nil)
+        }
       })
       .store(in: &subscriptions)
 

@@ -13,13 +13,13 @@ import Foundation
 /// 백엔드로부터 받아온 JWT를 담을 데이터 entity
 struct Token {
   /// accessToken
-  let accesToken: String?
+  let accessToken: String?
 
   /// refreshToken
   let refreshToken: String?
 
   init(accesToken: String? = nil, refreshToken: String? = nil) {
-    self.accesToken = accesToken
+    accessToken = accesToken
     self.refreshToken = refreshToken
   }
 }

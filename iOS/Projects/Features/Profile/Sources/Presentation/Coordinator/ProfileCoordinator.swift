@@ -29,14 +29,23 @@ public final class ProfileCoordinator {
   }
 
   public func start() {
-    guard let jsonPath = Bundle(for: Self.self).path(forResource: "GetProfile", ofType: "json"),
-          let jsonData = try? Data(contentsOf: .init(filePath: jsonPath))
+    guard
+      let baseURL = Bundle.main.infoDictionary?["BaseURL"] as? String,
+      let jsonProfilePath = Bundle(for: Self.self).path(forResource: "GetProfile", ofType: "json"),
+      let jsonPostsPath = Bundle(for: Self.self).path(forResource: "GetPosts", ofType: "json"),
+      let jsonProfileData = try? Data(contentsOf: .init(filePath: jsonProfilePath)),
+      let jsonPostsData = try? Data(contentsOf: .init(filePath: jsonPostsPath))
     else {
       Log.make().error("Records Mock 데이터를 생성할 수 없습니다.")
       return
     }
 
-    let session: URLSessionProtocol = isMockEnvironment ? MockURLSession(mockData: jsonData) : URLSession.shared
+    let mockData = [
+      "\(baseURL)/api/v1/profiles": jsonProfileData,
+      "\(baseURL)/api/v1/posts": jsonPostsData,
+    ]
+
+    let session: URLSessionProtocol = isMockEnvironment ? MockURLSession(mockDataByURLString: mockData) : URLSession.shared
 
     let repository = ProfileRepository(session: session)
     let useCase = ProfileUseCase(repository: repository)
@@ -49,7 +58,19 @@ public final class ProfileCoordinator {
 // MARK: ProfileCoordinating
 
 extension ProfileCoordinator: ProfileCoordinating {
+  public func moveToLogin() {}
+
+  public func moveToProfileSettings() {
+    let viewModel = ProfileSettingsViewModel(coordinating: self)
+    let viewController = ProfileSettingsViewController(viewModel: viewModel)
+    viewController.hidesBottomBarWhenPushed = true
+    navigationController.pushViewController(viewController, animated: true)
+  }
+
   public func pushToSettings() {
-    // TODO: 설정창으로 이동
+    let viewModel = SettingsViewModel(coordinating: self)
+    let viewController = SettingsViewController(viewModel: viewModel)
+    viewController.hidesBottomBarWhenPushed = true
+    navigationController.pushViewController(viewController, animated: true)
   }
 }

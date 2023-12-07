@@ -9,5 +9,5 @@
 import Foundation
 
 protocol WorkoutSettingCoordinatorFinishDelegate: AnyObject {
-  func workoutSettingCoordinatorDidFinished(workoutSetting: WorkoutSetting)
+  func workoutSettingCoordinatorDidFinished(workoutSessionComponents: WorkoutSessionComponents)
 }

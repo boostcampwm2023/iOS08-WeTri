@@ -1,5 +1,9 @@
 import { Injectable, BadRequestException, PipeTransform } from '@nestjs/common';
 import { FileUploadOptions } from '../interface/images.interface';
+import {
+  FileSizeTooLargeException,
+  InvalidFileTypeException,
+} from '../exceptions/images.exception';
 
 @Injectable()
 export class ValidateFilesPipe implements PipeTransform {
@@ -17,16 +21,14 @@ export class ValidateFilesPipe implements PipeTransform {
   private validateFileSize(file: Express.Multer.File): void {
     const maxSize = this.options.maxSize;
     if (file.size > maxSize) {
-      throw new BadRequestException(
-        `File size too large: ${file.originalname}`,
-      );
+      throw new FileSizeTooLargeException();
     }
   }
 
   private validateFileType(file: Express.Multer.File): void {
     const allowedTypes = this.options.fileType;
     if (!allowedTypes.includes(file.mimetype)) {
-      throw new BadRequestException(`Invalid file type: ${file.originalname}`);
+      throw new InvalidFileTypeException();
     }
   }
 }

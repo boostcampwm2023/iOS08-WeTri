@@ -7,6 +7,7 @@
 //
 
 import Coordinator
+import HomeFeature
 import ProfileFeature
 import RecordFeature
 import UIKit
@@ -47,7 +48,7 @@ final class TabBarCoordinator: TabBarCoordinating {
   private func startTabBarCoordinator(page: TabBarPage, pageNavigationViewController: UINavigationController) {
     switch page {
     case .home:
-      let homeCoordinator = ACoordinator(navigationController: pageNavigationViewController)
+      let homeCoordinator = HomeCoordinator(navigationController: pageNavigationViewController, delegate: self)
       childCoordinators.append(homeCoordinator)
       homeCoordinator.finishDelegate = self
       homeCoordinator.start()

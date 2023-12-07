@@ -26,7 +26,7 @@ typealias WorkoutEnvironmentSetupViewModelOutput = AnyPublisher<WorkoutEnvironme
 
 enum WorkoutEnvironmentState {
   case idle
-  case workoutTpyes([WorkoutType])
+  case workoutTypes([WorkoutType])
   case workoutPeerTypes([PeerType])
   case didSelectWorkoutType(Bool)
   case didSelectWorkoutPeerType(Bool)
@@ -37,7 +37,7 @@ enum WorkoutEnvironmentState {
 // MARK: - WorkoutEnvironmentErrorState
 
 enum WorkoutEnvironmentErrorState: LocalizedError {
-  case unkownError
+  case unknownError
 }
 
 // MARK: - WorkoutEnvironmentSetupViewModelRepresentable
@@ -50,7 +50,8 @@ protocol WorkoutEnvironmentSetupViewModelRepresentable {
 
 final class WorkoutEnvironmentSetupViewModel {
   private var subscriptions = Set<AnyCancellable>()
-  private var useCase: WorkoutEnvironmentSetupUseCaseRepresentable
+  private let workoutEnvironmentSetupUseCase: WorkoutEnvironmentSetupUseCaseRepresentable
+  private let userInformationUseCase: UserInformationUseCaseRepresentable
 
   private weak var coordinator: WorkoutEnvironmentSetUpCoordinating?
 
@@ -60,11 +61,13 @@ final class WorkoutEnvironmentSetupViewModel {
   var workoutTypes: [WorkoutType] = []
 
   init(
-    useCase: WorkoutEnvironmentSetupUseCaseRepresentable,
+    workoutEnvironmentSetupUseCase: WorkoutEnvironmentSetupUseCaseRepresentable,
+    userInformationUseCase: UserInformationUseCaseRepresentable,
     coordinator: WorkoutEnvironmentSetUpCoordinator?
   ) {
-    self.useCase = useCase
+    self.workoutEnvironmentSetupUseCase = workoutEnvironmentSetupUseCase
     self.coordinator = coordinator
+    self.userInformationUseCase = userInformationUseCase
   }
 }
 
@@ -76,29 +79,21 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
 
     let workoutTypes: WorkoutEnvironmentSetupViewModelOutput = input
       .requestWorkoutTypes
-      .flatMap { [weak self] _ -> AnyPublisher<Result<[WorkoutType], Error>, Never> in
-        guard let self else {
-          return Just(Result.failure(ViewModelError.viewModelDidDeinit)).eraseToAnyPublisher()
-        }
-        return useCase.workoutTypes()
-      }
+      .flatMap(workoutEnvironmentSetupUseCase.workoutTypes)
       .map { results -> WorkoutEnvironmentState in
         switch results {
-        case let .success(workOuttypes):
-          let uniquePeerTypes = Array(Set(workOuttypes))
-          return .workoutTpyes(uniquePeerTypes)
+        case let .success(workoutTypes):
+          let uniquePeerTypes = Array(Set(workoutTypes))
+          return .workoutTypes(uniquePeerTypes)
         case .failure:
-          return .error(.unkownError)
+          return .error(.unknownError)
         }
       }.eraseToAnyPublisher()
 
     let workoutPeerType: WorkoutEnvironmentSetupViewModelOutput = input
       .requestWorkoutPeerTypes
-      .flatMap { [weak self] _ -> AnyPublisher<Result<[PeerType], Error>, Never> in
-        guard let self else {
-          return Just(Result.failure(ViewModelError.viewModelDidDeinit)).eraseToAnyPublisher()
-        }
-        return useCase.paerTypes()
+      .flatMap { [workoutEnvironmentSetupUseCase] _ -> AnyPublisher<Result<[PeerType], Error>, Never> in
+        return workoutEnvironmentSetupUseCase.peerTypes()
       }
       .map { results -> WorkoutEnvironmentState in
         switch results {
@@ -106,7 +101,7 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
           let uniquePeerTypes = Array(Set(peerTypes))
           return .workoutPeerTypes(uniquePeerTypes)
         case .failure:
-          return .error(.unkownError)
+          return .error(.unknownError)
         }
       }.eraseToAnyPublisher()
 
@@ -114,7 +109,7 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
       .selectPeerType
       .map { [weak self] peerType -> WorkoutEnvironmentState in
         guard let self else {
-          return .error(.unkownError)
+          return .error(.unknownError)
         }
         if let peerType {
           self.didSelectWorkoutPeerType = peerType
@@ -127,7 +122,7 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
       .selectWorkoutType
       .map { [weak self] workoutType -> WorkoutEnvironmentState in
         guard let self else {
-          return .error(.unkownError)
+          return .error(.unknownError)
         }
         if let workoutType {
           self.didSelectWorkoutType = workoutType
@@ -156,13 +151,28 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
       return
     }
 
-    let workoutSettiong = WorkoutSetting(workoutType: didSelectWorkoutType, workoutPeerType: didSelectWorkoutPeerType)
+    let workoutSetting = WorkoutSetting(workoutType: didSelectWorkoutType, workoutPeerType: didSelectWorkoutPeerType)
 
     switch mode {
     case .solo:
-      coordinator?.finish(workoutSetting: workoutSettiong)
+      let sessionPeerTypeOfMe = SessionPeerType(
+        nickname: userInformationUseCase.userNickName(),
+        id: "",
+        profileImageURL: userInformationUseCase.userProfileImageURL()
+      )
+      coordinator?.finish(
+        workoutSessionComponents: .init(
+          participants: [sessionPeerTypeOfMe],
+          startDate: .now + 3,
+          roomID: "",
+          id: "",
+          workoutTypeCode: workoutSetting.workoutType,
+          nickname: userInformationUseCase.userNickName(),
+          userProfileImage: userInformationUseCase.userProfileImageURL()
+        )
+      )
     case .random:
-      coordinator?.pushPeerRandomMatchingViewController(workoutSetting: workoutSettiong)
+      coordinator?.pushPeerRandomMatchingViewController(workoutSetting: workoutSetting)
     }
   }
 

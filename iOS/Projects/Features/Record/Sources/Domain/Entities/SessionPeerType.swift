@@ -17,5 +17,5 @@ struct SessionPeerType: Identifiable {
   let id: String
 
   /// 사용자의 프로필 이미지 주소
-  let profileImageURL: URL
+  let profileImageURL: URL?
 }

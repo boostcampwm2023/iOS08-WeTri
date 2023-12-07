@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { RecordsService } from './records.service';
 import { RecordsController } from './records.controller';
-import { AuthModule } from 'src/auth/auth.module';
-import { ProfilesModule } from 'src/profiles/profiles.module';
+import { AuthModule } from '../auth/auth.module';
+import { ProfilesModule } from '../profiles/profiles.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Record } from './entities/records.entity';
-import { WorkoutsModule } from 'src/workouts/workouts.module';
+import { WorkoutsModule } from '../workouts/workouts.module';
 
 @Module({
   imports: [

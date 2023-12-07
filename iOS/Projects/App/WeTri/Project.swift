@@ -23,6 +23,7 @@ let projects = Project.makeModule(
       .feature(.splash),
       .feature(.signUp),
       .feature(.profile),
+      .feature(.home),
       .keychain,
     ],
     infoPlist: [

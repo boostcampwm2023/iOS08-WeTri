@@ -125,7 +125,7 @@ private extension CountDownBeforeWorkoutViewController {
   }
 
   func makeLabelAnimation(labelText: String) {
-    Log.make().debug("viewController makeLabelAnimation: \(labelText)")
+    Log.make().debug("\(labelText) 뒤에 운동을 시작합니다")
     countDownLabel.text = labelText
     countDownLabel.transform = CGAffineTransform(scaleX: 1, y: 1)
     view.layoutIfNeeded()

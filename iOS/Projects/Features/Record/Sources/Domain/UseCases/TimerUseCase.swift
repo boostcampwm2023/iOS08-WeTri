@@ -59,7 +59,7 @@ private extension TimerUseCase {
         let timeInterval = initDate.timeIntervalSince(currentDate)
         let currentMillisecondsString = String(format: "%.2f", timeInterval)
         if Int(currentMillisecondsString.suffix(2)) == 0 {
-          if timeInterval.rounded(.toNearestOrAwayFromZero) >= timerPeriod {
+          if abs(timeInterval.rounded(.toNearestOrAwayFromZero)) >= timerPeriod {
             timeIntervalAtEachPeriodPublisher.send(Int(timeInterval.rounded(.toNearestOrAwayFromZero)))
           }
           startPeriodTimer()

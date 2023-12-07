@@ -9,3 +9,4 @@ export const ALONE_USER = 1;
 export const WAITING_20_TIME = 20;
 export const MATCHING_DELAY = 15;
 export const UTC_REMOVE_TIME = 600;
+export const MATCHES_API_TIME_OUT = 10000;

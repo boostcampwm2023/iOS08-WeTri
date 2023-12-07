@@ -142,7 +142,7 @@ private extension WorkoutEnvironmentSetupViewController {
         // TODO: failure에 알맞는 로직 세우기
         case .error,
              .idle: break
-        case let .workoutTpyes(workoutTypes): updateWorkout(types: workoutTypes)
+        case let .workoutTypes(workoutTypes): updateWorkout(types: workoutTypes)
         case let .workoutPeerTypes(peer): updateWorkoutPeer(types: peer)
         case let .didSelectWorkoutType(bool): workoutSelectViewController.nextButtonEnable(bool)
         case let .didSelectWorkoutPeerType(bool): workoutPeerSelectViewController.startButtonEnable(bool)

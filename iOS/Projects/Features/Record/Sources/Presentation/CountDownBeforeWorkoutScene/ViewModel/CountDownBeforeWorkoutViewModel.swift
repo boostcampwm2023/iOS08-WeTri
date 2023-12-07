@@ -38,13 +38,12 @@ final class CountDownBeforeWorkoutViewModel {
   // MARK: - Properties
 
   weak var coordinator: WorkoutSessionCoordinating?
-  var useCase: CountDownBeforeWorkoutStartTimerUseCaseRepresentable
-  // TODO: 차후 생성 시점에서 시작 시간을 넘길 예정
+  var timerUseCase: CountDownBeforeWorkoutStartTimerUseCaseRepresentable
   private var subscriptions: Set<AnyCancellable> = []
   private var beforeWorkoutTimerSubject: CurrentValueSubject<String, Never> = .init("")
   init(coordinator: WorkoutSessionCoordinating, useCase: CountDownBeforeWorkoutStartTimerUseCaseRepresentable) {
     self.coordinator = coordinator
-    self.useCase = useCase
+    timerUseCase = useCase
   }
 }
 
@@ -56,27 +55,19 @@ extension CountDownBeforeWorkoutViewModel: CountDownBeforeWorkoutViewModelRepres
 
     input
       .viewDidAppearPublisher
-      .sink { [weak self] _ in
-        self?.useCase.startTimer()
+      .sink { [timerUseCase] _ in
+        timerUseCase.startTimer()
       }
       .store(in: &subscriptions)
 
     input
       .didFinishTimerSubscription
       .sink { [weak self] _ in
-        self?.coordinator?.pushWorkoutSession(
-          dependency: WorkoutSessionComponents(
-            participants: [.init(nickname: "S043_홍승현", id: "MyID", profileImageURL: .init(filePath: ""))],
-            startDate: .now,
-            roomID: "HHH",
-            id: "MyID",
-            nickname: "S043_홍승현"
-          )
-        )
+        self?.coordinator?.pushWorkoutSession()
       }
       .store(in: &subscriptions)
 
-    let timerMessagePublisher = useCase
+    let timerMessagePublisher = timerUseCase
       .beforeWorkoutTimerTextPublisher()
       .map { message -> CountDownBeforeWorkoutState in
         return .updateMessage(message: message)
