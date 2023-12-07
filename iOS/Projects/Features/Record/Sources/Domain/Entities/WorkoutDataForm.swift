@@ -19,6 +19,8 @@ public struct WorkoutDataForm: Encodable {
   /// 소모한 칼로리
   let calorie: Int?
 
+  let imageURL: URL
+
   /// 평균 심박수
   let averageHeartRate: Int?
 

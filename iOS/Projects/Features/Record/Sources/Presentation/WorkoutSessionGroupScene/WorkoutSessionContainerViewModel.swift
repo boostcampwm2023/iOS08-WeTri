@@ -82,19 +82,29 @@ extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepr
 
     // == Input Output Binding ==
 
+    let mapURLPublisher = input.mapCaptureImageDataPublisher
+      .flatMap(imageUploadUseCase.uploadImage(included:))
+      .catch { _ in Just(URL(string: "https://gblafytgdduy20857289.cdn.ntruss.com/30ab314b-a59a-44c8-b9c5-44d94b4542f0.png")!) }
+      .eraseToAnyPublisher()
+
     let recordPublisher = input.endWorkoutPublisher
-      .combineLatest(input.locationPublisher, input.healthPublisher) { [dependency] _, rawLocations, health in
-        let locations = rawLocations.map { LocationDTO(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
+      .withLatestFrom(input.locationPublisher) {
+        $1.map { LocationDTO(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
+      }
+      .withLatestFrom(mapURLPublisher) {
+        return ($0, $1)
+      }
+      .withLatestFrom(input.healthPublisher) { [dependency] tuple, health in
         let healthData = WorkoutDataForm(
           workoutTime: Int(dependency.startDate.timeIntervalSince1970.rounded(.down)),
           distance: Int(health.distance?.rounded(.toNearestOrAwayFromZero) ?? 0),
           calorie: Int(health.calorie?.rounded(.toNearestOrAwayFromZero) ?? 0),
+          imageURL: tuple.1,
           averageHeartRate: Int(health.averageHeartRate?.rounded(.toNearestOrAwayFromZero) ?? 0),
           minimumHeartRate: Int(health.minimumHeartRate?.rounded(.toNearestOrAwayFromZero) ?? 0),
           maximumHeartRate: Int(health.maximumHeartRate?.rounded(.toNearestOrAwayFromZero) ?? 0)
         )
-
-        return (locations, healthData)
+        return (tuple.0, healthData)
       }
       .flatMap(workoutRecordUseCase.record)
 

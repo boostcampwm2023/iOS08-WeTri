@@ -6,6 +6,9 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import Combine
 import Foundation
 
-protocol MapImageUploadRepositoryRepresentable {}
+protocol MapImageUploadRepositoryRepresentable {
+  func upload(with imageData: Data) -> AnyPublisher<URL, Error>
+}

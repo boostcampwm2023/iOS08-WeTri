@@ -24,16 +24,18 @@ struct MapImageUploadRepository: MapImageUploadRepositoryRepresentable {
     return Future<Data, Error> { promise in
       Task {
         do {
-          let data = try await provider.uploadRequest(.init(data: [imageData]), interceptor: TNKeychainInterceptor.shared)
+          let data = try await provider.uploadRequest(ImageUploadEndPoint(data: [imageData]), interceptor: TNKeychainInterceptor.shared)
           promise(.success(data))
         } catch {
           promise(.failure(error))
         }
       }
     }
+    .print()
     .decode(type: GWResponse<ImageModel>.self, decoder: JSONDecoder())
     .compactMap(\.data)
     .map(\.imageURL)
+    .print()
     .eraseToAnyPublisher()
   }
 }
@@ -55,13 +57,12 @@ private struct ImageUploadEndPoint: TNEndPoint {
 
   init(data: [Data]) {
     let boundary: UUID = .init()
-    self.headers =  [
+    headers = [
       .accept("application/json"),
-      .contentType("multipart/form-data; boundary=\(boundary.uuidString)")
+      .contentType("multipart/form-data; boundary=\(boundary.uuidString)"),
     ]
 
-    self.multipart = .init(boundary: boundary, data: data)
-    body = multipart?.data
+    multipart = .init(boundary: boundary, data: data)
   }
 }
 

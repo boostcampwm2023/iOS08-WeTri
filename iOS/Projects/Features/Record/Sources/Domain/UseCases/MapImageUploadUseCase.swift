@@ -10,7 +10,16 @@ import Combine
 import Foundation
 
 struct MapImageUploadUseCase: MapImageUploadUseCaseRepresentable {
+  private let repository: MapImageUploadRepositoryRepresentable
+
+  init(repository: MapImageUploadRepositoryRepresentable) {
+    self.repository = repository
+  }
+
   func uploadImage(included data: Data?) -> AnyPublisher<URL, Error> {
-    return Empty<URL, Error>().eraseToAnyPublisher()
+    guard let data else {
+      return Empty<URL, Error>().eraseToAnyPublisher()
+    }
+    return repository.upload(with: data)
   }
 }

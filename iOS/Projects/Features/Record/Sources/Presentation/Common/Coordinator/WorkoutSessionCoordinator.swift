@@ -136,7 +136,7 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
     let repository = WorkoutRecordRepository(session: session)
     let useCase = WorkoutRecordUseCase(repository: repository)
     let oneSecondsTimerUseCase = OneSecondsTimerUseCase(initDate: .now)
-    let uploadUseCase = MapImageUploadUseCase()
+    let uploadUseCase = MapImageUploadUseCase(repository: MapImageUploadRepository(session: session))
     let viewModel = WorkoutSessionContainerViewModel(
       workoutRecordUseCase: useCase,
       oneSecondsTimerUseCase: oneSecondsTimerUseCase,
