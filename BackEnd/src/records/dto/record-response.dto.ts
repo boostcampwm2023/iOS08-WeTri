@@ -12,6 +12,8 @@ class GetRecord extends PickType(Record, [
   'minHeartRate',
   'maxHeartRate',
   'createdAt',
+  'mapCapture',
+  'gps'
 ]) {}
 
 class GetRecordWithId extends PickType(Record, ['id']) {}
