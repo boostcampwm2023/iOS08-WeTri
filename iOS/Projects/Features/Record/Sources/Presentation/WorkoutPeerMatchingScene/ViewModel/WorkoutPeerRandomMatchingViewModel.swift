@@ -150,7 +150,7 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
       let peersResponse = response.peers,
       let roomID = response.roomID,
       let startDate = response.liveWorkoutStartTime,
-      let id = response.roomID
+      let id = response.myPublicID
     else {
       return
     }

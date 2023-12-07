@@ -13,6 +13,7 @@ import Foundation
 struct IsMatchedRandomPeersResponse: Decodable {
   let matched: Bool
   let liveWorkoutStartTime: String?
+  let myPublicID: String?
   let roomID: String?
   let peers: [IsMatchedRandomPeersForPeerResponse]?
 
@@ -20,6 +21,7 @@ struct IsMatchedRandomPeersResponse: Decodable {
     case matched
     case liveWorkoutStartTime
     case roomID = "roomId"
+    case myPublicID = "myPublicId"
     case peers
   }
 }

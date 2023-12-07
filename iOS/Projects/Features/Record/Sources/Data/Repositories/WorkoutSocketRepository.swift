@@ -10,6 +10,8 @@ import Combine
 import Foundation
 import Log
 import Trinet
+import CommonNetworkingKeyManager
+import Keychain
 
 // MARK: - WorkoutSocketRepositoryDependency
 
@@ -30,7 +32,10 @@ struct WorkoutSocketRepository {
   init(session: URLSessionWebSocketProtocol, dependency: WorkoutSocketRepositoryDependency) {
     provider = .init(
       session: session,
-      endPoint: .init(headers: [.init(key: "roomId", value: dependency.roomID)])
+      endPoint: .init(headers: [
+        .init(key: "roomId", value: dependency.roomID),
+        .authorization(bearer: String(data: Keychain.shared.load(key: Tokens.accessToken)!, encoding: .utf8)!)
+      ])
     )
     task = receiveParticipantsData()
   }
