@@ -26,11 +26,15 @@ class FeedItemCollectionViewCell: UICollectionViewCell {
 
   // MARK: - Property
 
+  private var dataSource: UICollectionViewDiffableDataSource<Int, URL>? = nil
+
   // MARK: - 프로필 이미지와 정보들을 알 수 있는 Property들의 모음입니다.
 
   private let profileImage: UIImageView = {
     let imageView = UIImageView()
-    imageView.backgroundColor = .blue
+    imageView.backgroundColor = DesignSystemColor.main02
+    imageView.layer.cornerRadius = Metrics.profileImageHeight / 2
+    imageView.clipsToBounds = true
 
     imageView.translatesAutoresizingMaskIntoConstraints = false
     return imageView
@@ -59,7 +63,7 @@ class FeedItemCollectionViewCell: UICollectionViewCell {
   private let dateLabel: UILabel = {
     let label = UILabel()
     label.text = "2023.12.07"
-    label.font = .preferredFont(forTextStyle: .title3)
+    label.font = .preferredFont(forTextStyle: .subheadline)
     label.textColor = DesignSystemColor.primaryText
 
     label.translatesAutoresizingMaskIntoConstraints = false
@@ -108,7 +112,8 @@ class FeedItemCollectionViewCell: UICollectionViewCell {
     let button = UIButton(type: .custom)
     button.setImage(UIImage(systemName: "ellipsis"), for: .normal)
     button.tintColor = DesignSystemColor.gray03
-    button.backgroundColor = .blue
+    // TODO: 이것에 대해서 PR에 꼭 작성하기
+    button.contentHorizontalAlignment = .right
 
     button.translatesAutoresizingMaskIntoConstraints = false
     return button
@@ -142,18 +147,20 @@ class FeedItemCollectionViewCell: UICollectionViewCell {
     return label
   }()
 
-  private let feedDetailImages: UIView = {
-    let view = UIView()
-    view.backgroundColor = .cyan
+  private lazy var feedDetailImages: UICollectionView = {
+    let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout.createLayout())
+    collectionView.register(FeedImageCell.self, forCellWithReuseIdentifier: FeedImageCell.identifier)
+    collectionView.backgroundColor = .cyan
+    collectionView.delegate = self
 
-    view.translatesAutoresizingMaskIntoConstraints = false
-    return view
+    collectionView.translatesAutoresizingMaskIntoConstraints = false
+    return collectionView
   }()
 
   private let feedDetailImageView: UIImageView = {
     let imageView = UIImageView()
 
-    imageView.backgroundColor = .blue
+    imageView.backgroundColor = DesignSystemColor.main03
     imageView.translatesAutoresizingMaskIntoConstraints = false
     return imageView
   }()
@@ -162,6 +169,7 @@ class FeedItemCollectionViewCell: UICollectionViewCell {
     let button = UIButton(configuration: .plain())
     var configure = button.configuration
     configure?.image = UIImage(systemName: Constants.heartButtonSystemName)
+    configure?.baseForegroundColor = DesignSystemColor.main03
     configure?.title = "123,456"
     button.configuration = configure
 
@@ -225,19 +233,49 @@ private extension FeedItemCollectionViewCell {
     profileImage.heightAnchor.constraint(equalToConstant: Metrics.profileImageHeight).isActive = true
   }
 
+  func setupImagesDataSource() {
+    dataSource = .init(collectionView: feedDetailImages) { collectionView, indexPath, item in
+      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FeedImageCell.identifier, for: indexPath)
+      guard let imageCell = cell as? FeedImageCell else {
+        return cell
+      }
+      imageCell.configure(imageURL: item)
+      return cell
+    }
+  }
+
+  func setupInitImageData() {
+    guard let dataSource else {
+      return
+    }
+    var snapShot = dataSource.snapshot()
+    snapShot.appendSections([1])
+    snapShot.appendItems(
+      [
+        URL(string: "https://i.ytimg.com/vi/YCaGYUIfdy4/maxresdefault.jpg")!,
+        URL(string: "https://www.cats.org.uk/uploads/images/featurebox_sidebar_kids/grief-and-loss.jpg")!,
+        URL(string: "https://www.telegraph.co.uk/content/dam/pets/2017/01/06/1-JS117202740-yana-two-face-cat-news_trans_NvBQzQNjv4BqJNqHJA5DVIMqgv_1zKR2kxRY9bnFVTp4QZlQjJfe6H0.jpg?imwidth=450")!,
+      ],
+      toSection: 1
+    )
+    dataSource.apply(snapShot)
+  }
+
   func setup() {
     setStyle()
     setupViewHierarchyAndConstraints()
+    setupImagesDataSource()
+    setupInitImageData()
   }
 
   func setStyle() {
-    backgroundColor = .red
+    backgroundColor = DesignSystemColor.secondaryBackground
   }
 
   enum Metrics {
     static let headerTopAnchorSpacing: CGFloat = 6
     static let sportLabelAndNickdateLabelSpacing: CGFloat = 3
-    static let nickNameLabelAndSportDateLabelSpacing: CGFloat = 4
+    static let nickNameLabelAndSportDateLabelSpacing: CGFloat = 9
     static let profileImageAndUserInformationLabelStackViewSpacing: CGFloat = 12
     static let feedUserInformationAndFeedEllipsisButtonSpacing: CGFloat = 80
 
@@ -258,5 +296,40 @@ private extension FeedItemCollectionViewCell {
     static let heartButtonSystemName = "heart"
 
     static let feedDetailText = "정당은 그 목적·조직과 활동이 민주적이어야 하며, 국민의 정치적 의사형성에 참여하는데 필요한 조직을 가져야 한다. 대통령은 내우·외환·천재·지변 또는 중대한 재정·경제상의 위기에 있어서 없을 때에 한하여 최소한으로 필"
+  }
+}
+
+// MARK: UICollectionViewDelegate
+
+extension FeedItemCollectionViewCell: UICollectionViewDelegate {
+  func scrollViewDidEndDecelerating(_: UIScrollView) {
+    let center = contentView.convert(center, to: feedDetailImages)
+    if let indexPath = feedDetailImages.indexPathForItem(at: center) {
+      feedDetailImages.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+    }
+  }
+}
+
+private extension UICollectionViewLayout {
+  static func createLayout() -> UICollectionViewCompositionalLayout {
+    // Create item
+    let item = NSCollectionLayoutItem(
+      layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
+    )
+
+    // Create group with horizontal paging behavior
+    let group = NSCollectionLayoutGroup.horizontal(
+      layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.8), heightDimension: .fractionalHeight(1.0)),
+      subitems: [item]
+    )
+    group.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8)
+
+    // Create section
+    let section = NSCollectionLayoutSection(group: group)
+    section.orthogonalScrollingBehavior = .groupPagingCentered
+
+    // Create compositional layout
+    let layout = UICollectionViewCompositionalLayout(section: section)
+    return layout
   }
 }

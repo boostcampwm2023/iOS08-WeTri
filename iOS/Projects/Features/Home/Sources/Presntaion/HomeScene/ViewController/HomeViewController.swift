@@ -48,6 +48,7 @@ final class HomeViewController: UIViewController {
   private let feedListCollectionView: UICollectionView = {
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeFeedCollectionViewLayout())
     collectionView.register(FeedItemCollectionViewCell.self, forCellWithReuseIdentifier: FeedItemCollectionViewCell.identifier)
+    collectionView.backgroundColor = .clear
 
     collectionView.translatesAutoresizingMaskIntoConstraints = false
     return collectionView
