@@ -12,7 +12,7 @@ import Foundation
 
 /// 처음 로그인 하는 유저의 Response를 담을 Entity
 public struct UserBit {
-  ///
+  /// 애플 토큰에 있는 유저정보인데 보안때문에 UUID로 매핑한 ID
   public let mappedUserID: String
 
   /// OAuth 로그인 종류
