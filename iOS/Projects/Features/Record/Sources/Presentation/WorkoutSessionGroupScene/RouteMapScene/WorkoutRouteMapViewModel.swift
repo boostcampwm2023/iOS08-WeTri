@@ -14,6 +14,7 @@ import Foundation
 public struct WorkoutRouteMapViewModelInput {
   let filterShouldUpdatePositionPublisher: AnyPublisher<KalmanFilterUpdateRequireElement, Never>
   let filterShouldUpdateHeadingPublisher: AnyPublisher<Double, Never>
+  let locationListPublisher: AnyPublisher<[LocationDTO], Never>
 }
 
 public typealias WorkoutRouteMapViewModelOutput = AnyPublisher<WorkoutRouteMapState, Never>
@@ -22,6 +23,7 @@ public typealias WorkoutRouteMapViewModelOutput = AnyPublisher<WorkoutRouteMapSt
 
 public enum WorkoutRouteMapState {
   case idle
+  case snapshotRegion(MapRegion)
   case censoredValue(KalmanFilterCensored?)
 }
 
@@ -64,6 +66,11 @@ extension WorkoutRouteMapViewModel: WorkoutRouteMapViewModelRepresentable {
       }
       .store(in: &subscriptions)
 
+    let region = input
+      .locationListPublisher
+      .map(locationPathUseCase.processPath(locations:))
+      .map(WorkoutRouteMapState.snapshotRegion)
+
     let updateValue: WorkoutRouteMapViewModelOutput = input
       .filterShouldUpdatePositionPublisher
       .dropFirst(4)
@@ -75,6 +82,6 @@ extension WorkoutRouteMapViewModel: WorkoutRouteMapViewModelRepresentable {
 
     let initialState: WorkoutRouteMapViewModelOutput = Just(.idle).eraseToAnyPublisher()
 
-    return initialState.merge(with: updateValue).eraseToAnyPublisher()
+    return initialState.merge(with: updateValue, region).eraseToAnyPublisher()
   }
 }

@@ -30,6 +30,10 @@ final class WorkoutRouteMapViewController: UIViewController {
 
   /// 사용자 위치 추적 배열
   @Published private var locations: [CLLocation] = []
+
+  private let mapCaptureDataSubject: PassthroughSubject<Data, Never> = .init()
+  private let mapSnapshotterImageDataSubject: PassthroughSubject<[CLLocation], Never> = .init()
+
   private let kalmanFilterShouldUpdatePositionSubject: PassthroughSubject<KalmanFilterUpdateRequireElement, Never> = .init()
   private let kalmanFilterShouldUpdateHeadingSubject: PassthroughSubject<Double, Never> = .init()
 
@@ -120,9 +124,15 @@ final class WorkoutRouteMapViewController: UIViewController {
   }
 
   private func bind() {
+    let locationPublisher = mapSnapshotterImageDataSubject.map {
+      $0.map { LocationDTO(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
+    }
+    .eraseToAnyPublisher()
+
     let input: WorkoutRouteMapViewModelInput = .init(
       filterShouldUpdatePositionPublisher: kalmanFilterShouldUpdatePositionSubject.eraseToAnyPublisher(),
-      filterShouldUpdateHeadingPublisher: kalmanFilterShouldUpdateHeadingSubject.eraseToAnyPublisher()
+      filterShouldUpdateHeadingPublisher: kalmanFilterShouldUpdateHeadingSubject.eraseToAnyPublisher(),
+      locationListPublisher: locationPublisher
     )
 
     viewModel
@@ -135,11 +145,17 @@ final class WorkoutRouteMapViewController: UIViewController {
     switch state {
     case .idle:
       break
+    case let .snapshotRegion(region):
+      setupSnapshotter(using: region)
     case let .censoredValue(value): updatePolyLine(value)
     }
   }
 
-  func updatePolyLine(_ value: KalmanFilterCensored?) {
+  private func setupSnapshotter(using regionModel: MapRegion) {
+
+  }
+
+  private func updatePolyLine(_ value: KalmanFilterCensored?) {
     guard let value else { return }
 
     let currentLocation = CLLocation(latitude: value.latitude, longitude: value.longitude)

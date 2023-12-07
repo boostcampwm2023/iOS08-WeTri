@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct MapRegion {
+public struct MapRegion {
   var minLatitude: Double
   var maxLatitude: Double
   var minLongitude: Double
