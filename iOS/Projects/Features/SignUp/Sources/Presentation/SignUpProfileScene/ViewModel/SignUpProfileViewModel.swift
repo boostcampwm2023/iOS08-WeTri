@@ -40,9 +40,16 @@ public final class SignUpProfileViewModel {
   private let nickNameCheckUseCase: NickNameCheckUseCaseRepresentable
   private let imageTransmitUseCase: ImageTransmitUseCaseRepresentable
 
-  public init(nickNameCheckUseCase: NickNameCheckUseCaseRepresentable, imageTransmitUseCase: ImageTransmitUseCaseRepresentable) {
+  private let userBit: UserBit
+
+  public init(
+    nickNameCheckUseCase: NickNameCheckUseCaseRepresentable,
+    imageTransmitUseCase: ImageTransmitUseCaseRepresentable,
+    userBit: UserBit
+  ) {
     self.nickNameCheckUseCase = nickNameCheckUseCase
     self.imageTransmitUseCase = imageTransmitUseCase
+    self.userBit = userBit
   }
 }
 

@@ -24,7 +24,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     window?.rootViewController = navigationController
     let coordinator = SignUpFeatureCoordinator(
       navigationController: navigationController,
-      initialUser: InitialUser(isFirstLogined: true, mappedUserID: "???", provider: .apple)
+      userBit: UserBit(mappedUserID: "???", provider: .apple)
     )
 //    let coordinator = AppCoordinator(navigationController: navigationController)
 //    coordinating = coordinator
