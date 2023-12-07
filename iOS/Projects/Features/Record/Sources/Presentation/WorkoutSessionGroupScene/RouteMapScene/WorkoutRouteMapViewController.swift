@@ -30,12 +30,12 @@ final class WorkoutRouteMapViewController: UIViewController {
 
   /// 사용자 위치 추적 배열
   @Published private var locations: [CLLocation] = []
-  var kalmanFilterShouldUpdatePositionSubject: PassthroughSubject<KalmanFilterUpdateRequireElement, Never> = .init()
-  var kalmanFilterShouldUpdateHeadingSubject: PassthroughSubject<Double, Never> = .init()
+  private let kalmanFilterShouldUpdatePositionSubject: PassthroughSubject<KalmanFilterUpdateRequireElement, Never> = .init()
+  private let kalmanFilterShouldUpdateHeadingSubject: PassthroughSubject<Double, Never> = .init()
 
   private var subscriptions: Set<AnyCancellable> = []
 
-  lazy var locationManager: CLLocationManager = {
+  private lazy var locationManager: CLLocationManager = {
     let manager = CLLocationManager()
     manager.startMonitoringSignificantLocationChanges()
     manager.distanceFilter = 10
