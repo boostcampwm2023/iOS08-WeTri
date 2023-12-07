@@ -14,6 +14,7 @@ final class LoginCoordinator: LoginCoordinating {
   var navigationController: UINavigationController
   var childCoordinators: [Coordinating] = []
   weak var finishDelegate: CoordinatorFinishDelegate?
+  weak var loginFinishDelegate: LoginDidFinishedDelegate?
   var flow: CoordinatorFlow = .login
 
   init(navigationController: UINavigationController) {
@@ -25,9 +26,14 @@ final class LoginCoordinator: LoginCoordinating {
       authorizationRepository: AuthorizationRepository(session: URLSession.shared),
       keychainRepository: KeychainRepository(keychain: Keychain.shared)
     )
-    let loginViewModel = LoginViewModel(authorizeUseCase: authorizeUseCase)
+    let loginViewModel = LoginViewModel(coordinator: self, authorizeUseCase: authorizeUseCase)
     let viewController = LoginViewController(viewModel: loginViewModel)
 
     navigationController.pushViewController(viewController, animated: false)
+  }
+
+  func finish(initialUser: InitialUser? = nil, token: Token? = nil) {
+    loginFinishDelegate?.loginCoordinatorDidFinished(initialUser: initialUser, token: token)
+    finishDelegate?.flowDidFinished(childCoordinator: self)
   }
 }

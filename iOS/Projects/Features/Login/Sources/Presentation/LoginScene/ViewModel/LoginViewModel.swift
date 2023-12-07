@@ -31,9 +31,14 @@ enum LoginState {
 final class LoginViewModel {
   private var subscriptions: Set<AnyCancellable> = []
 
+  private let coordinator: LoginCoordinating
   private let authorizeUseCase: AuthorizeUseCaseRepresentable
 
-  init(authorizeUseCase: AuthorizeUseCaseRepresentable) {
+  init(
+    coordinator: LoginCoordinating,
+    authorizeUseCase: AuthorizeUseCaseRepresentable
+  ) {
+    self.coordinator = coordinator
     self.authorizeUseCase = authorizeUseCase
   }
 }

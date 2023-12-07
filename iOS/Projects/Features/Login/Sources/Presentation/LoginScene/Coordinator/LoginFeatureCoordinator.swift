@@ -8,6 +8,7 @@
 
 import Coordinator
 import Keychain
+import SignUpFeature
 import UIKit
 
 // MARK: - LoginFeatureCoordinator
@@ -30,6 +31,7 @@ public final class LoginFeatureCoordinator: LoginFeatureCoordinating {
     let coordinator = LoginCoordinator(navigationController: navigationController)
     childCoordinators.append(coordinator)
     coordinator.finishDelegate = self
+    coordinator.loginFinishDelegate = self
     coordinator.start()
   }
 }
@@ -41,6 +43,17 @@ extension LoginFeatureCoordinator: CoordinatorFinishDelegate {
     childCoordinators = childCoordinators.filter {
       $0.flow != childCoordinator.flow
     }
-    navigationController.popToRootViewController(animated: false)
+  }
+}
+
+// MARK: LoginDidFinishedDelegate
+
+extension LoginFeatureCoordinator: LoginDidFinishedDelegate {
+  func loginCoordinatorDidFinished(initialUser: InitialUser?, token: Token?) {
+    // TODO: Login시, User가 처음이라면 해당 데이터 갖고 SignUpModule로 넘어가야됨.
+    if let initialUser {}
+
+    // TODO: User가 처음이 아니라면 토큰이 존재한다 해당 토큰 갖고 TabBar로 넘어가야됨.
+    if let token {}
   }
 }
