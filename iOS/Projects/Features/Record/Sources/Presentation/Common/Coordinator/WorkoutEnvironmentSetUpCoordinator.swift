@@ -37,8 +37,13 @@ final class WorkoutEnvironmentSetUpCoordinator: WorkoutEnvironmentSetUpCoordinat
     let repository = WorkoutEnvironmentSetupNetworkRepository(session: URLSession.shared)
 
     let useCase = WorkoutEnvironmentSetupUseCase(repository: repository)
+    let userInfoUseCase = UserInformationUseCase()
 
-    let viewModel = WorkoutEnvironmentSetupViewModel(useCase: useCase, coordinator: self)
+    let viewModel = WorkoutEnvironmentSetupViewModel(
+      workoutEnvironmentSetupUseCase: useCase,
+      userInformationUseCase: userInfoUseCase,
+      coordinator: self
+    )
 
     let viewController = WorkoutEnvironmentSetupViewController(viewModel: viewModel)
 
@@ -46,11 +51,18 @@ final class WorkoutEnvironmentSetUpCoordinator: WorkoutEnvironmentSetUpCoordinat
   }
 
   func pushPeerRandomMatchingViewController(workoutSetting: WorkoutSetting) {
-    let repository = WorkoutPeerRandomMatchingRepository(session: makeMockDataFromRandomMatching())
+    let repository = WorkoutPeerRandomMatchingRepository(session: makeMockDataFromRandomMatching()
+    )
 
-    let useCase = WorkoutPeerRandomMatchingUseCase(repository: repository)
+    let workoutPeerRandomMatchingUseCase = WorkoutPeerRandomMatchingUseCase(repository: repository)
+    let userInformationUseCase = UserInformationUseCase()
 
-    let viewModel = WorkoutPeerRandomMatchingViewModel(workoutSetting: workoutSetting, coordinating: self, useCase: useCase)
+    let viewModel = WorkoutPeerRandomMatchingViewModel(
+      workoutSetting: workoutSetting,
+      coordinating: self,
+      workoutPeerRandomMatchingUseCase: workoutPeerRandomMatchingUseCase,
+      userInformationUseCase: userInformationUseCase
+    )
 
     let viewController = WorkoutPeerRandomMatchingViewController(viewModel: viewModel)
 
@@ -63,8 +75,8 @@ final class WorkoutEnvironmentSetUpCoordinator: WorkoutEnvironmentSetUpCoordinat
     navigationController.dismiss(animated: true)
   }
 
-  func finish(workoutSetting: WorkoutSetting) {
-    settingDidFinishedDelegate?.workoutSettingCoordinatorDidFinished(workoutSetting: workoutSetting)
+  func finish(workoutSessionComponents: WorkoutSessionComponents) {
+    settingDidFinishedDelegate?.workoutSettingCoordinatorDidFinished(workoutSessionComponents: workoutSessionComponents)
   }
 }
 
@@ -125,13 +137,13 @@ private extension WorkoutEnvironmentSetUpCoordinator {
     static let bundleIdentifier = "kr.codesquad.boostcamp8.RecordFeature"
 
     static let matchStart = "MatchesStart"
-    static let matchStartPath = "matches/start"
+    static let matchStartPath = "api/v1/matches/start"
 
     static let matchCancel = "matchesCancel"
-    static let matchCancelPath = "matches/cancle"
+    static let matchCancelPath = "api/v1/matches/cancel"
 
     static let matchesRandom = "MatchesRandom"
-    static let matchesRandomPath = "matches/random"
+    static let matchesRandomPath = "api/v1/matches/random"
 
     static let peerTypesFileNameOfType = "json"
   }

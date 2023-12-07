@@ -24,15 +24,8 @@ public final class UserInformationManager {
     return formatter
   }()
 
-  /// Memory Cache에 있는 데이터를 리턴합니다.
-  ///
-  /// 중요: birthDayDate의 경우 yyyy-MM-dd의 포멧을 사용하는 String의 Data를 리턴합니다.
-  func data(_ key: UserInformation) -> Data? {
-    return defaults.data(forKey: key.rawValue)
-  }
-
   public enum UserInformation: String, CaseIterable {
-    case userName = "UserNickName"
+    case userNickName = "UserNickName"
     case userProfileImage = "UserProfileImage"
     case birthDayDate = "BirthDayDate"
     case userProfileImageURL = "UserImageURL"
@@ -40,13 +33,20 @@ public final class UserInformationManager {
 }
 
 public extension UserInformationManager {
+  /// UserDefaults에 있는 데이터를 리턴합니다.
+  ///
+  /// 중요: birthDayDate의 경우 yyyy-MM-dd의 포멧을 사용하는 String의 Data를 리턴합니다.
+  func data(_ key: UserInformation) -> Data? {
+    return defaults.data(forKey: key.rawValue)
+  }
+
   func setUserName(_ name: String) {
     let nameData = Data(name.utf8)
-    defaults.setValue(nameData, forKey: UserInformation.userName.rawValue)
+    defaults.setValue(nameData, forKey: UserInformation.userNickName.rawValue)
   }
 
   func setUserProfileImageData(_ imageData: Data) {
-    defaults.setValue(imageData, forKey: UserInformation.userName.rawValue)
+    defaults.setValue(imageData, forKey: UserInformation.userNickName.rawValue)
   }
 
   func setBirthDayDate(_ date: Date) {
@@ -61,7 +61,7 @@ private extension UserInformationManager {
   /// 만약 userDefaults에 값이 존재한다면 fakeData를 설정합니다.
   func setDefaultsData() {
     guard
-      data(.userName) == nil,
+      data(.userNickName) == nil,
       data(.birthDayDate) == nil,
       data(.userProfileImage) == nil,
       data(.userProfileImageURL) == nil
@@ -76,13 +76,12 @@ private extension UserInformationManager {
     let dateData = Data(dateString.utf8)
     defaults.setValue(dateData, forKey: UserInformation.birthDayDate.rawValue)
 
-    let name = Data("김무드".utf8)
-    defaults.setValue(name, forKey: UserInformation.userName.rawValue)
+    let name = Data("김무디".utf8)
+    defaults.setValue(name, forKey: UserInformation.userNickName.rawValue)
 
-    guard let imageURL = URL(string: "https://www.catster.com/wp-content/uploads/2017/08/Pixiebob-cat.jpg") else {
-      return
-    }
-    defaults.setValue(imageURL, forKey: UserInformation.userProfileImageURL.rawValue)
+    let imageURLString = "https://www.catster.com/wp-content/uploads/2017/08/Pixiebob-cat.jpg"
+    let imageURLData = Data(imageURLString.utf8)
+    defaults.setValue(imageURLData, forKey: UserInformation.userProfileImageURL.rawValue)
 
     guard
       let path = Bundle(for: Self.self).path(forResource: DefaultsKey.imageKey, ofType: DefaultsKey.imageType),

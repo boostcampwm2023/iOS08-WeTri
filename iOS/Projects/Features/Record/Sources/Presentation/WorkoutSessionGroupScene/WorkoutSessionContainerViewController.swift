@@ -163,20 +163,21 @@ final class WorkoutSessionContainerViewController: UIViewController {
       .receive(on: RunLoop.main)
       .sink { [weak self] state in
         switch state {
-        case .idle:
-          break
-        case let .updateTime(elapsedTime):
-          let minutes = Int(-elapsedTime) / 60 % 60
-          let seconds = Int(-elapsedTime) % 60
-          self?.recordTimerLabel.text = String(format: "%02d분 %02d초", minutes, seconds)
-        case let .alert(error):
-          self?.showAlert(with: error)
+        case .idle: break
+        case let .updateTime(elapsedTime): self?.updateRecordTimerLabel(elapsedTime: elapsedTime)
+        case let .alert(error): self?.showAlert(with: error)
         }
       }
       .store(in: &subscriptions)
   }
 
   // MARK: - Custom Methods
+
+  private func updateRecordTimerLabel(elapsedTime: Int) {
+    let minutes = elapsedTime / 60 % 60
+    let seconds = elapsedTime % 60
+    recordTimerLabel.text = String(format: "%02d분 %02d초", minutes, seconds)
+  }
 
   /// 에러 알림 문구를 보여줍니다.
   private func showAlert(with error: Error) {
