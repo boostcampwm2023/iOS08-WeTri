@@ -27,7 +27,6 @@ public final class ImageFormRepository: ImageFormRepositoryRepresentable {
       let boundary = "Boundary-\(UUID().uuidString)"
       let body = createBody(boundary: boundary, imageDataArray: [imageData], mimeType: "image/png")
       let endPoint = ImageFormEndPoint.image(body, boundary)
-//      sendURLRequest(boundary: boundary, body: body)
       Task {
         do {
           let data = try await self.provider.request(endPoint)
@@ -66,40 +65,6 @@ public final class ImageFormRepository: ImageFormRepositoryRepresentable {
 
     return body
   }
-
-//  func sendURLRequest(boundary: String, body: Data) {
-//    guard let url = URL(string: "https://api.wonho.site/api/v1/images") else {
-//      print("Error: Invalid URL")
-//      return
-//    }
-//    var request = URLRequest(url: url)
-//    request.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-//    request.httpMethod = "POST"
-//    request.httpBody = body
-//
-//    let task = URLSession.shared.dataTask(with: request) { data, response, error in
-//      if let error {
-//        print("Error: \(error)")
-//        return
-//      }
-//
-//      if let httpResponse = response as? HTTPURLResponse {
-//        print("Response Status Code: \(httpResponse.statusCode)")
-//      }
-//
-//      if let responseData = data {
-//        if let responseString = String(data: responseData, encoding: .utf8) {
-//          print("Response Data: \(responseString)")
-//        } else {
-//          print("Response Data cannot be decoded to UTF-8 string")
-//        }
-//      } else {
-//        print("No response data received")
-//      }
-//    }
-//
-//    task.resume()
-//  }
 }
 
 // MARK: - ImageFormEndPoint
