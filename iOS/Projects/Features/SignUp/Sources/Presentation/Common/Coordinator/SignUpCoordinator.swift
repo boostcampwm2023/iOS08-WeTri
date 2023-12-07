@@ -18,14 +18,14 @@ final class SignUpCoordinator: SignUpCoordinating {
   weak var finishDelegate: CoordinatorFinishDelegate?
   var flow: CoordinatorFlow = .signup
 
-  private let userBit: UserBit
+  private let userBit: NewUserInformation
 
   private let isMockEnvironment: Bool
 
   init(
     navigationController: UINavigationController,
     isMockEnvironment: Bool,
-    userBit: UserBit
+    userBit: NewUserInformation
   ) {
     self.navigationController = navigationController
     self.isMockEnvironment = isMockEnvironment

@@ -17,11 +17,11 @@ public final class SignUpFeatureCoordinator: SignUpFeatureCoordinating {
   public weak var finishDelegate: CoordinatorFinishDelegate?
   public var flow: CoordinatorFlow = .signup
 
-  private let userBit: UserBit
+  private let userBit: NewUserInformation
 
   public init(
     navigationController: UINavigationController,
-    userBit: UserBit
+    userBit: NewUserInformation
   ) {
     self.navigationController = navigationController
     self.userBit = userBit

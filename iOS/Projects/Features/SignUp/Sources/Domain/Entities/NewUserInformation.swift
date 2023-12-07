@@ -1,5 +1,5 @@
 //
-//  UserBit.swift
+//  NewUserInformation.swift
 //  SignUpFeature
 //
 //  Created by 안종표 on 12/7/23.
@@ -8,10 +8,10 @@
 
 import Foundation
 
-// MARK: - UserBit
+// MARK: - NewUserInformation
 
 /// 처음 로그인 하는 유저의 Response를 담을 Entity
-public struct UserBit {
+public struct NewUserInformation {
   /// 애플 토큰에 있는 유저정보인데 보안때문에 UUID로 매핑한 ID
   public let mappedUserID: String
 
@@ -26,7 +26,7 @@ public struct UserBit {
 
 // MARK: Codable
 
-extension UserBit: Codable {}
+extension NewUserInformation: Codable {}
 
 // MARK: - AuthProvider
 
