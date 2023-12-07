@@ -28,36 +28,14 @@ public final class SignUpFeatureCoordinator: SignUpFeatureCoordinating {
   }
 
   public func start() {
-    pushSingUpContainerViewController()
+    showSignUpFlow()
   }
 
-  public func pushSingUpContainerViewController() {
-    let dateFormatUseCase = DateFormatUseCase()
-
-    let signUpGenderBirthViewModel = SignUpGenderBirthViewModel(dateFormatUseCase: dateFormatUseCase)
-
-    let signUpGenderBirthViewController = SignUpGenderBirthViewController(viewModel: signUpGenderBirthViewModel)
-
-    let nickNameCheckUseCase = NickNameCheckUseCase()
-
-    let imageFormRepository = ImageFormRepository(urlSession: URLSession.shared)
-
-    let imageTransmitUseCase = ImageTransmitUseCase(imageFormRepository: imageFormRepository)
-
-    let signUpProfileViewModel = SignUpProfileViewModel(
-      nickNameCheckUseCase: nickNameCheckUseCase,
-      imageTransmitUseCase: imageTransmitUseCase,
-      userBit: userBit
-    )
-
-    let signUpProfileViewController = SignUpProfileViewController(viewModel: signUpProfileViewModel)
-
-    let signUpContainerViewController = SignUpContainerViewController(
-      signUpGenderBirthViewController: signUpGenderBirthViewController,
-      signUpProfileViewController: signUpProfileViewController
-    )
-
-    navigationController.pushViewController(signUpContainerViewController, animated: false)
+  public func showSignUpFlow() {
+    let coordinator = SignUpCoordinator(navigationController: navigationController, userBit: userBit)
+    childCoordinators.append(coordinator)
+    coordinator.finishDelegate = self
+    coordinator.start()
   }
 }
 

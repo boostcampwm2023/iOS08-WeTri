@@ -15,15 +15,43 @@ final class SignUpCoordinator: SignUpCoordinating {
   weak var finishDelegate: CoordinatorFinishDelegate?
   var flow: CoordinatorFlow = .signup
 
-  init(navigationController: UINavigationController) {
+  private let userBit: UserBit
+
+  init(navigationController: UINavigationController, userBit: UserBit) {
     self.navigationController = navigationController
+    self.userBit = userBit
   }
 
   func start() {
-    //
+    pushSingUpContainerViewController()
   }
 
   func pushSingUpContainerViewController() {
-    //
+    let dateFormatUseCase = DateFormatUseCase()
+
+    let signUpGenderBirthViewModel = SignUpGenderBirthViewModel(dateFormatUseCase: dateFormatUseCase)
+
+    let signUpGenderBirthViewController = SignUpGenderBirthViewController(viewModel: signUpGenderBirthViewModel)
+
+    let nickNameCheckUseCase = NickNameCheckUseCase()
+
+    let imageFormRepository = ImageFormRepository(urlSession: URLSession.shared)
+
+    let imageTransmitUseCase = ImageTransmitUseCase(imageFormRepository: imageFormRepository)
+
+    let signUpProfileViewModel = SignUpProfileViewModel(
+      nickNameCheckUseCase: nickNameCheckUseCase,
+      imageTransmitUseCase: imageTransmitUseCase,
+      userBit: userBit
+    )
+
+    let signUpProfileViewController = SignUpProfileViewController(viewModel: signUpProfileViewModel)
+
+    let signUpContainerViewController = SignUpContainerViewController(
+      signUpGenderBirthViewController: signUpGenderBirthViewController,
+      signUpProfileViewController: signUpProfileViewController
+    )
+
+    navigationController.pushViewController(signUpContainerViewController, animated: false)
   }
 }

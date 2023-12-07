@@ -1,5 +1,5 @@
 //
-//  SingUpCoordination.swift
+//  SingUpCoordinating.swift
 //  SignUpFeature
 //
 //  Created by 안종표 on 12/7/23.
