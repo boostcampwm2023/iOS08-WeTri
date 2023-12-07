@@ -22,7 +22,11 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { Profile } from '../profiles/entities/profiles.entity';
 import { ProfileDeco } from '../profiles/decorator/profile.decorator';
 import { PaginatePostDto } from './dto/paginate-post.dto';
-import { GetPostsResponseDto, PostDto, PostsPaginateResDto } from './dto/get-posts-response.dto';
+import {
+  GetPostsResponseDto,
+  PostDto,
+  PostsPaginateResDto,
+} from './dto/get-posts-response.dto';
 import { GetPostResponseDto } from './dto/get-create-update-post-response.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { DeletePostResponseDto } from './dto/delete-post-response.dto';
@@ -47,7 +51,9 @@ export class PostsController {
   @Get()
   @ApiOperation({ summary: '게시글 가져오기' })
   @ApiCreatedResponse({ type: GetPostsResponseDto })
-  async getPosts(@Query() query: PaginatePostDto): Promise<PostsPaginateResDto> {
+  async getPosts(
+    @Query() query: PaginatePostDto,
+  ): Promise<PostsPaginateResDto> {
     return this.postsService.paginatePosts(query);
   }
 

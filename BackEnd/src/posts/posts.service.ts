@@ -24,7 +24,10 @@ export class PostsService {
     private readonly commonService: CommonService,
   ) {}
 
-  async createPost(postInfo: CreatePostDto, profile: Profile): Promise<PostDto> {
+  async createPost(
+    postInfo: CreatePostDto,
+    profile: Profile,
+  ): Promise<PostDto> {
     const record = await this.recordService.findById(postInfo.recordId);
     if (record.isPosted) {
       throw new ExistPostException();
@@ -61,7 +64,10 @@ export class PostsService {
     return post;
   }
 
-  async paginateUserPosts(publicId: string, query: PaginatePostDto): Promise<PostsPaginateResDto> {
+  async paginateUserPosts(
+    publicId: string,
+    query: PaginatePostDto,
+  ): Promise<PostsPaginateResDto> {
     return await this.commonService.paginate<Post>(
       query,
       this.postsRepository,
@@ -70,7 +76,10 @@ export class PostsService {
     );
   }
 
-  async updatePost(id: number, updatePostInfo: UpdatePostDto): Promise<PostDto> {
+  async updatePost(
+    id: number,
+    updatePostInfo: UpdatePostDto,
+  ): Promise<PostDto> {
     await this.findOneById(id);
     await this.postsRepository.update(id, updatePostInfo);
     return await this.findOneById(id);
