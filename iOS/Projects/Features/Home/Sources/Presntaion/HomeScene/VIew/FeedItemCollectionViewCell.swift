@@ -66,7 +66,7 @@ class FeedItemCollectionViewCell: UICollectionViewCell {
     return label
   }()
 
-  lazy var sportLabelAndNickdateLabelStackView: UIStackView = {
+  private lazy var sportLabelAndNickdateLabelStackView: UIStackView = {
     let stackView = UIStackView(arrangedSubviews: [
       sportLabel,
       dateLabel,
@@ -78,7 +78,7 @@ class FeedItemCollectionViewCell: UICollectionViewCell {
     return stackView
   }()
 
-  lazy var nickNameLabelAndSportDateLabelStackView: UIStackView = {
+  private lazy var nickNameLabelAndSportDateLabelStackView: UIStackView = {
     let stackView = UIStackView(arrangedSubviews: [
       nickNameLabel,
       sportLabelAndNickdateLabelStackView,
@@ -114,7 +114,7 @@ class FeedItemCollectionViewCell: UICollectionViewCell {
     return button
   }()
 
-  lazy var cardHeaderStackView: UIStackView = {
+  private lazy var cardHeaderStackView: UIStackView = {
     let stackView = UIStackView(arrangedSubviews: [
       feedUserInformationStackView,
       feedEllipsisButton,
