@@ -35,6 +35,13 @@ public struct TNProvider<T: TNEndPoint>: TNProvidable {
     return retriedData
   }
 
+  public func uploadRequest(_ service: T, successStatusCodeRange range: Range<Int> = 200 ..< 300) async throws -> Data {
+    guard let multipart = service.multipart else { throw TNError.unknownError }
+    let (data, response) = try await session.upload(for: service.request(), from: multipart.makeBody())
+    try checkStatusCode(response, successStatusCodeRange: range)
+    return data
+  }
+
   public func request(_ service: T, completion: @escaping (Data?, URLResponse?, Error?) -> Void) throws {
     try session.dataTask(with: service.request(), completionHandler: completion).resume()
   }
