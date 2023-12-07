@@ -28,7 +28,7 @@ final class HomeViewController: UIViewController {
   private let titleBarButtonItem: UIBarButtonItem = {
     let item = UIBarButtonItem(title: "홈")
     item.tintColor = DesignSystemColor.primaryText
-    
+
     // TODO: 버그가 있는 코드
     // 이유를 알지 못하겠음...
     let titleBarButtonItemFont: UIFont = .preferredFont(forTextStyle: .title1, weight: .bold)
