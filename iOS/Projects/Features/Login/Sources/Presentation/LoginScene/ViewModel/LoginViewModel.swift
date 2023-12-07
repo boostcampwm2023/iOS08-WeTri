@@ -50,6 +50,7 @@ extension LoginViewModel: LoginViewModelRepresentable {
   func transform(input: LoginViewModelInput) -> LoginViewModelOutput {
     input.credential
       .flatMap(authorizeUseCase.authorize(authorizationInfo:))
+      .receive(on: DispatchQueue.main)
       .sink(receiveValue: { [weak self] loginResponse in
         if let token = loginResponse.token {
           guard let accessToken = token.accessToken,
@@ -57,14 +58,12 @@ extension LoginViewModel: LoginViewModelRepresentable {
           else {
             return
           }
-          Log.make().debug("\(accessToken)")
           self?.authorizeUseCase.accessTokenSave(accessToken)
           self?.authorizeUseCase.refreshTokenSave(refreshToken)
           self?.coordinator.finish(initialUser: nil, token: token)
         }
 
         if let initialUser = loginResponse.initialUser {
-          Log.make().debug("\(initialUser.mappedUserID)")
           self?.coordinator.finish(initialUser: initialUser, token: nil)
         }
       })
