@@ -17,6 +17,7 @@ public struct SignUpProfileViewModelInput {
   let imageButtonTap: AnyPublisher<Void, Never>
   let imageSetting: AnyPublisher<Data, Never>
   let completeButtonTap: AnyPublisher<Void, Never>
+  let genderBirth: AnyPublisher<GenderBirth, Never>
 }
 
 public typealias SignUpProfileViewModelOutput = AnyPublisher<SignUpProfileState, Never>
@@ -64,11 +65,15 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
 
     var imageData: Data?
 
+    let imageFormSubject = PassthroughSubject<ImageForm, Never>()
+    let nickNameSubject = PassthroughSubject<String, Never>()
+
     let nickNameCheckedResult = input.nickNameTextFieldEditting
       .tryMap { [weak self] nickName in
         guard let result = self?.nickNameCheckUseCase.check(nickName: nickName) else {
           throw SignUpProfileViewModelError.invalidBinding
         }
+        nickNameSubject.send(nickName)
         return SignUpProfileState.checking(result)
       }
       .catch { Just(.customError($0)) }
@@ -98,7 +103,31 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
           Log.make().error("\(error)")
         }
       } receiveValue: { imageforms in
+        guard let imageForm = imageforms.first else {
+          return
+        }
+        imageFormSubject.send(imageForm)
         Log.make().debug("이미지 폼스 : \(imageforms)")
+      }
+      .store(in: &subscriptions)
+
+    let genderBirth = input.genderBirth
+
+    // Complete 버튼이 클릭되어야만 해당 코드가 동작된다.
+    Publishers
+      .CombineLatest3(imageFormSubject.eraseToAnyPublisher(), nickNameSubject.eraseToAnyPublisher(), input.genderBirth)
+      .sink { [weak self] imageForm, nickName, genderBirth in
+        guard let userBit = self?.userBit else {
+          return
+        }
+        let signUpUser = SignUpUser(
+          provider: userBit.provider.rawValue,
+          nickName: nickName,
+          gender: genderBirth.gender.rawValue,
+          birthDate: genderBirth.birth,
+          profileImage: imageForm.imageURL,
+          mappedUserID: userBit.mappedUserID
+        )
       }
       .store(in: &subscriptions)
 
@@ -107,7 +136,6 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
 
     let success = Publishers
       .CombineLatest(nickNameCheckedResult, imageSettingResult)
-      .print()
       .flatMap { nickNameCheckState, _ in
         if case let .checking(isChecked) = nickNameCheckState, isChecked {
           return Just(SignUpProfileState.success)

@@ -24,6 +24,8 @@ public final class SignUpProfileViewController: UIViewController {
   private let imageSetSubject = PassthroughSubject<Data, Never>()
   private let completeButtonTapSubject = PassthroughSubject<Void, Never>()
 
+  let genderBirthSubject = PassthroughSubject<GenderBirth, Never>()
+
   public init(viewModel: SignUpProfileViewModelRepresentable) {
     self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
@@ -190,7 +192,8 @@ private extension SignUpProfileViewController {
       nickNameTextFieldEditting: textFieldEdittingSubject.eraseToAnyPublisher(),
       imageButtonTap: imageButtonTapSubject.eraseToAnyPublisher(),
       imageSetting: imageSetSubject.eraseToAnyPublisher(),
-      completeButtonTap: completeButtonTapSubject.eraseToAnyPublisher()
+      completeButtonTap: completeButtonTapSubject.eraseToAnyPublisher(),
+      genderBirth: genderBirthSubject.eraseToAnyPublisher()
     )
     let output = viewModel.transform(input: input)
     output

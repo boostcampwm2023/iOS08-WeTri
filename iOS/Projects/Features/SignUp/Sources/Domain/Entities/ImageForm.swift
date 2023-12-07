@@ -11,8 +11,8 @@ import Foundation
 // MARK: - ImageForm
 
 public struct ImageForm {
-  let imageName: String
-  let imageURL: String
+  let imageName: String?
+  let imageURL: URL?
 }
 
 // MARK: Codable
