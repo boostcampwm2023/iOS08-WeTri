@@ -20,18 +20,11 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     guard let windowScene = scene as? UIWindowScene else { return }
     window = UIWindow(windowScene: windowScene)
     let navigationController = UINavigationController()
-    let viewController = SignUpContainerViewController(
-      signUpGenderBirthViewController: SignUpGenderBirthViewController(viewModel: SignUpGenderBirthViewModel(dateFormatUseCase: DateFormatUseCase())),
-      signUpProfileViewController:
-      SignUpProfileViewController(
-        viewModel: SignUpProfileViewModel(
-          nickNameCheckUseCase: NickNameCheckUseCase(), imageTransmitUseCase: ImageTransmitUseCase(imageFormRepository: ImageFormRepository(urlSession: URLSession.shared))
-        ))
-    )
-    window?.rootViewController = viewController
+    window?.rootViewController = navigationController
+    let coordinator = SignUpFeatureCoordinator(navigationController: navigationController)
 //    let coordinator = AppCoordinator(navigationController: navigationController)
 //    coordinating = coordinator
-//    coordinator.start()
+    coordinator.start()
     window?.makeKeyAndVisible()
   }
 }

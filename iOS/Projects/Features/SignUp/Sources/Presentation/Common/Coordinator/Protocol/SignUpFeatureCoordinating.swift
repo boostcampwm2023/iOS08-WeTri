@@ -1,5 +1,5 @@
 //
-//  SignUpCoordinating.swift
+//  SignUpFeatureCoordinating.swift
 //  SignUpFeature
 //
 //  Created by 안종표 on 12/6/23.
@@ -9,7 +9,6 @@
 import Coordinator
 import Foundation
 
-protocol SignUpCoordinating: Coordinating {
-  func showSignUpFlow()
+public protocol SignUpFeatureCoordinating: Coordinating {
   func pushSingUpContainerViewController()
 }

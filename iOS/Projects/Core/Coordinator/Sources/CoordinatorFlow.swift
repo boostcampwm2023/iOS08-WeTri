@@ -13,6 +13,7 @@ import Foundation
 public enum CoordinatorFlow {
   case splash
   case login
+  case signup
   case tabBar
   case workoutSetting
   case workout
