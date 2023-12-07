@@ -20,7 +20,11 @@ protocol LocationTrackingProtocol: UIViewController {
   /// 위치 정보를 제공하는 Publisher
   var locationPublisher: AnyPublisher<[CLLocation], Never> { get }
 
-  func mapScreenshotData() -> AnyPublisher<Data?, Never>
+  /// 지도 화면에 자신의 경로를 캡처한 이미지 데이터를 제공하는 Publisher
+  var mapCaptureData: AnyPublisher<Data?, Never> { get }
+
+  /// 지도 캡처를 요청합니다.
+  func requestCapture()
 }
 
 // MARK: - WorkoutRouteMapViewController
@@ -208,8 +212,11 @@ final class WorkoutRouteMapViewController: UIViewController {
 // MARK: LocationTrackingProtocol
 
 extension WorkoutRouteMapViewController: LocationTrackingProtocol {
-  func mapScreenshotData() -> AnyPublisher<Data?, Never> {
+  func requestCapture() {
     mapSnapshotterImageDataSubject.send(locations)
+  }
+
+  var mapCaptureData: AnyPublisher<Data?, Never> {
     return mapCaptureDataSubject.eraseToAnyPublisher()
   }
 
