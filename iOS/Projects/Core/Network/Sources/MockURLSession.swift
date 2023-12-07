@@ -11,6 +11,10 @@ import Foundation
 // MARK: - MockURLSession
 
 public struct MockURLSession: URLSessionProtocol {
+  public func upload(for _: URLRequest, from _: Data) async throws -> (Data, URLResponse) {
+    return (.init(), .init())
+  }
+
   let mockData: Data
   let mockResponse: URLResponse
   let mockError: Error?

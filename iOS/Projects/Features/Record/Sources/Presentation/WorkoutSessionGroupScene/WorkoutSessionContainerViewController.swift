@@ -27,7 +27,7 @@ final class WorkoutSessionContainerViewController: UIViewController {
 
   private let sessionViewController: HealthDataProtocol
 
-  private let routeMapViewController: LocationTrackingProtocol = WorkoutRouteMapViewController(viewModel: WorkoutRouteMapViewModel(useCase: KalmanUseCase()))
+  private let routeMapViewController: LocationTrackingProtocol
 
   private lazy var viewControllers: [UIViewController] = [
     sessionViewController,
@@ -60,9 +60,14 @@ final class WorkoutSessionContainerViewController: UIViewController {
 
   // MARK: Initializations
 
-  init(viewModel: WorkoutSessionContainerViewModelRepresentable, healthDataProtocol: HealthDataProtocol) {
+  init(
+    viewModel: WorkoutSessionContainerViewModelRepresentable,
+    healthDataProtocol: HealthDataProtocol,
+    locationTrackingProtocol: LocationTrackingProtocol
+  ) {
     self.viewModel = viewModel
     sessionViewController = healthDataProtocol
+    routeMapViewController = locationTrackingProtocol
     super.init(nibName: nil, bundle: nil)
   }
 
@@ -155,6 +160,7 @@ final class WorkoutSessionContainerViewController: UIViewController {
       input: .init(
         endWorkoutPublisher: endWorkoutSubject.eraseToAnyPublisher(),
         locationPublisher: routeMapViewController.locationPublisher,
+        mapCaptureImageDataPublisher: routeMapViewController.mapCaptureData,
         healthPublisher: sessionViewController.healthDataPublisher
       )
     )
@@ -168,6 +174,10 @@ final class WorkoutSessionContainerViewController: UIViewController {
         case let .alert(error): self?.showAlert(with: error)
         }
       }
+      .store(in: &subscriptions)
+
+    endWorkoutSubject
+      .sink(receiveValue: routeMapViewController.requestCapture)
       .store(in: &subscriptions)
   }
 

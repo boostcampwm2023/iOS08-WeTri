@@ -19,6 +19,12 @@ import UIKit
 protocol LocationTrackingProtocol: UIViewController {
   /// 위치 정보를 제공하는 Publisher
   var locationPublisher: AnyPublisher<[CLLocation], Never> { get }
+
+  /// 지도 화면에 자신의 경로를 캡처한 이미지 데이터를 제공하는 Publisher
+  var mapCaptureData: AnyPublisher<Data?, Never> { get }
+
+  /// 지도 캡처를 요청합니다.
+  func requestCapture()
 }
 
 // MARK: - WorkoutRouteMapViewController
@@ -30,12 +36,16 @@ final class WorkoutRouteMapViewController: UIViewController {
 
   /// 사용자 위치 추적 배열
   @Published private var locations: [CLLocation] = []
-  var kalmanFilterShouldUpdatePositionSubject: PassthroughSubject<KalmanFilterUpdateRequireElement, Never> = .init()
-  var kalmanFilterShouldUpdateHeadingSubject: PassthroughSubject<Double, Never> = .init()
+
+  private let mapCaptureDataSubject: PassthroughSubject<Data?, Never> = .init()
+  private let mapSnapshotterImageDataSubject: PassthroughSubject<[CLLocation], Never> = .init()
+
+  private let kalmanFilterShouldUpdatePositionSubject: PassthroughSubject<KalmanFilterUpdateRequireElement, Never> = .init()
+  private let kalmanFilterShouldUpdateHeadingSubject: PassthroughSubject<Double, Never> = .init()
 
   private var subscriptions: Set<AnyCancellable> = []
 
-  lazy var locationManager: CLLocationManager = {
+  private lazy var locationManager: CLLocationManager = {
     let manager = CLLocationManager()
     manager.startMonitoringSignificantLocationChanges()
     manager.distanceFilter = 10
@@ -120,24 +130,58 @@ final class WorkoutRouteMapViewController: UIViewController {
   }
 
   private func bind() {
+    let locationPublisher = mapSnapshotterImageDataSubject.map {
+      $0.map { LocationDTO(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
+    }
+    .eraseToAnyPublisher()
+
     let input: WorkoutRouteMapViewModelInput = .init(
       filterShouldUpdatePositionPublisher: kalmanFilterShouldUpdatePositionSubject.eraseToAnyPublisher(),
-      filterShouldUpdateHeadingPublisher: kalmanFilterShouldUpdateHeadingSubject.eraseToAnyPublisher()
+      filterShouldUpdateHeadingPublisher: kalmanFilterShouldUpdateHeadingSubject.eraseToAnyPublisher(),
+      locationListPublisher: locationPublisher
     )
 
     viewModel
       .transform(input: input)
-      .sink { [weak self] state in
-        switch state {
-        case .idle:
-          break
-        case let .censoredValue(value): self?.updatePolyLine(value)
-        }
-      }
+      .sink(receiveValue: render(state:))
       .store(in: &subscriptions)
   }
 
-  func updatePolyLine(_ value: KalmanFilterCensored?) {
+  private func render(state: WorkoutRouteMapState) {
+    switch state {
+    case .idle:
+      break
+    case let .snapshotRegion(region): createMapSnapshot(with: region)
+    case let .censoredValue(value): updatePolyLine(value)
+    }
+  }
+
+  private func createMapSnapshot(with regionData: MapRegion) {
+    // 맵 가운데 초점 설정
+    let center = CLLocationCoordinate2D(
+      latitude: (regionData.minLatitude + regionData.maxLatitude) / 2,
+      longitude: (regionData.minLongitude + regionData.maxLongitude) / 2
+    )
+
+    let span = MKCoordinateSpan(
+      latitudeDelta: regionData.maxLatitude - regionData.minLatitude,
+      longitudeDelta: regionData.maxLongitude - regionData.minLongitude
+    )
+
+    let region = MKCoordinateRegion(center: center, span: span)
+
+    let options = MKMapSnapshotter.Options()
+    options.region = region
+    options.size = mapView.frame.size
+
+    let snapshotter = MKMapSnapshotter(options: options)
+    snapshotter.start { [weak self] snapshot, _ in
+      // 스냅샷 이미지를 png데이터로 전달
+      self?.mapCaptureDataSubject.send(snapshot?.image.pngData())
+    }
+  }
+
+  private func updatePolyLine(_ value: KalmanFilterCensored?) {
     guard let value else { return }
 
     let currentLocation = CLLocation(latitude: value.latitude, longitude: value.longitude)
@@ -168,6 +212,14 @@ final class WorkoutRouteMapViewController: UIViewController {
 // MARK: LocationTrackingProtocol
 
 extension WorkoutRouteMapViewController: LocationTrackingProtocol {
+  func requestCapture() {
+    mapSnapshotterImageDataSubject.send(locations)
+  }
+
+  var mapCaptureData: AnyPublisher<Data?, Never> {
+    return mapCaptureDataSubject.eraseToAnyPublisher()
+  }
+
   var locationPublisher: AnyPublisher<[CLLocation], Never> {
     $locations.eraseToAnyPublisher()
   }

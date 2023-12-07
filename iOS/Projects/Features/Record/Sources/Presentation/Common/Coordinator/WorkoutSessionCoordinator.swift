@@ -106,8 +106,6 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
   }
 
   func pushWorkoutSession() {
-    let oneSecondsTimerUseCase = OneSecondsTimerUseCase(initDate: .now)
-
     guard let jsonPath = Bundle(for: Self.self).path(forResource: "WorkoutSession", ofType: "json"),
           let jsonData = try? Data(contentsOf: .init(filePath: jsonPath))
     else {
@@ -129,17 +127,29 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
     let sessionViewModel = WorkoutSessionViewModel(useCase: sessionUseCase)
     let sessionViewController = WorkoutSessionViewController(viewModel: sessionViewModel, dependency: workoutSessionComponents)
 
+    let kalmanUseCase = KalmanUseCase()
+    let locationPathUseCase = LocationPathUseCase()
+    let routeMapViewModel = WorkoutRouteMapViewModel(kalmanUseCase: kalmanUseCase, locationPathUseCase: locationPathUseCase)
+    let routeMapViewController = WorkoutRouteMapViewController(viewModel: routeMapViewModel)
+
     let session: URLSessionProtocol = isMockEnvironment ? MockURLSession(mockData: jsonData) : URLSession.shared
     let repository = WorkoutRecordRepository(session: session)
     let useCase = WorkoutRecordUseCase(repository: repository)
+    let oneSecondsTimerUseCase = OneSecondsTimerUseCase(initDate: .now)
+    let uploadUseCase = MapImageUploadUseCase(repository: MapImageUploadRepository(session: session))
     let viewModel = WorkoutSessionContainerViewModel(
       workoutRecordUseCase: useCase,
       oneSecondsTimerUseCase: oneSecondsTimerUseCase,
+      imageUploadUseCase: uploadUseCase,
       coordinating: self,
       dependency: workoutSessionComponents
     )
 
-    let viewController = WorkoutSessionContainerViewController(viewModel: viewModel, healthDataProtocol: sessionViewController)
+    let viewController = WorkoutSessionContainerViewController(
+      viewModel: viewModel,
+      healthDataProtocol: sessionViewController,
+      locationTrackingProtocol: routeMapViewController
+    )
     navigationController.pushViewController(viewController, animated: true)
   }
 

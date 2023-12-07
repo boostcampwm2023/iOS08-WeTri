@@ -24,12 +24,12 @@ public struct WorkoutRecordRepository: WorkoutRecordRepositoryRepresentable {
   /// - Parameter locationData: 사용자의 위치 정보
   /// - Parameter healthData: 사용자의 건강 정보
   /// - Returns: 기록 고유 Identifier
-  func record(usingLocation locationData: [LocationDTO], andHealthData healthData: WorkoutDataForm) -> AnyPublisher<Int, Error> {
+  func record(dataForm: WorkoutDataForm) -> AnyPublisher<Int, Error> {
     return Deferred {
       Future<Data, Error> { promise in
         Task {
           do {
-            let data = try await provider.request(.init(locationList: locationData, health: healthData))
+            let data = try await provider.request(.init(dataForm: dataForm))
             promise(.success(data))
           } catch {
             promise(.failure(error))
@@ -55,18 +55,18 @@ public struct WorkoutRecordRepository: WorkoutRecordRepositoryRepresentable {
 extension WorkoutRecordRepository {
   // TODO: 서버 값으로 세팅
   struct WorkoutRecordEndPoint: TNEndPoint {
-    var path: String = "api/v1/records"
+    let path: String = "api/v1/records"
 
-    var method: TNMethod = .post
+    let method: TNMethod = .post
 
-    var query: Encodable? = nil
+    let query: Encodable? = nil
 
-    var body: Encodable? = nil
+    let body: Encodable?
 
-    var headers: TNHeaders = .init(headers: [])
+    let headers: TNHeaders = .default
 
-    init(locationList _: [LocationDTO], health _: WorkoutDataForm) {
-      // TODO: 요청 모델 설정 필요
+    init(dataForm: WorkoutDataForm) {
+      body = dataForm
     }
   }
 }

@@ -66,3 +66,11 @@ struct LocationDTO: Codable {
   /// 경도
   let longitude: Double
 }
+
+// MARK: CustomStringConvertible
+
+extension LocationDTO: CustomStringConvertible {
+  var description: String {
+    return "\(latitude)/\(longitude)"
+  }
+}

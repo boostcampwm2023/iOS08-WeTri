@@ -19,6 +19,14 @@ public struct WorkoutDataForm: Encodable {
   /// 소모한 칼로리
   let calorie: Int?
 
+  /// 지도 경로 스크린샷 URL
+  let imageURL: URL
+
+  /// 위도 경도를 한 줄의 문자열로 합친 형태입니다.
+  ///
+  /// `"위도/경도,위도/경도,..."`형태로 들어갑니다.
+  let locations: String
+
   /// 평균 심박수
   let averageHeartRate: Int?
 
@@ -32,6 +40,8 @@ public struct WorkoutDataForm: Encodable {
     case workoutTime
     case distance
     case calorie
+    case imageURL = "mapCapture"
+    case locations = "gps"
     case averageHeartRate = "avgHeartRate"
     case minimumHeartRate = "minHeartRate"
     case maximumHeartRate = "maxHeartRate"

@@ -14,6 +14,7 @@ import Foundation
 public struct WorkoutRouteMapViewModelInput {
   let filterShouldUpdatePositionPublisher: AnyPublisher<KalmanFilterUpdateRequireElement, Never>
   let filterShouldUpdateHeadingPublisher: AnyPublisher<Double, Never>
+  let locationListPublisher: AnyPublisher<[LocationDTO], Never>
 }
 
 public typealias WorkoutRouteMapViewModelOutput = AnyPublisher<WorkoutRouteMapState, Never>
@@ -22,6 +23,7 @@ public typealias WorkoutRouteMapViewModelOutput = AnyPublisher<WorkoutRouteMapSt
 
 public enum WorkoutRouteMapState {
   case idle
+  case snapshotRegion(MapRegion)
   case censoredValue(KalmanFilterCensored?)
 }
 
@@ -36,12 +38,17 @@ protocol WorkoutRouteMapViewModelRepresentable {
 final class WorkoutRouteMapViewModel {
   // MARK: - Properties
 
-  var useCase: KalmanUseCaseRepresentable
+  private let kalmanUseCase: KalmanUseCaseRepresentable
+  private let locationPathUseCase: LocationPathUseCaseRepresentable
 
   private var subscriptions: Set<AnyCancellable> = []
 
-  init(useCase: KalmanUseCaseRepresentable) {
-    self.useCase = useCase
+  init(
+    kalmanUseCase: KalmanUseCaseRepresentable,
+    locationPathUseCase: LocationPathUseCaseRepresentable
+  ) {
+    self.kalmanUseCase = kalmanUseCase
+    self.locationPathUseCase = locationPathUseCase
   }
 }
 
@@ -54,22 +61,27 @@ extension WorkoutRouteMapViewModel: WorkoutRouteMapViewModelRepresentable {
     input
       .filterShouldUpdateHeadingPublisher
       .dropFirst(4)
-      .sink { [useCase] value in
-        useCase.updateHeading(value)
+      .sink { [kalmanUseCase] value in
+        kalmanUseCase.updateHeading(value)
       }
       .store(in: &subscriptions)
+
+    let region = input
+      .locationListPublisher
+      .map(locationPathUseCase.processPath(locations:))
+      .map(WorkoutRouteMapState.snapshotRegion)
 
     let updateValue: WorkoutRouteMapViewModelOutput = input
       .filterShouldUpdatePositionPublisher
       .dropFirst(4)
-      .map { [useCase] element in
-        let censoredValue = useCase.updateFilter(element)
+      .map { [kalmanUseCase] element in
+        let censoredValue = kalmanUseCase.updateFilter(element)
         return WorkoutRouteMapState.censoredValue(censoredValue)
       }
       .eraseToAnyPublisher()
 
     let initialState: WorkoutRouteMapViewModelOutput = Just(.idle).eraseToAnyPublisher()
 
-    return initialState.merge(with: updateValue).eraseToAnyPublisher()
+    return initialState.merge(with: updateValue, region).eraseToAnyPublisher()
   }
 }
