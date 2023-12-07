@@ -10,6 +10,8 @@ import Combine
 import CombineExtension
 import DesignSystem
 import UIKit
+import CommonNetworkingKeyManager
+import Keychain
 
 // MARK: - WorkoutPeerRandomMatchingViewController
 
@@ -68,6 +70,16 @@ final class WorkoutPeerRandomMatchingViewController: UIViewController {
   init(viewModel: WorkoutPeerRandomMatchingViewModelRepresentable) {
     self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
+    
+    let accessToken = """
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkNWNkN2I2Ni03ZWU2LTQ0NTMtYTczZS0wMjYxMjY4NjFlOTYiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzAxOTUyOTQyLCJleHAiOjE3MDE5NTY1NDJ9.le8qmFpUwJa6orbhz4qOthKFDouqJiCLX-jHIM6D7vA
+""".data(using: .utf8)!
+    Keychain.shared.save(key: Tokens.accessToken, data: accessToken)
+    
+    let refreshToken = """
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkNWNkN2I2Ni03ZWU2LTQ0NTMtYTczZS0wMjYxMjY4NjFlOTYiLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTcwMTk1Mjk0MiwiZXhwIjoxNzAyMDM5MzQyfQ.rlcvAGhVojV_iZQ2Lt61uhFcu-af0mTpm7S8VSmGkw8
+""".data(using: .utf8)!
+    Keychain.shared.save(key: Tokens.accessToken, data: accessToken)
   }
 
   @available(*, unavailable)
