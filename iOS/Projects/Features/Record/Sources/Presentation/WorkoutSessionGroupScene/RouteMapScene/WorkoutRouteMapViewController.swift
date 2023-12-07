@@ -19,6 +19,8 @@ import UIKit
 protocol LocationTrackingProtocol: UIViewController {
   /// 위치 정보를 제공하는 Publisher
   var locationPublisher: AnyPublisher<[CLLocation], Never> { get }
+
+  func mapScreenshotData() -> AnyPublisher<Data?, Never>
 }
 
 // MARK: - WorkoutRouteMapViewController
@@ -31,7 +33,7 @@ final class WorkoutRouteMapViewController: UIViewController {
   /// 사용자 위치 추적 배열
   @Published private var locations: [CLLocation] = []
 
-  private let mapCaptureDataSubject: PassthroughSubject<Data, Never> = .init()
+  private let mapCaptureDataSubject: PassthroughSubject<Data?, Never> = .init()
   private let mapSnapshotterImageDataSubject: PassthroughSubject<[CLLocation], Never> = .init()
 
   private let kalmanFilterShouldUpdatePositionSubject: PassthroughSubject<KalmanFilterUpdateRequireElement, Never> = .init()
@@ -145,14 +147,34 @@ final class WorkoutRouteMapViewController: UIViewController {
     switch state {
     case .idle:
       break
-    case let .snapshotRegion(region):
-      setupSnapshotter(using: region)
+    case let .snapshotRegion(region): createMapSnapshot(with: region)
     case let .censoredValue(value): updatePolyLine(value)
     }
   }
 
-  private func setupSnapshotter(using regionModel: MapRegion) {
+  private func createMapSnapshot(with regionData: MapRegion) {
+    // 맵 가운데 초점 설정
+    let center = CLLocationCoordinate2D(
+      latitude: (regionData.minLatitude + regionData.maxLatitude) / 2,
+      longitude: (regionData.minLongitude + regionData.maxLongitude) / 2
+    )
 
+    let span = MKCoordinateSpan(
+      latitudeDelta: regionData.maxLatitude - regionData.minLatitude,
+      longitudeDelta: regionData.maxLongitude - regionData.minLongitude
+    )
+
+    let region = MKCoordinateRegion(center: center, span: span)
+
+    let options = MKMapSnapshotter.Options()
+    options.region = region
+    options.size = mapView.frame.size
+
+    let snapshotter = MKMapSnapshotter(options: options)
+    snapshotter.start { [weak self] snapshot, _ in
+      // 스냅샷 이미지를 png데이터로 전달
+      self?.mapCaptureDataSubject.send(snapshot?.image.pngData())
+    }
   }
 
   private func updatePolyLine(_ value: KalmanFilterCensored?) {
@@ -186,6 +208,11 @@ final class WorkoutRouteMapViewController: UIViewController {
 // MARK: LocationTrackingProtocol
 
 extension WorkoutRouteMapViewController: LocationTrackingProtocol {
+  func mapScreenshotData() -> AnyPublisher<Data?, Never> {
+    mapSnapshotterImageDataSubject.send(locations)
+    return mapCaptureDataSubject.eraseToAnyPublisher()
+  }
+
   var locationPublisher: AnyPublisher<[CLLocation], Never> {
     $locations.eraseToAnyPublisher()
   }
