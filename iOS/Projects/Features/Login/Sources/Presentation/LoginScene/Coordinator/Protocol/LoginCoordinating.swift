@@ -1,5 +1,5 @@
 //
-//  LoginFeatureCoordinating.swift
+//  LoginCoordinating.swift
 //  LoginFeature
 //
 //  Created by 안종표 on 12/7/23.
@@ -9,6 +9,4 @@
 import Coordinator
 import Foundation
 
-protocol LoginFeatureCoordinating: Coordinating {
-  func showLoginFlow()
-}
+protocol LoginCoordinating: Coordinating {}

@@ -23,14 +23,14 @@ public final class LoginFeatureCoordinator: LoginFeatureCoordinating {
   }
 
   public func start() {
-    let authorizeUseCase = AuthorizeUseCase(
-      authorizationRepository: AuthorizationRepository(session: URLSession.shared),
-      keychainRepository: KeychainRepository(keychain: Keychain.shared)
-    )
-    let loginViewModel = LoginViewModel(authorizeUseCase: authorizeUseCase)
-    let viewController = LoginViewController(viewModel: loginViewModel)
+    showLoginFlow()
+  }
 
-    navigationController.pushViewController(viewController, animated: false)
+  func showLoginFlow() {
+    let coordinator = LoginCoordinator(navigationController: navigationController)
+    childCoordinators.append(coordinator)
+    coordinator.finishDelegate = self
+    coordinator.start()
   }
 }
 
