@@ -36,12 +36,17 @@ protocol WorkoutRouteMapViewModelRepresentable {
 final class WorkoutRouteMapViewModel {
   // MARK: - Properties
 
-  var kalmanUseCase: KalmanUseCaseRepresentable
+  private let kalmanUseCase: KalmanUseCaseRepresentable
+  private let locationPathUseCase: LocationPathUseCaseRepresentable
 
   private var subscriptions: Set<AnyCancellable> = []
 
-  init(kalmanUseCase: KalmanUseCaseRepresentable) {
+  init(
+    kalmanUseCase: KalmanUseCaseRepresentable,
+    locationPathUseCase: LocationPathUseCaseRepresentable
+  ) {
     self.kalmanUseCase = kalmanUseCase
+    self.locationPathUseCase = locationPathUseCase
   }
 }
 
