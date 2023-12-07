@@ -31,11 +31,9 @@ struct MapImageUploadRepository: MapImageUploadRepositoryRepresentable {
         }
       }
     }
-    .print()
     .decode(type: GWResponse<ImageModel>.self, decoder: JSONDecoder())
     .compactMap(\.data)
     .map(\.imageURL)
-    .print()
     .eraseToAnyPublisher()
   }
 }
