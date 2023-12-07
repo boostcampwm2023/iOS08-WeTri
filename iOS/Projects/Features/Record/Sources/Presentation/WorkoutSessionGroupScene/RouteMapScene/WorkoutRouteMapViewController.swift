@@ -127,14 +127,16 @@ final class WorkoutRouteMapViewController: UIViewController {
 
     viewModel
       .transform(input: input)
-      .sink { [weak self] state in
-        switch state {
-        case .idle:
-          break
-        case let .censoredValue(value): self?.updatePolyLine(value)
-        }
-      }
+      .sink(receiveValue: render(state:))
       .store(in: &subscriptions)
+  }
+
+  private func render(state: WorkoutRouteMapState) {
+    switch state {
+    case .idle:
+      break
+    case let .censoredValue(value): updatePolyLine(value)
+    }
   }
 
   func updatePolyLine(_ value: KalmanFilterCensored?) {
