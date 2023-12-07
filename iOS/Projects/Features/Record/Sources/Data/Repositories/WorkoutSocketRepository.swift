@@ -7,11 +7,11 @@
 //
 
 import Combine
+import CommonNetworkingKeyManager
 import Foundation
+import Keychain
 import Log
 import Trinet
-import CommonNetworkingKeyManager
-import Keychain
 
 // MARK: - WorkoutSocketRepositoryDependency
 
@@ -34,7 +34,7 @@ struct WorkoutSocketRepository {
       session: session,
       endPoint: .init(headers: [
         .init(key: "roomId", value: dependency.roomID),
-        .authorization(bearer: String(data: Keychain.shared.load(key: Tokens.accessToken)!, encoding: .utf8)!)
+        .authorization(bearer: String(data: Keychain.shared.load(key: Tokens.accessToken)!, encoding: .utf8)!),
       ])
     )
     task = receiveParticipantsData()
@@ -42,9 +42,23 @@ struct WorkoutSocketRepository {
 
   private func stringToWorkoutRealTimeModel(rawString: String) throws -> WorkoutRealTimeModel {
     guard let jsonData = rawString.data(using: .utf8) else {
+      Log.make().debug("StringToWorkoutRealTimeModel에서 Decode에러 ")
       throw WorkoutSocketRepositoryError.invalidStringForConversion
     }
-    return try jsonDecoder.decode(WorkoutRealTimeModel.self, from: jsonData)
+    guard let workoutSessionModel = try? jsonDecoder.decode(WorkoutSession.self, from: jsonData) else {
+      Log.make().debug("StringToWorkoutRealTimeModel에서 Decode에러 ")
+      throw WorkoutSocketRepositoryError.invalidStringForConversion
+    }
+    return .init(
+      id: workoutSessionModel.data.id,
+      roomID: workoutSessionModel.data.roomID,
+      nickname: workoutSessionModel.data.nickname,
+      health: .init(
+        distance: workoutSessionModel.data.health.distance,
+        calories: workoutSessionModel.data.health.calories,
+        heartRate: nil
+      )
+    )
   }
 
   private func receiveParticipantsData() -> Task<Void, Error> {
@@ -54,7 +68,7 @@ struct WorkoutSocketRepository {
         do {
           switch try await provider.receive() {
           case let .string(string):
-            Log.make(with: .network).debug("received \(string)")
+            Log.make(with: .network).debug("소켓: received \(string)")
             try subject.send(stringToWorkoutRealTimeModel(rawString: string))
           default:
             Log.make().error("소켓: You can't enter this line")

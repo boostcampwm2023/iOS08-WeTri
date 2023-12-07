@@ -163,7 +163,7 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
     Log.make().debug("\(startDate)")
 
     let workoutSessionComponents = WorkoutSessionComponents(
-      participants: [sessionPeerTypeOfMe] + peers,
+      participants: peers,
       startDate: startDate,
       roomID: roomID,
       id: id,

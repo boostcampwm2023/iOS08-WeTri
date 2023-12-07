@@ -64,6 +64,7 @@ public final class WorkoutSessionViewController: UIViewController {
   init(viewModel: WorkoutSessionViewModelRepresentable, dependency: WorkoutSessionViewControllerDependency) {
     self.viewModel = viewModel
     for participant in dependency.participants {
+      Log.make().debug("사람 id는 \(participant.id), nickName: \(participant.nickname)")
       userInfoByID[participant.id] = participant
       realTimeModelByID[participant.id] = .init(distance: 0, calories: 0, heartRate: 0)
     }
@@ -132,8 +133,11 @@ public final class WorkoutSessionViewController: UIViewController {
           Log.make().debug("\(model)")
           self?.realTimeModelByID[model.id] = model.health
           var snapshot = self?.participantsDataSource?.snapshot()
+
           snapshot?.reconfigureItems([model.id])
           if let snapshot {
+            let temp = snapshot.itemIdentifiers
+            Log.make().debug("현재 snpahot의 아이템은 다음과 같습니다. \(temp)")
             self?.participantsDataSource?.apply(snapshot)
           } else {
             Log.make().error("snapshot이 생성되지 못했습니다. 헬스 데이터로 UI를 그리지 못합니다.")
