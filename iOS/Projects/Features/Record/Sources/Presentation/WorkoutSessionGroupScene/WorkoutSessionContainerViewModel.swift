@@ -16,6 +16,7 @@ import Log
 
 protocol WorkoutSessionViewModelDependency {
   var startDate: Date { get }
+  var workoutTypeCode: WorkoutType { get }
 }
 
 // MARK: - WorkoutSessionContainerViewModelInput
@@ -89,10 +90,7 @@ extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepr
       .catch { _ in Just(URL(string: "https://gblafytgdduy20857289.cdn.ntruss.com/30ab314b-a59a-44c8-b9c5-44d94b4542f0.png")!) }
       .eraseToAnyPublisher()
 
-    let recordPublisher = input.endWorkoutPublisher
-      .combineLatest(mapURLPublisher) { _, url -> URL in
-        return url
-      }
+    let recordPublisher = mapURLPublisher
       .withLatestFrom(input.locationPublisher) {
         return (url: $0, locations: $1.map { LocationDTO(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) })
       }
@@ -102,6 +100,7 @@ extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepr
           distance: Int(health.distance?.rounded(.toNearestOrAwayFromZero) ?? 0),
           calorie: Int(health.calorie?.rounded(.toNearestOrAwayFromZero) ?? 0),
           imageURL: tuple.url,
+          workoutID: dependency.workoutTypeCode.typeCode,
           locations: tuple.locations.map(\.description).joined(separator: ","),
           averageHeartRate: Int(health.averageHeartRate?.rounded(.toNearestOrAwayFromZero) ?? 0),
           minimumHeartRate: Int(health.minimumHeartRate?.rounded(.toNearestOrAwayFromZero) ?? 0),
