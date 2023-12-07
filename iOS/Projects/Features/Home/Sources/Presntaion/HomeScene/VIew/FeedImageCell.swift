@@ -24,7 +24,7 @@ final class FeedImageCell: UICollectionViewCell {
     fatalError("cant use this init")
   }
 
-  func setupViewHierarchyAndConstraints() {
+  private func setupViewHierarchyAndConstraints() {
     contentView.addSubview(feedImage)
     feedImage.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
     feedImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true

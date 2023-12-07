@@ -243,28 +243,10 @@ private extension FeedItemCollectionViewCell {
     }
   }
 
-  func setupInitImageData() {
-    guard let dataSource else {
-      return
-    }
-    var snapShot = dataSource.snapshot()
-    snapShot.appendSections([1])
-    snapShot.appendItems(
-      [
-        URL(string: "https://i.ytimg.com/vi/YCaGYUIfdy4/maxresdefault.jpg")!,
-        URL(string: "https://www.cats.org.uk/uploads/images/featurebox_sidebar_kids/grief-and-loss.jpg")!,
-        URL(string: "https://www.telegraph.co.uk/content/dam/pets/2017/01/06/1-JS117202740-yana-two-face-cat-news_trans_NvBQzQNjv4BqJNqHJA5DVIMqgv_1zKR2kxRY9bnFVTp4QZlQjJfe6H0.jpg?imwidth=450")!,
-      ],
-      toSection: 1
-    )
-    dataSource.apply(snapShot)
-  }
-
   func setup() {
     setStyle()
     setupViewHierarchyAndConstraints()
     setupImagesDataSource()
-    setupInitImageData()
   }
 
   func setStyle() {
