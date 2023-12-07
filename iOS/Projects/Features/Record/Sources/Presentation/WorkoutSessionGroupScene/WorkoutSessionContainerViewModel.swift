@@ -52,6 +52,8 @@ final class WorkoutSessionContainerViewModel {
 
   private let workoutRecordUseCase: WorkoutRecordUseCaseRepresentable
 
+  private let imageUploadUseCase: MapImageUploadUseCaseRepresentable
+
   private weak var coordinating: WorkoutSessionCoordinating?
 
   private let dependency: WorkoutSessionViewModelDependency
@@ -59,10 +61,12 @@ final class WorkoutSessionContainerViewModel {
   init(
     workoutRecordUseCase: WorkoutRecordUseCaseRepresentable,
     oneSecondsTimerUseCase: OneSecondsTimerUseCaseRepresentable,
+    imageUploadUseCase: MapImageUploadUseCaseRepresentable,
     coordinating: WorkoutSessionCoordinating,
     dependency: WorkoutSessionViewModelDependency
   ) {
     self.workoutRecordUseCase = workoutRecordUseCase
+    self.imageUploadUseCase = imageUploadUseCase
     self.coordinating = coordinating
     self.dependency = dependency
     self.oneSecondsTimerUseCase = oneSecondsTimerUseCase

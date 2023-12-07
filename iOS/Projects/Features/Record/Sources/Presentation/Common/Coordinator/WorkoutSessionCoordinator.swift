@@ -106,8 +106,6 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
   }
 
   func pushWorkoutSession() {
-    let oneSecondsTimerUseCase = OneSecondsTimerUseCase(initDate: .now)
-
     guard let jsonPath = Bundle(for: Self.self).path(forResource: "WorkoutSession", ofType: "json"),
           let jsonData = try? Data(contentsOf: .init(filePath: jsonPath))
     else {
@@ -137,9 +135,12 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
     let session: URLSessionProtocol = isMockEnvironment ? MockURLSession(mockData: jsonData) : URLSession.shared
     let repository = WorkoutRecordRepository(session: session)
     let useCase = WorkoutRecordUseCase(repository: repository)
+    let oneSecondsTimerUseCase = OneSecondsTimerUseCase(initDate: .now)
+    let uploadUseCase = MapImageUploadUseCase()
     let viewModel = WorkoutSessionContainerViewModel(
       workoutRecordUseCase: useCase,
       oneSecondsTimerUseCase: oneSecondsTimerUseCase,
+      imageUploadUseCase: uploadUseCase,
       coordinating: self,
       dependency: workoutSessionComponents
     )
