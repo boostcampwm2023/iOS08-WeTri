@@ -48,6 +48,10 @@ public final class ProfileViewController: UICollectionViewController {
     viewDidLoadSubject.send(())
   }
 
+  override public func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+  }
+
   // MARK: Configurations
 
   private func setupLayouts() {
@@ -56,6 +60,7 @@ public final class ProfileViewController: UICollectionViewController {
 
   private func setupStyles() {
     collectionView.backgroundColor = DesignSystemColor.primaryBackground
+    navigationItem.backButtonDisplayMode = .minimal
     navigationItem.rightBarButtonItem = .init(
       image: .init(systemName: "gearshape"),
       style: .plain,

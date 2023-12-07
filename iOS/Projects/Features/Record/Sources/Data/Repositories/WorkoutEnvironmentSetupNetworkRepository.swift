@@ -78,16 +78,6 @@ private extension WorkoutEnvironmentSetupNetworkRepository {
     case exerciseTypes
     case peer
 
-    // TODO: API에 맞게 수정 예정
-    var baseURL: String {
-      switch self {
-      case .exerciseTypes:
-        return "https://www.naver.com"
-      case .peer:
-        return "https://www.naver.com"
-      }
-    }
-
     var path: String {
       switch self {
       case .exerciseTypes:
@@ -100,7 +90,7 @@ private extension WorkoutEnvironmentSetupNetworkRepository {
     var method: TNMethod { return .get }
     var query: Encodable? { nil }
     var body: Encodable? { nil }
-    var headers: Trinet.TNHeaders { .init(headers: []) }
+    var headers: TNHeaders { .default }
   }
 
   enum PersistencyProperty {
