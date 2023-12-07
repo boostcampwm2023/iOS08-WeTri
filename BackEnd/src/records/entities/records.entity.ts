@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { Post } from '../../posts/entities/posts.entity';
 import { Profile } from '../../profiles/entities/profiles.entity';
-import { IsNumber } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Workout } from '../../workouts/entities/workout.entity';
 
@@ -76,6 +76,22 @@ export class Record {
   })
   @CreateDateColumn()
   createdAt: Date;
+
+  @ApiProperty({
+    example: 'https://www.naver.com',
+    description: 'map capture을 의미합니다.',
+  })
+  @IsString()
+  @Column()
+  mapCapture: string;
+
+  @ApiProperty({
+    example: '1420/1234, 532/214, .....',
+    description: '운동 기록 생성 날짜',
+  })
+  @IsString()
+  @Column()
+  gps: string;
 
   @Column({ default: false })
   isPosted: boolean;

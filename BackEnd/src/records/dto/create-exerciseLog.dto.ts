@@ -9,6 +9,8 @@ export class CreateExerciseLogDto extends PickType(Record, [
   'avgHeartRate',
   'maxHeartRate',
   'minHeartRate',
+  'mapCapture',
+  'gps'
 ]) {
   @ApiProperty({
     example: 1,
