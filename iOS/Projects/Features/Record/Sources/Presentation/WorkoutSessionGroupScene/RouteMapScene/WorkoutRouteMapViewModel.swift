@@ -36,12 +36,12 @@ protocol WorkoutRouteMapViewModelRepresentable {
 final class WorkoutRouteMapViewModel {
   // MARK: - Properties
 
-  var useCase: KalmanUseCaseRepresentable
+  var kalmanUseCase: KalmanUseCaseRepresentable
 
   private var subscriptions: Set<AnyCancellable> = []
 
-  init(useCase: KalmanUseCaseRepresentable) {
-    self.useCase = useCase
+  init(kalmanUseCase: KalmanUseCaseRepresentable) {
+    self.kalmanUseCase = kalmanUseCase
   }
 }
 
@@ -54,16 +54,16 @@ extension WorkoutRouteMapViewModel: WorkoutRouteMapViewModelRepresentable {
     input
       .filterShouldUpdateHeadingPublisher
       .dropFirst(4)
-      .sink { [useCase] value in
-        useCase.updateHeading(value)
+      .sink { [kalmanUseCase] value in
+        kalmanUseCase.updateHeading(value)
       }
       .store(in: &subscriptions)
 
     let updateValue: WorkoutRouteMapViewModelOutput = input
       .filterShouldUpdatePositionPublisher
       .dropFirst(4)
-      .map { [useCase] element in
-        let censoredValue = useCase.updateFilter(element)
+      .map { [kalmanUseCase] element in
+        let censoredValue = kalmanUseCase.updateFilter(element)
         return WorkoutRouteMapState.censoredValue(censoredValue)
       }
       .eraseToAnyPublisher()
