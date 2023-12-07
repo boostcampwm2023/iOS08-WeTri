@@ -19,8 +19,6 @@ public protocol ImageTransmitUseCaseRepresentable {
 // MARK: - ImageTransmitUseCase
 
 public final class ImageTransmitUseCase: ImageTransmitUseCaseRepresentable {
-  private var subscriptions: Set<AnyCancellable> = []
-
   private let imageFormRepository: ImageFormRepositoryRepresentable
 
   public init(imageFormRepository: ImageFormRepositoryRepresentable) {
