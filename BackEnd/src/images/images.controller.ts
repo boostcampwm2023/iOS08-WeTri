@@ -15,7 +15,7 @@ import { ImagesService } from './images.service';
 import { MAX_IMAGE_SIZE } from './constant/images.constant';
 import { ValidateFilesPipe } from './pipe/validate-files.pip';
 import { ImageRequestDto, ImageResponseDto } from './dto/images.response';
-import { FilesInterceptor } from "@nestjs/platform-express";
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('이미지 업로드 API')
 @Controller('api/v1/images')

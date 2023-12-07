@@ -1,5 +1,15 @@
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
-import { BaseEntity, FindManyOptions, QueryBuilder, Repository, SelectQueryBuilder } from 'typeorm';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
+import {
+  BaseEntity,
+  FindManyOptions,
+  QueryBuilder,
+  Repository,
+  SelectQueryBuilder,
+} from 'typeorm';
 import { BasePaginationDto } from './dto/base-pagination.dto';
 import { ORM_OPERATION } from './const/orm-operation.const';
 import { BaseModel } from './type/base-model.type';
@@ -38,7 +48,7 @@ export class CommonService {
         },
       };
     } catch (error) {
-      Logger.error(`쿼리 실행 중 오류: ${error.message}`, {error});
+      Logger.error(`쿼리 실행 중 오류: ${error.message}`, { error });
       throw new InternalServerErrorException();
     }
   }
