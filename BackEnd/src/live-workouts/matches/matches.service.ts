@@ -16,7 +16,6 @@ import {
   ALONE_USER,
   MATCHING_DELAY,
   UTC_REMOVE_TIME,
-  MATCHES_API_TIME_OUT,
 } from './constant/matches.constant';
 
 @Injectable()
@@ -104,7 +103,7 @@ export class MatchesService {
 
     const liveWorkoutStartTime = new Date();
     liveWorkoutStartTime.setSeconds(
-        liveWorkoutStartTime.getSeconds() + 15,
+        liveWorkoutStartTime.getSeconds() + MATCHING_DELAY,
     );
     const kstTime = new Date(liveWorkoutStartTime.getTime() + (9 * 60 * 60 * 1000));
     const liveWorkoutStartTimeUTC = kstTime.toISOString()
@@ -114,15 +113,12 @@ export class MatchesService {
 
     const multi = this.redis.multi();
     for (const { publicId } of profiles) {
-      multi.set(`userMatch:${publicId}`, roomId, 'EX', MATCHES_API_TIME_OUT);
+      multi.set(`userMatch:${publicId}`, roomId);
     }
 
     multi.set(
       `matchProfiles:${roomId}`,
-      JSON.stringify(profiles),
-      'EX',
-      MATCHES_API_TIME_OUT,
-    );
+      JSON.stringify(profiles),);
     multi.set(
       `matchStartTime:${roomId}`,
       liveWorkoutStartTimeUTC,
