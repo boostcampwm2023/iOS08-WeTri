@@ -22,6 +22,10 @@ export class RandomMatch {
   matched: boolean;
 
   @IsString()
+  @ApiProperty({ example: 'uuid' })
+  myPublicId?: string;
+
+  @IsString()
   @ApiProperty({ example: 'yyyy-mm-dd hh:mm:ss' })
   liveWorkoutStartTime?: string;
 
