@@ -8,7 +8,7 @@ import { Repository } from 'typeorm';
 import { Record } from '../records/entities/records.entity';
 import { Profile } from '../profiles/entities/profiles.entity';
 import { ExistPostException, NotFoundPostException } from './exceptions/posts.exception';
-import { post, postInfo, posts, profile, query, updatePostInfo, updateResult, updatedPaginatePost } from './mocks/mocks';
+import { post, postInfo, posts, profile, query, updatePostInfo, updateResult, updatedPost } from './mocks/mocks';
 
 describe('postsService', () => {
     let service: PostsService;
@@ -120,10 +120,10 @@ describe('postsService', () => {
         it('update된 post 반환', async () => {
             jest.spyOn(service, 'findOneById').mockResolvedValue(post);
             jest.spyOn(repository, 'update').mockResolvedValue(updateResult);
-            jest.spyOn(service, 'findOneById').mockResolvedValue(updatedPaginatePost);
+            jest.spyOn(service, 'findOneById').mockResolvedValue(updatedPost);
 
-            const result = await service.updatePost(updatedPaginatePost.id, updatePostInfo);
-            expect(result).toEqual(updatedPaginatePost);
+            const result = await service.updatePost(updatedPost.id, updatePostInfo);
+            expect(result).toEqual(updatedPost);
         })
     })
 });

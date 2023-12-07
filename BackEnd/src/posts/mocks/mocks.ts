@@ -4,7 +4,6 @@ import { CreatePostDto } from "../dto/create-post.dto";
 import { PostDto, PostsPaginateResDto } from "../dto/get-posts-response.dto";
 import { PaginatePostDto } from "../dto/paginate-post.dto";
 import { UpdatePostDto } from "../dto/update-post.dto";
-import { Post } from "../entities/posts.entity";
 
 export const postInfo: CreatePostDto = {
     content: 'test content',
@@ -52,7 +51,7 @@ export const post: PostDto = {
 };
 export const updateResult: UpdateResult = { generatedMaps: [], raw: [], affected: 1 };
 
-export const updatedPaginatePost: PostDto = {
+export const updatedPost: PostDto = {
     id: 5,
     publicId: profile.publicId,
     content: updatePostInfo.content,
