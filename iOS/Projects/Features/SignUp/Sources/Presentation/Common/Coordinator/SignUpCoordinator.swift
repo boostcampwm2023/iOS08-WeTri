@@ -18,7 +18,7 @@ final class SignUpCoordinator: SignUpCoordinating {
   weak var finishDelegate: CoordinatorFinishDelegate?
   var flow: CoordinatorFlow = .signup
 
-  private let userBit: NewUserInformation
+  private let newUserInformation: NewUserInformation
 
   private let isMockEnvironment: Bool
 
@@ -29,7 +29,7 @@ final class SignUpCoordinator: SignUpCoordinating {
   ) {
     self.navigationController = navigationController
     self.isMockEnvironment = isMockEnvironment
-    self.userBit = userBit
+    newUserInformation = userBit
   }
 
   func start() {
@@ -71,7 +71,7 @@ final class SignUpCoordinator: SignUpCoordinating {
       nickNameCheckUseCase: nickNameCheckUseCase,
       imageTransmitUseCase: imageTransmitUseCase,
       signUpUseCase: signUpUseCase,
-      userBit: userBit
+      newUserInformation: newUserInformation
     )
 
     let signUpProfileViewController = SignUpProfileViewController(viewModel: signUpProfileViewModel)

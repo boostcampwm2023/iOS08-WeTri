@@ -54,8 +54,18 @@ extension LoginFeatureCoordinator: CoordinatorFinishDelegate {
 
 extension LoginFeatureCoordinator: LoginDidFinishedDelegate {
   func loginCoordinatorDidFinished(initialUser: InitialUser?, token: Token?) {
-    // TODO: Login시, User가 처음이라면 해당 데이터 갖고 SignUpModule로 넘어가야됨.
-    if let initialUser {}
+    if let initialUser {
+      let coordinator = SignUpFeatureCoordinator(
+        navigationController: navigationController,
+        newUserInformation: NewUserInformation(
+          mappedUserID: initialUser.mappedUserID,
+          provider: .apple
+        )
+      )
+      childCoordinators.append(coordinator)
+      coordinator.finishDelegate = self
+      coordinator.showSignUpFlow()
+    }
 
     // TODO: User가 처음이 아니라면 토큰이 존재한다 해당 토큰 갖고 TabBar로 넘어가야됨.
     if let token {}

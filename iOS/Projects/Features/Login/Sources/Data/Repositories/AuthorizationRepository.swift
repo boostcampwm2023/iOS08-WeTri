@@ -40,10 +40,11 @@ struct AuthorizationRepository: AuthorizationRepositoryRepresentable {
           let authorizationInfoRequestDTO = AuthorizationInfoRequestDTO(identityToken: token, authorizationCode: authorizationCode)
 
           let data = try await provider.request(.signIn(authorizationInfoRequestDTO))
-
+          Log.make().debug("\(data)")
           guard let responseCode = try decoder.decode(Response.self, from: data).code else {
             return
           }
+          Log.make().debug("\(responseCode)")
           switch responseCode {
           case AuthorizationRepositoryResponseCode.token.code:
             let token = try decoder.decode(GWResponse<Token>.self, from: data).data

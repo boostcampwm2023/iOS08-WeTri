@@ -34,7 +34,7 @@ final class LoginCoordinator: LoginCoordinating {
 
   func start() {
     guard let jsonPath = isMockFirst ?
-      Bundle(for: Self.self).path(forResource: "Token", ofType: "json") : Bundle(for: Self.self).path(forResource: "InitialUser", ofType: "json"),
+      Bundle(for: Self.self).path(forResource: "InitialUser", ofType: "json") : Bundle(for: Self.self).path(forResource: "Token", ofType: "json"),
       let jsonData = try? Data(contentsOf: .init(filePath: jsonPath))
     else {
       Log.make().error("Login Mock 데이터를 생성할 수 없습니다.")

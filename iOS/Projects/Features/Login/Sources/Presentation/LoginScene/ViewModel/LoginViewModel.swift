@@ -51,13 +51,13 @@ extension LoginViewModel: LoginViewModelRepresentable {
     input.credential
       .flatMap(authorizeUseCase.authorize(authorizationInfo:))
       .sink(receiveValue: { [weak self] loginResponse in
-
         if let token = loginResponse.token {
           guard let accessToken = token.accessToken,
                 let refreshToken = token.refreshToken
           else {
             return
           }
+          Log.make().debug("\(accessToken)")
           self?.authorizeUseCase.accessTokenSave(accessToken)
           self?.authorizeUseCase.refreshTokenSave(refreshToken)
           self?.coordinator.finish(initialUser: nil, token: token)

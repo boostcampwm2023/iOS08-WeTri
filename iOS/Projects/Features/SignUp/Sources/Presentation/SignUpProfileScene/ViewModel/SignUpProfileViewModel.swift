@@ -42,18 +42,18 @@ public final class SignUpProfileViewModel {
   private let imageTransmitUseCase: ImageTransmitUseCaseRepresentable
   private let signUpUseCase: SignUpUseCaseRepresentable
 
-  private let userBit: NewUserInformation
+  private let newUserInformation: NewUserInformation
 
   public init(
     nickNameCheckUseCase: NickNameCheckUseCaseRepresentable,
     imageTransmitUseCase: ImageTransmitUseCaseRepresentable,
     signUpUseCase: SignUpUseCaseRepresentable,
-    userBit: NewUserInformation
+    newUserInformation: NewUserInformation
   ) {
     self.nickNameCheckUseCase = nickNameCheckUseCase
     self.imageTransmitUseCase = imageTransmitUseCase
     self.signUpUseCase = signUpUseCase
-    self.userBit = userBit
+    self.newUserInformation = newUserInformation
   }
 }
 
@@ -120,7 +120,7 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
     Publishers
       .CombineLatest3(imageFormSubject.eraseToAnyPublisher(), nickNameSubject.eraseToAnyPublisher(), input.genderBirth)
       .sink { [weak self] imageForm, nickName, genderBirth in
-        guard let userBit = self?.userBit else {
+        guard let userBit = self?.newUserInformation else {
           return
         }
         let signUpUser = SignUpUser(
