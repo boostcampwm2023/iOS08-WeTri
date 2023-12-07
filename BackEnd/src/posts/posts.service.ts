@@ -13,6 +13,7 @@ import { PaginatePostDto } from './dto/paginate-post.dto';
 import { CommonService } from '../common/common.service';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { getCreateUpdateQueryOptions } from './queryOptions/get-create-update.queryOptions';
+import { PostDto, PostsPaginateResDto } from './dto/get-posts-response.dto';
 
 @Injectable()
 export class PostsService {
@@ -23,7 +24,10 @@ export class PostsService {
     private readonly commonService: CommonService,
   ) {}
 
-  async createPost(postInfo: CreatePostDto, profile: Profile) {
+  async createPost(
+    postInfo: CreatePostDto,
+    profile: Profile,
+  ): Promise<PostDto> {
     const record = await this.recordService.findById(postInfo.recordId);
     if (record.isPosted) {
       throw new ExistPostException();
@@ -39,7 +43,7 @@ export class PostsService {
     return await this.findOneById(post.id);
   }
 
-  async paginatePosts(query: PaginatePostDto) {
+  async paginatePosts(query: PaginatePostDto): Promise<PostsPaginateResDto> {
     return await this.commonService.paginate<Post>(
       query,
       this.postsRepository,
@@ -47,8 +51,8 @@ export class PostsService {
     );
   }
 
-  async findOneById(id: number) {
-    const queryBuilder = this.commonService.makeQueryBuilder(
+  async findOneById(id: number): Promise<PostDto> {
+    const queryBuilder = this.commonService.makeQueryBuilder<Post>(
       this.postsRepository,
       getCreateUpdateQueryOptions,
       { where: { id } },
@@ -60,7 +64,10 @@ export class PostsService {
     return post;
   }
 
-  async paginateUserPosts(publicId: string, query: PaginatePostDto) {
+  async paginateUserPosts(
+    publicId: string,
+    query: PaginatePostDto,
+  ): Promise<PostsPaginateResDto> {
     return await this.commonService.paginate<Post>(
       query,
       this.postsRepository,
@@ -69,7 +76,10 @@ export class PostsService {
     );
   }
 
-  async updatePost(id: number, updatePostInfo: UpdatePostDto) {
+  async updatePost(
+    id: number,
+    updatePostInfo: UpdatePostDto,
+  ): Promise<PostDto> {
     await this.findOneById(id);
     await this.postsRepository.update(id, updatePostInfo);
     return await this.findOneById(id);
