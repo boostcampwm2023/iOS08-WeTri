@@ -80,24 +80,25 @@ extension SignUpGenderBirthViewModel: SignUpGenderBirthViewModelRepresentable {
       .store(in: &subscriptions)
 
     let success = confirmSelected
-      .tryMap {
+      .flatMap { _ -> SignUpGenderBirthViewModelOutput in
         guard isGenderSelected && isBirthSelected else {
-          throw SignUpGenderBirthViewModelError.eitherNotSelected
+          return Just(.customError(SignUpGenderBirthViewModelError.eitherNotSelected))
+            .eraseToAnyPublisher()
         }
         guard let gender,
               let birth
         else {
-          throw SignUpGenderBirthViewModelError.invalidBinding
+          return Just(.customError(SignUpGenderBirthViewModelError.invalidBinding))
+            .eraseToAnyPublisher()
         }
-        return SignUpGenderBirthState.success(
-          GenderBirth(
-            gender: gender,
-            birth: birth
-          )
-        )
+        Log.make().debug("\(gender.rawValue)")
+        Log.make().debug("\(birth)")
+        return Just(.success(.init(
+          gender: gender,
+          birth: birth
+        )))
+        .eraseToAnyPublisher()
       }
-      .catch { Just(.customError($0)) }
-      .eraseToAnyPublisher()
 
     let initialState: SignUpGenderBirthViewModelOutput = Just(.idle)
       .eraseToAnyPublisher()

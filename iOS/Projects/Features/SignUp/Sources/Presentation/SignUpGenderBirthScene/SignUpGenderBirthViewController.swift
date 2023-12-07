@@ -250,10 +250,12 @@ private extension SignUpGenderBirthViewController {
     )
     let output = viewModel.transform(input: input)
 
-    output.sink { [weak self] state in
-      self?.render(state: state)
-    }
-    .store(in: &subscriptions)
+    output
+      .subscribe(on: DispatchQueue.main)
+      .sink { [weak self] state in
+        self?.render(state: state)
+      }
+      .store(in: &subscriptions)
   }
 
   private func render(state: SignUpGenderBirthState) {

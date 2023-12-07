@@ -10,12 +10,37 @@ import Combine
 import CombineCocoa
 import DesignSystem
 import Log
+import Photos
 import UIKit
 
 // MARK: - SignUpProfileViewController
 
 public final class SignUpProfileViewController: UIViewController {
   private var subscriptions: Set<AnyCancellable> = []
+  private let viewModel: SignUpProfileViewModelRepresentable
+
+  private let textFieldEdittingSubject = PassthroughSubject<String, Never>()
+  private let imageButtonTapSubject = PassthroughSubject<Void, Never>()
+  private let imageSetSubject = PassthroughSubject<Data, Never>()
+  private let completeButtonTapSubject = PassthroughSubject<Void, Never>()
+
+  let genderBirthSubject = PassthroughSubject<GenderBirth, Never>()
+
+  public init(viewModel: SignUpProfileViewModelRepresentable) {
+    self.viewModel = viewModel
+    super.init(nibName: nil, bundle: nil)
+  }
+
+  @available(*, unavailable)
+  required init?(coder _: NSCoder) {
+    fatalError("NO Xib")
+  }
+
+  private lazy var imagePicker: UIImagePickerController = {
+    let imagePicker = UIImagePickerController()
+    imagePicker.delegate = self
+    return imagePicker
+  }()
 
   private let titleLabel: UILabel = {
     let label = UILabel()
@@ -58,6 +83,7 @@ public final class SignUpProfileViewController: UIViewController {
     let button = UIButton(configuration: configuration)
     button.translatesAutoresizingMaskIntoConstraints = false
     button.titleLabel?.font = .preferredFont(forTextStyle: .headline, weight: .bold)
+    button.isEnabled = false
     return button
   }()
 
@@ -67,6 +93,7 @@ public final class SignUpProfileViewController: UIViewController {
     super.viewDidLoad()
     configureUI()
     bindUI()
+    bindViewModel()
   }
 }
 
@@ -119,6 +146,16 @@ private extension SignUpProfileViewController {
       completionButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -Metrics.safeAreaInterval),
     ])
   }
+
+  func nickNameEnabled() {
+    nickNameBoxView.configureEnabled()
+    nickNameCheckerView.configureEnabled()
+  }
+
+  func nickNameDisabled() {
+    nickNameBoxView.configureDisabled()
+    nickNameCheckerView.configureDisabled()
+  }
 }
 
 private extension SignUpProfileViewController {
@@ -130,14 +167,192 @@ private extension SignUpProfileViewController {
 private extension SignUpProfileViewController {
   func bindUI() {
     nickNameBoxView.nickNameDidChangedPublisher
-      .sink { _ in
-        // TODO: ViewModel로 닉네임 넘겨서 사용가능한닉인지 아닌지 받아와서 사용가능하면 true/false
-        // TODO: NickNameBoxView 사용가능, 불가능
-        // TODO: NickNameCheckerView 사용가능, 불가능
+      .subscribe(on: DispatchQueue.main)
+      .sink { [weak self] text in
+        Log.make().debug("\(text)")
+        self?.textFieldEdittingSubject.send(text)
+      }
+      .store(in: &subscriptions)
+
+    profileImageButton.publisher(.touchUpInside)
+      .sink { [weak self] _ in
+        self?.imageButtonTapSubject.send()
+      }
+      .store(in: &subscriptions)
+
+    completionButton.publisher(.touchUpInside)
+      .sink { [weak self] _ in
+        self?.completeButtonTapSubject.send()
       }
       .store(in: &subscriptions)
   }
+
+  func bindViewModel() {
+    let input = SignUpProfileViewModelInput(
+      nickNameTextFieldEditting: textFieldEdittingSubject.eraseToAnyPublisher(),
+      imageButtonTap: imageButtonTapSubject.eraseToAnyPublisher(),
+      imageSetting: imageSetSubject.eraseToAnyPublisher(),
+      completeButtonTap: completeButtonTapSubject.eraseToAnyPublisher(),
+      genderBirth: genderBirthSubject.eraseToAnyPublisher()
+    )
+    let output = viewModel.transform(input: input)
+    output
+      .subscribe(on: DispatchQueue.main)
+      .sink { [weak self] state in
+        self?.render(state: state)
+      }
+      .store(in: &subscriptions)
+  }
+
+  func render(state: SignUpProfileState) {
+    switch state {
+    case .idle:
+      break
+    case let .checking(isChecked):
+      if isChecked {
+        nickNameEnabled()
+      } else {
+        nickNameDisabled()
+      }
+    case .imageButtonTap:
+      showAlertSelect()
+    case .success:
+      completionButton.isEnabled = true
+    case .failure:
+      completionButton.isEnabled = false
+    case let .customError(error):
+      Log.make().error("\(error)")
+    default:
+      break
+    }
+  }
 }
+
+// MARK: PHPhotoLibrary
+
+private extension SignUpProfileViewController {
+  /// 버튼을 눌렀을 때, 카메라로 찍을지 앨범에서 고를지 선택하기 위한 얼럿
+  func showAlertSelect() {
+    let alertVC = UIAlertController(
+      title: "프로필 이미지 설정",
+      message: "선택해주세요.",
+      preferredStyle: .alert
+    )
+    let cameraAction = UIAlertAction(title: "카메라", style: .default) { [weak self] _ in
+      self?.cameraAuth()
+    }
+    let albumAction = UIAlertAction(title: "앨범", style: .default) { [weak self] _ in
+      self?.albumAuth()
+    }
+    alertVC.addAction(cameraAction)
+    alertVC.addAction(albumAction)
+    present(alertVC, animated: true, completion: nil)
+  }
+
+  /// 앨범 접근 권한 판별하는 함수
+  func albumAuth() {
+    switch PHPhotoLibrary.authorizationStatus() {
+    case .denied:
+      showAlertAuth("앨범")
+    case .authorized:
+      openPhotoLibrary()
+    case .notDetermined,
+         .restricted:
+      PHPhotoLibrary.requestAuthorization { [weak self] state in
+        if state == .authorized {
+          self?.openPhotoLibrary()
+        } else {
+          self?.dismiss(animated: true)
+        }
+      }
+    default:
+      break
+    }
+  }
+
+  /// 카메라 접근 권한 팔별하는 함수
+  func cameraAuth() {
+    AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
+      if granted {
+        self?.openCamera()
+      } else {
+        self?.showAlertAuth("카메라")
+      }
+    }
+  }
+
+  /// 권한을 거부했을 때 띄워주는 Alert 함수
+  func showAlertAuth(
+    _ type: String
+  ) {
+    if let appName = Bundle.main.infoDictionary!["CFBundleDisplayName"] as? String {
+      let alertVC = UIAlertController(
+        title: "설정",
+        message: "\(appName)이(가) \(type) 접근 허용되어 있지 않습니다. 설정화면으로 가시겠습니까?",
+        preferredStyle: .alert
+      )
+      let cancelAction = UIAlertAction(
+        title: "취소",
+        style: .cancel,
+        handler: nil
+      )
+      let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
+        UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:], completionHandler: nil)
+      }
+      alertVC.addAction(cancelAction)
+      alertVC.addAction(confirmAction)
+      present(alertVC, animated: true, completion: nil)
+    }
+  }
+
+  /// 아이폰에서 앨범에 접근하는 함수
+  func openPhotoLibrary() {
+    if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
+      DispatchQueue.main.async { [weak self] in
+        guard let self else {
+          return
+        }
+        imagePicker.sourceType = .photoLibrary
+        imagePicker.modalPresentationStyle = .currentContext
+        present(imagePicker, animated: true, completion: nil)
+      }
+    }
+  }
+
+  /// 아이폰에서 카메라에 접근하는 함수
+  func openCamera() {
+    if UIImagePickerController.isSourceTypeAvailable(.camera) {
+      DispatchQueue.main.async { [weak self] in
+        guard let self else {
+          return
+        }
+        imagePicker.sourceType = .camera
+        imagePicker.modalPresentationStyle = .currentContext
+        present(imagePicker, animated: true, completion: nil)
+      }
+    }
+  }
+}
+
+// MARK: UIImagePickerControllerDelegate
+
+extension SignUpProfileViewController: UIImagePickerControllerDelegate {
+  public func imagePickerController(
+    _: UIImagePickerController,
+    didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+  ) {
+    if let image = info[.originalImage] as? UIImage,
+       let imageData = image.pngData() {
+      profileImageButton.image = image
+      imageSetSubject.send(imageData)
+    }
+    dismiss(animated: true)
+  }
+}
+
+// MARK: UINavigationControllerDelegate
+
+extension SignUpProfileViewController: UINavigationControllerDelegate {}
 
 // MARK: - Metrics
 
