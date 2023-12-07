@@ -185,8 +185,16 @@ final class SessionParticipantCell: UICollectionViewCell {
     guard isInitiallyConfigured == false else { return }
     isInitiallyConfigured = true
     distanceLabel.text = "0"
-    profileImageView.image = try? UIImage(data: Data(contentsOf: model.profileImageURL)) ?? .init(systemName: "person")
     nicknameLabel.text = model.nickname
+    guard let url = model.profileImageURL else {
+      return
+    }
+    DispatchQueue.global().async { [weak self] in
+      let image = try? UIImage(data: Data(contentsOf: url))
+      DispatchQueue.main.async { [weak self] in
+        self?.profileImageView.image = image ?? .init(systemName: "person")
+      }
+    }
   }
 
   func configure(with model: WorkoutHealthRealTimeModel?) {

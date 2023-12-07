@@ -1,5 +1,24 @@
 {
-  "code": 201,
+  "code": null,
   "errorMessage": null,
-  "data": null
+  "data": {
+    "matched": true,
+    "liveWorkoutStartTime": "2023-12-05 16:33:00",
+    "roomId": "uuid",
+    "publicId": "someStringss",
+    "peers": [
+      {
+        "nickname": "나는 1번 타자",
+        "publicId": "someString",
+        "profileImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Cat-eating-prey.jpg/220px-Cat-eating-prey.jpg",
+        "etc": "그 외 나머지 모든 컬럼"
+      },
+      {
+        "nickname": "나는 2번타자",
+        "publicId": "someStringw",
+        "profileImage": "https://www.telegraph.co.uk/content/dam/pets/2017/01/06/1-JS117202740-yana-two-face-cat-news_trans_NvBQzQNjv4BqJNqHJA5DVIMqgv_1zKR2kxRY9bnFVTp4QZlQjJfe6H0.jpg?imwidth=450",
+        "etc": "그 외 나머지 모든 컬럼"
+      }
+    ]
+  }
 }

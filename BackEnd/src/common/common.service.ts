@@ -66,16 +66,16 @@ export class CommonService {
     queryOptions: QueryOptions,
     findManyOptions: FindManyOptions<T> = {},
   ) {
-    let queryBilder = repository.createQueryBuilder(queryOptions.mainAlias);
-    queryBilder = queryBilder.setFindOptions(findManyOptions);
+    let queryBuilder = repository.createQueryBuilder(queryOptions.mainAlias);
+    queryBuilder = queryBuilder.setFindOptions(findManyOptions);
     if (queryOptions.join) {
       queryOptions.join.forEach((value: JoinType) => {
-        queryBilder = queryBilder.leftJoin(value.joinColumn, value.joinAlias);
+        queryBuilder = queryBuilder.leftJoin(value.joinColumn, value.joinAlias);
       });
     }
     if (queryOptions.select) {
-      queryBilder = queryBilder.select(queryOptions.select);
+      queryBuilder = queryBuilder.select(queryOptions.select);
     }
-    return queryBilder;
+    return queryBuilder;
   }
 }

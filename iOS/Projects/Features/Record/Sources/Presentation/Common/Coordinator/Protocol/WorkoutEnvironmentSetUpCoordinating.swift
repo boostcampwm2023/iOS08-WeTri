@@ -13,6 +13,6 @@ protocol WorkoutEnvironmentSetUpCoordinating: Coordinating {
   func pushWorkoutSelectViewController()
   func pushWorkoutEnvironmentSetupViewController()
   func pushPeerRandomMatchingViewController(workoutSetting: WorkoutSetting)
-  func finish(workoutSetting: WorkoutSetting)
+  func finish(workoutSessionComponents: WorkoutSessionComponents)
   func popPeerRandomMatchingViewController()
 }

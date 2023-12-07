@@ -54,7 +54,7 @@ export class MetaDataDto {
   count: number;
 }
 
-class PostsPaginateResDto {
+export class PostsPaginateResDto {
   @ApiProperty({ type: () => [PostDto] })
   items: PostDto[];
 
