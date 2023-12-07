@@ -7,6 +7,7 @@
 //
 
 import Combine
+import CommonNetworkingKeyManager
 import Foundation
 
 // MARK: - SignUpUseCaseRepresentable
@@ -35,17 +36,10 @@ public final class SignUpUseCase: SignUpUseCaseRepresentable {
   }
 
   func accessTokenSave(_ token: String) {
-    keychainRepository.save(key: Keys.accessToken, value: token)
+    keychainRepository.save(key: Tokens.accessToken, value: token)
   }
 
   func refreshTokenSave(_ token: String) {
-    keychainRepository.save(key: Keys.refreshToken, value: token)
+    keychainRepository.save(key: Tokens.refreshToken, value: token)
   }
-}
-
-// MARK: - Keys
-
-private enum Keys {
-  static let accessToken = "accessToken"
-  static let refreshToken = "refreshToken"
 }
