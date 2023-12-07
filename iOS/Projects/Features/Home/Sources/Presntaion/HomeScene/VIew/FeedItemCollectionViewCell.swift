@@ -150,7 +150,6 @@ class FeedItemCollectionViewCell: UICollectionViewCell {
   private lazy var feedDetailImages: UICollectionView = {
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout.createLayout())
     collectionView.register(FeedImageCell.self, forCellWithReuseIdentifier: FeedImageCell.identifier)
-    collectionView.backgroundColor = .cyan
     collectionView.delegate = self
 
     collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -302,6 +301,42 @@ private extension FeedItemCollectionViewCell {
 // MARK: UICollectionViewDelegate
 
 extension FeedItemCollectionViewCell: UICollectionViewDelegate {
+  func configure(_ element: FeedElement) {
+    configureProfileImage(element.profileImage)
+
+    nickNameLabel.text = element.nickName
+    sportLabel.text = element.sportText
+    dateLabel.text = element.publishDate.description
+    feedDetailTextLabel.text = element.content
+
+    configureFeedDetailImages(element.postImages)
+  }
+
+  func configureProfileImage(_ imageURL: URL?) {
+    guard let imageURL else {
+      return
+    }
+    DispatchQueue.global().async {
+      guard let data = try? Data(contentsOf: imageURL) else { return }
+      DispatchQueue.main.async { [weak self] in
+        self?.profileImage.image = UIImage(data: data)
+        self?.layoutIfNeeded()
+      }
+    }
+  }
+
+  func configureFeedDetailImages(_ url: [URL?]) {
+    guard var snapshot = dataSource?.snapshot() else {
+      return
+    }
+
+    snapshot.deleteAllItems()
+    snapshot.appendSections([0])
+    let url = url.compactMap { $0 }
+    snapshot.appendItems(Array(Set(url)), toSection: 0)
+    dataSource?.apply(snapshot)
+  }
+
   func scrollViewDidEndDecelerating(_: UIScrollView) {
     let center = contentView.convert(center, to: feedDetailImages)
     if let indexPath = feedDetailImages.indexPathForItem(at: center) {
