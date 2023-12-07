@@ -85,14 +85,18 @@ extension WorkoutSessionUseCase {
     // 기록할 운동 데이터를 myHealthForm에 전달
     healthRawDataSubject
       .compactMap { $0 } // nil이 들어오면 무시
-      .map(calculateHealthForm)
+      .compactMap { [weak self] in
+        return self?.calculateHealthForm(healthRawData: $0)
+      }
       .bind(to: myHealthFormSubject)
       .store(in: &subscriptions)
 
     // 소켓으로 자신의 데이터 전달
     healthRawDataSubject
       .compactMap { $0 }
-      .map(calculateWorkoutRealTimeModel)
+      .compactMap { [weak self] in
+        self?.calculateWorkoutRealTimeModel(healthRawData: $0)
+      }
       .flatMap(socketRepository.sendMyWorkout(with:))
       .sink { completion in
         if case let .failure(error) = completion {

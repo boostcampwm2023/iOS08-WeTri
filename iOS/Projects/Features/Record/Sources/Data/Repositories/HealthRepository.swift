@@ -68,7 +68,7 @@ public final class HealthRepository {
   ///   - anchor: 데이터를 받아올 위치, 중복되는 데이터를 설정할 때 쓰입니다.
   /// - Returns: HealthKit으로 받아온 샘플 데이터와 새로운 anchor
   private func query(startDate: Date, identifier: HKQuantityTypeIdentifier, anchor: HKQueryAnchor?) async throws -> ([HKSample]?, HKQueryAnchor?) {
-    return try await withCheckedThrowingContinuation { continuation in
+    return try await withCheckedThrowingContinuation { [weak self] continuation in
 
       let query = HKAnchoredObjectQuery(
         type: HKQuantityType(identifier),
@@ -102,16 +102,16 @@ public final class HealthRepository {
 
       switch identifier {
       case .activeEnergyBurned:
-        caloriesBurnedQuery = query
+        self?.caloriesBurnedQuery = query
       case .distanceWalkingRunning:
-        distanceQuery = query
+        self?.distanceQuery = query
       case .heartRate:
-        heartRateQuery = query
+        self?.heartRateQuery = query
       default:
         break
       }
 
-      healthStore.execute(query)
+      self?.healthStore.execute(query)
     }
   }
 
