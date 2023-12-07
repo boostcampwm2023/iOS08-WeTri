@@ -7,8 +7,10 @@
 //
 
 import Combine
+import CombineExtension
 import CoreLocation
 import Foundation
+import Log
 
 // MARK: - WorkoutSessionViewModelDependency
 
@@ -88,19 +90,19 @@ extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepr
       .eraseToAnyPublisher()
 
     let recordPublisher = input.endWorkoutPublisher
-      .withLatestFrom(input.locationPublisher) {
-        $1.map { LocationDTO(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
+      .combineLatest(mapURLPublisher) { _, url -> URL in
+        return url
       }
-      .withLatestFrom(mapURLPublisher) {
-        return ($0, $1)
+      .withLatestFrom(input.locationPublisher) {
+        return (url: $0, locations: $1.map { LocationDTO(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) })
       }
       .withLatestFrom(input.healthPublisher) { [dependency] tuple, health in
         let workoutData = WorkoutDataForm(
           workoutTime: Int(dependency.startDate.timeIntervalSince1970.rounded(.down)),
           distance: Int(health.distance?.rounded(.toNearestOrAwayFromZero) ?? 0),
           calorie: Int(health.calorie?.rounded(.toNearestOrAwayFromZero) ?? 0),
-          imageURL: tuple.1,
-          locations: tuple.0.map(\.description).joined(separator: ","),
+          imageURL: tuple.url,
+          locations: tuple.locations.map(\.description).joined(separator: ","),
           averageHeartRate: Int(health.averageHeartRate?.rounded(.toNearestOrAwayFromZero) ?? 0),
           minimumHeartRate: Int(health.minimumHeartRate?.rounded(.toNearestOrAwayFromZero) ?? 0),
           maximumHeartRate: Int(health.maximumHeartRate?.rounded(.toNearestOrAwayFromZero) ?? 0)
@@ -130,6 +132,6 @@ extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepr
       .oneSecondsTimerPublisher()
       .map { WorkoutSessionContainerState.updateTime($0) }
 
-    return Just(WorkoutSessionContainerState.idle).merge(with: recordErrorPublisher, workoutTimerPublisher).eraseToAnyPublisher()
+    return Just(.idle).merge(with: recordErrorPublisher, workoutTimerPublisher).eraseToAnyPublisher()
   }
 }
