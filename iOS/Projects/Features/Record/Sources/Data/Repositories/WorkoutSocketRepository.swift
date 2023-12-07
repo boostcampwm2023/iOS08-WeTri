@@ -44,7 +44,7 @@ struct WorkoutSocketRepository {
 
   private func receiveParticipantsData() -> Task<Void, Error> {
     return Task {
-      Log.make(with: .network).debug("receive Ready")
+      Log.make(with: .network).debug("소켓: receive Ready")
       while true {
         do {
           switch try await provider.receive() {
@@ -52,13 +52,13 @@ struct WorkoutSocketRepository {
             Log.make(with: .network).debug("received \(string)")
             try subject.send(stringToWorkoutRealTimeModel(rawString: string))
           default:
-            Log.make().error("You can't enter this line")
+            Log.make().error("소켓: You can't enter this line")
           }
         } catch {
           subject.send(completion: .failure(error))
         }
       }
-      Log.make().fault("You can't enter this line")
+      Log.make().fault("소켓: You can't enter this line")
     }
   }
 }

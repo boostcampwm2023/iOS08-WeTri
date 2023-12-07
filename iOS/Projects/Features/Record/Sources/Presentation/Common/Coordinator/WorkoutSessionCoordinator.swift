@@ -72,7 +72,7 @@ struct WorkoutSessionComponents: WorkoutSessionDependency {
     userProfileImage: URL?
   ) {
     let formatter = DateFormatter()
-    formatter.dateFormat = "yyyy-mm-dd hh:mm:ss"
+    formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
     let date = formatter.date(from: startDate)
 
     self.startDate = date ?? .now + 4
