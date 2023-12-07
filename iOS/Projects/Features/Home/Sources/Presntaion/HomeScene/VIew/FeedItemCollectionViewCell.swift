@@ -66,7 +66,7 @@ class FeedItemCollectionViewCell: UICollectionViewCell {
     return label
   }()
 
-  private lazy var sportLabelAndNickdateLabelStackView: UIStackView = {
+  private lazy var sportLabelAndNickDateLabelStackView: UIStackView = {
     let stackView = UIStackView(arrangedSubviews: [
       sportLabel,
       dateLabel,
@@ -81,7 +81,7 @@ class FeedItemCollectionViewCell: UICollectionViewCell {
   private lazy var nickNameLabelAndSportDateLabelStackView: UIStackView = {
     let stackView = UIStackView(arrangedSubviews: [
       nickNameLabel,
-      sportLabelAndNickdateLabelStackView,
+      sportLabelAndNickDateLabelStackView,
     ])
     stackView.axis = .vertical
     stackView.spacing = Metrics.nickNameLabelAndSportDateLabelSpacing
