@@ -69,6 +69,7 @@ export class MatchesService {
       );
       return {
         matched: true,
+        myPublicId: publicId,
         roomId: roomId,
         liveWorkoutStartTime: liveWorkoutStartTimeUTC,
         peers: profiles,
@@ -79,7 +80,7 @@ export class MatchesService {
     const waitingUsers = this.matchingAlgorithm(waitingLength, waitingTime);
 
     if (waitingUsers >= MIN_USERS) {
-      return await this.makeWebSocketRoom(workoutId, waitingUsers);
+      return await this.makeWebSocketRoom(workoutId, waitingUsers, publicId);
     }
     return {
       matched: false
@@ -87,9 +88,9 @@ export class MatchesService {
   }
 
   private async makeWebSocketRoom(
-    workoutId: number,
-    waitingUsers: number,
-  ): Promise<RandomMatch> {
+      workoutId: number,
+      waitingUsers: number,
+      myPublicId: any): Promise<RandomMatch> {
     const roomId: string = `match:${workoutId}:${uuidv4()}`;
 
     const serializedUsers: string[] = await this.redis.lrange(
@@ -133,6 +134,7 @@ export class MatchesService {
     return {
       matched: true,
       roomId: roomId,
+      myPublicId: myPublicId,
       liveWorkoutStartTime: liveWorkoutStartTimeUTC,
       peers: profiles,
     };
