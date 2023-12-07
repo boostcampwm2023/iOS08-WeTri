@@ -85,18 +85,45 @@ class FeedItemCollectionViewCell: UICollectionViewCell {
     ])
     stackView.axis = .vertical
     stackView.spacing = Metrics.nickNameLabelAndSportDateLabelSpacing
-
+    stackView.alignment = .fill
+    stackView.distribution = .fill
     stackView.translatesAutoresizingMaskIntoConstraints = false
     return stackView
   }()
 
-  lazy var cardHeaderStackView: UIStackView = {
+  private lazy var feedUserInformationStackView: UIStackView = {
     let stackView = UIStackView(arrangedSubviews: [
       profileImage,
       nickNameLabelAndSportDateLabelStackView,
     ])
     stackView.axis = .horizontal
     stackView.spacing = Metrics.profileImageAndUserInformationLabelStackViewSpacing
+    stackView.setContentHuggingPriority(.init(rawValue: 100), for: .horizontal)
+
+    stackView.translatesAutoresizingMaskIntoConstraints = false
+    return stackView
+  }()
+
+  private let feedEllipsisButton: UIButton = {
+    let button = UIButton(type: .custom)
+    button.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+    button.tintColor = DesignSystemColor.gray03
+    button.backgroundColor = .blue
+
+    button.translatesAutoresizingMaskIntoConstraints = false
+    return button
+  }()
+
+  lazy var cardHeaderStackView: UIStackView = {
+    let stackView = UIStackView(arrangedSubviews: [
+      feedUserInformationStackView,
+      feedEllipsisButton,
+    ])
+    stackView.axis = .horizontal
+    stackView.spacing = Metrics.feedUserInformationAndFeedEllipsisButtonSpacing
+
+    // 양쪽 정렬 코드
+    stackView.semanticContentAttribute = .forceLeftToRight
 
     stackView.translatesAutoresizingMaskIntoConstraints = false
     return stackView
@@ -115,6 +142,14 @@ class FeedItemCollectionViewCell: UICollectionViewCell {
     return label
   }()
 
+  private let feedDetailImages: UIView = {
+    let view = UIView()
+    view.backgroundColor = .cyan
+
+    view.translatesAutoresizingMaskIntoConstraints = false
+    return view
+  }()
+
   private let feedDetailImageView: UIImageView = {
     let imageView = UIImageView()
 
@@ -123,16 +158,23 @@ class FeedItemCollectionViewCell: UICollectionViewCell {
     return imageView
   }()
 
-  private lazy var cardBodyStackView: UIStackView = {
-    let stackView = UIStackView(arrangedSubviews: [
-      feedDetailTextLabel,
-      feedDetailImageView,
-    ])
-    stackView.spacing = 16
-    stackView.axis = .vertical
+  private let heartButton: UIButton = {
+    let button = UIButton(configuration: .plain())
+    var configure = button.configuration
+    configure?.image = UIImage(systemName: Constants.heartButtonSystemName)
+    configure?.title = "123,456"
+    button.configuration = configure
 
-    stackView.translatesAutoresizingMaskIntoConstraints = false
-    return stackView
+    button.translatesAutoresizingMaskIntoConstraints = false
+    return button
+  }()
+
+  private let dividingLine: UIView = {
+    let view = UIView()
+    view.backgroundColor = DesignSystemColor.gray03
+
+    view.translatesAutoresizingMaskIntoConstraints = false
+    return view
   }()
 }
 
@@ -141,23 +183,46 @@ private extension FeedItemCollectionViewCell {
     let safeArea = safeAreaLayoutGuide
 
     contentView.addSubview(cardHeaderStackView)
-    cardHeaderStackView.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
+    cardHeaderStackView.topAnchor
+      .constraint(equalTo: safeArea.topAnchor, constant: Metrics.headerTopAnchorSpacing).isActive = true
     cardHeaderStackView.leadingAnchor
       .constraint(equalTo: safeArea.leadingAnchor, constant: ConstraintsGuideLine.value).isActive = true
     cardHeaderStackView.trailingAnchor
       .constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
 
-//    contentView.addSubview(cardBodyStackView)
-//    cardBodyStackView.topAnchor
-//      .constraint(equalTo: cardHeaderStackView.bottomAnchor, constant: 16).isActive = true
-//    cardBodyStackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: <#T##CGFloat#>)
+    contentView.addSubview(feedDetailTextLabel)
+    feedDetailTextLabel.topAnchor
+      .constraint(equalTo: cardHeaderStackView.bottomAnchor, constant: Metrics.headerAndFeedDetailTextLabelSpacing).isActive = true
+    feedDetailTextLabel.leadingAnchor
+      .constraint(equalTo: safeArea.leadingAnchor, constant: ConstraintsGuideLine.value).isActive = true
+    feedDetailTextLabel.trailingAnchor
+      .constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
+
+    contentView.addSubview(feedDetailImages)
+    feedDetailImages.topAnchor
+      .constraint(equalTo: feedDetailTextLabel.bottomAnchor, constant: Metrics.feedDetailTextLabelAndFeedContentImagesSpacing).isActive = true
+    feedDetailImages.leadingAnchor
+      .constraint(equalTo: safeArea.leadingAnchor).isActive = true
+    feedDetailImages.trailingAnchor
+      .constraint(equalTo: safeArea.trailingAnchor).isActive = true
+    feedDetailImages.heightAnchor.constraint(equalToConstant: Metrics.feedContentImagesHeight).isActive = true
+
+    contentView.addSubview(heartButton)
+    heartButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor).isActive = true
+    heartButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor).isActive = true
+    heartButton.bottomAnchor
+      .constraint(equalTo: safeArea.bottomAnchor, constant: -Metrics.bottomAndHeartButtonSpacing).isActive = true
+
+    contentView.addSubview(dividingLine)
+    dividingLine.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor).isActive = true
+    dividingLine.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor).isActive = true
+    dividingLine.bottomAnchor
+      .constraint(equalTo: heartButton.topAnchor, constant: -Metrics.heartButtonAndDividingLineSpacing).isActive = true
+    dividingLine.heightAnchor.constraint(equalToConstant: Metrics.dividingLineHeight).isActive = true
 
     // 이미지 뷰 너비와 높이 조정
-    profileImage.widthAnchor.constraint(equalToConstant: 56).isActive = true
-    profileImage.heightAnchor.constraint(equalToConstant: 56).isActive = true
-
-    feedDetailImageView.widthAnchor.constraint(equalToConstant: 291).isActive = true
-    feedDetailImageView.heightAnchor.constraint(equalToConstant: 246).isActive = true
+    profileImage.widthAnchor.constraint(equalToConstant: Metrics.profileImageHeight).isActive = true
+    profileImage.heightAnchor.constraint(equalToConstant: Metrics.profileImageHeight).isActive = true
   }
 
   func setup() {
@@ -170,12 +235,28 @@ private extension FeedItemCollectionViewCell {
   }
 
   enum Metrics {
+    static let headerTopAnchorSpacing: CGFloat = 6
     static let sportLabelAndNickdateLabelSpacing: CGFloat = 3
     static let nickNameLabelAndSportDateLabelSpacing: CGFloat = 4
     static let profileImageAndUserInformationLabelStackViewSpacing: CGFloat = 12
+    static let feedUserInformationAndFeedEllipsisButtonSpacing: CGFloat = 80
+
+    static let headerAndFeedDetailTextLabelSpacing: CGFloat = 12
+    static let feedDetailTextLabelAndFeedContentImagesSpacing: CGFloat = 16
+
+    static let bottomAndHeartButtonSpacing: CGFloat = 6
+    static let heartButtonAndDividingLineSpacing: CGFloat = 6
+
+    static let dividingLineHeight: CGFloat = 1
+
+    static let feedContentImagesHeight: CGFloat = 246
+
+    static let profileImageHeight: CGFloat = 56
   }
 
   enum Constants {
+    static let heartButtonSystemName = "heart"
+
     static let feedDetailText = "정당은 그 목적·조직과 활동이 민주적이어야 하며, 국민의 정치적 의사형성에 참여하는데 필요한 조직을 가져야 한다. 대통령은 내우·외환·천재·지변 또는 중대한 재정·경제상의 위기에 있어서 없을 때에 한하여 최소한으로 필"
   }
 }
