@@ -1,9 +1,20 @@
-import { Injectable } from '@nestjs/common';
-import { FindManyOptions, QueryBuilder, Repository } from 'typeorm';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
+import {
+  BaseEntity,
+  FindManyOptions,
+  QueryBuilder,
+  Repository,
+  SelectQueryBuilder,
+} from 'typeorm';
 import { BasePaginationDto } from './dto/base-pagination.dto';
 import { ORM_OPERATION } from './const/orm-operation.const';
 import { BaseModel } from './type/base-model.type';
 import { JoinType, QueryOptions } from './type/query-options.type';
+import { PaginateResponseDto } from './dto/base-paginate-res.dto';
 
 @Injectable()
 export class CommonService {
@@ -12,7 +23,7 @@ export class CommonService {
     repository: Repository<T>,
     queryOptions: QueryOptions,
     overrideFindOptions: FindManyOptions<T> = {},
-  ) {
+  ): Promise<PaginateResponseDto> {
     const findManyOptions: FindManyOptions<T> = {
       ...overrideFindOptions,
     };
@@ -22,19 +33,24 @@ export class CommonService {
       queryOptions,
       findManyOptions,
     );
-    const results: Array<T> = await queryBuilder.getMany();
-    const lastItemId: number =
-      results.length > 0 ? results[results.length - 1].id : null;
-    const isLastCursor: boolean =
-      results.length === paginationDto.take ? false : true;
-    return {
-      items: results,
-      metaData: {
-        lastItemId,
-        isLastCursor,
-        count: results.length,
-      },
-    };
+    try {
+      const results: Array<T> = await queryBuilder.getMany();
+      const lastItemId: number =
+        results.length > 0 ? results[results.length - 1].id : null;
+      const isLastCursor: boolean =
+        results.length === paginationDto.take ? false : true;
+      return {
+        items: results,
+        metaData: {
+          lastItemId,
+          isLastCursor,
+          count: results.length,
+        },
+      };
+    } catch (error) {
+      Logger.error(`쿼리 실행 중 오류: ${error.message}`, { error });
+      throw new InternalServerErrorException();
+    }
   }
 
   composeFindManyOptions<T>(
@@ -65,16 +81,16 @@ export class CommonService {
     repository: Repository<T>,
     queryOptions: QueryOptions,
     findManyOptions: FindManyOptions<T> = {},
-  ) {
+  ): SelectQueryBuilder<T> {
     let queryBuilder = repository.createQueryBuilder(queryOptions.mainAlias);
     queryBuilder = queryBuilder.setFindOptions(findManyOptions);
-    if (queryOptions.join) {
-      queryOptions.join.forEach((value: JoinType) => {
+    if (queryOptions.joins) {
+      queryOptions.joins.forEach((value: JoinType) => {
         queryBuilder = queryBuilder.leftJoin(value.joinColumn, value.joinAlias);
       });
     }
-    if (queryOptions.select) {
-      queryBuilder = queryBuilder.select(queryOptions.select);
+    if (queryOptions.selects) {
+      queryBuilder = queryBuilder.select(queryOptions.selects);
     }
     return queryBuilder;
   }

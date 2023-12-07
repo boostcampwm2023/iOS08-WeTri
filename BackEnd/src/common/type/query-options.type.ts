@@ -5,6 +5,6 @@ export interface JoinType {
 
 export interface QueryOptions {
   mainAlias: string;
-  join?: JoinType[];
-  select?: string[];
+  joins?: JoinType[];
+  selects?: string[];
 }
