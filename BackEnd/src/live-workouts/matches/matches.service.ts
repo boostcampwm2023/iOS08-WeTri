@@ -101,10 +101,14 @@ export class MatchesService {
     );
 
     const liveWorkoutStartTime = new Date();
-    liveWorkoutStartTime.setMinutes(
-      liveWorkoutStartTime.getSeconds() + MATCHING_DELAY,
+    liveWorkoutStartTime.setSeconds(
+        liveWorkoutStartTime.getSeconds() + 15,
     );
-    const liveWorkoutStartTimeUTC = liveWorkoutStartTime.toISOString();
+    const kstTime = new Date(liveWorkoutStartTime.getTime() + (9 * 60 * 60 * 1000));
+    const liveWorkoutStartTimeUTC = kstTime.toISOString()
+        .replace(/T/, ' ')
+        .replace(/\..+/, '')
+        .slice(0, 19);
 
     const multi = this.redis.multi();
     for (const { publicId } of profiles) {
