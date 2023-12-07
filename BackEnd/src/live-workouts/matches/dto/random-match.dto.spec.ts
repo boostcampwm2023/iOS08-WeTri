@@ -33,14 +33,6 @@ describe('RandomMatchDto', () => {
   });
 });
 
-describe('RandomMatch', () => {
-  it('만약 매칭이 실패한 경우 false를 리턴한다.', async () => {
-    const match = plainToInstance(RandomMatch, { matched: false });
-    const errors = await validate(match);
-    expect(errors.length).toBe(0);
-  });
-});
-
 describe('RandomMatchResDto', () => {
   it('만약 매칭이 잡힌 경우, true를 리턴한다.', async () => {
     const resDto = plainToInstance(RandomMatchResDto, {
