@@ -81,6 +81,9 @@ export class MatchesService {
     if (waitingUsers >= MIN_USERS) {
       return await this.makeWebSocketRoom(workoutId, waitingUsers);
     }
+    return {
+      matched: false
+    };
   }
 
   private async makeWebSocketRoom(
