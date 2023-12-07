@@ -11,17 +11,17 @@ import Foundation
 
 // MARK: - SignUpUseCaseRepresentable
 
-protocol SignUpUseCaseRepresentable {
+public protocol SignUpUseCaseRepresentable {
   func signUp(signUpUser: SignUpUser) -> AnyPublisher<Token, Error>
 }
 
 // MARK: - SignUpUseCase
 
-final class SignUpUseCase: SignUpUseCaseRepresentable {
+public final class SignUpUseCase: SignUpUseCaseRepresentable {
   private let signUpRepository: SignUpRepositoryRepresentable
   private let keychainRepository: KeychainRepositoryRepresentable
 
-  init(
+  public init(
     signUpRepository: SignUpRepositoryRepresentable,
     keychainRepository: KeychainRepositoryRepresentable
   ) {
@@ -29,7 +29,7 @@ final class SignUpUseCase: SignUpUseCaseRepresentable {
     self.keychainRepository = keychainRepository
   }
 
-  func signUp(signUpUser: SignUpUser) -> AnyPublisher<Token, Error> {
+  public func signUp(signUpUser: SignUpUser) -> AnyPublisher<Token, Error> {
     return signUpRepository.signUp(signUpUser: signUpUser)
       .eraseToAnyPublisher()
   }

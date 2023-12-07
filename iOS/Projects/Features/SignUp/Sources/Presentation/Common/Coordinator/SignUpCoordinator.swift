@@ -7,6 +7,7 @@
 //
 
 import Coordinator
+import Keychain
 import UIKit
 
 final class SignUpCoordinator: SignUpCoordinating {
@@ -39,9 +40,19 @@ final class SignUpCoordinator: SignUpCoordinating {
 
     let imageTransmitUseCase = ImageTransmitUseCase(imageFormRepository: imageFormRepository)
 
+    let signUpRepository = SignUpRepository(urlSession: URLSession.shared)
+
+    let keyChainRepository = KeychainRepository(keychain: Keychain.shared)
+
+    let signUpUseCase = SignUpUseCase(
+      signUpRepository: signUpRepository,
+      keychainRepository: keyChainRepository
+    )
+
     let signUpProfileViewModel = SignUpProfileViewModel(
       nickNameCheckUseCase: nickNameCheckUseCase,
       imageTransmitUseCase: imageTransmitUseCase,
+      signUpUseCase: signUpUseCase,
       userBit: userBit
     )
 

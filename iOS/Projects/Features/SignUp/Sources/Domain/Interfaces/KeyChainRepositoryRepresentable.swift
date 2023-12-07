@@ -9,7 +9,7 @@
 import Combine
 import Foundation
 
-protocol KeychainRepositoryRepresentable {
+public protocol KeychainRepositoryRepresentable {
   /// 키체인에 키-data로 데이터를 저장합니다.
   func save(key: String, value: String)
 

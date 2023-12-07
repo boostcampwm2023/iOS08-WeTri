@@ -19,14 +19,14 @@ enum SignUpRepositoryError: Error {
 
 // MARK: - SignUpRepository
 
-struct SignUpRepository: SignUpRepositoryRepresentable {
+public struct SignUpRepository: SignUpRepositoryRepresentable {
   private let provider: TNProvider<SignUpRepositoryEndPoint>
 
   init(urlSession: URLSessionProtocol) {
     provider = TNProvider(session: urlSession)
   }
 
-  func signUp(signUpUser: SignUpUser) -> AnyPublisher<Token, Error> {
+  public func signUp(signUpUser: SignUpUser) -> AnyPublisher<Token, Error> {
     return Future<Data, Never> { promise in
       Task {
         do {

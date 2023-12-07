@@ -40,16 +40,19 @@ public final class SignUpProfileViewModel {
   private var subscriptions: Set<AnyCancellable> = []
   private let nickNameCheckUseCase: NickNameCheckUseCaseRepresentable
   private let imageTransmitUseCase: ImageTransmitUseCaseRepresentable
+  private let signUpUseCase: SignUpUseCaseRepresentable
 
   private let userBit: UserBit
 
   public init(
     nickNameCheckUseCase: NickNameCheckUseCaseRepresentable,
     imageTransmitUseCase: ImageTransmitUseCaseRepresentable,
+    signUpUseCase: SignUpUseCaseRepresentable,
     userBit: UserBit
   ) {
     self.nickNameCheckUseCase = nickNameCheckUseCase
     self.imageTransmitUseCase = imageTransmitUseCase
+    self.signUpUseCase = signUpUseCase
     self.userBit = userBit
   }
 }

@@ -9,6 +9,6 @@
 import Combine
 import Foundation
 
-protocol SignUpRepositoryRepresentable {
+public protocol SignUpRepositoryRepresentable {
   func signUp(signUpUser: SignUpUser) -> AnyPublisher<Token, Error>
 }

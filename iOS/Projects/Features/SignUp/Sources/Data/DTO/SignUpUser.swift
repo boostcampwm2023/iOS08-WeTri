@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - SignUpUser
 
-struct SignUpUser {
+public struct SignUpUser {
   let provider: String
   let nickName: String
   let gender: String
