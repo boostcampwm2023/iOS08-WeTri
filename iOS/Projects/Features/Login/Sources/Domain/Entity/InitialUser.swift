@@ -22,6 +22,10 @@ struct InitialUser {
   let provider: AuthProvider
 }
 
+// MARK: Codable
+
+extension InitialUser: Codable {}
+
 // MARK: - AuthProvider
 
 enum AuthProvider: String, Codable {

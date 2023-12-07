@@ -49,14 +49,20 @@ extension LoginViewModel: LoginViewModelRepresentable {
   func transform(input: LoginViewModelInput) -> LoginViewModelOutput {
     input.credential
       .flatMap(authorizeUseCase.authorize(authorizationInfo:))
-      .sink(receiveValue: { [weak self] token in
-        guard let accessToken = token.accesToken,
-              let refreshToken = token.refreshToken
-        else {
-          return
+      .sink(receiveValue: { [weak self] loginResponse in
+        if let token = loginResponse.token {
+          guard let accessToken = token.accesToken,
+                let refreshToken = token.refreshToken
+          else {
+            return
+          }
+          self?.authorizeUseCase.accessTokenSave(accessToken)
+          self?.authorizeUseCase.refreshTokenSave(refreshToken)
         }
-        self?.authorizeUseCase.accessTokenSave(accessToken)
-        self?.authorizeUseCase.refreshTokenSave(refreshToken)
+
+        if let initialUser = loginResponse.initialUser {
+          self?.coordinator.finish(initialUser: initialUser, token: nil)
+        }
       })
       .store(in: &subscriptions)
 

@@ -10,5 +10,7 @@ import Combine
 import Foundation
 
 protocol AuthorizationRepositoryRepresentable {
-  func fetch(authorizationInfo: AuthorizationInfo) -> AnyPublisher<Token, Never>
+  typealias LoginResponse = (token: Token?, initialUser: InitialUser?)
+
+  func fetch(authorizationInfo: AuthorizationInfo) -> AnyPublisher<LoginResponse, Never>
 }
