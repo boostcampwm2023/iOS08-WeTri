@@ -7,6 +7,7 @@
 //
 
 import Combine
+import CommonNetworkingKeyManager
 import Foundation
 import Trinet
 
@@ -17,6 +18,23 @@ struct MapImageUploadRepository: MapImageUploadRepositoryRepresentable {
 
   init(session: URLSessionProtocol) {
     provider = .init(session: session)
+  }
+
+  func upload(with imageData: Data) -> AnyPublisher<URL, Error> {
+    return Future<Data, Error> { promise in
+      Task {
+        do {
+          let data = try await provider.uploadRequest(.init(data: [imageData]), interceptor: TNKeychainInterceptor.shared)
+          promise(.success(data))
+        } catch {
+          promise(.failure(error))
+        }
+      }
+    }
+    .decode(type: GWResponse<ImageModel>.self, decoder: JSONDecoder())
+    .compactMap(\.data)
+    .map(\.imageURL)
+    .eraseToAnyPublisher()
   }
 }
 
@@ -29,10 +47,32 @@ private struct ImageUploadEndPoint: TNEndPoint {
 
   let query: Encodable? = nil
 
-  var body: Encodable?
+  var body: Encodable? = nil
 
-  let headers: TNHeaders = [
-    .accept("application/json"),
-    .contentType("multipart/form-data"),
-  ]
+  let headers: TNHeaders
+
+  var multipart: MultipartFormData?
+
+  init(data: [Data]) {
+    let boundary: UUID = .init()
+    self.headers =  [
+      .accept("application/json"),
+      .contentType("multipart/form-data; boundary=\(boundary.uuidString)")
+    ]
+
+    self.multipart = .init(boundary: boundary, data: data)
+    body = multipart?.data
+  }
+}
+
+// MARK: - ImageModel
+
+struct ImageModel: Codable {
+  let imageName: String
+  let imageURL: URL
+
+  enum CodingKeys: String, CodingKey {
+    case imageName
+    case imageURL = "imageUrl"
+  }
 }

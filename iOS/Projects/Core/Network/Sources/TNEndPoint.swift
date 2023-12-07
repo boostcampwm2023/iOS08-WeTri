@@ -17,12 +17,17 @@ public protocol TNEndPoint {
   var query: Encodable? { get }
   var body: Encodable? { get }
   var headers: TNHeaders { get }
+  var multipart: MultipartFormData? { get }
 }
 
 public extension TNEndPoint {
   var baseURL: String {
     // request를 생성할 때 빈 문자열이면 invalidURL Error로 자연스레 들어갑니다.
     return Bundle.main.infoDictionary?["BaseURL"] as? String ?? ""
+  }
+
+  var multipart: MultipartFormData? {
+    return nil
   }
 }
 
@@ -69,5 +74,51 @@ private extension Encodable {
     }
 
     return dictionaryTarget
+  }
+}
+
+// MARK: - MultipartFormData
+
+public struct MultipartFormData {
+  
+  public var data: Data = .init()
+
+  let boundary: UUID
+
+  public init(boundary: UUID, data: [Data], mimeType: String = "image/png") {
+    self.boundary = boundary
+    self.data = createBody(boundary: boundary.uuidString, imageData: data, mimeType: mimeType)
+  }
+
+  private mutating func createBody(boundary: String, imageData: [Data], mimeType: String) -> Data {
+    let linebreak = "\r\n"
+    let boundaryPrefix = "--\(boundary)\(linebreak)"
+
+    var body = Data()
+    // 각 이미지 데이터를 멀티파트 형식으로 추가
+    for (index, imageData) in imageData.enumerated() {
+      let imgDataKey = "images"
+      let filename = "image[\(index)]"
+
+      body.append(boundaryPrefix)
+      body.append("Content-Disposition: form-data; name=\"\(imgDataKey)\"; filename=\"\(filename)\"\(linebreak)")
+      body.append("Content-Type: \(mimeType)\(linebreak)\(linebreak)")
+      body.append(imageData)
+      body.append("\(linebreak)")
+      body.append("--\(boundary)\(linebreak)")
+    }
+
+    // 종결 바운더리 추가
+    body.append("--\(boundary)--\(linebreak)")
+
+    return body
+  }
+}
+
+fileprivate extension Data {
+  mutating func append(_ string: String) {
+    if let data = string.data(using: .utf8) {
+      append(data)
+    }
   }
 }
