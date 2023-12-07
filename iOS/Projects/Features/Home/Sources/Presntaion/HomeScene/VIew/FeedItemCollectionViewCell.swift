@@ -292,7 +292,7 @@ extension FeedItemCollectionViewCell {
     configureFeedDetailImages(element.postImages)
   }
 
-  func configureProfileImage(_ imageURL: URL?) {
+  private func configureProfileImage(_ imageURL: URL?) {
     guard let imageURL else {
       return
     }
@@ -305,7 +305,7 @@ extension FeedItemCollectionViewCell {
     }
   }
 
-  func configureFeedDetailImages(_ url: [URL?]) {
+  private func configureFeedDetailImages(_ url: [URL?]) {
     guard var snapshot = dataSource?.snapshot() else {
       return
     }
