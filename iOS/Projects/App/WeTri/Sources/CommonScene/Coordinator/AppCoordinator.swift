@@ -7,6 +7,7 @@
 //
 
 import Coordinator
+import LoginFeature
 import SplashFeature
 import UIKit
 
@@ -25,7 +26,7 @@ final class AppCoordinator: AppCoordinating {
   }
 
   func start() {
-    showTabBarFlow()
+    showSplashFlow()
   }
 
   private func showSplashFlow() {
@@ -49,9 +50,15 @@ final class AppCoordinator: AppCoordinating {
 
   func showLoginFlow() {
     // TODO: LoginCoordinator 연결
-    let aCoordinator = ACoordinator(navigationController: navigationController)
-    childCoordinators.append(aCoordinator)
-    aCoordinator.start()
+
+    let loginCoordinator = LoginCoordinator(
+      navigationController: navigationController,
+      isMockEnvironment: true,
+      isMockFirst: true
+    )
+
+    childCoordinators.append(loginCoordinator)
+    loginCoordinator.start()
   }
 
   func showTabBarFlow() {

@@ -12,17 +12,17 @@ import Log
 import Trinet
 import UIKit
 
-final class LoginCoordinator: LoginCoordinating {
-  var navigationController: UINavigationController
-  var childCoordinators: [Coordinating] = []
-  weak var finishDelegate: CoordinatorFinishDelegate?
-  weak var loginFinishDelegate: LoginDidFinishedDelegate?
-  var flow: CoordinatorFlow = .login
+public final class LoginCoordinator: LoginCoordinating {
+  public   var navigationController: UINavigationController
+  public var childCoordinators: [Coordinating] = []
+  public weak var finishDelegate: CoordinatorFinishDelegate?
+  public weak var loginFinishDelegate: LoginDidFinishedDelegate?
+  public var flow: CoordinatorFlow = .login
 
   private let isMockEnvironment: Bool
   private let isMockFirst: Bool
 
-  init(
+  public init(
     navigationController: UINavigationController,
     isMockEnvironment: Bool,
     isMockFirst: Bool
@@ -32,7 +32,7 @@ final class LoginCoordinator: LoginCoordinating {
     self.isMockFirst = isMockFirst
   }
 
-  func start() {
+  public func start() {
     guard let jsonPath = isMockFirst ?
       Bundle(for: Self.self).path(forResource: "Token", ofType: "json") : Bundle(for: Self.self).path(forResource: "InitialUser", ofType: "json"),
       let jsonData = try? Data(contentsOf: .init(filePath: jsonPath))
