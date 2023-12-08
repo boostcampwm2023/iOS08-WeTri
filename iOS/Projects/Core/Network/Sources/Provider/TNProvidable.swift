@@ -7,12 +7,11 @@
 //
 
 import Foundation
-import Log
 
 // MARK: - TNProvidable
 
 public protocol TNProvidable {
-  associatedtype EndPoint = TNEndPoint
+  associatedtype EndPoint: TNEndPoint
   func request(_ service: EndPoint, successStatusCodeRange: Range<Int>) async throws -> Data
   func request(_ service: EndPoint, completion: @Sendable @escaping (Data?, URLResponse?, Error?) -> Void) throws
   func request(_ service: EndPoint, successStatusCodeRange range: Range<Int>, interceptor: TNRequestInterceptor) async throws -> Data
@@ -52,7 +51,6 @@ public struct TNProvider<T: TNEndPoint>: TNProvidable {
     let (data, response) = try await session.data(for: request, delegate: nil)
     let (retriedData, retriedResponse) = try await interceptor.retry(request, session: session, data: data, response: response, delegate: nil)
 
-    Log.make().debug("\(String(data: data, encoding: .utf8)!)")
     try checkStatusCode(retriedResponse, successStatusCodeRange: range)
 
     return retriedData
