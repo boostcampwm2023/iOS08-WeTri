@@ -40,11 +40,9 @@ struct AuthorizationRepository: AuthorizationRepositoryRepresentable {
           let authorizationInfoRequestDTO = AuthorizationInfoRequestDTO(identityToken: token, authorizationCode: authorizationCode)
 
           let data = try await provider.request(.signIn(authorizationInfoRequestDTO))
-          Log.make().debug("\(data)")
           guard let responseCode = try decoder.decode(Response.self, from: data).code else {
             return
           }
-          Log.make().debug("\(responseCode)")
           switch responseCode {
           case AuthorizationRepositoryResponseCode.token.code:
             let token = try decoder.decode(GWResponse<Token>.self, from: data).data
@@ -72,7 +70,7 @@ enum AuthorizationRepositoryEndPoint: TNEndPoint {
   var path: String {
     switch self {
     case .signIn:
-      return "auth/apple/signin"
+      return "/api/v1/auth/apple/signin"
     }
   }
 
@@ -96,7 +94,6 @@ enum AuthorizationRepositoryEndPoint: TNEndPoint {
 
   var headers: TNHeaders {
     return .init(headers: [
-      // TODO: 헤더 설정
     ])
   }
 }

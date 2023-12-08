@@ -119,9 +119,6 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
       }
       .store(in: &subscriptions)
 
-    let genderBirth = input.genderBirth
-
-    // Complete 버튼이 클릭되어야만 해당 코드가 동작된다.
     Publishers
       .CombineLatest3(imageFormSubject.eraseToAnyPublisher(), nickNameSubject.eraseToAnyPublisher(), input.genderBirth)
       .sink { [weak self] imageForm, nickName, genderBirth in

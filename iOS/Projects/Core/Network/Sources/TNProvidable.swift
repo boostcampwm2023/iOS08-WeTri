@@ -48,6 +48,9 @@ public struct TNProvider<T: TNEndPoint>: TNProvidable {
 
   public func request(_ service: T, successStatusCodeRange range: Range<Int> = 200 ..< 300) async throws -> Data {
     let (data, response) = try await session.data(for: service.request(), delegate: nil)
+    let res = try JSONDecoder().decode(Response.self, from: data)
+    print("코드 : \(res.code)")
+    print("에러 메시지 : \(res.errorMessage)")
     try checkStatusCode(response, successStatusCodeRange: range)
     return data
   }
@@ -80,4 +83,11 @@ private extension TNProvider {
       throw TNError.unknownError
     }
   }
+}
+
+// MARK: - Response
+
+private struct Response: Codable {
+  let code: Int?
+  let errorMessage: String?
 }
