@@ -13,7 +13,7 @@ import Trinet
 import UIKit
 
 public final class LoginCoordinator: LoginCoordinating {
-  public   var navigationController: UINavigationController
+  public var navigationController: UINavigationController
   public var childCoordinators: [Coordinating] = []
   public weak var finishDelegate: CoordinatorFinishDelegate?
   public weak var loginFinishDelegate: LoginDidFinishedDelegate?

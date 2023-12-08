@@ -53,7 +53,7 @@ extension LoginFeatureCoordinator: CoordinatorFinishDelegate {
 // MARK: LoginDidFinishedDelegate
 
 extension LoginFeatureCoordinator: LoginDidFinishedDelegate {
-  func loginCoordinatorDidFinished(initialUser: InitialUser?, token: Token?) {
+  public func loginCoordinatorDidFinished(initialUser: InitialUser?, token: Token?) {
     // TODO: Login시, User가 처음이라면 해당 데이터 갖고 SignUpModule로 넘어가야됨.
     if let initialUser {}
 
