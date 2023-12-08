@@ -11,7 +11,7 @@ import Foundation
 // MARK: - TNProvidable
 
 public protocol TNProvidable {
-  associatedtype EndPoint = TNEndPoint
+  associatedtype EndPoint: TNEndPoint
   func request(_ service: EndPoint, successStatusCodeRange: Range<Int>) async throws -> Data
   func request(_ service: EndPoint, completion: @Sendable @escaping (Data?, URLResponse?, Error?) -> Void) throws
   func request(_ service: EndPoint, successStatusCodeRange range: Range<Int>, interceptor: TNRequestInterceptor) async throws -> Data
