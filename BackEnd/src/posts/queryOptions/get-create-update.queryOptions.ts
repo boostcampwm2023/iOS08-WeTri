@@ -22,5 +22,6 @@ export const getCreateUpdateQueryOptions: QueryOptions = {
     'record.minHeartRate',
     'record.maxHeartRate',
     'profile.nickname',
+    'profile.profileImage',
   ],
 };

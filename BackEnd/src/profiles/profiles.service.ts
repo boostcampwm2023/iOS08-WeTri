@@ -54,7 +54,7 @@ export class ProfilesService {
       getProfilePostsQueryOptions,
       {
         where: { publicId },
-        select: ['id', 'postUrl'],
+        select: ['id', 'imagesUrl'],
       },
     );
   }

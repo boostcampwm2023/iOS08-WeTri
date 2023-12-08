@@ -68,8 +68,8 @@ export class Post {
     description: '게시글 이미지 url을 의미합니다.',
   })
   @IsString()
-  @Column()
-  postUrl: string;
+  @Column({length: 500})
+  imagesUrl: string;
 
   @OneToOne(() => Record)
   @JoinColumn()

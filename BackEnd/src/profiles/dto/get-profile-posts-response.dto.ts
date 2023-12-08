@@ -3,7 +3,7 @@ import { SuccessResDto } from '../../common/dto/SuccessRes.dto';
 import { MetaDataDto } from '../../posts/dto/get-posts-response.dto';
 import { Post } from '../../posts/entities/posts.entity';
 
-export class ProfilePostDto extends PickType(Post, ['id', 'postUrl']) {}
+export class ProfilePostDto extends PickType(Post, ['id', 'imagesUrl']) {}
 
 class ProfilePostsPaginateResDto {
   @ApiProperty({ type: () => [ProfilePostDto] })
