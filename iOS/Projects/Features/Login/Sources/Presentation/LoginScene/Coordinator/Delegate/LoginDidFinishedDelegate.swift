@@ -8,6 +8,6 @@
 
 import Foundation
 
-protocol LoginDidFinishedDelegate: AnyObject {
+public protocol LoginDidFinishedDelegate: AnyObject {
   func loginCoordinatorDidFinished(initialUser: InitialUser?, token: Token?)
 }

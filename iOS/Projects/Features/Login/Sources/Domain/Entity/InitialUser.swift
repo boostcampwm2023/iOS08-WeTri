@@ -11,7 +11,7 @@ import Foundation
 // MARK: - InitialUser
 
 /// 처음 로그인 하는 유저의 Response를 담을 Entity
-struct InitialUser {
+public struct InitialUser {
   /// 처음 로그인 하는지 아닌지
   let isFirstLogined: Bool
 
