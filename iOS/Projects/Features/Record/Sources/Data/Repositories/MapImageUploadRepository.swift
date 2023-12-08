@@ -60,7 +60,7 @@ private struct ImageUploadEndPoint: TNEndPoint {
       .contentType("multipart/form-data; boundary=\(boundary.uuidString)"),
     ]
 
-    multipart = .init(boundary: boundary, data: data)
+    multipart = .init(imageDataList: data, mimeTypeList: Array(repeating: MultipartFormData.MimeType.imagePNG, count: data.count))
   }
 }
 

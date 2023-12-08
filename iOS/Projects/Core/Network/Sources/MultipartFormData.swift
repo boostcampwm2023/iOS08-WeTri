@@ -13,30 +13,32 @@ import Foundation
 public struct MultipartFormData {
   private let boundary: String
   public let imageDataList: [Data]
+  public let mimeTypeList: [MimeType]
 
-  public init(uuid: UUID = UUID(), imageDataList: [Data]) {
-    boundary = "Boundary-\(uuid.uuidString)"
+  public init(imageDataList: [Data], mimeTypeList: [MimeType] = []) {
+    boundary = UUID().uuidString
     self.imageDataList = imageDataList
+    self.mimeTypeList = mimeTypeList
   }
 
-  public func makeBody(imageDataList: [Data], mimeType: String) -> Data {
+  public func makeBody() -> Data {
     let lineBreak = "\r\n"
     let boundaryPrefix = "--\(boundary)\(lineBreak)"
 
     var body = Data()
 
-    for (index, imageData) in imageDataList.enumerated() {
-      let imgDataKey = "images"
-      let filename = "image[\(index)]"
+    for (imageData, mimeType) in zip(imageDataList, mimeTypeList) {
+      let imageFieldName = "images"
+      let filename = "image\(UUID().uuidString)"
 
       body.append(boundaryPrefix)
-      body.append("Content-Disposition: form-data; name=\"\(imgDataKey)\"; filename=\"\(filename)\"\(lineBreak)")
-      body.append("Content-Type: \(mimeType)\(lineBreak)\(lineBreak)")
+      body.append(#"Content-Disposition: form-data; name="\#(imageFieldName)"; filename="\#(filename)"\#(lineBreak)"#)
+      body.append("Content-Type: \(mimeType.rawValue)\(lineBreak)\(lineBreak)")
       body.append(imageData)
       body.append("\(lineBreak)")
-      body.append("\(boundaryPrefix)")
     }
 
+    // insert final boundary
     body.append("--\(boundary)--\(lineBreak)")
 
     return body
@@ -49,5 +51,11 @@ private extension Data {
       return
     }
     append(data)
+  }
+}
+
+public extension MultipartFormData {
+  enum MimeType: String {
+    case imagePNG = "image/png"
   }
 }
