@@ -114,7 +114,7 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
           return
         }
         let waitingTime = Date.now.timeIntervalSince(didMatchStartedDate)
-        let request = IsMatchedRandomPeersRequest(workoutID: workoutSetting.workoutType.typeCode, waitingTime: Int(waitingTime) * 20)
+        let request = IsMatchedRandomPeersRequest(workoutID: workoutSetting.workoutType.typeCode, waitingTime: Int(waitingTime))
         requestIsMatchedRandomPeers(request: request)
       }
       .store(in: &subscriptions)
