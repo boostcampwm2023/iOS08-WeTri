@@ -90,7 +90,7 @@ export class Record {
     description: '운동 기록 생성 날짜',
   })
   @IsString()
-  @Column()
+  @Column('longtext')
   gps: string;
 
   @Column({ default: false })

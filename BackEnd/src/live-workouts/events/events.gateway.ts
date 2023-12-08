@@ -12,6 +12,7 @@ import { WetriWebSocket, WetriServer } from './types/custom-websocket.type';
 import { AuthService } from '../../auth/auth.service';
 import { CheckMatchingDto } from './dto/checkMatching.dto';
 import {Logger} from "@nestjs/common";
+import {NotAccessTokenException} from "../../auth/exceptions/auth.exception";
 
 @WebSocketGateway(3003)
 export class EventsGateway
@@ -31,10 +32,13 @@ export class EventsGateway
   async handleConnection(client: WetriWebSocket, ...args: any[]) {
     Logger.log("연결 성공");
     const { authorization, roomid } = args[0].headers;
-    if (!(await this.authService.verifyWs(authorization, client))) {
+    try {
+      await this.authService.verifyWs(authorization, client);
+    } catch (e) {
       client.close();
       return;
     }
+
     const matchInfo: CheckMatchingDto = {
       matchingKey: `userMatch:${client.id}`,
       roomId: roomid,

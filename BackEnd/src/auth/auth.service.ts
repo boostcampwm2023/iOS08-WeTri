@@ -130,7 +130,8 @@ export class AuthService {
     const user = await this.checkSignUp(userId);
     if (!user) {
       const mappedUserID = uuidv4();
-      await this.redisData.set(mappedUserID, userId, 'EX', 600);
+      await this.redisData.set(mappedUserID, userId);
+      await this.redisData.expire(mappedUserID, 600);
       return {
         isFirstLogined: true,
         mappedUserID,
