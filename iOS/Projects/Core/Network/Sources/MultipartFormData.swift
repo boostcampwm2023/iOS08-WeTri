@@ -12,31 +12,31 @@ import Foundation
 
 public struct MultipartFormData {
   private let boundary: String
-  public let imageDataList: [Data]
+  public let multipartItems: [MultipartItem]
 
-  public init(uuid: UUID = UUID(), imageDataList: [Data]) {
-    boundary = "Boundary-\(uuid.uuidString)"
-    self.imageDataList = imageDataList
+  public init(multipartItems: [MultipartItem]) {
+    boundary = UUID().uuidString
+    self.multipartItems = multipartItems
   }
 
-  public func makeBody(imageDataList: [Data], mimeType: String) -> Data {
+  public func makeBody() -> Data {
     let lineBreak = "\r\n"
     let boundaryPrefix = "--\(boundary)\(lineBreak)"
 
     var body = Data()
 
-    for (index, imageData) in imageDataList.enumerated() {
-      let imgDataKey = "images"
-      let filename = "image[\(index)]"
+    for item in multipartItems {
+      let imageFieldName = "images"
+      let filename = "image\(UUID().uuidString)"
 
       body.append(boundaryPrefix)
-      body.append("Content-Disposition: form-data; name=\"\(imgDataKey)\"; filename=\"\(filename)\"\(lineBreak)")
-      body.append("Content-Type: \(mimeType)\(lineBreak)\(lineBreak)")
-      body.append(imageData)
+      body.append(#"Content-Disposition: form-data; name="\#(imageFieldName)"; filename="\#(filename)"\#(lineBreak)"#)
+      body.append("Content-Type: \(item.mimeType.rawValue)\(lineBreak)\(lineBreak)")
+      body.append(item.data)
       body.append("\(lineBreak)")
-      body.append("\(boundaryPrefix)")
     }
 
+    // insert final boundary
     body.append("--\(boundary)--\(lineBreak)")
 
     return body
