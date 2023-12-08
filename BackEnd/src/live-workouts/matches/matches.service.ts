@@ -118,11 +118,12 @@ export class MatchesService {
 
     multi.set(
       `matchProfiles:${roomId}`,
-      JSON.stringify(profiles), 'EX', MATCHES_API_TIME_OUT);
+      JSON.stringify(profiles));
     multi.set(
       `matchStartTime:${roomId}`,
       liveWorkoutStartTimeUTC,
     );
+    multi.expire(`matchProfiles:${roomId}`, MATCHES_API_TIME_OUT);
     multi.expire(`matchStartTime:${roomId}`, UTC_REMOVE_TIME);
     multi.ltrim(`matching:${workoutId}`, waitingUsers, -1);
     await multi.exec();
