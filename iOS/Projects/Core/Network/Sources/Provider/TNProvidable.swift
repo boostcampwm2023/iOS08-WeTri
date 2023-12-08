@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Log
 
 // MARK: - TNProvidable
 
@@ -52,7 +51,6 @@ public struct TNProvider<T: TNEndPoint>: TNProvidable {
     let (data, response) = try await session.data(for: request, delegate: nil)
     let (retriedData, retriedResponse) = try await interceptor.retry(request, session: session, data: data, response: response, delegate: nil)
 
-    Log.make().debug("\(String(data: data, encoding: .utf8)!)")
     try checkStatusCode(retriedResponse, successStatusCodeRange: range)
 
     return retriedData
