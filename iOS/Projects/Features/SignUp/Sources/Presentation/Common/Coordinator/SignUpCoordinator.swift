@@ -12,11 +12,11 @@ import Log
 import Trinet
 import UIKit
 
-final class SignUpCoordinator: SignUpCoordinating {
-  var navigationController: UINavigationController
-  var childCoordinators: [Coordinating] = []
-  weak var finishDelegate: CoordinatorFinishDelegate?
-  var flow: CoordinatorFlow = .signup
+public final class SignUpCoordinator: SignUpCoordinating {
+  public var navigationController: UINavigationController
+  public var childCoordinators: [Coordinating] = []
+  public weak var finishDelegate: CoordinatorFinishDelegate?
+  public var flow: CoordinatorFlow = .signup
 
   private let newUserInformation: NewUserInformation
 
@@ -32,11 +32,15 @@ final class SignUpCoordinator: SignUpCoordinating {
     newUserInformation = userBit
   }
 
-  func start() {
+  public func start() {
     pushSingUpContainerViewController()
   }
 
-  func pushSingUpContainerViewController() {
+  public func finish() {
+    finishDelegate?.flowDidFinished(childCoordinator: self)
+  }
+
+  public func pushSingUpContainerViewController() {
     guard let jsonPath = Bundle(for: Self.self).path(forResource: "Token", ofType: "json"),
           let jsonData = try? Data(contentsOf: .init(filePath: jsonPath))
     else {
@@ -68,6 +72,7 @@ final class SignUpCoordinator: SignUpCoordinating {
     )
 
     let signUpProfileViewModel = SignUpProfileViewModel(
+      coordinator: self,
       nickNameCheckUseCase: nickNameCheckUseCase,
       imageTransmitUseCase: imageTransmitUseCase,
       signUpUseCase: signUpUseCase,

@@ -8,6 +8,7 @@
 
 import Combine
 import Foundation
+import Keychain
 import Log
 
 // MARK: - SignUpProfileViewModelInput
@@ -38,6 +39,7 @@ public enum SignUpProfileState {
 
 public final class SignUpProfileViewModel {
   private var subscriptions: Set<AnyCancellable> = []
+  private let coordinator: SignUpCoordinator
   private let nickNameCheckUseCase: NickNameCheckUseCaseRepresentable
   private let imageTransmitUseCase: ImageTransmitUseCaseRepresentable
   private let signUpUseCase: SignUpUseCaseRepresentable
@@ -45,11 +47,13 @@ public final class SignUpProfileViewModel {
   private let newUserInformation: NewUserInformation
 
   public init(
+    coordinator: SignUpCoordinator,
     nickNameCheckUseCase: NickNameCheckUseCaseRepresentable,
     imageTransmitUseCase: ImageTransmitUseCaseRepresentable,
     signUpUseCase: SignUpUseCaseRepresentable,
     newUserInformation: NewUserInformation
   ) {
+    self.coordinator = coordinator
     self.nickNameCheckUseCase = nickNameCheckUseCase
     self.imageTransmitUseCase = imageTransmitUseCase
     self.signUpUseCase = signUpUseCase
@@ -70,6 +74,7 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
 
     let imageFormSubject = PassthroughSubject<ImageForm, Never>()
     let nickNameSubject = PassthroughSubject<String, Never>()
+    let completeSignUpSubject = PassthroughSubject<SignUpUser, Never>()
 
     let nickNameCheckedResult = input.nickNameTextFieldEditting
       .tryMap { [weak self] nickName in
@@ -131,7 +136,33 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
           profileImage: imageForm.imageURL,
           mappedUserID: userBit.mappedUserID
         )
+        completeSignUpSubject.send(signUpUser)
       }
+      .store(in: &subscriptions)
+
+    completeSignUpSubject
+      .flatMap { [weak self] signUpUser -> AnyPublisher<Token, Error> in
+        guard let publisher = self?.signUpUseCase.signUp(signUpUser: signUpUser) else {
+          return Fail(error: SignUpProfileViewModelError.invalidTokenPublisher).eraseToAnyPublisher()
+        }
+        return publisher
+      }
+      .receive(on: DispatchQueue.main)
+      .sink(receiveCompletion: { completion in
+        switch completion {
+        case .finished:
+          break
+        case let .failure(error):
+          Log.make().error("\(error)")
+        }
+      }, receiveValue: { [weak self] token in
+        if let accessToken = token.accesToken,
+           let refreshToken = token.refreshToken {
+          self?.signUpUseCase.accessTokenSave(accessToken)
+          self?.signUpUseCase.refreshTokenSave(refreshToken)
+          self?.coordinator.finish()
+        }
+      })
       .store(in: &subscriptions)
 
     let initialState: SignUpProfileViewModelOutput = Just(.idle)
@@ -164,4 +195,5 @@ public protocol SignUpProfileViewModelRepresentable {
 enum SignUpProfileViewModelError: Error {
   case invalidBinding
   case invalidNickNameCheck
+  case invalidTokenPublisher
 }

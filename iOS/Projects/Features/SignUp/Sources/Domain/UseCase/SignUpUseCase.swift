@@ -14,6 +14,8 @@ import Foundation
 
 public protocol SignUpUseCaseRepresentable {
   func signUp(signUpUser: SignUpUser) -> AnyPublisher<Token, Error>
+  func accessTokenSave(_ token: String)
+  func refreshTokenSave(_ token: String)
 }
 
 // MARK: - SignUpUseCase
@@ -35,11 +37,11 @@ public final class SignUpUseCase: SignUpUseCaseRepresentable {
       .eraseToAnyPublisher()
   }
 
-  func accessTokenSave(_ token: String) {
+  public func accessTokenSave(_ token: String) {
     keychainRepository.save(key: Tokens.accessToken, value: token)
   }
 
-  func refreshTokenSave(_ token: String) {
+  public func refreshTokenSave(_ token: String) {
     keychainRepository.save(key: Tokens.refreshToken, value: token)
   }
 }

@@ -11,12 +11,16 @@ import Foundation
 // MARK: - MultipartFormData
 
 public struct MultipartFormData {
-  private let boundary: String
-  private let mimeType: String
+  public let boundary: String
   public let imageDataList: [Data]
+  private let mimeType: String
 
-  public init(uuid: UUID = UUID(), mimeType: String, imageDataList: [Data]) {
-    boundary = "Boundary-\(uuid.uuidString)"
+  public init(
+    uuid: UUID,
+    mimeType: String = "image/png",
+    imageDataList: [Data]
+  ) {
+    boundary = "\(uuid.uuidString)"
     self.mimeType = mimeType
     self.imageDataList = imageDataList
   }
@@ -40,7 +44,6 @@ public struct MultipartFormData {
     }
 
     body.append("--\(boundary)--\(lineBreak)")
-
     return body
   }
 }

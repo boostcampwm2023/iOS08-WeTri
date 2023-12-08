@@ -32,7 +32,7 @@ public final class SignUpFeatureCoordinator: SignUpFeatureCoordinating {
   }
 
   public func showSignUpFlow() {
-    let coordinator = SignUpCoordinator(navigationController: navigationController, isMockEnvironment: true, userBit: newUserInformation)
+    let coordinator = SignUpCoordinator(navigationController: navigationController, isMockEnvironment: false, userBit: newUserInformation)
     childCoordinators.append(coordinator)
     coordinator.finishDelegate = self
     coordinator.start()
@@ -46,5 +46,6 @@ extension SignUpFeatureCoordinator: CoordinatorFinishDelegate {
     childCoordinators = childCoordinators.filter {
       $0.flow != childCoordinator.flow
     }
+    navigationController.popToRootViewController(animated: false)
   }
 }
