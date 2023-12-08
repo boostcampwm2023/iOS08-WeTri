@@ -76,6 +76,18 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
     let nickNameSubject = PassthroughSubject<String, Never>()
     let completeSignUpSubject = PassthroughSubject<SignUpUser, Never>()
 
+    var imageFormPubliser: AnyPublisher<ImageForm, Never> {
+      return imageFormSubject.eraseToAnyPublisher()
+    }
+
+    var nickNamePublisher: AnyPublisher<String, Never> {
+      return nickNameSubject.eraseToAnyPublisher()
+    }
+
+    var genderBirthPublisher: AnyPublisher<GenderBirth, Never> {
+      return input.genderBirth.eraseToAnyPublisher()
+    }
+
     let nickNameCheckedResult = input.nickNameTextFieldEditting
       .tryMap { [weak self] nickName in
         guard let result = self?.nickNameCheckUseCase.check(nickName: nickName) else {
@@ -120,7 +132,11 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
       .store(in: &subscriptions)
 
     Publishers
-      .CombineLatest3(imageFormSubject.eraseToAnyPublisher(), nickNameSubject.eraseToAnyPublisher(), input.genderBirth)
+      .CombineLatest3(
+        imageFormPubliser,
+        nickNamePublisher,
+        genderBirthPublisher
+      )
       .sink { [weak self] imageForm, nickName, genderBirth in
         guard let userBit = self?.newUserInformation else {
           return
@@ -153,7 +169,7 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
           Log.make().error("\(error)")
         }
       }, receiveValue: { [weak self] token in
-        if let accessToken = token.accesToken,
+        if let accessToken = token.accessToken,
            let refreshToken = token.refreshToken {
           self?.signUpUseCase.accessTokenSave(accessToken)
           self?.signUpUseCase.refreshTokenSave(refreshToken)

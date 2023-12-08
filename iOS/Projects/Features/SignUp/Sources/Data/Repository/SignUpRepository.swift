@@ -74,6 +74,6 @@ private enum SignUpRepositoryEndPoint: TNEndPoint {
   }
 
   var headers: TNHeaders {
-    []
+    return .default
   }
 }

@@ -86,3 +86,14 @@ private extension Encodable {
     return dictionaryTarget
   }
 }
+
+// MARK: - AuthorizationInfoRequestDTO
+
+/// 애플로그인을 통해 받아온 데이터 entity
+struct AuthorizationInfoRequestDTO: Codable {
+  /// identityToken
+  let identityToken: String
+
+  /// authorizationCode
+  let authorizationCode: String
+}

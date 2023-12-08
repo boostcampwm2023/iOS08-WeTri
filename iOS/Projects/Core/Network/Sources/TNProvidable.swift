@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Log
 
 // MARK: - TNProvidable
 
@@ -48,11 +49,14 @@ public struct TNProvider<T: TNEndPoint>: TNProvidable {
 
   public func request(_ service: T, successStatusCodeRange range: Range<Int> = 200 ..< 300) async throws -> Data {
     let (data, response) = try await session.data(for: service.request(), delegate: nil)
-    let res = try JSONDecoder().decode(Response.self, from: data)
-    print("코드 : \(res.code)")
-    print("에러 메시지 : \(res.errorMessage)")
     try checkStatusCode(response, successStatusCodeRange: range)
     return data
+  }
+
+  public func requestResponse(_ service: T, successStatusCodeRange range: Range<Int> = 200 ..< 300) async throws -> (Data, URLResponse) {
+    let (data, response) = try await session.data(for: service.request(), delegate: nil)
+    try checkStatusCode(response, successStatusCodeRange: range)
+    return (data, response)
   }
 
   public func request(_ service: T, successStatusCodeRange range: Range<Int> = 200 ..< 300, interceptor: TNRequestInterceptor) async throws -> Data {

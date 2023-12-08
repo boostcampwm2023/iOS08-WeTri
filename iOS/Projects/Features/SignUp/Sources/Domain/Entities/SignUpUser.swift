@@ -24,7 +24,7 @@ public struct SignUpUser {
 extension SignUpUser: Codable {
   enum CodingKeys: String, CodingKey {
     case provider
-    case nickName
+    case nickName = "nickname"
     case gender
     case birthDate = "birthdate"
     case profileImage

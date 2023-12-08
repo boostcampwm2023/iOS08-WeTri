@@ -52,6 +52,7 @@ extension LoginViewModel: LoginViewModelRepresentable {
       .flatMap(authorizeUseCase.authorize(authorizationInfo:))
       .receive(on: DispatchQueue.main)
       .sink(receiveValue: { [weak self] loginResponse in
+
         if let token = loginResponse.token {
           guard let accessToken = token.accessToken,
                 let refreshToken = token.refreshToken

@@ -16,6 +16,7 @@ import Trinet
 enum AuthorizationRepositoryError: Error {
   case invalidData
   case failureDecode
+  case resonseDecodingError
 }
 
 // MARK: - AuthorizationRepository
@@ -32,18 +33,16 @@ struct AuthorizationRepository: AuthorizationRepositoryRepresentable {
     return Future<LoginResponse, Never> { promise in
       Task {
         do {
-          guard let token = String(data: authorizationInfo.identityToken, encoding: .utf8),
-                let authorizationCode = String(data: authorizationInfo.authorizationCode, encoding: .utf8)
-          else {
-            return
-          }
-          let authorizationInfoRequestDTO = AuthorizationInfoRequestDTO(identityToken: token, authorizationCode: authorizationCode)
+          let token = String(decoding: authorizationInfo.identityToken, as: UTF8.self)
+          let authorizationCode = String(decoding: authorizationInfo.authorizationCode, as: UTF8.self)
 
-          let data = try await provider.request(.signIn(authorizationInfoRequestDTO))
-          guard let responseCode = try decoder.decode(Response.self, from: data).code else {
-            return
+          let authorizationInfoRequestDTO = AuthorizationInfoRequestDTO(identityToken: token, authorizationCode: authorizationCode)
+          let (data, response) = try await provider.requestResponse(.signIn(authorizationInfoRequestDTO))
+          guard let urlResponse = response as? HTTPURLResponse else {
+            throw AuthorizationRepositoryError.resonseDecodingError
           }
-          switch responseCode {
+          let statusCode = urlResponse.statusCode
+          switch statusCode {
           case AuthorizationRepositoryResponseCode.token.code:
             let token = try decoder.decode(GWResponse<Token>.self, from: data).data
             promise(.success((token, nil)))
@@ -93,8 +92,7 @@ enum AuthorizationRepositoryEndPoint: TNEndPoint {
   }
 
   var headers: TNHeaders {
-    return .init(headers: [
-    ])
+    return .default
   }
 }
 

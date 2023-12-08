@@ -29,6 +29,7 @@ public final class SignUpProfileViewController: UIViewController {
   public init(viewModel: SignUpProfileViewModelRepresentable) {
     self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
+    bindViewModel()
   }
 
   @available(*, unavailable)
@@ -93,7 +94,6 @@ public final class SignUpProfileViewController: UIViewController {
     super.viewDidLoad()
     configureUI()
     bindUI()
-    bindViewModel()
   }
 }
 
