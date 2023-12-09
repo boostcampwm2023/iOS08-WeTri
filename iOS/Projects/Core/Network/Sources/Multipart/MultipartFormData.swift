@@ -12,11 +12,24 @@ import Foundation
 
 public struct MultipartFormData {
   private let boundary: String
+  private let imageDataList: [Data]
+
   public let multipartItems: [MultipartItem]
 
-  public init(multipartItems: [MultipartItem]) {
-    boundary = UUID().uuidString
+  public init(
+    uuid: UUID,
+    mimeType _: String = "image/png",
+    imageDataList: [Data]
+  ) {
+    boundary = "\(uuid.uuidString)"
+    multipartItems = imageDataList.map { MultipartItem(data: $0, mimeType: .imagePNG) }
+    self.imageDataList = imageDataList
+  }
+
+  public init(uuid: UUID, multipartItems: [MultipartItem]) {
+    boundary = uuid.uuidString
     self.multipartItems = multipartItems
+    imageDataList = []
   }
 
   public func makeBody() -> Data {
@@ -27,7 +40,7 @@ public struct MultipartFormData {
 
     for item in multipartItems {
       let imageFieldName = "images"
-      let filename = "image\(UUID().uuidString)"
+      let filename = "image\(UUID().uuidString)\(item.fileExtension.rawValue)"
 
       body.append(boundaryPrefix)
       body.append(#"Content-Disposition: form-data; name="\#(imageFieldName)"; filename="\#(filename)"\#(lineBreak)"#)
@@ -38,7 +51,6 @@ public struct MultipartFormData {
 
     // insert final boundary
     body.append("--\(boundary)--\(lineBreak)")
-
     return body
   }
 }

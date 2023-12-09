@@ -15,6 +15,7 @@ import Log
 
 enum KeychainRepositoryError: Error {
   case invalidKey
+  case invalidValue
 }
 
 // MARK: - KeychainRepository
@@ -28,8 +29,9 @@ final class KeychainRepository: KeychainRepositoryRepresentable {
 
   func save(key: String, value: String) {
     do {
-      let encoder = JSONEncoder()
-      let data = try encoder.encode(value)
+      guard let data = value.data(using: .utf8) else {
+        throw KeychainRepositoryError.invalidValue
+      }
       keychain.save(key: key, data: data)
     } catch {
       Log.make().error("\(error)")

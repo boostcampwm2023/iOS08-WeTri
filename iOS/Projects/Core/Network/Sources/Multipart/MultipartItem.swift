@@ -8,16 +8,28 @@
 
 import Foundation
 
+// MARK: - MultipartItem
+
 public struct MultipartItem {
   let data: Data
   let mimeType: MimeType
+  let fileExtension: FileExtension
 
-  public init(data: Data, mimeType: MimeType) {
+  public init(data: Data, mimeType: MimeType, fileExtension: FileExtension = .png) {
     self.data = data
     self.mimeType = mimeType
+    self.fileExtension = fileExtension
   }
 
   public enum MimeType: String {
     case imagePNG = "image/png"
   }
+}
+
+// MARK: - FileExtension
+
+public enum FileExtension: String {
+  case png = ".png"
+  case jpg = ".jpg"
+  case jpeg = ".jpeg"
 }

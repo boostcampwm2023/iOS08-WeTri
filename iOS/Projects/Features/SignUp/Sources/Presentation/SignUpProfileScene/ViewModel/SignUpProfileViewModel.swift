@@ -6,8 +6,10 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import Auth
 import Combine
 import Foundation
+import Keychain
 import Log
 
 // MARK: - SignUpProfileViewModelInput
@@ -38,22 +40,25 @@ public enum SignUpProfileState {
 
 public final class SignUpProfileViewModel {
   private var subscriptions: Set<AnyCancellable> = []
+  private let coordinator: SignUpFeatureCoordinating
   private let nickNameCheckUseCase: NickNameCheckUseCaseRepresentable
   private let imageTransmitUseCase: ImageTransmitUseCaseRepresentable
   private let signUpUseCase: SignUpUseCaseRepresentable
 
-  private let userBit: NewUserInformation
+  private let newUserInformation: NewUserInformation
 
   public init(
+    coordinator: SignUpFeatureCoordinating,
     nickNameCheckUseCase: NickNameCheckUseCaseRepresentable,
     imageTransmitUseCase: ImageTransmitUseCaseRepresentable,
     signUpUseCase: SignUpUseCaseRepresentable,
-    userBit: NewUserInformation
+    newUserInformation: NewUserInformation
   ) {
+    self.coordinator = coordinator
     self.nickNameCheckUseCase = nickNameCheckUseCase
     self.imageTransmitUseCase = imageTransmitUseCase
     self.signUpUseCase = signUpUseCase
-    self.userBit = userBit
+    self.newUserInformation = newUserInformation
   }
 }
 
@@ -70,6 +75,19 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
 
     let imageFormSubject = PassthroughSubject<ImageForm, Never>()
     let nickNameSubject = PassthroughSubject<String, Never>()
+    let completeSignUpSubject = PassthroughSubject<SignUpUser, Never>()
+
+    var imageFormPubliser: AnyPublisher<ImageForm, Never> {
+      return imageFormSubject.eraseToAnyPublisher()
+    }
+
+    var nickNamePublisher: AnyPublisher<String, Never> {
+      return nickNameSubject.eraseToAnyPublisher()
+    }
+
+    var genderBirthPublisher: AnyPublisher<GenderBirth, Never> {
+      return input.genderBirth.eraseToAnyPublisher()
+    }
 
     let nickNameCheckedResult = input.nickNameTextFieldEditting
       .tryMap { [weak self] nickName in
@@ -114,24 +132,46 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
       }
       .store(in: &subscriptions)
 
-    let genderBirth = input.genderBirth
-
-    // Complete 버튼이 클릭되어야만 해당 코드가 동작된다.
     Publishers
-      .CombineLatest3(imageFormSubject.eraseToAnyPublisher(), nickNameSubject.eraseToAnyPublisher(), input.genderBirth)
+      .CombineLatest3(
+        imageFormPubliser,
+        nickNamePublisher,
+        genderBirthPublisher
+      )
       .sink { [weak self] imageForm, nickName, genderBirth in
-        guard let userBit = self?.userBit else {
+        guard let newUserInformation = self?.newUserInformation else {
           return
         }
         let signUpUser = SignUpUser(
-          provider: userBit.provider.rawValue,
-          nickName: nickName,
+          provider: newUserInformation.provider.rawValue,
+          nickname: nickName,
           gender: genderBirth.gender.rawValue,
           birthDate: genderBirth.birth,
           profileImage: imageForm.imageURL,
-          mappedUserID: userBit.mappedUserID
+          mappedUserID: newUserInformation.mappedUserID
         )
+        completeSignUpSubject.send(signUpUser)
       }
+      .store(in: &subscriptions)
+
+    completeSignUpSubject
+      .flatMap(signUpUseCase.signUp(signUpUser:))
+      .receive(on: DispatchQueue.main)
+      .sink(receiveCompletion: { completion in
+        switch completion {
+        case .finished:
+          break
+        case let .failure(error):
+          Log.make().error("\(error)")
+        }
+      }, receiveValue: { [weak self] token in
+        if let accessToken = token.accessToken,
+           let refreshToken = token.refreshToken {
+          self?.signUpUseCase.accessTokenSave(accessToken)
+          self?.signUpUseCase.refreshTokenSave(refreshToken)
+          self?.coordinator.finish()
+        }
+      })
       .store(in: &subscriptions)
 
     let initialState: SignUpProfileViewModelOutput = Just(.idle)
@@ -164,4 +204,5 @@ public protocol SignUpProfileViewModelRepresentable {
 enum SignUpProfileViewModelError: Error {
   case invalidBinding
   case invalidNickNameCheck
+  case invalidTokenPublisher
 }

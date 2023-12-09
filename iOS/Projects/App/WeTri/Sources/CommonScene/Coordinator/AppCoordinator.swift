@@ -6,8 +6,10 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import Auth
 import Coordinator
 import LoginFeature
+import SignUpFeature
 import SplashFeature
 import UIKit
 
@@ -49,16 +51,27 @@ final class AppCoordinator: AppCoordinating {
   }
 
   func showLoginFlow() {
-    // TODO: LoginCoordinator 연결
-
-    let loginCoordinator = LoginCoordinator(
+    let coordinator = LoginFeatureCoordinator(
       navigationController: navigationController,
-      isMockEnvironment: true,
+      isMockEnvironment: false,
       isMockFirst: true
     )
+    childCoordinators.append(coordinator)
+    coordinator.finishDelegate = self
+    coordinator.loginFeatureFinishDelegate = self
+    coordinator.start()
+  }
 
-    childCoordinators.append(loginCoordinator)
-    loginCoordinator.start()
+  func showSignUpFlow(newUserInformation: NewUserInformation) {
+    let coordinator = SignUpFeatureCoordinator(
+      navigationController: navigationController,
+      newUserInformation: newUserInformation,
+      isMockEnvironment: false
+    )
+    childCoordinators.append(coordinator)
+    coordinator.finishDelegate = self
+    coordinator.signUpFeatureFinishDelegate = self
+    coordinator.start()
   }
 
   func showTabBarFlow() {
@@ -86,6 +99,33 @@ extension AppCoordinator: SplashCoordinatorFinishDelegate {
     if hasTokenExpired {
       showLoginFlow()
     } else {
+      showTabBarFlow()
+    }
+  }
+}
+
+// MARK: SignUpFeatureCoordinatorFinishDelegate
+
+extension AppCoordinator: SignUpFeatureCoordinatorFinishDelegate {
+  func signUpFeatureCooridnatorDidFinished() {
+    showTabBarFlow()
+  }
+}
+
+// MARK: LoginFeatureFinishDelegate
+
+extension AppCoordinator: LoginFeatureFinishDelegate {
+  func loginFeatureCoordinatorDidFinished(initialUser: InitialUser?, token: Token?) {
+    if let initialUser {
+      showSignUpFlow(
+        newUserInformation: NewUserInformation(
+          mappedUserID: initialUser.mappedUserID,
+          provider: initialUser.provider
+        )
+      )
+    }
+
+    if token != nil {
       showTabBarFlow()
     }
   }

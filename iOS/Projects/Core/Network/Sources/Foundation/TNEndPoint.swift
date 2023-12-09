@@ -43,6 +43,17 @@ public extension TNEndPoint {
     request.httpBody = body?.data
     return request
   }
+
+  func requestFormData() throws -> URLRequest {
+    guard let targetURL = URL(string: baseURL)?.appending(path: path).appending(query: query)
+    else {
+      throw TNError.invalidURL
+    }
+    var request = URLRequest(url: targetURL)
+    request.httpMethod = method.rawValue
+    request.allHTTPHeaderFields = headers.dictionary
+    return request
+  }
 }
 
 private extension URL {
