@@ -20,9 +20,7 @@ export class ProfilesService {
   ) {}
 
   async updateProfile(publicId: string, updateProfileDto: UpdateProfileDto) {
-    if (await this.validateProfileNickname(updateProfileDto.nickname)) {
-      throw new NicknameDuplicateException();
-    }
+    await this.validateProfileNickname(updateProfileDto.nickname);
     await this.profilesRepository.update({ publicId }, updateProfileDto);
     return this.getProfile(publicId);
   }
@@ -32,11 +30,14 @@ export class ProfilesService {
   }
 
   async validateProfileNickname(nickname: string) {
-    return await this.profilesRepository.exist({
+    const result = await this.profilesRepository.exist({
       where: {
         nickname,
       },
     });
+    if(result) {
+      throw new NicknameDuplicateException();
+    }
   }
 
   async getProfile(publicId: string) {

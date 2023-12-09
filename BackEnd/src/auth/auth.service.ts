@@ -47,11 +47,7 @@ export class AuthService {
   }
 
   async registerWithUserIdAndProvider(signupInfo: SignupDto) {
-    if (
-      await this.profilesService.validateProfileNickname(signupInfo.nickname)
-    ) {
-      throw new NicknameDuplicateException();
-    }
+    await this.profilesService.validateProfileNickname(signupInfo.nickname);
     const newUser = await this.usersService.createUser(signupInfo);
 
     return this.loginUser(newUser.profile.publicId);
