@@ -6,6 +6,7 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import CoreLocation
 import DesignSystem
 import MapKit
 import UIKit
@@ -192,12 +193,7 @@ final class WorkoutSummaryCardView: UIView {
     }
 
     // 지도 설정
-    let currentLocations = model.locations.map { CLLocation(latitude: $0.latitude, longitude: $0.longitude) }
-    let coordinates = currentLocations.map(\.coordinate)
-    let polyline = MKPolyline(coordinates: coordinates, count: coordinates.count)
-
-    mapView.removeOverlays(mapView.overlays)
-    mapView.addOverlay(polyline)
+    configureMapPolyline(with: model.locations)
 
     distanceItemView.configure(withTitle: "거리", value: "\(model.distance)")
     caloriesItemView.configure(withTitle: "칼로리", value: "\(model.calorie)")
@@ -205,6 +201,32 @@ final class WorkoutSummaryCardView: UIView {
     averageHeartRateItemView.configure(withTitle: "Avg.HR", value: "\(model.averageHeartRate.flatMap(String.init) ?? "-")")
     minimumHeartRateItemView.configure(withTitle: "Min.HR", value: "\(model.minimumHeartRate.flatMap(String.init) ?? "-")")
     maximumHeartRateItemView.configure(withTitle: "Max.HR", value: "\(model.maximumHeartRate.flatMap(String.init) ?? "-")")
+  }
+
+  private func configureMapPolyline(with locations: [LocationModel]) {
+    let currentLocations =
+      if !locations.isEmpty { locations.map { CLLocation(latitude: $0.latitude, longitude: $0.longitude) } }
+    else { [CLLocation(latitude: 37.22738768300735, longitude: 127.06500224609061)] }
+    let coordinates = currentLocations.map(\.coordinate)
+    let polyline = MKPolyline(coordinates: coordinates, count: coordinates.count)
+
+    mapView.removeOverlays(mapView.overlays)
+    mapView.addOverlay(polyline)
+    // 지도 뷰 업데이트
+    let latitudes = currentLocations.map(\.coordinate.latitude)
+    let longitudes = currentLocations.map(\.coordinate.longitude)
+    let maxLatitude = latitudes.max() ?? 0
+    let minLatitude = latitudes.min() ?? 0
+    let maxLongitude = longitudes.max() ?? 0
+    let minLongitude = longitudes.min() ?? 0
+    let region = MKCoordinateRegion(
+      center: .init(
+        latitude: (maxLatitude + minLatitude) / 2,
+        longitude: (maxLongitude + minLongitude) / 2
+      ),
+      span: .init()
+    )
+    mapView.setRegion(region, animated: true)
   }
 }
 
