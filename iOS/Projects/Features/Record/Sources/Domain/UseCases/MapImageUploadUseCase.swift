@@ -8,7 +8,6 @@
 
 import Combine
 import Foundation
-import UIKit
 
 struct MapImageUploadUseCase: MapImageUploadUseCaseRepresentable {
   private let repository: MapImageUploadRepositoryRepresentable
@@ -18,14 +17,10 @@ struct MapImageUploadUseCase: MapImageUploadUseCaseRepresentable {
   }
 
   func uploadImage(included data: Data?) -> AnyPublisher<URL, Error> {
-    guard
-      let data,
-      let image = UIImage(data: data)
+    guard let data
     else {
       return Empty<URL, Error>().eraseToAnyPublisher()
     }
-
-    UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
     return repository.upload(with: data)
   }
 }
