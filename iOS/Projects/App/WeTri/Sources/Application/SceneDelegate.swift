@@ -22,11 +22,12 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     window = UIWindow(windowScene: windowScene)
 
     let navigationController = UINavigationController()
+    let coordinator = LoginFeatureCoordinator(navigationController: navigationController, isMockEnvironment: false, isMockFirst: false)
     window?.rootViewController = navigationController
-    let coordinator = AppCoordinator(navigationController: navigationController)
-    coordinating = coordinator
+//    let coordinator = AppCoordinator(navigationController: navigationController)
+//    coordinating = coordinator
+//    coordinator.start()
     coordinator.start()
-    window?.rootViewController = navigationController
     window?.makeKeyAndVisible()
   }
 }
