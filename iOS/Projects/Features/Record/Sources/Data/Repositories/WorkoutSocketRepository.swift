@@ -70,6 +70,8 @@ struct WorkoutSocketRepository {
           case let .string(string):
             Log.make(with: .network).debug("소켓: received \(string)")
             try subject.send(stringToWorkoutRealTimeModel(rawString: string))
+          case let .data(data):
+            Log.make().error("소켓: 데이터로 받았음. \(String(data: data, encoding: .utf8)!)")
           default:
             Log.make().error("소켓: You can't enter this line")
           }

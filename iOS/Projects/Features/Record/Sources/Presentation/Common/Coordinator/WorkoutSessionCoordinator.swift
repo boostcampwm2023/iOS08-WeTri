@@ -42,7 +42,7 @@ struct WorkoutSessionComponents: WorkoutSessionDependency {
 
   /// 실제 사용자(기기 사용자)의 프로필 이미지 URL 입니다.
   let userProfileImage: URL?
-  
+
   /// 사용자의 workoutMode를 판별해주는 변수 입니다.
   ///
   /// 솔로와, 랜덤매칭이 있습니다.
@@ -124,7 +124,6 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
 
     let healthRepository = HealthRepository()
 
-    
     let socketSession = makeSocketSessionBy(workoutMode: workoutSessionComponents.workoutMode)
     let socketRepository = WorkoutSocketRepository(session: socketSession, dependency: workoutSessionComponents)
 
