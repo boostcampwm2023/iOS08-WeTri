@@ -70,15 +70,12 @@ final class WorkoutPeerRandomMatchingViewController: UIViewController {
   init(viewModel: WorkoutPeerRandomMatchingViewModelRepresentable) {
     self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
-<<<<<<< Updated upstream
-=======
 
-    let accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkMDA0MmFjZC02YTc0LTRjMDItYTdmZi1iYzU2YzZhYzQzZjQiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzAxOTk5NTA2LCJleHAiOjE3MDIwMDMxMDZ9.wpfTVubkyQFTcVSFTgigjhCX1gwm7TFc98cEZMzS-U".data(using: .utf8)!
+    let accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkMDA0MmFjZC02YTc0LTRjMDItYTdmZi1iYzU2YzZhYzQzZjQiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzAxOTk5NTA2LCJleHAiOjE3MDIwMDMxMDZ9.wpfTVubkyQFTcVSFTgigjhCX1gwm7TFc98cEZMzS-UU".data(using: .utf8)!
     Keychain.shared.save(key: Tokens.accessToken, data: accessToken)
 
     let refreshToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkMDA0MmFjZC02YTc0LTRjMDItYTdmZi1iYzU2YzZhYzQzZjQiLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTcwMTk5OTUwNiwiZXhwIjoxNzAyMDg1OTA2fQ.1-_8mVenoS7uUuuGedOlG_Ng7xHHYEmX5Kpw5Z8XJls".data(using: .utf8)!
     Keychain.shared.save(key: Tokens.refreshToken, data: refreshToken)
->>>>>>> Stashed changes
   }
 
   @available(*, unavailable)
