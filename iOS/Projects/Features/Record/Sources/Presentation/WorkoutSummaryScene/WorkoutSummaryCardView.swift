@@ -179,7 +179,15 @@ final class WorkoutSummaryCardView: UIView {
 
   func configure(with model: WorkoutSummaryModel) {
     dateLabel.text = model.createdAt.description
-    timeItemView.configure(withTitle: "시간", value: "\(model.workoutTime)")
+    let formatter = DateComponentsFormatter()
+    formatter.allowedUnits = [.hour, .minute, .second]
+    formatter.unitsStyle = .positional
+    formatter.zeroFormattingBehavior = .pad
+
+    if let formattedString = formatter.string(from: TimeInterval(model.workoutTime)) {
+      timeItemView.configure(withTitle: "시간", value: "\(formattedString)")
+    }
+
     distanceItemView.configure(withTitle: "거리", value: "\(model.distance)")
     caloriesItemView.configure(withTitle: "칼로리", value: "\(model.calorie)")
 
