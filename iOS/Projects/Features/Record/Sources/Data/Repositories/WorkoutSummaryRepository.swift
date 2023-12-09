@@ -14,7 +14,14 @@ import Trinet
 
 public struct WorkoutSummaryRepository: WorkoutSummaryRepositoryRepresentable {
   private let provider: TNProvider<WorkoutSummaryEndPoint>
-  private let jsonDecoder: JSONDecoder = .init()
+  private let jsonDecoder: JSONDecoder = {
+    let jsonDecoder = JSONDecoder()
+    let dateFormatter = DateFormatter()
+    dateFormatter.locale = Locale(identifier: "ko_KR")
+    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+    jsonDecoder.dateDecodingStrategy = .formatted(dateFormatter)
+    return jsonDecoder
+  }()
 
   init(session: URLSessionProtocol) {
     provider = .init(session: session)
