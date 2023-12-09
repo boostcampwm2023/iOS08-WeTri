@@ -285,6 +285,7 @@ private enum Metrics {
   static let sectionInterval: CGFloat = 48
   static let componentInterval: CGFloat = 9
   static let datePickerToNextButton: CGFloat = 5
+  static let buttonHeight: CGFloat = 44
 }
 
 // MARK: - DateFormatter

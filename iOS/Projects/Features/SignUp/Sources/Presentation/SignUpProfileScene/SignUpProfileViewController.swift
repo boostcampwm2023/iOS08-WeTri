@@ -80,7 +80,7 @@ public final class SignUpProfileViewController: UIViewController {
   }()
 
   private let completionButton: UIButton = {
-    let configuration = UIButton.Configuration.mainEnabled(title: "완료")
+    let configuration = UIButton.Configuration.mainDisabled(title: "완료")
     let button = UIButton(configuration: configuration)
     button.translatesAutoresizingMaskIntoConstraints = false
     button.titleLabel?.font = .preferredFont(forTextStyle: .headline, weight: .bold)
@@ -141,9 +141,9 @@ private extension SignUpProfileViewController {
     view.addSubview(completionButton)
     NSLayoutConstraint.activate([
       completionButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.safeAreaInterval),
-      completionButton.topAnchor.constraint(equalTo: nickNameBoxView.bottomAnchor, constant: Metrics.buttonInteval),
       completionButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.safeAreaInterval),
       completionButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -Metrics.safeAreaInterval),
+      completionButton.heightAnchor.constraint(equalToConstant: Metrics.buttonHeight),
     ])
   }
 
@@ -218,6 +218,8 @@ private extension SignUpProfileViewController {
       showAlertSelect()
     case .success:
       completionButton.isEnabled = true
+      let configuration = UIButton.Configuration.mainEnabled(title: "확인")
+      completionButton.configuration = configuration
     case .failure:
       completionButton.isEnabled = false
     case let .customError(error):
@@ -358,10 +360,13 @@ extension SignUpProfileViewController: UINavigationControllerDelegate {}
 
 private enum Metrics {
   static let safeAreaInterval: CGFloat = 24
-  static let topInterval: CGFloat = 81
-  static let sectionInterval: CGFloat = 48
+  static let topInterval: CGFloat = 30
+  static let sectionInterval: CGFloat = 54
   static let componentInterval: CGFloat = 9
-  static let buttonInteval: CGFloat = 258
+  static let buttonInterval: CGFloat = 132
   static let profileImageButtonSize: CGFloat = 100
   static let nickNameCheckerWidth: CGFloat = 175
+  static let nickNameCheckerHeight: CGFloat = 24
+  static let buttonHeight: CGFloat = 44
+  static let buttonSafeAreaInterval: CGFloat = 30
 }
