@@ -156,22 +156,74 @@ final class WorkoutRouteMapViewController: UIViewController {
     }
   }
 
-  private func createMapSnapshot(with _: MapRegion) {
+  private func createMapSnapshot(with regionData: MapRegion) {
     let coordinates = locations.map(\.coordinate)
     let polyLine = MKPolyline(coordinates: coordinates, count: coordinates.count)
-    let region = MKCoordinateRegion(polyLine.boundingMapRect)
+    let span = MKCoordinateSpan(
+      latitudeDelta: regionData.maxLatitude - regionData.minLatitude + 0.005,
+      longitudeDelta: regionData.maxLongitude - regionData.minLongitude + 0.005
+    )
+    var region = MKCoordinateRegion(polyLine.boundingMapRect)
+    region.span = span
     // 맵 가운데 초점 설정
 
     let options = MKMapSnapshotter.Options()
     options.region = region
     options.size = mapView.frame.size
+    options.showsBuildings = true
 
     let snapshotter = MKMapSnapshotter(options: options)
 
     snapshotter.start { [weak self] snapshot, _ in
       // 스냅샷 이미지를 png데이터로 전달
-      self?.mapCaptureDataSubject.send(snapshot?.image.pngData())
+      let data = self?.drawLineOnImagePngData(snapshot: snapshot)
+      self?.mapCaptureDataSubject.send(data)
     }
+  }
+
+  func drawLineOnImagePngData(snapshot: MKMapSnapshotter.Snapshot?) -> Data? {
+    guard let snapshot else {
+      return nil
+    }
+    let image = snapshot.image
+
+    UIGraphicsBeginImageContextWithOptions(snapshot.image.size, true, 0)
+
+    // draw original image into the context
+    image.draw(at: CGPoint.zero)
+
+    // get the context for CoreGraphics
+    guard let context = UIGraphicsGetCurrentContext() else {
+      return nil
+    }
+
+    // set stroking width and color of the context
+    context.setLineWidth(2.0)
+    context.setStrokeColor(UIColor.orange.cgColor)
+
+    // Here is the trick :
+    // We use addLine() and move() to draw the line, this should be easy to understand.
+    // The diificult part is that they both take CGPoint as parameters, and it would be way too complex for us to calculate by ourselves
+    // Thus we use snapshot.point() to save the pain.
+//    let initialLocation2D = CLLocationCoordinate2DMake(locations[0].coordinate.latitude, locations[0].coordinate.longitude)
+//    context.move(to: snapshot.point(for: initialLocation2D))
+    locations
+      .forEach { location in
+        let currentCLLocationCoordinator2D = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+        context.addLine(to: snapshot.point(for: currentCLLocationCoordinator2D))
+        context.move(to: snapshot.point(for: currentCLLocationCoordinator2D))
+      }
+
+    // apply the stroke to the context
+    context.strokePath()
+
+    // get the image from the graphics context
+    let resultImage = UIGraphicsGetImageFromCurrentImageContext()
+
+    // end the graphics context
+    UIGraphicsEndImageContext()
+
+    return resultImage?.pngData()
   }
 
   private func updatePolyLine(_ value: KalmanFilterCensored?) {
