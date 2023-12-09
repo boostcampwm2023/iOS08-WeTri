@@ -40,7 +40,7 @@ public enum SignUpProfileState {
 
 public final class SignUpProfileViewModel {
   private var subscriptions: Set<AnyCancellable> = []
-  private let coordinator: SignUpFeatureCoordinator
+  private let coordinator: SignUpFeatureCoordinating
   private let nickNameCheckUseCase: NickNameCheckUseCaseRepresentable
   private let imageTransmitUseCase: ImageTransmitUseCaseRepresentable
   private let signUpUseCase: SignUpUseCaseRepresentable
@@ -48,7 +48,7 @@ public final class SignUpProfileViewModel {
   private let newUserInformation: NewUserInformation
 
   public init(
-    coordinator: SignUpFeatureCoordinator,
+    coordinator: SignUpFeatureCoordinating,
     nickNameCheckUseCase: NickNameCheckUseCaseRepresentable,
     imageTransmitUseCase: ImageTransmitUseCaseRepresentable,
     signUpUseCase: SignUpUseCaseRepresentable,
@@ -139,28 +139,23 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
         genderBirthPublisher
       )
       .sink { [weak self] imageForm, nickName, genderBirth in
-        guard let userBit = self?.newUserInformation else {
+        guard let newUserInformation = self?.newUserInformation else {
           return
         }
         let signUpUser = SignUpUser(
-          provider: userBit.provider.rawValue,
-          nickName: nickName,
+          provider: newUserInformation.provider.rawValue,
+          nickname: nickName,
           gender: genderBirth.gender.rawValue,
           birthDate: genderBirth.birth,
           profileImage: imageForm.imageURL,
-          mappedUserID: userBit.mappedUserID
+          mappedUserID: newUserInformation.mappedUserID
         )
         completeSignUpSubject.send(signUpUser)
       }
       .store(in: &subscriptions)
 
     completeSignUpSubject
-      .flatMap { [weak self] signUpUser -> AnyPublisher<Token, Error> in
-        guard let publisher = self?.signUpUseCase.signUp(signUpUser: signUpUser) else {
-          return Fail(error: SignUpProfileViewModelError.invalidTokenPublisher).eraseToAnyPublisher()
-        }
-        return publisher
-      }
+      .flatMap(signUpUseCase.signUp(signUpUser:))
       .receive(on: DispatchQueue.main)
       .sink(receiveCompletion: { completion in
         switch completion {

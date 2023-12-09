@@ -66,8 +66,8 @@ public final class LoginFeatureCoordinator: LoginFeatureCoordinating {
     navigationController.pushViewController(viewController, animated: false)
   }
 
-  public func finish(initialUser: InitialUser? = nil, token: Token? = nil) {
-    finishDelegate?.flowDidFinished(childCoordinator: self)
+  public func finishLogin(initialUser: InitialUser? = nil, token: Token? = nil) {
+    finish()
     loginFeatureFinishDelegate?.loginFeatureCoordinatorDidFinished(initialUser: initialUser, token: token)
   }
 }

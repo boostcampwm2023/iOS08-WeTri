@@ -53,9 +53,9 @@ struct ImageFormEndPoint: TNEndPoint {
   init(imageDataList: [Data]) {
     let uuid = UUID()
 
-    headers = .init(headers: [
-      .init(key: "Content-Type", value: "multipart/form-data; boundary=\(uuid.uuidString)"),
-    ])
+    headers = [
+      .contentType("multipart/form-data; boundary=\(uuid.uuidString)"),
+    ]
 
     multipart = MultipartFormData(
       uuid: uuid,

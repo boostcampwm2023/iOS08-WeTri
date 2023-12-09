@@ -12,7 +12,7 @@ import Foundation
 
 public struct SignUpUser {
   let provider: String
-  let nickName: String
+  let nickname: String
   let gender: String
   let birthDate: String
   let profileImage: URL?
@@ -24,7 +24,7 @@ public struct SignUpUser {
 extension SignUpUser: Codable {
   enum CodingKeys: String, CodingKey {
     case provider
-    case nickName = "nickname"
+    case nickname
     case gender
     case birthDate = "birthdate"
     case profileImage

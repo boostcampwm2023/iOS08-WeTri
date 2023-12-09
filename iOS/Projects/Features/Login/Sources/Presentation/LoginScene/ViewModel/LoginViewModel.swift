@@ -61,11 +61,11 @@ extension LoginViewModel: LoginViewModelRepresentable {
           }
           self?.authorizeUseCase.accessTokenSave(accessToken)
           self?.authorizeUseCase.refreshTokenSave(refreshToken)
-          self?.coordinator.finish(initialUser: nil, token: token)
+          self?.coordinator.finishLogin(initialUser: nil, token: token)
         }
 
         if let initialUser = loginResponse.initialUser {
-          self?.coordinator.finish(initialUser: initialUser, token: nil)
+          self?.coordinator.finishLogin(initialUser: initialUser, token: nil)
         }
       })
       .store(in: &subscriptions)
