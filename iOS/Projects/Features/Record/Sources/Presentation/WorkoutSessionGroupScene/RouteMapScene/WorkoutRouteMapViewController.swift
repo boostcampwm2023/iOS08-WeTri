@@ -156,25 +156,18 @@ final class WorkoutRouteMapViewController: UIViewController {
     }
   }
 
-  private func createMapSnapshot(with regionData: MapRegion) {
+  private func createMapSnapshot(with _: MapRegion) {
+    let coordinates = locations.map(\.coordinate)
+    let polyLine = MKPolyline(coordinates: coordinates, count: coordinates.count)
+    let region = MKCoordinateRegion(polyLine.boundingMapRect)
     // 맵 가운데 초점 설정
-    let center = CLLocationCoordinate2D(
-      latitude: (regionData.minLatitude + regionData.maxLatitude) / 2,
-      longitude: (regionData.minLongitude + regionData.maxLongitude) / 2
-    )
-
-    let span = MKCoordinateSpan(
-      latitudeDelta: regionData.maxLatitude - regionData.minLatitude,
-      longitudeDelta: regionData.maxLongitude - regionData.minLongitude
-    )
-
-    let region = MKCoordinateRegion(center: center, span: span)
 
     let options = MKMapSnapshotter.Options()
     options.region = region
     options.size = mapView.frame.size
 
     let snapshotter = MKMapSnapshotter(options: options)
+
     snapshotter.start { [weak self] snapshot, _ in
       // 스냅샷 이미지를 png데이터로 전달
       self?.mapCaptureDataSubject.send(snapshot?.image.pngData())

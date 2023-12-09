@@ -26,7 +26,7 @@ final class AppCoordinator: AppCoordinating {
   }
 
   func start() {
-    showSplashFlow()
+    showTabBarFlow()
   }
 
   private func showSplashFlow() {
