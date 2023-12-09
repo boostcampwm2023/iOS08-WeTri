@@ -56,7 +56,7 @@ public final class RecordFeatureCoordinator: RecordFeatureCoordinating {
       recordCalendarViewController: recordCalendarViewCotnroller,
       recordListViewController: recordListViewController
     )
-    navigationController.pushViewController(recordContainerViewController, animated: false)
+    navigationController.setViewControllers([recordContainerViewController], animated: true)
   }
 
   func showSettingFlow() {
@@ -70,6 +70,7 @@ public final class RecordFeatureCoordinator: RecordFeatureCoordinating {
   func showWorkoutFlow(_ workoutSessionComponents: WorkoutSessionComponents) {
     let coordinator = WorkoutSessionCoordinator(
       navigationController: navigationController,
+      sessionFinishDelegate: self,
       isMockEnvironment: false,
       workoutSessionComponents: workoutSessionComponents
     )
@@ -96,5 +97,13 @@ extension RecordFeatureCoordinator: WorkoutSettingCoordinatorFinishDelegate {
   func workoutSettingCoordinatorDidFinished(workoutSessionComponents: WorkoutSessionComponents) {
     navigationController.dismiss(animated: false)
     showWorkoutFlow(workoutSessionComponents)
+  }
+}
+
+// MARK: WorkoutSessionFinishDelegate
+
+extension RecordFeatureCoordinator: WorkoutSessionFinishDelegate {
+  public func moveToMainRecord() {
+    start()
   }
 }

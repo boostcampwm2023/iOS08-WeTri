@@ -86,18 +86,31 @@ struct WorkoutSessionComponents: WorkoutSessionDependency {
   }
 }
 
+// MARK: - WorkoutSessionFinishDelegate
+
+public protocol WorkoutSessionFinishDelegate: AnyObject {
+  func moveToMainRecord()
+}
+
 // MARK: - WorkoutSessionCoordinator
 
 final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
   var navigationController: UINavigationController
   var childCoordinators: [Coordinating] = []
   weak var finishDelegate: CoordinatorFinishDelegate?
+  private weak var sessionFinishDelegate: WorkoutSessionFinishDelegate?
   var flow: CoordinatorFlow = .workout
   private let isMockEnvironment: Bool
   private let workoutSessionComponents: WorkoutSessionComponents
 
-  init(navigationController: UINavigationController, isMockEnvironment: Bool, workoutSessionComponents: WorkoutSessionComponents) {
+  init(
+    navigationController: UINavigationController,
+    sessionFinishDelegate: WorkoutSessionFinishDelegate?,
+    isMockEnvironment: Bool,
+    workoutSessionComponents: WorkoutSessionComponents
+  ) {
     self.navigationController = navigationController
+    self.sessionFinishDelegate = sessionFinishDelegate
     self.isMockEnvironment = isMockEnvironment
     self.workoutSessionComponents = workoutSessionComponents
   }
@@ -180,8 +193,8 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
     navigationController.pushViewController(viewController, animated: true)
   }
 
-  func pushTapBarViewController() {
-    // TODO: 코디네이팅 종료에 관한 로직 생성
-    finishDelegate?.flowDidFinished(childCoordinator: self)
+  func setToMainRecord() {
+    finish()
+    sessionFinishDelegate?.moveToMainRecord()
   }
 }
