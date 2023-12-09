@@ -156,6 +156,7 @@ final class WorkoutRouteMapViewController: UIViewController {
     }
   }
 
+  /// 스냅샷을 찍습니다. 거리의 위도 경도중 가장 큰값과 작은값을 적절하게 조합해서 사이즈를 만듭니다.
   private func createMapSnapshot(with regionData: MapRegion) {
     let coordinates = locations.map(\.coordinate)
     let polyLine = MKPolyline(coordinates: coordinates, count: coordinates.count)
@@ -163,9 +164,9 @@ final class WorkoutRouteMapViewController: UIViewController {
       latitudeDelta: (regionData.maxLatitude - regionData.minLatitude) * 1.15,
       longitudeDelta: (regionData.maxLongitude - regionData.minLongitude) * 1.15
     )
+    
     var region = MKCoordinateRegion(polyLine.boundingMapRect)
     region.span = span
-    // 맵 가운데 초점 설정
 
     let options = MKMapSnapshotter.Options()
     options.region = region
@@ -174,13 +175,18 @@ final class WorkoutRouteMapViewController: UIViewController {
 
     let snapshotter = MKMapSnapshotter(options: options)
 
-    snapshotter.start { [weak self] snapshot, _ in
-      // 스냅샷 이미지를 png데이터로 전달
+    snapshotter.start { [weak self] snapshot, error in
+      if let error  {
+        Log.make().error("사진 Snapshot을 찍는 도중 에러가 발생했습니다.")
+        return
+      }
       let data = self?.drawLineOnImagePngData(snapshot: snapshot)
       self?.mapCaptureDataSubject.send(data)
     }
   }
 
+  
+  /// MKMapSnapshotter를 통해 PngData를 만듭니다.
   func drawLineOnImagePngData(snapshot: MKMapSnapshotter.Snapshot?) -> Data? {
     guard let snapshot else {
       return nil
@@ -189,15 +195,13 @@ final class WorkoutRouteMapViewController: UIViewController {
 
     UIGraphicsBeginImageContextWithOptions(snapshot.image.size, true, 0)
 
-    // draw original image into the context
     image.draw(at: CGPoint.zero)
 
-    // get the context for CoreGraphics
     guard let context = UIGraphicsGetCurrentContext() else {
       return nil
     }
 
-    // set stroking width and color of the context
+    // 이미지의 폴리라인 굵기와 색을 지정해 줍니다.
     context.setLineWidth(3.0)
     context.setStrokeColor(DesignSystemColor.main03.cgColor)
 
@@ -208,11 +212,13 @@ final class WorkoutRouteMapViewController: UIViewController {
     locations
       .forEach { location in
         let currentCLLocationCoordinator2D = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+        
+        // snapshot에서 현재 위도 경도에 대한 데이터가 어느 Point에 있는지 찾아내고, Polyline을 그립니다.
         context.addLine(to: snapshot.point(for: currentCLLocationCoordinator2D))
         context.move(to: snapshot.point(for: currentCLLocationCoordinator2D))
       }
 
-    // apply the stroke to the context
+    // 현재 컨텍스트 에서 여태 그린 Path를 적용합니다.
     context.strokePath()
 
     // get the image from the graphics context
