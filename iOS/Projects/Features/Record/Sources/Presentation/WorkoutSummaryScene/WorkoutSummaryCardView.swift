@@ -181,7 +181,11 @@ final class WorkoutSummaryCardView: UIView {
   }
 
   func configure(with model: WorkoutSummaryModel) {
-    dateLabel.text = model.createdAt.description
+    // 기록된 날짜 시간 설정
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy. MM. dd"
+    dateLabel.text = dateFormatter.string(from: model.createdAt)
+
     let formatter = DateComponentsFormatter()
     formatter.allowedUnits = [.hour, .minute, .second]
     formatter.unitsStyle = .positional
