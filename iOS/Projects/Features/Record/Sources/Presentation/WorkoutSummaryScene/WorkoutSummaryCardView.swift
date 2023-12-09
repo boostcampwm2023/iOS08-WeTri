@@ -129,12 +129,14 @@ final class WorkoutSummaryCardView: UIView {
     super.init(frame: frame)
     setupLayouts()
     setupConstraints()
+    mapView.delegate = self
   }
 
   required init?(coder: NSCoder) {
     super.init(coder: coder)
     setupLayouts()
     setupConstraints()
+    mapView.delegate = self
   }
 
   private func setupLayouts() {
@@ -184,9 +186,18 @@ final class WorkoutSummaryCardView: UIView {
     formatter.unitsStyle = .positional
     formatter.zeroFormattingBehavior = .pad
 
+    // 시간초 설정
     if let formattedString = formatter.string(from: TimeInterval(model.workoutTime)) {
       timeItemView.configure(withTitle: "시간", value: "\(formattedString)")
     }
+
+    // 지도 설정
+    let currentLocations = model.locations.map { CLLocation(latitude: $0.latitude, longitude: $0.longitude) }
+    let coordinates = currentLocations.map(\.coordinate)
+    let polyline = MKPolyline(coordinates: coordinates, count: coordinates.count)
+
+    mapView.removeOverlays(mapView.overlays)
+    mapView.addOverlay(polyline)
 
     distanceItemView.configure(withTitle: "거리", value: "\(model.distance)")
     caloriesItemView.configure(withTitle: "칼로리", value: "\(model.calorie)")
@@ -194,6 +205,21 @@ final class WorkoutSummaryCardView: UIView {
     averageHeartRateItemView.configure(withTitle: "Avg.HR", value: "\(model.averageHeartRate.flatMap(String.init) ?? "-")")
     minimumHeartRateItemView.configure(withTitle: "Min.HR", value: "\(model.minimumHeartRate.flatMap(String.init) ?? "-")")
     maximumHeartRateItemView.configure(withTitle: "Max.HR", value: "\(model.maximumHeartRate.flatMap(String.init) ?? "-")")
+  }
+}
+
+// MARK: MKMapViewDelegate
+
+extension WorkoutSummaryCardView: MKMapViewDelegate {
+  func mapView(_: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+    if let polyline = overlay as? MKPolyline {
+      let renderer = MKPolylineRenderer(polyline: polyline)
+      renderer.strokeColor = DesignSystemColor.main03
+      renderer.lineWidth = 3
+      return renderer
+    }
+
+    return MKOverlayRenderer(overlay: overlay)
   }
 }
 
