@@ -6,9 +6,10 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import Auth
 import Combine
 import Foundation
 
 public protocol SignUpRepositoryRepresentable {
-  func signUp(signUpUser: SignUpUser) -> AnyPublisher<NewToken, Error>
+  func signUp(signUpUser: SignUpUser) -> AnyPublisher<Token, Error>
 }

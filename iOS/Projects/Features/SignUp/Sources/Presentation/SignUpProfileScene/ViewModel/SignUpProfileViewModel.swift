@@ -6,6 +6,7 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import Auth
 import Combine
 import Foundation
 import Keychain
@@ -154,7 +155,7 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
       .store(in: &subscriptions)
 
     completeSignUpSubject
-      .flatMap { [weak self] signUpUser -> AnyPublisher<NewToken, Error> in
+      .flatMap { [weak self] signUpUser -> AnyPublisher<Token, Error> in
         guard let publisher = self?.signUpUseCase.signUp(signUpUser: signUpUser) else {
           return Fail(error: SignUpProfileViewModelError.invalidTokenPublisher).eraseToAnyPublisher()
         }

@@ -6,6 +6,7 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import Auth
 import Combine
 import CommonNetworkingKeyManager
 import Foundation
@@ -13,7 +14,7 @@ import Foundation
 // MARK: - SignUpUseCaseRepresentable
 
 public protocol SignUpUseCaseRepresentable {
-  func signUp(signUpUser: SignUpUser) -> AnyPublisher<NewToken, Error>
+  func signUp(signUpUser: SignUpUser) -> AnyPublisher<Token, Error>
   func accessTokenSave(_ token: String)
   func refreshTokenSave(_ token: String)
 }
@@ -32,7 +33,7 @@ public final class SignUpUseCase: SignUpUseCaseRepresentable {
     self.keychainRepository = keychainRepository
   }
 
-  public func signUp(signUpUser: SignUpUser) -> AnyPublisher<NewToken, Error> {
+  public func signUp(signUpUser: SignUpUser) -> AnyPublisher<Token, Error> {
     return signUpRepository.signUp(signUpUser: signUpUser)
       .eraseToAnyPublisher()
   }
