@@ -132,6 +132,12 @@ final class WorkoutSummaryViewController: UIViewController {
         self?.render(state: state)
       }
       .store(in: &subscriptions)
+
+    writeButton.publisher(.touchUpInside)
+      .sink { [weak self] _ in
+        self?.showAlert(with: "준비중입니다.")
+      }
+      .store(in: &subscriptions)
   }
 
   private func render(state: WorkoutSummaryState) {
@@ -148,8 +154,8 @@ final class WorkoutSummaryViewController: UIViewController {
   // MARK: - Custom Methods
 
   /// 에러 알림 문구를 보여줍니다.
-  private func showAlert(with error: Error) {
-    let alertController = UIAlertController(title: "알림", message: String(describing: error), preferredStyle: .alert)
+  private func showAlert(with value: Any) {
+    let alertController = UIAlertController(title: "알림", message: String(describing: value), preferredStyle: .alert)
     alertController.addAction(UIAlertAction(title: "확인", style: .default))
     present(alertController, animated: true)
   }
