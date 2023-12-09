@@ -96,7 +96,7 @@ export class Record {
   @Column({ default: false })
   isPosted: boolean;
 
-  @ManyToOne(() => Profile, (profile) => profile.records) //manyToOne이 항상 외래키를 갖고 있음
+  @ManyToOne(() => Profile, (profile) => profile.records)
   profile: Profile;
 
   @OneToOne(() => Post, (post) => post.record)
