@@ -108,10 +108,10 @@ public final class SignUpGenderBirthViewController: UIViewController {
   }()
 
   private let nextButton: UIButton = {
-    var configuration = UIButton.Configuration.mainDisabled(title: "다음")
-    configuration.font = .preferredFont(forTextStyle: .headline, weight: .semibold)
-    configuration.titleAlignment = .center
-    let button = UIButton(configuration: configuration)
+    var configuration = UIButton.Configuration.main(label: "다음")
+    let button = UIButton()
+    button.configurationUpdateHandler = configuration
+    button.configuration?.font = .preferredFont(forTextStyle: .headline, weight: .semibold)
     button.translatesAutoresizingMaskIntoConstraints = false
     button.isEnabled = false
     return button
@@ -264,7 +264,6 @@ private extension SignUpGenderBirthViewController {
       break
     case let .success(genderBirth):
       genderBirthSubject.send(genderBirth)
-      nextButton.configuration = UIButton.Configuration.mainEnabled(title: "다음")
       nextButton.isEnabled = true
     case let .customError(error):
       Log.make().error("\(error)")
