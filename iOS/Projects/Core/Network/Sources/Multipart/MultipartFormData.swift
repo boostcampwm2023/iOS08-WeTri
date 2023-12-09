@@ -40,7 +40,7 @@ public struct MultipartFormData {
 
     for item in multipartItems {
       let imageFieldName = "images"
-      let filename = "image\(UUID().uuidString)"
+      let filename = "image\(UUID().uuidString)\(item.fileExtension.rawValue)"
 
       body.append(boundaryPrefix)
       body.append(#"Content-Disposition: form-data; name="\#(imageFieldName)"; filename="\#(filename)"\#(lineBreak)"#)

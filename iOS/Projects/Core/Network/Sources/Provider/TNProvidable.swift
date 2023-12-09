@@ -38,6 +38,9 @@ public struct TNProvider<T: TNEndPoint>: TNProvidable {
   public func uploadRequest(_ service: T, successStatusCodeRange range: Range<Int> = 200 ..< 300) async throws -> Data {
     guard let multipart = service.multipart else { throw TNError.unknownError }
     let (data, response) = try await session.upload(for: service.requestFormData(), from: multipart.makeBody())
+    let decoded = try! JSONDecoder().decode(Response.self, from: data)
+    print(decoded.code)
+    print(decoded.errorMessage)
     try checkStatusCode(response, successStatusCodeRange: range)
     return data
   }
@@ -88,4 +91,11 @@ private extension TNProvider {
       throw TNError.unknownError
     }
   }
+}
+
+// MARK: - Response
+
+struct Response: Codable {
+  let code: Int?
+  let errorMessage: String?
 }
