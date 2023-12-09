@@ -177,7 +177,7 @@ final class WorkoutSummaryCardView: UIView {
     )
   }
 
-  func configure(with model: WorkoutSummaryDTO) {
+  func configure(with model: WorkoutSummaryModel) {
     dateLabel.text = model.createdAt.description
     timeItemView.configure(withTitle: "시간", value: "\(model.workoutTime)")
     distanceItemView.configure(withTitle: "거리", value: "\(model.distance)")

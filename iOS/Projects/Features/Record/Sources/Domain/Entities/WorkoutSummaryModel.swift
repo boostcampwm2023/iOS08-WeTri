@@ -8,6 +8,8 @@
 
 import Foundation
 
+// MARK: - WorkoutSummaryModel
+
 /// 운동 데이터를 요약해서 보여줄 때 사용하는 Response 모델입니다.
 struct WorkoutSummaryModel {
   /// 운동 요약 정보 고유 Identifier

@@ -22,7 +22,7 @@ typealias WorkoutSummaryViewModelOutput = AnyPublisher<WorkoutSummaryState, Neve
 
 enum WorkoutSummaryState {
   case idle
-  case fetchSummary(WorkoutSummaryDTO)
+  case fetchSummary(WorkoutSummaryModel)
   case alert(Error)
 }
 

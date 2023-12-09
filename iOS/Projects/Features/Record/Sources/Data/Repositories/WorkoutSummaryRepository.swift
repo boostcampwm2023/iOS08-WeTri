@@ -22,7 +22,7 @@ public struct WorkoutSummaryRepository: WorkoutSummaryRepositoryRepresentable {
 
   /// 운동 요약 데이터를 가져옵니다.
   /// - Parameter id: 운동 데이터의 고유 Identifier 값
-  func fetchWorkoutSummary(with id: Int) -> AnyPublisher<WorkoutSummaryDTO, Error> {
+  func fetchWorkoutSummary(with id: Int) -> AnyPublisher<WorkoutSummaryModel, Error> {
     return Deferred {
       Future<Data, Error> { promise in
         Task {
@@ -37,6 +37,30 @@ public struct WorkoutSummaryRepository: WorkoutSummaryRepositoryRepresentable {
     }
     .decode(type: GWResponse<WorkoutSummaryDTO>.self, decoder: jsonDecoder)
     .compactMap(\.data)
+    .map {
+      let locations = $0.locations.components(separatedBy: ",").compactMap { location -> LocationModel? in
+        let coordinates = location.components(separatedBy: "/")
+        guard coordinates.count == 2,
+              let latitude = Double(coordinates[0]),
+              let longitude = Double(coordinates[1])
+        else {
+          return nil
+        }
+        return LocationModel(latitude: latitude, longitude: longitude)
+      }
+      return .init(
+        id: $0.id,
+        workoutTime: $0.workoutTime,
+        distance: $0.distance,
+        calorie: $0.calorie,
+        averageHeartRate: $0.averageHeartRate,
+        minimumHeartRate: $0.minimumHeartRate,
+        maximumHeartRate: $0.maximumHeartRate,
+        createdAt: $0.createdAt,
+        mapScreenshots: $0.mapScreenshots,
+        locations: locations
+      )
+    }
     .eraseToAnyPublisher()
   }
 }

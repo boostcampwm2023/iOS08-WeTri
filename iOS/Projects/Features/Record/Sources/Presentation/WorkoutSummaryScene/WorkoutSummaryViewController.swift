@@ -139,7 +139,7 @@ final class WorkoutSummaryViewController: UIViewController {
 
   /// 에러 알림 문구를 보여줍니다.
   private func showAlert(with error: Error) {
-    let alertController = UIAlertController(title: "알림", message: error.localizedDescription, preferredStyle: .alert)
+    let alertController = UIAlertController(title: "알림", message: String(describing: error), preferredStyle: .alert)
     alertController.addAction(UIAlertAction(title: "확인", style: .default))
     present(alertController, animated: true)
   }
