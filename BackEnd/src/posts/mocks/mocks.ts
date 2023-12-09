@@ -7,18 +7,19 @@ import { UpdatePostDto } from '../dto/update-post.dto';
 
 export const postInfo: CreatePostDto = {
   content: 'test content',
-  postUrl: 'naver.com',
+  imagesUrl: 'naver.com',
   recordId: 1,
 };
 
 export const updatePostInfo: UpdatePostDto = {
   content: 'update content',
-  postUrl: 'google.com',
+  imagesUrl: 'google.com',
 };
 
 export const profile = {
   publicId: 'XVZXC-ASFSA123-ASFSF',
   nickname: 'testNickname',
+  profileImage: 'https://profile.image'
 } as Profile;
 
 export const query: PaginatePostDto = {
@@ -35,7 +36,7 @@ export const post: PostDto = {
   createdAt: new Date('2023-12-04T05:14:15.879Z'),
   updatedAt: new Date('2023-12-04T05:14:15.879Z'),
   deletedAt: null,
-  postUrl: postInfo.postUrl,
+  imagesUrl: postInfo.imagesUrl,
   record: {
     id: postInfo.recordId,
     workoutTime: 6000000,
@@ -47,6 +48,7 @@ export const post: PostDto = {
   },
   profile: {
     nickname: profile.nickname,
+    profileImage: profile.profileImage,
   },
 };
 export const updateResult: UpdateResult = {
@@ -63,7 +65,7 @@ export const updatedPost: PostDto = {
   createdAt: new Date('2023-12-04T05:14:15.879Z'),
   updatedAt: new Date('2023-12-05T05:14:15.879Z'),
   deletedAt: null,
-  postUrl: updatePostInfo.postUrl,
+  imagesUrl: updatePostInfo.imagesUrl,
   record: {
     id: postInfo.recordId,
     workoutTime: 6000000,
@@ -75,6 +77,7 @@ export const updatedPost: PostDto = {
   },
   profile: {
     nickname: profile.nickname,
+    profileImage: profile.profileImage,
   },
 };
 
@@ -88,7 +91,7 @@ export const posts: PostsPaginateResDto = {
       createdAt: new Date('2023-12-04T05:14:15.879Z'),
       updatedAt: new Date('2023-12-04T05:14:15.879Z'),
       deletedAt: null,
-      postUrl: 'https://www.naver.com',
+      imagesUrl: 'https://www.naver.com',
       record: {
         id: 2,
         workoutTime: 6000000,
@@ -100,6 +103,7 @@ export const posts: PostsPaginateResDto = {
       },
       profile: {
         nickname: profile.nickname,
+        profileImage: profile.profileImage,
       },
     },
     {
@@ -110,7 +114,7 @@ export const posts: PostsPaginateResDto = {
       createdAt: new Date('2023-12-03T13:47:08.677Z'),
       updatedAt: new Date('2023-12-04T12:44:44.000Z'),
       deletedAt: null,
-      postUrl: 'google.com',
+      imagesUrl: 'google.com',
       record: {
         id: 1,
         workoutTime: 100,
@@ -122,6 +126,7 @@ export const posts: PostsPaginateResDto = {
       },
       profile: {
         nickname: profile.nickname,
+        profileImage: profile.profileImage,
       },
     },
   ],

@@ -36,7 +36,7 @@ export class PostsService {
     const post = await this.postsRepository.save({
       publicId: profile.publicId,
       content: postInfo.content,
-      postUrl: postInfo.postUrl,
+      imagesUrl: postInfo.imagesUrl,
       record,
       profile,
     });

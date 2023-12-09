@@ -10,6 +10,7 @@ export const mockPaginationDto: BasePaginationDto = {
 export const profile = {
   publicId: 'XVZXC-ASFSA123-ASFSF',
   nickname: 'testNickname',
+  profileImage: 'https://profile.image'
 } as Profile;
 
 export const mockItems = [
@@ -21,7 +22,7 @@ export const mockItems = [
     createdAt: new Date('2023-12-04T05:14:15.879Z'),
     updatedAt: new Date('2023-12-04T05:14:15.879Z'),
     deletedAt: null,
-    postUrl: 'https://www.naver.com',
+    imagesUrl: 'https://www.naver.com',
     record: {
       id: 2,
       workoutTime: 6000000,
@@ -33,6 +34,7 @@ export const mockItems = [
     },
     profile: {
       nickname: profile.nickname,
+      profileImage: profile.profileImage
     },
   },
   {
@@ -43,7 +45,7 @@ export const mockItems = [
     createdAt: new Date('2023-12-03T13:47:08.677Z'),
     updatedAt: new Date('2023-12-04T12:44:44.000Z'),
     deletedAt: null,
-    postUrl: 'google.com',
+    imagesUrl: 'google.com',
     record: {
       id: 1,
       workoutTime: 100,
@@ -55,6 +57,7 @@ export const mockItems = [
     },
     profile: {
       nickname: profile.nickname,
+      profileImage: profile.profileImage
     },
   },
 ];
@@ -81,5 +84,6 @@ export const mockGetCreateUpdateQueryOptions: QueryOptions = {
     'record.minHeartRate',
     'record.maxHeartRate',
     'profile.nickname',
+    'profile.profileImage'
   ],
 };

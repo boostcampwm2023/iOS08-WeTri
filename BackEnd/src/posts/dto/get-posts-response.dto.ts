@@ -14,7 +14,7 @@ class PostRecordDto extends PickType(Record, [
   'maxHeartRate',
 ]) {}
 
-class PostProfileDto extends PickType(Profile, ['nickname']) {}
+class PostProfileDto extends PickType(Profile, ['nickname', 'profileImage']) {}
 
 export class PostDto extends PickType(Post, [
   'id',
@@ -24,7 +24,7 @@ export class PostDto extends PickType(Post, [
   'createdAt',
   'updatedAt',
   'deletedAt',
-  'postUrl',
+  'imagesUrl',
 ]) {
   @ApiProperty({ type: () => PostRecordDto })
   record: PostRecordDto;
