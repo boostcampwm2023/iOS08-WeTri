@@ -142,7 +142,7 @@ private extension SignUpGenderBirthViewController {
     view.addSubview(titleLabel)
     NSLayoutConstraint.activate([
       titleLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.safeAreaInterval),
-      titleLabel.topAnchor.constraint(equalTo: safeArea.topAnchor),
+      titleLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: Metrics.safeAreaInterval),
     ])
 
     view.addSubview(genderLabel)
@@ -182,9 +182,9 @@ private extension SignUpGenderBirthViewController {
     view.addSubview(nextButton)
     NSLayoutConstraint.activate([
       nextButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.safeAreaInterval),
-      nextButton.topAnchor.constraint(equalTo: datePicker.bottomAnchor, constant: Metrics.datePickerToNextButton),
       nextButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.safeAreaInterval),
       nextButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -Metrics.safeAreaInterval),
+      nextButton.heightAnchor.constraint(equalToConstant: Metrics.buttonHeight),
     ])
   }
 }
