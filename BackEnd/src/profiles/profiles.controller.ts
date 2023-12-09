@@ -84,7 +84,6 @@ export class ProfilesController {
   @ApiOperation({ summary: '닉네임 중복 검사한다.' })
   @Post('nickname-availability')
   getNicknameAvailability(@Body() body: GetNicknameAvailAbailityDto) {
-    this.profilesService.validateProfileNickname(body.nickname);
-    return null;
+    return this.profilesService.validateProfileNickname(body.nickname);
   }
 }

@@ -38,6 +38,7 @@ export class ProfilesService {
     if(result) {
       throw new NicknameDuplicateException();
     }
+    return null;
   }
 
   async getProfile(publicId: string) {
