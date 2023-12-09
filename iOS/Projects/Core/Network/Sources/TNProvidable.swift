@@ -88,10 +88,3 @@ private extension TNProvider {
     }
   }
 }
-
-// MARK: - Response
-
-private struct Response: Codable {
-  let code: Int?
-  let errorMessage: String?
-}
