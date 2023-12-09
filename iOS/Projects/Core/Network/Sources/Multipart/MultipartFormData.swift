@@ -18,17 +18,18 @@ public struct MultipartFormData {
 
   public init(
     uuid: UUID,
-    mimeType: String = "image/png",
+    mimeType _: String = "image/png",
     imageDataList: [Data]
   ) {
     boundary = "\(uuid.uuidString)"
-    self.multipartItems = imageDataList.map { MultipartItem(data: $0, mimeType: .imagePNG) }
+    multipartItems = imageDataList.map { MultipartItem(data: $0, mimeType: .imagePNG) }
     self.imageDataList = imageDataList
   }
 
   public init(uuid: UUID, multipartItems: [MultipartItem]) {
     boundary = uuid.uuidString
     self.multipartItems = multipartItems
+    imageDataList = []
   }
 
   public func makeBody() -> Data {
