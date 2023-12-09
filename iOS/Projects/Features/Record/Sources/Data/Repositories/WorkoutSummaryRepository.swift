@@ -35,27 +35,25 @@ public struct WorkoutSummaryRepository: WorkoutSummaryRepositoryRepresentable {
         }
       }
     }
-    .decode(type: WorkoutSummaryDTO.self, decoder: jsonDecoder)
+    .decode(type: GWResponse<WorkoutSummaryDTO>.self, decoder: jsonDecoder)
+    .compactMap(\.data)
     .eraseToAnyPublisher()
   }
 }
 
 // MARK: WorkoutSummaryRepository.WorkoutSummaryEndPoint
 
-extension WorkoutSummaryRepository {
-  // TODO: 서버 값으로 세팅
+private extension WorkoutSummaryRepository {
   struct WorkoutSummaryEndPoint: TNEndPoint {
-    let baseURL: String = "https://www.naver.com"
+    let path: String
 
-    var path: String
+    let method: TNMethod = .get
 
-    var method: TNMethod = .get
+    let query: Encodable? = nil
 
-    var query: Encodable? = nil
+    let body: Encodable? = nil
 
-    var body: Encodable? = nil
-
-    var headers: TNHeaders = .init(headers: [])
+    let headers: TNHeaders = .default
 
     init(recordID: Int) {
       path = "api/v1/records/\(recordID)"
