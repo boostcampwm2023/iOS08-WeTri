@@ -178,7 +178,7 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
     let session: URLSessionProtocol = isMockEnvironment ? MockURLSession(mockData: jsonData, mockResponse: .init()) : URLSession.shared
     let repository = WorkoutSummaryRepository(session: session)
     let useCase = WorkoutSummaryUseCase(repository: repository, workoutRecordID: recordID)
-    let viewModel = WorkoutSummaryViewModel(workoutSummaryUseCase: useCase)
+    let viewModel = WorkoutSummaryViewModel(coordinating: self, workoutSummaryUseCase: useCase)
     let workoutSummaryViewController = WorkoutSummaryViewController(viewModel: viewModel)
     navigationController.setViewControllers([workoutSummaryViewController], animated: true)
   }

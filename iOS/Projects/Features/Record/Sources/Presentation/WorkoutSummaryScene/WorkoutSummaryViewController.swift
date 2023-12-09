@@ -7,6 +7,7 @@
 //
 
 import Combine
+import CombineCocoa
 import DesignSystem
 import UIKit
 
@@ -118,21 +119,30 @@ final class WorkoutSummaryViewController: UIViewController {
   }
 
   private func bind() {
-    let output = viewModel.transform(input: .init(viewDidLoad: viewDidLoadSubject.eraseToAnyPublisher()))
+    let output = viewModel.transform(
+      input: .init(
+        viewDidLoad: viewDidLoadSubject.eraseToAnyPublisher(),
+        moveToFirstButtonPublisher: homeButton.publisher(.touchUpInside).map { _ in }.eraseToAnyPublisher()
+      )
+    )
 
     output
       .receive(on: DispatchQueue.main)
       .sink { [weak self] state in
-        switch state {
-        case .idle:
-          break
-        case let .fetchSummary(model):
-          self?.summaryCardView.configure(with: model)
-        case let .alert(error):
-          self?.showAlert(with: error)
-        }
+        self?.render(state: state)
       }
       .store(in: &subscriptions)
+  }
+
+  private func render(state: WorkoutSummaryState) {
+    switch state {
+    case .idle:
+      break
+    case let .fetchSummary(model):
+      summaryCardView.configure(with: model)
+    case let .alert(error):
+      showAlert(with: error)
+    }
   }
 
   // MARK: - Custom Methods
@@ -156,9 +166,4 @@ private extension WorkoutSummaryViewController {
     static let writeButton: String = "글쓰러 가기"
     static let initialScreenButton: String = "처음으로"
   }
-}
-
-@available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, xrOS 1.0, *)
-#Preview {
-  WorkoutSummaryViewController(viewModel: WorkoutSummaryViewModel(workoutSummaryUseCase: WorkoutSummaryUseCase(repository: WorkoutSummaryRepository(session: URLSession.shared), workoutRecordID: 0)))
 }
