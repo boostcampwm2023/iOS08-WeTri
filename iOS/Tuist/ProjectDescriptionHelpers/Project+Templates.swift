@@ -3,6 +3,7 @@ import ProjectDescription
 import Foundation
 
 private let isCI = ProcessInfo.processInfo.environment["TUIST_CI"] != nil
+private let isDebug = ProcessInfo.processInfo.environment["TUIST_SCHEME"] == "DEBUG"
 
 public extension Project {
   static func makeModule(
@@ -19,10 +20,8 @@ public extension Project {
       ]
     )
 
-    let schemes: [Scheme] = [
-      .makeScheme(target: .debug, targetName: name, schemeName: "\(name)-Debug"),
-      .makeScheme(target: .release, targetName: name, schemeName: "\(name)-Release")
-    ]
+    let configurationName: ConfigurationName = isDebug ? .debug : .release
+    let schemes: [Scheme] = [.makeScheme(configuration: configurationName, name: name)]
 
     return Project(
       name: name,
@@ -38,20 +37,20 @@ public extension Project {
 
 extension Scheme {
   /// Scheme을 만드는 메소드
-  static func makeScheme(target: ConfigurationName, targetName: String, schemeName: String) -> Scheme {
+  static func makeScheme(configuration: ConfigurationName, name: String) -> Scheme {
     return Scheme(
-      name: schemeName,
+      name: name,
       shared: true,
-      buildAction: .buildAction(targets: ["\(targetName)"]),
+      buildAction: .buildAction(targets: ["\(name)"]),
       testAction: .targets(
-        ["\(targetName)Tests"],
-        configuration: target,
-        options: .options(coverage: true, codeCoverageTargets: ["\(targetName)"])
+        ["\(name)Tests"],
+        configuration: configuration,
+        options: .options(coverage: true, codeCoverageTargets: ["\(name)"])
       ),
-      runAction: .runAction(configuration: target),
-      archiveAction: .archiveAction(configuration: target),
-      profileAction: .profileAction(configuration: target),
-      analyzeAction: .analyzeAction(configuration: target)
+      runAction: .runAction(configuration: configuration),
+      archiveAction: .archiveAction(configuration: configuration),
+      profileAction: .profileAction(configuration: configuration),
+      analyzeAction: .analyzeAction(configuration: configuration)
     )
   }
 }
