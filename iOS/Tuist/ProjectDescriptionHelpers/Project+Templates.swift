@@ -12,15 +12,17 @@ public extension Project {
     targets: [Target],
     packages: [Package] = []
   ) -> Project {
+    let settingConfigurations: [Configuration] =
+    if isCI { [.debug(name: .debug)] }
+    else if isDebug { [.debug(name: .debug, xcconfig: .relativeToXCConfig("Server/Debug"))] }
+    else { [.debug(name: .release, xcconfig: .relativeToXCConfig("Server/Release"))] }
+
     let settings: Settings = .settings(
       base: ["ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES"],
-      configurations: [
-        .debug(name: .debug, xcconfig: isCI ? nil : .relativeToXCConfig("Server/Debug")),
-        .release(name: .release, xcconfig: isCI ? nil : .relativeToXCConfig("Server/Release")),
-      ]
+      configurations: settingConfigurations
     )
 
-    let configurationName: ConfigurationName = isDebug ? .debug : .release
+    let configurationName: ConfigurationName = isDebug || isCI ? .debug : .release
     let schemes: [Scheme] = [.makeScheme(configuration: configurationName, name: name)]
 
     return Project(
