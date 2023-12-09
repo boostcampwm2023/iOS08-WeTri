@@ -73,6 +73,7 @@ struct WorkoutSessionComponents: WorkoutSessionDependency {
   ) {
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+    formatter.locale = .init(identifier: "ko_KR")
     let date = formatter.date(from: startDate)
 
     self.startDate = date ?? .now + 4
