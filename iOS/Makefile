@@ -1,6 +1,10 @@
 generate:
 	tuist fetch
-	TUIST_ROOT_DIR=${PWD} tuist generate
+	TUIST_ROOT_DIR=${PWD} TUIST_SCHEME=DEBUG tuist generate
+
+release:
+	tuist fetch
+	TUIST_ROOT_DIR=${PWD} TUIST_SCHEME=RELEASE tuist generate
 
 feature:
 	chmod +x Scripts/create_module.sh
