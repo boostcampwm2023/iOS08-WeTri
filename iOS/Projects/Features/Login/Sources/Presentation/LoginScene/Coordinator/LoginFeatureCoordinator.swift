@@ -8,8 +8,15 @@
 
 import Coordinator
 import Keychain
-import SignUpFeature
+import Log
+import Trinet
 import UIKit
+
+// MARK: - LoginFeatureFinishDelegate
+
+public protocol LoginFeatureFinishDelegate: AnyObject {
+  func loginFeatureCoordinatorDidFinished(initialUser: InitialUser?, token: Token?)
+}
 
 // MARK: - LoginFeatureCoordinator
 
@@ -17,57 +24,49 @@ public final class LoginFeatureCoordinator: LoginFeatureCoordinating {
   public var navigationController: UINavigationController
   public var childCoordinators: [Coordinating] = []
   public weak var finishDelegate: CoordinatorFinishDelegate?
+  public weak var loginFeatureFinishDelegate: LoginFeatureFinishDelegate?
   public var flow: CoordinatorFlow = .login
 
-  public init(navigationController: UINavigationController) {
+  private let isMockEnvironment: Bool
+  private let isMockFirst: Bool
+
+  public init(
+    navigationController: UINavigationController,
+    isMockEnvironment: Bool,
+    isMockFirst: Bool
+  ) {
     self.navigationController = navigationController
+    self.isMockEnvironment = isMockEnvironment
+    self.isMockFirst = isMockFirst
   }
 
   public func start() {
     showLoginFlow()
   }
 
-  func showLoginFlow() {
-    let coordinator = LoginCoordinator(
-      navigationController: navigationController,
-      isMockEnvironment: false,
-      isMockFirst: true
+  public func showLoginFlow() {
+    guard let jsonPath = isMockFirst ?
+      Bundle(for: Self.self).path(forResource: "InitialUser", ofType: "json") : Bundle(for: Self.self).path(forResource: "Token", ofType: "json"),
+      let jsonData = try? Data(contentsOf: .init(filePath: jsonPath))
+    else {
+      Log.make().error("Login Mock 데이터를 생성할 수 없습니다.")
+      return
+    }
+
+    let urlSession: URLSessionProtocol = isMockEnvironment ? MockURLSession(mockData: jsonData) : URLSession.shared
+
+    let authorizeUseCase = AuthorizeUseCase(
+      authorizationRepository: AuthorizationRepository(session: urlSession),
+      keychainRepository: KeychainRepository(keychain: Keychain.shared)
     )
-    childCoordinators.append(coordinator)
-    coordinator.finishDelegate = self
-    coordinator.loginFinishDelegate = self
-    coordinator.start()
+    let loginViewModel = LoginViewModel(coordinator: self, authorizeUseCase: authorizeUseCase)
+    let viewController = LoginViewController(viewModel: loginViewModel)
+
+    navigationController.pushViewController(viewController, animated: false)
   }
-}
 
-// MARK: CoordinatorFinishDelegate
-
-extension LoginFeatureCoordinator: CoordinatorFinishDelegate {
-  public func flowDidFinished(childCoordinator: Coordinating) {
-    childCoordinators = childCoordinators.filter {
-      $0.flow != childCoordinator.flow
-    }
-  }
-}
-
-// MARK: LoginDidFinishedDelegate
-
-extension LoginFeatureCoordinator: LoginDidFinishedDelegate {
-  func loginCoordinatorDidFinished(initialUser: InitialUser?, token: Token?) {
-    if let initialUser {
-      let coordinator = SignUpFeatureCoordinator(
-        navigationController: navigationController,
-        newUserInformation: NewUserInformation(
-          mappedUserID: initialUser.mappedUserID,
-          provider: .apple
-        )
-      )
-      childCoordinators.append(coordinator)
-      coordinator.finishDelegate = self
-      coordinator.showSignUpFlow()
-    }
-
-    // TODO: User가 처음이 아니라면 토큰이 존재한다 해당 토큰 갖고 TabBar로 넘어가야됨.
-    if let token {}
+  public func finish(initialUser: InitialUser? = nil, token: Token? = nil) {
+    loginFeatureFinishDelegate?.loginFeatureCoordinatorDidFinished(initialUser: initialUser, token: token)
+    finishDelegate?.flowDidFinished(childCoordinator: self)
   }
 }

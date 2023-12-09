@@ -10,5 +10,5 @@ import Coordinator
 import Foundation
 
 public protocol SignUpFeatureCoordinating: Coordinating {
-  func showSignUpFlow()
+  func pushSingUpContainerViewController()
 }

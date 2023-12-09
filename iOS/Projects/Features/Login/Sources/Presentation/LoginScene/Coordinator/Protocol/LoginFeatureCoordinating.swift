@@ -11,4 +11,5 @@ import Foundation
 
 protocol LoginFeatureCoordinating: Coordinating {
   func showLoginFlow()
+  func finish(initialUser: InitialUser?, token: Token?)
 }

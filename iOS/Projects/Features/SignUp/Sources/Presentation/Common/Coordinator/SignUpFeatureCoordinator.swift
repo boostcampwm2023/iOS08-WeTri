@@ -7,7 +7,16 @@
 //
 
 import Coordinator
+import Keychain
+import Log
+import Trinet
 import UIKit
+
+// MARK: - SignUpFeatureCoordinatorFinishDelegate
+
+public protocol SignUpFeatureCoordinatorFinishDelegate: AnyObject {
+  func signUpFeatureCooridnatorDidFinished()
+}
 
 // MARK: - SignUpFeatureCoordinator
 
@@ -15,37 +24,78 @@ public final class SignUpFeatureCoordinator: SignUpFeatureCoordinating {
   public var navigationController: UINavigationController
   public var childCoordinators: [Coordinating] = []
   public weak var finishDelegate: CoordinatorFinishDelegate?
+  public weak var signUpFeatureFinishDelegate: SignUpFeatureCoordinatorFinishDelegate?
   public var flow: CoordinatorFlow = .signup
 
   private let newUserInformation: NewUserInformation
 
+  private let isMockEnvironment: Bool
+
   public init(
     navigationController: UINavigationController,
-    newUserInformation: NewUserInformation
+    newUserInformation: NewUserInformation,
+    isMockEnvironment: Bool
   ) {
     self.navigationController = navigationController
     self.newUserInformation = newUserInformation
+    self.isMockEnvironment = isMockEnvironment
   }
 
   public func start() {
-    showSignUpFlow()
+    pushSingUpContainerViewController()
   }
 
-  public func showSignUpFlow() {
-    let coordinator = SignUpCoordinator(navigationController: navigationController, isMockEnvironment: false, userBit: newUserInformation)
-    childCoordinators.append(coordinator)
-    coordinator.finishDelegate = self
-    coordinator.start()
+  public func finish() {
+    finishDelegate?.flowDidFinished(childCoordinator: self)
+    signUpFeatureFinishDelegate?.signUpFeatureCooridnatorDidFinished()
   }
-}
 
-// MARK: CoordinatorFinishDelegate
-
-extension SignUpFeatureCoordinator: CoordinatorFinishDelegate {
-  public func flowDidFinished(childCoordinator: Coordinating) {
-    childCoordinators = childCoordinators.filter {
-      $0.flow != childCoordinator.flow
+  public func pushSingUpContainerViewController() {
+    guard let jsonPath = Bundle(for: Self.self).path(forResource: "Token", ofType: "json"),
+          let jsonData = try? Data(contentsOf: .init(filePath: jsonPath))
+    else {
+      Log.make().error("Token 데이터를 생성할 수 없습니다.")
+      return
     }
-    navigationController.popToRootViewController(animated: false)
+
+    let urlSession: URLSessionProtocol = isMockEnvironment ? MockURLSession(mockData: jsonData) : URLSession.shared
+
+    let dateFormatUseCase = DateFormatUseCase()
+
+    let signUpGenderBirthViewModel = SignUpGenderBirthViewModel(dateFormatUseCase: dateFormatUseCase)
+
+    let signUpGenderBirthViewController = SignUpGenderBirthViewController(viewModel: signUpGenderBirthViewModel)
+
+    let nickNameCheckUseCase = NickNameCheckUseCase()
+
+    let imageFormRepository = ImageFormRepository(urlSession: urlSession)
+
+    let imageTransmitUseCase = ImageTransmitUseCase(imageFormRepository: imageFormRepository)
+
+    let signUpRepository = SignUpRepository(urlSession: urlSession)
+
+    let keyChainRepository = KeychainRepository(keychain: Keychain.shared)
+
+    let signUpUseCase = SignUpUseCase(
+      signUpRepository: signUpRepository,
+      keychainRepository: keyChainRepository
+    )
+
+    let signUpProfileViewModel = SignUpProfileViewModel(
+      coordinator: self,
+      nickNameCheckUseCase: nickNameCheckUseCase,
+      imageTransmitUseCase: imageTransmitUseCase,
+      signUpUseCase: signUpUseCase,
+      newUserInformation: newUserInformation
+    )
+
+    let signUpProfileViewController = SignUpProfileViewController(viewModel: signUpProfileViewModel)
+
+    let signUpContainerViewController = SignUpContainerViewController(
+      signUpGenderBirthViewController: signUpGenderBirthViewController,
+      signUpProfileViewController: signUpProfileViewController
+    )
+
+    navigationController.pushViewController(signUpContainerViewController, animated: false)
   }
 }

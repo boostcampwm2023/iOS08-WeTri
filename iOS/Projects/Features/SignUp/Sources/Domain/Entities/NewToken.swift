@@ -1,5 +1,5 @@
 //
-//  Token.swift
+//  NewToken.swift
 //  SignUpFeature
 //
 //  Created by 안종표 on 12/7/23.
@@ -8,10 +8,10 @@
 
 import Foundation
 
-// MARK: - Token
+// MARK: - NewToken
 
 /// 백엔드로부터 받아온 JWT를 담을 데이터 entity
-public struct Token {
+public struct NewToken {
   /// accessToken
   let accessToken: String?
 
@@ -26,4 +26,4 @@ public struct Token {
 
 // MARK: Codable
 
-extension Token: Codable {}
+extension NewToken: Codable {}

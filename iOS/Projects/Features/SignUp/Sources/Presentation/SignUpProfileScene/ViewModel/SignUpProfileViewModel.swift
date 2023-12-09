@@ -39,7 +39,7 @@ public enum SignUpProfileState {
 
 public final class SignUpProfileViewModel {
   private var subscriptions: Set<AnyCancellable> = []
-  private let coordinator: SignUpCoordinator
+  private let coordinator: SignUpFeatureCoordinator
   private let nickNameCheckUseCase: NickNameCheckUseCaseRepresentable
   private let imageTransmitUseCase: ImageTransmitUseCaseRepresentable
   private let signUpUseCase: SignUpUseCaseRepresentable
@@ -47,7 +47,7 @@ public final class SignUpProfileViewModel {
   private let newUserInformation: NewUserInformation
 
   public init(
-    coordinator: SignUpCoordinator,
+    coordinator: SignUpFeatureCoordinator,
     nickNameCheckUseCase: NickNameCheckUseCaseRepresentable,
     imageTransmitUseCase: ImageTransmitUseCaseRepresentable,
     signUpUseCase: SignUpUseCaseRepresentable,
@@ -154,7 +154,7 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
       .store(in: &subscriptions)
 
     completeSignUpSubject
-      .flatMap { [weak self] signUpUser -> AnyPublisher<Token, Error> in
+      .flatMap { [weak self] signUpUser -> AnyPublisher<NewToken, Error> in
         guard let publisher = self?.signUpUseCase.signUp(signUpUser: signUpUser) else {
           return Fail(error: SignUpProfileViewModelError.invalidTokenPublisher).eraseToAnyPublisher()
         }

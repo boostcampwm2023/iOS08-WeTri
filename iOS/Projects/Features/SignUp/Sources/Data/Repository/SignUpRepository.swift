@@ -26,7 +26,7 @@ public struct SignUpRepository: SignUpRepositoryRepresentable {
     provider = TNProvider(session: urlSession)
   }
 
-  public func signUp(signUpUser: SignUpUser) -> AnyPublisher<Token, Error> {
+  public func signUp(signUpUser: SignUpUser) -> AnyPublisher<NewToken, Error> {
     return Future<Data, Never> { promise in
       Task {
         do {
@@ -37,7 +37,7 @@ public struct SignUpRepository: SignUpRepositoryRepresentable {
         }
       }
     }
-    .decode(type: GWResponse<Token>.self, decoder: JSONDecoder())
+    .decode(type: GWResponse<NewToken>.self, decoder: JSONDecoder())
     .compactMap(\.data)
     .eraseToAnyPublisher()
   }
