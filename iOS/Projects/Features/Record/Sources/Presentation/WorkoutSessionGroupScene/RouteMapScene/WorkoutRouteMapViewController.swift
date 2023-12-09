@@ -164,7 +164,7 @@ final class WorkoutRouteMapViewController: UIViewController {
       latitudeDelta: (regionData.maxLatitude - regionData.minLatitude) * 1.15,
       longitudeDelta: (regionData.maxLongitude - regionData.minLongitude) * 1.15
     )
-    
+
     var region = MKCoordinateRegion(polyLine.boundingMapRect)
     region.span = span
 
@@ -176,7 +176,7 @@ final class WorkoutRouteMapViewController: UIViewController {
     let snapshotter = MKMapSnapshotter(options: options)
 
     snapshotter.start { [weak self] snapshot, error in
-      if let error  {
+      if let error {
         Log.make().error("사진 Snapshot을 찍는 도중 에러가 발생했습니다.")
         return
       }
@@ -185,49 +185,37 @@ final class WorkoutRouteMapViewController: UIViewController {
     }
   }
 
-  
   /// MKMapSnapshotter를 통해 PngData를 만듭니다.
   func drawLineOnImagePngData(snapshot: MKMapSnapshotter.Snapshot?) -> Data? {
     guard let snapshot else {
       return nil
     }
-    let image = snapshot.image
+    let renderer = UIGraphicsImageRenderer(size: snapshot.image.size)
 
-    UIGraphicsBeginImageContextWithOptions(snapshot.image.size, true, 0)
+    let pngData = renderer.pngData { [weak self] context in
 
-    image.draw(at: CGPoint.zero)
+      // 이미지의 폴리라인 굵기와 색을 지정해 줍니다.
+      context.cgContext.setLineWidth(3.0)
+      context.cgContext.setStrokeColor(DesignSystemColor.main03.cgColor)
 
-    guard let context = UIGraphicsGetCurrentContext() else {
-      return nil
+      // Here is the trick :
+      // We use addLine() and move() to draw the line, this should be easy to understand.
+      // The diificult part is that they both take CGPoint as parameters, and it would be way too complex for us to calculate by ourselves
+      // Thus we use snapshot.point() to save the pain.
+      self?.locations
+        .forEach { location in
+          let currentCLLocationCoordinator2D = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+
+          // snapshot에서 현재 위도 경도에 대한 데이터가 어느 Point에 있는지 찾아내고, Polyline을 그립니다.
+          context.cgContext.addLine(to: snapshot.point(for: currentCLLocationCoordinator2D))
+          context.cgContext.move(to: snapshot.point(for: currentCLLocationCoordinator2D))
+        }
+
+      // 현재 컨텍스트 에서 여태 그린 Path를 적용합니다.
+
+      context.cgContext.strokePath()
     }
-
-    // 이미지의 폴리라인 굵기와 색을 지정해 줍니다.
-    context.setLineWidth(3.0)
-    context.setStrokeColor(DesignSystemColor.main03.cgColor)
-
-    // Here is the trick :
-    // We use addLine() and move() to draw the line, this should be easy to understand.
-    // The diificult part is that they both take CGPoint as parameters, and it would be way too complex for us to calculate by ourselves
-    // Thus we use snapshot.point() to save the pain.
-    locations
-      .forEach { location in
-        let currentCLLocationCoordinator2D = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-        
-        // snapshot에서 현재 위도 경도에 대한 데이터가 어느 Point에 있는지 찾아내고, Polyline을 그립니다.
-        context.addLine(to: snapshot.point(for: currentCLLocationCoordinator2D))
-        context.move(to: snapshot.point(for: currentCLLocationCoordinator2D))
-      }
-
-    // 현재 컨텍스트 에서 여태 그린 Path를 적용합니다.
-    context.strokePath()
-
-    // get the image from the graphics context
-    let resultImage = UIGraphicsGetImageFromCurrentImageContext()
-
-    // end the graphics context
-    UIGraphicsEndImageContext()
-
-    return resultImage?.pngData()
+    return pngData
   }
 
   private func updatePolyLine(_ value: KalmanFilterCensored?) {
