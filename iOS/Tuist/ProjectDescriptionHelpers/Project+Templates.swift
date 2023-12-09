@@ -14,11 +14,10 @@ public extension Project {
     let settings: Settings = .settings(
       base: ["ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES"],
       configurations: [
-        .debug(name: .debug, xcconfig: isCI ? nil : .relativeToXCConfig()),
-        .release(name: .release, xcconfig: isCI ? nil : .relativeToXCConfig()),
+        .debug(name: .debug, xcconfig: isCI ? nil : .relativeToXCConfig("Server/Debug")),
+        .release(name: .release, xcconfig: isCI ? nil : .relativeToXCConfig("Server/Release")),
       ]
     )
-
     let schemes: [Scheme] = [.makeScheme(target: .debug, name: name)]
 
     return Project(
