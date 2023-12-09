@@ -160,8 +160,8 @@ final class WorkoutRouteMapViewController: UIViewController {
     let coordinates = locations.map(\.coordinate)
     let polyLine = MKPolyline(coordinates: coordinates, count: coordinates.count)
     let span = MKCoordinateSpan(
-      latitudeDelta: regionData.maxLatitude - regionData.minLatitude + 0.005,
-      longitudeDelta: regionData.maxLongitude - regionData.minLongitude + 0.005
+      latitudeDelta: (regionData.maxLatitude - regionData.minLatitude) * 1.15,
+      longitudeDelta: (regionData.maxLongitude - regionData.minLongitude) * 1.15
     )
     var region = MKCoordinateRegion(polyLine.boundingMapRect)
     region.span = span
@@ -198,15 +198,13 @@ final class WorkoutRouteMapViewController: UIViewController {
     }
 
     // set stroking width and color of the context
-    context.setLineWidth(2.0)
-    context.setStrokeColor(UIColor.orange.cgColor)
+    context.setLineWidth(3.0)
+    context.setStrokeColor(DesignSystemColor.main03.cgColor)
 
     // Here is the trick :
     // We use addLine() and move() to draw the line, this should be easy to understand.
     // The diificult part is that they both take CGPoint as parameters, and it would be way too complex for us to calculate by ourselves
     // Thus we use snapshot.point() to save the pain.
-//    let initialLocation2D = CLLocationCoordinate2DMake(locations[0].coordinate.latitude, locations[0].coordinate.longitude)
-//    context.move(to: snapshot.point(for: initialLocation2D))
     locations
       .forEach { location in
         let currentCLLocationCoordinator2D = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
