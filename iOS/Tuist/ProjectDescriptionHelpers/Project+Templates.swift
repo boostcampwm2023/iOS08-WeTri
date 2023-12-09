@@ -18,7 +18,11 @@ public extension Project {
         .release(name: .release, xcconfig: isCI ? nil : .relativeToXCConfig("Server/Release")),
       ]
     )
-    let schemes: [Scheme] = [.makeScheme(target: .debug, name: name)]
+
+    let schemes: [Scheme] = [
+      .makeScheme(target: .debug, targetName: name, schemeName: "\(name)-Debug"),
+      .makeScheme(target: .release, targetName: name, schemeName: "\(name)-Release")
+    ]
 
     return Project(
       name: name,
@@ -34,15 +38,15 @@ public extension Project {
 
 extension Scheme {
   /// Scheme을 만드는 메소드
-  static func makeScheme(target: ConfigurationName, name: String) -> Scheme {
+  static func makeScheme(target: ConfigurationName, targetName: String, schemeName: String) -> Scheme {
     return Scheme(
-      name: name,
+      name: schemeName,
       shared: true,
-      buildAction: .buildAction(targets: ["\(name)"]),
+      buildAction: .buildAction(targets: ["\(targetName)"]),
       testAction: .targets(
-        ["\(name)Tests"],
+        ["\(targetName)Tests"],
         configuration: target,
-        options: .options(coverage: true, codeCoverageTargets: ["\(name)"])
+        options: .options(coverage: true, codeCoverageTargets: ["\(targetName)"])
       ),
       runAction: .runAction(configuration: target),
       archiveAction: .archiveAction(configuration: target),
