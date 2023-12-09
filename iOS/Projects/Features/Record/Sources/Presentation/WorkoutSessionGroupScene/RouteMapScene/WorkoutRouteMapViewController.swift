@@ -198,21 +198,16 @@ final class WorkoutRouteMapViewController: UIViewController {
       context.cgContext.setLineWidth(3.0)
       context.cgContext.setStrokeColor(DesignSystemColor.main03.cgColor)
 
-      // Here is the trick :
-      // We use addLine() and move() to draw the line, this should be easy to understand.
-      // The diificult part is that they both take CGPoint as parameters, and it would be way too complex for us to calculate by ourselves
-      // Thus we use snapshot.point() to save the pain.
       self?.locations
         .forEach { location in
           let currentCLLocationCoordinator2D = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
 
-          // snapshot에서 현재 위도 경도에 대한 데이터가 어느 Point에 있는지 찾아내고, Polyline을 그립니다.
+          // snapshot에서 현재 위도 경도에 대한 데이터가 어느 CGPoint에 있는지 찾아내고, 이를 Polyline을 그립니다.
           context.cgContext.addLine(to: snapshot.point(for: currentCLLocationCoordinator2D))
           context.cgContext.move(to: snapshot.point(for: currentCLLocationCoordinator2D))
         }
 
       // 현재 컨텍스트 에서 여태 그린 Path를 적용합니다.
-
       context.cgContext.strokePath()
     }
     return pngData
