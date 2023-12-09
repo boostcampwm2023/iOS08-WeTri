@@ -207,10 +207,18 @@ final class WorkoutSummaryCardView: UIView {
     maximumHeartRateItemView.configure(withTitle: "Max.HR", value: "\(model.maximumHeartRate.flatMap(String.init) ?? "-")")
   }
 
+  private func createLocations(from locations: [LocationModel]) -> [CLLocation] {
+    if !locations.isEmpty {
+      return locations.map { CLLocation(latitude: $0.latitude, longitude: $0.longitude) }
+    } else {
+      // Default location
+      return [CLLocation(latitude: 37.22738768300735, longitude: 127.06500224609061)]
+    }
+  }
+
   private func configureMapPolyline(with locations: [LocationModel]) {
-    let currentLocations =
-      if !locations.isEmpty { locations.map { CLLocation(latitude: $0.latitude, longitude: $0.longitude) } }
-    else { [CLLocation(latitude: 37.22738768300735, longitude: 127.06500224609061)] }
+    let currentLocations = createLocations(from: locations)
+
     let coordinates = currentLocations.map(\.coordinate)
     let polyline = MKPolyline(coordinates: coordinates, count: coordinates.count)
 
