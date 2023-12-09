@@ -30,7 +30,8 @@ export class RecordsService {
   findByDate(profileId: number, year: number, month: number, day: number) {
     return this.recordsRepository
       .createQueryBuilder('record')
-      .leftJoinAndSelect('record.workout', 'workout')
+      .leftJoin('record.workout', 'workout')
+      .addSelect('workout.name')
       .where('record.profileId = :profileId', { profileId })
       .andWhere(
         `YEAR(record.createdAt) = :year AND MONTH(record.createdAt) = :month AND DAY(record.createdAt) = :day`,
@@ -40,11 +41,13 @@ export class RecordsService {
   }
 
   async findById(recordId: number) {
-    const result = await this.recordsRepository.findOne({
-      where: {
-        id: recordId,
-      },
-    });
+    const result = await this.recordsRepository
+        .createQueryBuilder('record')
+        .leftJoin('record.workout', 'workout')
+        .addSelect('workout.name')
+        .where('record.id = :recordId', { recordId })
+        .getOne();
+
     if (!result) {
       throw new NotFoundRecordException();
     }
