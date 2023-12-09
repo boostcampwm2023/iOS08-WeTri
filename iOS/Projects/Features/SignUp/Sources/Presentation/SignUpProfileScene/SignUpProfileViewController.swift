@@ -80,10 +80,10 @@ public final class SignUpProfileViewController: UIViewController {
   }()
 
   private let completionButton: UIButton = {
-    let configuration = UIButton.Configuration.mainDisabled(title: "완료")
+    var configuration = UIButton.Configuration.mainDisabled(title: "완료")
+    configuration.font = .preferredFont(forTextStyle: .headline, weight: .bold)
     let button = UIButton(configuration: configuration)
     button.translatesAutoresizingMaskIntoConstraints = false
-    button.titleLabel?.font = .preferredFont(forTextStyle: .headline, weight: .bold)
     button.isEnabled = false
     return button
   }()
@@ -218,7 +218,8 @@ private extension SignUpProfileViewController {
       showAlertSelect()
     case .success:
       completionButton.isEnabled = true
-      let configuration = UIButton.Configuration.mainEnabled(title: "확인")
+      var configuration = UIButton.Configuration.mainEnabled(title: "완료")
+      configuration.font = .preferredFont(forTextStyle: .headline, weight: .bold)
       completionButton.configuration = configuration
     case .failure:
       completionButton.isEnabled = false

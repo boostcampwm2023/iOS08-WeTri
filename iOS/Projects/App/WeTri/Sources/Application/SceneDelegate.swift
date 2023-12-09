@@ -23,8 +23,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     let navigationController = UINavigationController()
     window?.rootViewController = navigationController
-    let coordinator = AppCoordinator(navigationController: navigationController)
-    coordinating = coordinator
+    let coordinator = SignUpFeatureCoordinator(navigationController: navigationController, newUserInformation: NewUserInformation(mappedUserID: "", provider: .apple), isMockEnvironment: true)
+//    coordinating = coordinator
     coordinator.start()
     window?.makeKeyAndVisible()
   }
