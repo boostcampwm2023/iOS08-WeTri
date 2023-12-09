@@ -20,13 +20,11 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   func scene(_ scene: UIScene, willConnectTo _: UISceneSession, options _: UIScene.ConnectionOptions) {
     guard let windowScene = scene as? UIWindowScene else { return }
     window = UIWindow(windowScene: windowScene)
-
     let navigationController = UINavigationController()
-    let coordinator = LoginFeatureCoordinator(navigationController: navigationController, isMockEnvironment: false, isMockFirst: false)
     window?.rootViewController = navigationController
-//    let coordinator = AppCoordinator(navigationController: navigationController)
-//    coordinating = coordinator
-//    coordinator.start()
+    let coordinator = AppCoordinator(navigationController: navigationController)
+    coordinating = coordinator
+    coordinator.start()
     coordinator.start()
     window?.makeKeyAndVisible()
   }
