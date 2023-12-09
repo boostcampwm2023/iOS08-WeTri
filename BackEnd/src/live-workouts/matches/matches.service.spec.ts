@@ -66,7 +66,7 @@ describe('MatchesService', () => {
 
     it('매칭을 시작하면 redis에는 직렬화된 profile를 matching:1 key에 value로 저장한다.', async () => {
       await service.startMatch(profile, createMatchDto);
-      expect(rpush).toHaveBeenCalledWith(`matching:1`, JSON.stringify(profile), 'EX', MATCHES_API_TIME_OUT);
+      expect(rpush).toHaveBeenCalledWith(`matching:1`, JSON.stringify(profile));
     });
 
     it('매칭을 취소하면, maching:1에 있는 value는 삭제가 되어야 한다.', async () => {
@@ -91,34 +91,6 @@ describe('MatchesService', () => {
       expect(lrange).toHaveBeenCalledWith(`matching:1`, 0, 1);
       expect(result).toBeDefined();
       expect(result.matched).toBeTruthy();
-    });
-  });
-
-  describe('makeWebSocketRoom 메서드 검증', () => {
-    it('달리기 종목에 대기인원이 2명이고일 때 트렌잭션이 잘 작동하는지 테스트', async () => {
-      const workoutId = 1;
-      const waitingUsers = 2;
-      const serializedUsers = [
-        JSON.stringify({ publicId: 'User1' }),
-        JSON.stringify({ publicId: 'User2' }),
-      ];
-      lrange.mockResolvedValue(serializedUsers);
-
-      const result = await service['makeWebSocketRoom'](
-        workoutId,
-        waitingUsers,
-      );
-
-      expect(lrange).toHaveBeenCalledWith(
-        `matching:${workoutId}`,
-        0,
-        waitingUsers - 1,
-      );
-      expect(multi().set).toHaveBeenCalled();
-      expect(multi().expire).toHaveBeenCalled();
-      expect(multi().ltrim).toHaveBeenCalled();
-      expect(multi().exec).toHaveBeenCalled();
-      expect(result).toHaveProperty('matched', true);
     });
   });
 

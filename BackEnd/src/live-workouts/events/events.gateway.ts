@@ -11,6 +11,8 @@ import { ExtensionWebSocketService } from './extensionWebSocket.service';
 import { WetriWebSocket, WetriServer } from './types/custom-websocket.type';
 import { AuthService } from '../../auth/auth.service';
 import { CheckMatchingDto } from './dto/checkMatching.dto';
+import {Logger} from "@nestjs/common";
+import {NotAccessTokenException} from "../../auth/exceptions/auth.exception";
 
 @WebSocketGateway(3003)
 export class EventsGateway
@@ -28,11 +30,15 @@ export class EventsGateway
   }
 
   async handleConnection(client: WetriWebSocket, ...args: any[]) {
+    Logger.log("연결 성공");
     const { authorization, roomid } = args[0].headers;
-    if (!(await this.authService.verifyWs(authorization, client))) {
+    try {
+      await this.authService.verifyWs(authorization, client);
+    } catch (e) {
       client.close();
       return;
     }
+
     const matchInfo: CheckMatchingDto = {
       matchingKey: `userMatch:${client.id}`,
       roomId: roomid,
@@ -43,12 +49,16 @@ export class EventsGateway
       client.close();
       return;
     }
+
+    Logger.log("연결 검증 성공");
+
     this.extensionWebSocketService.webSocket(client, this.server);
     client.join(roomid);
   }
 
   @SubscribeMessage('workout_session')
   onWorkoutSession(client: WetriWebSocket, data: any): void {
+    Logger.log(`응답 받은 답 : ${data}`);
     if (!this.eventsService.checkMsgRoomId(data)) {
       client.wemit('workout_session', 'data에 roomId를 포함시켜주세요.');
     } else {
@@ -60,5 +70,7 @@ export class EventsGateway
     }
   }
 
-  handleDisconnect(client: any) {}
+  handleDisconnect(client: any) {
+    Logger.log("연결 종료");
+  }
 }

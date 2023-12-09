@@ -9,6 +9,7 @@
 import Combine
 import CommonNetworkingKeyManager
 import Foundation
+import Log
 import Trinet
 
 // MARK: - WorkoutPeerRandomMatchingRepository
@@ -29,10 +30,11 @@ extension WorkoutPeerRandomMatchingRepository: WorkoutPeerRandomMatchingReposito
       Task {
         do {
           let data = try await provider.request(
-            .matchStart(matchStartRequest: .init(workoutID: workoutTypeCode)),
+            .matchStart(
+              matchStartRequest: .init(workoutID: workoutTypeCode)),
             interceptor: TNKeychainInterceptor.shared
           )
-          _ = try decoder.decode(GWResponse<NullDTO>.self, from: data)
+          _ = try decoder.decode(GWResponse<EmptyModel>.self, from: data)
           promise(.success(.success(())))
         } catch {
           promise(.success(.failure(error)))
@@ -44,7 +46,7 @@ extension WorkoutPeerRandomMatchingRepository: WorkoutPeerRandomMatchingReposito
   func matchCancel() {
     Task {
       do {
-        let _ = try await provider.request(.matchCancel)
+        let _ = try await provider.request(.matchCancel, interceptor: TNKeychainInterceptor.shared)
       } catch {
         // TODO: ERROR Handling
       }
@@ -57,7 +59,10 @@ extension WorkoutPeerRandomMatchingRepository: WorkoutPeerRandomMatchingReposito
     return Future<Result<IsMatchedRandomPeersResponse?, Error>, Never> { promise in
       Task {
         do {
-          let data = try await provider.request(.isMatchedRandomPeer(isMatchedRandomPeersRequest: isMatchedRandomPeersRequest))
+          let data = try await provider.request(
+            .isMatchedRandomPeer(isMatchedRandomPeersRequest: isMatchedRandomPeersRequest),
+            interceptor: TNKeychainInterceptor.shared
+          )
           guard
             let responseData = try decoder.decode(GWResponse<IsMatchedRandomPeersResponse>.self, from: data).data
           else {
@@ -123,7 +128,7 @@ extension WorkoutPeerRandomMatchingRepository {
     }
 
     var headers: TNHeaders {
-      return .init(headers: [.init(key: "Authorization", value: "accessToken")])
+      .default
     }
   }
 }

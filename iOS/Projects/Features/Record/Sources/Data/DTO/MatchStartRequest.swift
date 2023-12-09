@@ -12,4 +12,8 @@ import Foundation
 struct MatchStartRequest: Encodable {
   /// workoutId는 운동 번호를 의미합니다.
   let workoutID: Int
+
+  enum CodingKeys: String, CodingKey {
+    case workoutID = "workoutId"
+  }
 }

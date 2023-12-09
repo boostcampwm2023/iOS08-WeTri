@@ -7,13 +7,16 @@
 //
 
 import Combine
+import CombineExtension
 import CoreLocation
 import Foundation
+import Log
 
 // MARK: - WorkoutSessionViewModelDependency
 
 protocol WorkoutSessionViewModelDependency {
   var startDate: Date { get }
+  var workoutTypeCode: WorkoutType { get }
 }
 
 // MARK: - WorkoutSessionContainerViewModelInput
@@ -87,20 +90,18 @@ extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepr
       .catch { _ in Just(URL(string: "https://gblafytgdduy20857289.cdn.ntruss.com/30ab314b-a59a-44c8-b9c5-44d94b4542f0.png")!) }
       .eraseToAnyPublisher()
 
-    let recordPublisher = input.endWorkoutPublisher
+    let recordPublisher = mapURLPublisher
       .withLatestFrom(input.locationPublisher) {
-        $1.map { LocationDTO(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
-      }
-      .withLatestFrom(mapURLPublisher) {
-        return ($0, $1)
+        return (url: $0, locations: $1.map { LocationDTO(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) })
       }
       .withLatestFrom(input.healthPublisher) { [dependency] tuple, health in
         let workoutData = WorkoutDataForm(
           workoutTime: Int(dependency.startDate.timeIntervalSince1970.rounded(.down)),
           distance: Int(health.distance?.rounded(.toNearestOrAwayFromZero) ?? 0),
           calorie: Int(health.calorie?.rounded(.toNearestOrAwayFromZero) ?? 0),
-          imageURL: tuple.1,
-          locations: tuple.0.map(\.description).joined(separator: ","),
+          imageURL: tuple.url,
+          workoutID: dependency.workoutTypeCode.typeCode,
+          locations: tuple.locations.map(\.description).joined(separator: ","),
           averageHeartRate: Int(health.averageHeartRate?.rounded(.toNearestOrAwayFromZero) ?? 0),
           minimumHeartRate: Int(health.minimumHeartRate?.rounded(.toNearestOrAwayFromZero) ?? 0),
           maximumHeartRate: Int(health.maximumHeartRate?.rounded(.toNearestOrAwayFromZero) ?? 0)
@@ -130,6 +131,6 @@ extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepr
       .oneSecondsTimerPublisher()
       .map { WorkoutSessionContainerState.updateTime($0) }
 
-    return Just(WorkoutSessionContainerState.idle).merge(with: recordErrorPublisher, workoutTimerPublisher).eraseToAnyPublisher()
+    return Just(.idle).merge(with: recordErrorPublisher, workoutTimerPublisher).eraseToAnyPublisher()
   }
 }

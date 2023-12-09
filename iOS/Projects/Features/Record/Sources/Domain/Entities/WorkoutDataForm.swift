@@ -22,6 +22,9 @@ public struct WorkoutDataForm: Encodable {
   /// 지도 경로 스크린샷 URL
   let imageURL: URL
 
+  /// 운동 ID
+  let workoutID: Int
+
   /// 위도 경도를 한 줄의 문자열로 합친 형태입니다.
   ///
   /// `"위도/경도,위도/경도,..."`형태로 들어갑니다.
@@ -40,6 +43,7 @@ public struct WorkoutDataForm: Encodable {
     case workoutTime
     case distance
     case calorie
+    case workoutID = "workoutId"
     case imageURL = "mapCapture"
     case locations = "gps"
     case averageHeartRate = "avgHeartRate"

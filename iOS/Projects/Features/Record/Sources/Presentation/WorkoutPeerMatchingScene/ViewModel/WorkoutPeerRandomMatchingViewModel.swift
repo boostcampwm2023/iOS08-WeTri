@@ -150,7 +150,7 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
       let peersResponse = response.peers,
       let roomID = response.roomID,
       let startDate = response.liveWorkoutStartTime,
-      let id = response.publicID
+      let id = response.myPublicID
     else {
       return
     }
@@ -160,9 +160,10 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
       id: id,
       profileImageURL: userInformationUseCase.userProfileImageURL()
     )
+    Log.make().debug("\(startDate)")
 
     let workoutSessionComponents = WorkoutSessionComponents(
-      participants: [sessionPeerTypeOfMe] + peers,
+      participants: peers,
       startDate: startDate,
       roomID: roomID,
       id: id,
@@ -180,6 +181,6 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
 
   private enum Constants {
     static let pollingPeriod: Double = 2
-    static let maximumCouldWaitTime: Double = 10
+    static let maximumCouldWaitTime: Double = 150
   }
 }

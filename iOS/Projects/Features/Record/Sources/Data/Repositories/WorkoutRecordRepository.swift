@@ -7,6 +7,7 @@
 //
 
 import Combine
+import CommonNetworkingKeyManager
 import Foundation
 import Trinet
 
@@ -29,7 +30,7 @@ public struct WorkoutRecordRepository: WorkoutRecordRepositoryRepresentable {
       Future<Data, Error> { promise in
         Task {
           do {
-            let data = try await provider.request(.init(dataForm: dataForm))
+            let data = try await provider.request(.init(dataForm: dataForm), interceptor: TNKeychainInterceptor.shared)
             promise(.success(data))
           } catch {
             promise(.failure(error))
@@ -40,7 +41,7 @@ public struct WorkoutRecordRepository: WorkoutRecordRepositoryRepresentable {
     .decode(type: GWResponse<[String: Int]>.self, decoder: jsonDecoder)
     .tryMap {
       guard let dictionary = $0.data,
-            let recordID = dictionary["recordId"]
+            let recordID = dictionary["id"]
       else {
         throw DataLayerError.noData
       }

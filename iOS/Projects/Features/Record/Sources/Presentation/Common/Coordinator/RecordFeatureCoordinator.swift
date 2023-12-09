@@ -70,7 +70,7 @@ public final class RecordFeatureCoordinator: RecordFeatureCoordinating {
   func showWorkoutFlow(_ workoutSessionComponents: WorkoutSessionComponents) {
     let coordinator = WorkoutSessionCoordinator(
       navigationController: navigationController,
-      isMockEnvironment: true,
+      isMockEnvironment: false,
       workoutSessionComponents: workoutSessionComponents
     )
     childCoordinators.append(coordinator)

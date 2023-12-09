@@ -53,6 +53,7 @@ export class ExtensionWebSocketServer {
       const curRoom = this.rooms.get(roomId);
       curRoom.delete(clientId);
       await this.redisData.srem(roomId, clientId);
+      await this.redisData.del(`userMatch:${clientId}`);
       if (curRoom.size === 0) {
         this.unSubscribe(`channel/${roomId}`);
       }
@@ -110,7 +111,7 @@ export class ExtensionWebSocketServer {
           client.send(
             JSON.stringify({
               event: jsonMessage.event,
-              data: jsonMessage.message,
+              data: JSON.parse(jsonMessage.message),
             }),
           );
         }

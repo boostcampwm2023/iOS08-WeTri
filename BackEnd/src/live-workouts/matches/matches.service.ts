@@ -15,8 +15,7 @@ import {
   WAITING_20_TIME,
   ALONE_USER,
   MATCHING_DELAY,
-  UTC_REMOVE_TIME,
-  MATCHES_API_TIME_OUT,
+  UTC_REMOVE_TIME, MATCHES_API_TIME_OUT,
 } from './constant/matches.constant';
 
 @Injectable()
@@ -36,8 +35,6 @@ export class MatchesService {
     await this.redis.rpush(
       `matching:${workoutId}`,
       JSON.stringify(profile),
-      'EX',
-      MATCHES_API_TIME_OUT,
     );
   }
 
@@ -71,6 +68,7 @@ export class MatchesService {
       );
       return {
         matched: true,
+        myPublicId: publicId,
         roomId: roomId,
         liveWorkoutStartTime: liveWorkoutStartTimeUTC,
         peers: profiles,
@@ -81,14 +79,17 @@ export class MatchesService {
     const waitingUsers = this.matchingAlgorithm(waitingLength, waitingTime);
 
     if (waitingUsers >= MIN_USERS) {
-      return await this.makeWebSocketRoom(workoutId, waitingUsers);
+      return await this.makeWebSocketRoom(workoutId, waitingUsers, publicId);
     }
+    return {
+      matched: false
+    };
   }
 
   private async makeWebSocketRoom(
-    workoutId: number,
-    waitingUsers: number,
-  ): Promise<RandomMatch> {
+      workoutId: number,
+      waitingUsers: number,
+      myPublicId: any): Promise<RandomMatch> {
     const roomId: string = `match:${workoutId}:${uuidv4()}`;
 
     const serializedUsers: string[] = await this.redis.lrange(
@@ -101,26 +102,28 @@ export class MatchesService {
     );
 
     const liveWorkoutStartTime = new Date();
-    liveWorkoutStartTime.setMinutes(
-      liveWorkoutStartTime.getSeconds() + MATCHING_DELAY,
+    liveWorkoutStartTime.setSeconds(
+        liveWorkoutStartTime.getSeconds() + MATCHING_DELAY,
     );
-    const liveWorkoutStartTimeUTC = liveWorkoutStartTime.toISOString();
+    const kstTime = new Date(liveWorkoutStartTime.getTime() + (9 * 60 * 60 * 1000));
+    const liveWorkoutStartTimeUTC = kstTime.toISOString()
+        .replace(/T/, ' ')
+        .replace(/\..+/, '')
+        .slice(0, 19);
 
     const multi = this.redis.multi();
     for (const { publicId } of profiles) {
-      multi.set(`userMatch:${publicId}`, roomId, 'EX', MATCHES_API_TIME_OUT);
+      multi.set(`userMatch:${publicId}`, roomId);
     }
 
     multi.set(
       `matchProfiles:${roomId}`,
-      JSON.stringify(profiles),
-      'EX',
-      MATCHES_API_TIME_OUT,
-    );
+      JSON.stringify(profiles));
     multi.set(
       `matchStartTime:${roomId}`,
-      JSON.stringify(liveWorkoutStartTimeUTC),
+      liveWorkoutStartTimeUTC,
     );
+    multi.expire(`matchProfiles:${roomId}`, MATCHES_API_TIME_OUT);
     multi.expire(`matchStartTime:${roomId}`, UTC_REMOVE_TIME);
     multi.ltrim(`matching:${workoutId}`, waitingUsers, -1);
     await multi.exec();
@@ -128,6 +131,7 @@ export class MatchesService {
     return {
       matched: true,
       roomId: roomId,
+      myPublicId: myPublicId,
       liveWorkoutStartTime: liveWorkoutStartTimeUTC,
       peers: profiles,
     };

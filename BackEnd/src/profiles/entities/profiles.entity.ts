@@ -46,7 +46,7 @@ export class Profile {
   @IsString({
     message: 'birthdate string 타입으로 입력해야합니다.',
   })
-  birthdate: Date;
+  birthdate: string;
 
   @CreateDateColumn()
   createdAt: Date;

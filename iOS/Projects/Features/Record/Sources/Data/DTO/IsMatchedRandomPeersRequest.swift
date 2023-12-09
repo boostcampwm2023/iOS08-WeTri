@@ -21,4 +21,9 @@ struct IsMatchedRandomPeersRequest: Encodable {
 
   /// 몇초를 대기방에서 기다렸는지 알려줍니다.
   let waitingTime: Int
+
+  enum CodingKeys: String, CodingKey {
+    case workoutID = "workoutId"
+    case waitingTime
+  }
 }

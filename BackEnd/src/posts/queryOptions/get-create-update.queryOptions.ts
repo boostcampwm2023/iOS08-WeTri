@@ -2,7 +2,7 @@ import { QueryOptions } from '../../common/type/query-options.type';
 
 export const getCreateUpdateQueryOptions: QueryOptions = {
   mainAlias: 'post',
-  join: [
+  joins: [
     {
       joinColumn: 'post.record',
       joinAlias: 'record',
@@ -12,7 +12,7 @@ export const getCreateUpdateQueryOptions: QueryOptions = {
       joinAlias: 'profile',
     },
   ],
-  select: [
+  selects: [
     'post',
     'record.id',
     'record.workoutTime',

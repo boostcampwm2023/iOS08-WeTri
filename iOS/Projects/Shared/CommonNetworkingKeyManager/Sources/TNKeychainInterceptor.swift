@@ -44,7 +44,8 @@ extension TNKeychainInterceptor: TNRequestInterceptor {
     response: URLResponse,
     delegate _: URLSessionDelegate?
   ) async throws -> (Data, URLResponse) {
-    let code = try decoder.decode(GWResponseForStatusCode.self, from: data).code
+    Log.make().debug("\(String(data: data, encoding: .utf8)!)")
+    let code = try decoder.decode(GWResponse<EmptyModel>.self, from: data).code
     if code == 1030 {
       Log.make().debug("AccessToken이 만료되어, Retry를 진행합니다.")
       try await refreshAccessToken(session: session)
