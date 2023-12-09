@@ -9,5 +9,5 @@
 import Foundation
 
 protocol LocationPathUseCaseRepresentable {
-  func processPath(locations: [LocationDTO]) -> MapRegion
+  func processPath(locations: [LocationModel]) -> MapRegion
 }

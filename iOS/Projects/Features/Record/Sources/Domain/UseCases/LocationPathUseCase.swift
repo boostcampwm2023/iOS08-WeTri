@@ -9,7 +9,7 @@
 import Foundation
 
 struct LocationPathUseCase: LocationPathUseCaseRepresentable {
-  func processPath(locations: [LocationDTO]) -> MapRegion {
+  func processPath(locations: [LocationModel]) -> MapRegion {
     return MapRegion(
       minLatitude: locations.map(\.latitude).min() ?? 0,
       maxLatitude: locations.map(\.latitude).max() ?? 0,

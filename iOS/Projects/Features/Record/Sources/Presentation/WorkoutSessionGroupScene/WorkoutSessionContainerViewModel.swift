@@ -92,7 +92,7 @@ extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepr
 
     let recordPublisher = mapURLPublisher
       .withLatestFrom(input.locationPublisher) {
-        return (url: $0, locations: $1.map { LocationDTO(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) })
+        return (url: $0, locations: $1.map { LocationModel(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) })
       }
       .withLatestFrom(input.healthPublisher) { [dependency] tuple, health in
         let workoutData = WorkoutDataForm(
