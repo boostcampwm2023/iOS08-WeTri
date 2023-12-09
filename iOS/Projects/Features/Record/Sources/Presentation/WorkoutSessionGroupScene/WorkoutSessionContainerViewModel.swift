@@ -88,7 +88,7 @@ extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepr
     let mapURLPublisher = input.mapCaptureImageDataPublisher
       .flatMap(imageUploadUseCase.uploadImage(included:))
       .catch { _ in Just(URL(string: "https://gblafytgdduy20857289.cdn.ntruss.com/30ab314b-a59a-44c8-b9c5-44d94b4542f0.png")!) }
-      .eraseToAnyPublisher()
+      .share()
 
     let recordPublisher = mapURLPublisher
       .withLatestFrom(input.locationPublisher) {
@@ -109,6 +109,7 @@ extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepr
         return workoutData
       }
       .flatMap(workoutRecordUseCase.record)
+      .share()
 
     recordPublisher
       .receive(on: RunLoop.main)

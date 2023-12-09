@@ -37,6 +37,7 @@ final class WorkoutSessionContainerViewController: UIViewController {
   private lazy var pageViewController: UIPageViewController = {
     let pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
     pageViewController.dataSource = self
+    pageViewController.delegate = self
     return pageViewController
   }()
 
@@ -214,7 +215,6 @@ extension WorkoutSessionContainerViewController: UIPageViewControllerDataSource 
     guard viewControllers.count > previousIndex else {
       return nil
     }
-    pageControl.select(at: previousIndex)
     return viewControllers[previousIndex]
   }
 
@@ -233,8 +233,19 @@ extension WorkoutSessionContainerViewController: UIPageViewControllerDataSource 
     guard viewControllersCount > nextIndex else {
       return nil
     }
-    pageControl.select(at: nextIndex)
     return viewControllers[nextIndex]
+  }
+}
+
+// MARK: UIPageViewControllerDelegate
+
+extension WorkoutSessionContainerViewController: UIPageViewControllerDelegate {
+  func pageViewController(_: UIPageViewController, didFinishAnimating _: Bool, previousViewControllers _: [UIViewController], transitionCompleted completed: Bool) {
+    if completed,
+       let visibleViewController = pageViewController.viewControllers?.first,
+       let index = viewControllers.firstIndex(of: visibleViewController) {
+      pageControl.select(at: index)
+    }
   }
 }
 
