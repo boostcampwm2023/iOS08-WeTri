@@ -58,6 +58,7 @@ final class AppCoordinator: AppCoordinating {
     )
     childCoordinators.append(coordinator)
     coordinator.finishDelegate = self
+    coordinator.loginFeatureFinishDelegate = self
     coordinator.start()
   }
 
@@ -69,6 +70,7 @@ final class AppCoordinator: AppCoordinating {
     )
     childCoordinators.append(coordinator)
     coordinator.finishDelegate = self
+    coordinator.signUpFeatureFinishDelegate = self
     coordinator.start()
   }
 
@@ -87,7 +89,6 @@ extension AppCoordinator: CoordinatorFinishDelegate {
     childCoordinators = childCoordinators.filter {
       $0.flow != childCoordinator.flow
     }
-    navigationController.popToRootViewController(animated: false)
   }
 }
 
@@ -116,16 +117,16 @@ extension AppCoordinator: SignUpFeatureCoordinatorFinishDelegate {
 extension AppCoordinator: LoginFeatureFinishDelegate {
   func loginFeatureCoordinatorDidFinished(initialUser: InitialUser?, token: Token?) {
     if let initialUser {
-      // TODO: 처음접속하는 유저일 경우 signUp
-      showSignUpFlow(newUserInformation: NewUserInformation(
-        mappedUserID: initialUser.mappedUserID,
-        provider: initialUser.provider
-      )
+      showSignUpFlow(
+        newUserInformation: NewUserInformation(
+          mappedUserID: initialUser.mappedUserID,
+          provider: initialUser.provider
+        )
       )
     }
 
-    if let token {
-      // TODO: 기존에 접속해본적이 있어서 로그인하고 토큰을 받은 경우
+    if token != nil {
+      showTabBarFlow()
     }
   }
 }

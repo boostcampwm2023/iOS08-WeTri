@@ -67,7 +67,7 @@ public final class LoginFeatureCoordinator: LoginFeatureCoordinating {
   }
 
   public func finish(initialUser: InitialUser? = nil, token: Token? = nil) {
-    loginFeatureFinishDelegate?.loginFeatureCoordinatorDidFinished(initialUser: initialUser, token: token)
     finishDelegate?.flowDidFinished(childCoordinator: self)
+    loginFeatureFinishDelegate?.loginFeatureCoordinatorDidFinished(initialUser: initialUser, token: token)
   }
 }
