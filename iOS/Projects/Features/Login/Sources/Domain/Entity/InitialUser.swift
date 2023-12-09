@@ -6,6 +6,7 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import Auth
 import Foundation
 
 // MARK: - InitialUser
@@ -35,9 +36,3 @@ public struct InitialUser {
 // MARK: Codable
 
 extension InitialUser: Codable {}
-
-// MARK: - AuthProvider
-
-public enum AuthProvider: String, Codable {
-  case apple
-}
