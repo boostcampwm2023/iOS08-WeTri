@@ -26,7 +26,7 @@ final class WorkoutSelectViewController: UIViewController {
     bind()
   }
 
-  private var cancellables = Set<AnyCancellable>()
+  private var subscriptions = Set<AnyCancellable>()
   weak var delegate: WorkoutSelectViewDelegate?
 
   private let workoutSelectDescriptionLabel: UILabel = {
@@ -113,7 +113,7 @@ private extension WorkoutSelectViewController {
       .sink { [weak self] _ in
         self?.delegate?.nextButtonDidTap()
       }
-      .store(in: &cancellables)
+      .store(in: &subscriptions)
   }
 
   enum Metrics {

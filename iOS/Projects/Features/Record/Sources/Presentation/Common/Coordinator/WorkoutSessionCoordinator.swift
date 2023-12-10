@@ -175,7 +175,7 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
     )
     viewController.hidesBottomBarWhenPushed = true
 
-    navigationController.pushViewController(viewController, animated: true)
+    navigationController.setViewControllers([viewController], animated: true)
   }
 
   func pushWorkoutSummaryViewController(recordID: Int) {
