@@ -143,7 +143,9 @@ final class WorkoutRouteMapViewController: UIViewController {
 
     viewModel
       .transform(input: input)
-      .sink(receiveValue: render(state:))
+      .sink { [weak self] state in
+        self?.render(state: state)
+      }
       .store(in: &subscriptions)
   }
 
