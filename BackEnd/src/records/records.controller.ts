@@ -25,6 +25,7 @@ import {
 } from './dto/record-response.dto';
 
 @ApiTags('사용자 기록 API')
+@UseGuards(AccessTokenGuard)
 @Controller('api/v1/records')
 export class RecordsController {
   constructor(private readonly recordsService: RecordsService) {}
@@ -32,7 +33,6 @@ export class RecordsController {
   @ApiOperation({ summary: '운동 기록 생성' })
   @ApiBody({ type: CreateExerciseLogDto })
   @ApiCreatedResponse({ type: CreateRecordResDto })
-  @UseGuards(AccessTokenGuard)
   async createWorkOutLog(
     @ProfileDeco() profile: Profile,
     @Body() body: CreateExerciseLogDto,
@@ -44,7 +44,6 @@ export class RecordsController {
   @Get('me')
   @ApiOperation({ summary: '내 연/월/일에 맞는 모든 기록 조회' })
   @ApiCreatedResponse({ type: GetUsersRecordsResDto })
-  @UseGuards(AccessTokenGuard)
   async getUserRecords(
     @ProfileDeco() profile: Profile,
     @Query('year') year: number,
