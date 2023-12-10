@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UserInformationManager
 
 
 protocol SignUpUserDefaultsManagerUseCaseRepresentable {
@@ -14,7 +15,15 @@ protocol SignUpUserDefaultsManagerUseCaseRepresentable {
 }
 
 struct SignUpUserDefaultsManagerUseCase {
-  func setSignUpUserInformationAtUserDefaults(_ signUpUser: SignUpUser) {
+  let manager = UserInformationManager.shared
+  func setSignUpUserInformationAtUserDefaults(_ signUpUserInformation: SignUpUser) {
+    manager.setUserName(signUpUserInformation.birthDate)
+    manager.setUserProfileImageURLString(url: signUpUserInformation.profileImage)
+    
+    let formatter = DateFormatter()
+    formatter.dateFormat = "yyyy-MM-dd"
+    let date = formatter.date(from: signUpUserInformation.birthDate)
+    manager.setBirthDayDate(date)
     
   }
 }
