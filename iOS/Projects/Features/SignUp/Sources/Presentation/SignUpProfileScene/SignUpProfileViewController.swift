@@ -195,7 +195,7 @@ private extension SignUpProfileViewController {
       imageButtonTap: imageButtonTapSubject.eraseToAnyPublisher(),
       imageSetting: imageSetSubject.eraseToAnyPublisher(),
       completeButtonTap: completeButtonTapSubject.eraseToAnyPublisher(),
-      genderBirth: genderBirthSubject.eraseToAnyPublisher()
+      genderBirth: genderBirthSubject.setFailureType(to: Error.self).eraseToAnyPublisher()
     )
     let output = viewModel.transform(input: input)
     output
@@ -223,10 +223,36 @@ private extension SignUpProfileViewController {
     case .failure:
       completionButton.isEnabled = false
     case let .customError(error):
-      Log.make().error("\(error)")
+      if let profileImageError = error as? ImageFormRepositoryError {
+        switch profileImageError {
+        case .notAccessObjectStorage:
+          showAlert(message: "앱의 상태가 불안정합니다.")
+        case .notAccessGreenEye:
+          showAlert(message: "건전한 사진을 부탁드립니다.")
+        case .invalidFileType:
+          showAlert(message: "사진 파일이 올바르지 않은 확장자입니다.")
+        case .fileSizeTooLarge:
+          showAlert(message: "파일의 크기가 너무 큽니다.")
+        default:
+          showAlert(message: "다시 시도 해주세요.")
+        }
+      }
     default:
       break
     }
+  }
+
+  func showAlert(message: String) {
+    let alertVC = UIAlertController(
+      title: "잘못된 접근입니다.",
+      message: message,
+      preferredStyle: .alert
+    )
+    let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
+      alertVC.dismiss(animated: true)
+    }
+    alertVC.addAction(confirmAction)
+    present(alertVC, animated: true, completion: nil)
   }
 }
 
