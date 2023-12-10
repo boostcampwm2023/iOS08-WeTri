@@ -97,9 +97,9 @@ private extension RecordListViewController {
     let output = viewModel.transform(input: input)
     output
       .receive(on: DispatchQueue.main)
-      .sink(receiveValue: { [weak self] state in
+      .sink { [weak self] state in
         self?.render(output: state)
-      })
+      }
       .store(in: &subscriptions)
   }
 
