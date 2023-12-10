@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Patch,
+  Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -22,6 +23,7 @@ import { AccessTokenGuard } from '../auth/guard/bearerToken.guard';
 import { GetProfileResponseDto } from './dto/get-profile-response.dto';
 import { PaginateProfilePostDto } from './dto/paginate-profile-post.dto';
 import { GetProfilePostsResponseDto } from './dto/get-profile-posts-response.dto';
+import { GetNicknameAvailAbailityDto } from './dto/get-nickname-availability.dto';
 
 @ApiTags('Profiles API')
 @Controller('api/v1/profiles')
@@ -77,5 +79,11 @@ export class ProfilesController {
     @Query() query: PaginateProfilePostDto,
   ) {
     return this.profilesService.getProfilePosts(publicId, query);
+  }
+
+  @ApiOperation({ summary: '닉네임 중복 검사한다.' })
+  @Post('nickname-availability')
+  getNicknameAvailability(@Body() body: GetNicknameAvailAbailityDto) {
+    return this.profilesService.validateProfileNickname(body.nickname);
   }
 }
