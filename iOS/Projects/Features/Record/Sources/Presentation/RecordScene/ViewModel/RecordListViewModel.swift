@@ -70,7 +70,7 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
             .sucessRecords(records)
           }
           .catch { _ -> AnyPublisher<RecordListState, Never> in
-            return Just(.customError(RecordListViewModelError.dateNotFound))
+            return Just(.customError(RecordListViewModelError.recordUpdateFail))
               .eraseToAnyPublisher()
           }
           .eraseToAnyPublisher()
@@ -113,7 +113,7 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
               case let error as WorkoutRecordsRepositoryError where error == .invalidCachedData:
                 guard let publisher = self?.recordUpdateUsecase.execute(date: date, isToday: isToday)
                 else {
-                  return Just(.sucessRecords([]))
+                  return Just(.customError(RecordListViewModelError.recordUpdateFail))
                     .eraseToAnyPublisher()
                 }
                 return publisher
@@ -121,14 +121,14 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
                     return .sucessRecords(records)
                   }
                   .catch { _ in
-                    return Just(.sucessRecords([]))
+                    return Just(.customError(error))
                       .eraseToAnyPublisher()
                   }
                   .eraseToAnyPublisher()
               default:
                 break
               }
-              return Just(.sucessRecords([]))
+              return Just(.customError(error))
                 .eraseToAnyPublisher()
             }
             .eraseToAnyPublisher()
@@ -138,7 +138,7 @@ extension RecordListViewModel: RecordListViewModelRepresentable {
               return .sucessRecords(records)
             }
             .catch { _ in
-              return Just(.sucessRecords([]))
+              return Just(.customError(RecordListViewModelError.recordUpdateFail))
                 .eraseToAnyPublisher()
             }
             .eraseToAnyPublisher()
@@ -183,7 +183,7 @@ protocol RecordListViewModelRepresentable {
 
 // MARK: - RecordListViewModelError
 
-private enum RecordListViewModelError: Error {
+enum RecordListViewModelError: Error {
   case viewModelDeinitialized
   case dateNotFound
   case dateInfoNotTransformed
