@@ -9,6 +9,7 @@
 import Combine
 import CombineCocoa
 import DesignSystem
+import ImageDownsampling
 import Log
 import Photos
 import UIKit
@@ -342,12 +343,17 @@ extension SignUpProfileViewController: UIImagePickerControllerDelegate {
     _: UIImagePickerController,
     didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
   ) {
-    if let image = info[.originalImage] as? UIImage,
-       let imageData = image.pngData() {
-      profileImageButton.image = image
-      imageSetSubject.send(imageData)
+    do {
+      if let url = info[.imageURL] as? URL {
+        let image = try Data(contentsOf: url).downsampling(size: profileImageButton.profileSize, scale: .x3)
+        profileImageButton.image = image
+      }
+
+      dismiss(animated: true)
+    } catch {
+      Log.make().error("\(error)")
+      profileImageButton.image = UIImage(systemName: "person.fill")
     }
-    dismiss(animated: true)
   }
 }
 

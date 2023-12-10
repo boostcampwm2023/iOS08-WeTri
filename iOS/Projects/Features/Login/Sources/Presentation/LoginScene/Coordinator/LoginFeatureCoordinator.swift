@@ -63,7 +63,7 @@ public final class LoginFeatureCoordinator: LoginFeatureCoordinating {
     let loginViewModel = LoginViewModel(coordinator: self, authorizeUseCase: authorizeUseCase)
     let viewController = LoginViewController(viewModel: loginViewModel)
 
-    navigationController.pushViewController(viewController, animated: false)
+    navigationController.setViewControllers([viewController], animated: true)
   }
 
   public func finishLogin(initialUser: InitialUser? = nil, token: Token? = nil) {
