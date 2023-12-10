@@ -39,7 +39,7 @@ final class LoginViewController: UIViewController {
   private lazy var logoImageView: UIImageView = {
     let imageView = UIImageView()
     imageView.translatesAutoresizingMaskIntoConstraints = false
-    imageView.image = .logoImage
+    imageView.image = .logoImageDark
     imageView.contentMode = .scaleAspectFit
     return imageView
   }()

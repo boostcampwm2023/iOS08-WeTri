@@ -10,6 +10,7 @@ import UIKit
 
 public extension UIImage {
   static let logoImage: UIImage = .logo
+  static let logoImageDark: UIImage = .logoForDarkMode
   static let pencilImage: UIImage = .pencil
   static let noResultsImage: UIImage = .noResults
 }
