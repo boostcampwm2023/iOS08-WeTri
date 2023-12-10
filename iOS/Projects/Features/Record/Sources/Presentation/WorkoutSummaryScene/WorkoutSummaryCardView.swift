@@ -187,12 +187,12 @@ final class WorkoutSummaryCardView: UIView {
     // 지도 설정
     configureMapPolyline(with: model.locations)
 
-    distanceItemView.configure(withTitle: "거리", value: "\(model.distance)")
-    caloriesItemView.configure(withTitle: "칼로리", value: "\(model.calorie)")
+    distanceItemView.configure(withTitle: "거리", value: "\(model.distance)m")
+    caloriesItemView.configure(withTitle: "칼로리", value: "\(model.calorie)kcal")
 
-    averageHeartRateItemView.configure(withTitle: "Avg.HR", value: "\(model.averageHeartRate.flatMap(String.init) ?? "-")")
-    minimumHeartRateItemView.configure(withTitle: "Min.HR", value: "\(model.minimumHeartRate.flatMap(String.init) ?? "-")")
-    maximumHeartRateItemView.configure(withTitle: "Max.HR", value: "\(model.maximumHeartRate.flatMap(String.init) ?? "-")")
+    averageHeartRateItemView.configure(withTitle: "Avg.HR", value: "\(model.averageHeartRate.flatMap(String.init) ?? "-")bpm")
+    minimumHeartRateItemView.configure(withTitle: "Min.HR", value: "\(model.minimumHeartRate.flatMap(String.init) ?? "-")bpm")
+    maximumHeartRateItemView.configure(withTitle: "Max.HR", value: "\(model.maximumHeartRate.flatMap(String.init) ?? "-")bpm")
   }
 
   private func createLocations(from locations: [LocationModel]) -> [CLLocation] {
