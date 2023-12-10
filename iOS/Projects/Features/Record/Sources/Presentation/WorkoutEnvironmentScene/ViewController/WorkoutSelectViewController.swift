@@ -22,7 +22,6 @@ protocol WorkoutSelectViewDelegate: AnyObject {
 final class WorkoutSelectViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
-    navigationController?.setNavigationBarHidden(true, animated: false)
     setupConstraints()
     bind()
   }
@@ -32,7 +31,7 @@ final class WorkoutSelectViewController: UIViewController {
 
   private let workoutSelectDescriptionLabel: UILabel = {
     let label = UILabel()
-    label.font = .preferredFont(forTextStyle: .title1, with: .traitBold)
+    label.font = .preferredFont(forTextStyle: .title1, weight: .bold)
     label.textAlignment = .left
     label.text = "1. 운동을 선택하세요"
 

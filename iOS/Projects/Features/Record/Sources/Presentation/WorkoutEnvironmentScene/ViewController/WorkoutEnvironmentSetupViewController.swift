@@ -72,6 +72,7 @@ public final class WorkoutEnvironmentSetupViewController: UIViewController {
       .compactMap { $0 as? UIScrollView }
       .first
     pageScrollView = scrollView
+    pageScrollView?.isScrollEnabled = false
     pageScrollView?.delegate = self
 
     pageViewController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -81,11 +82,21 @@ public final class WorkoutEnvironmentSetupViewController: UIViewController {
 
 private extension WorkoutEnvironmentSetupViewController {
   func setup() {
-    view.backgroundColor = DesignSystemColor.primaryBackground
+    setupStyle()
     setupViewHierarchyAndConstraints()
     bind()
 
     configureDataSource()
+  }
+
+  func setupStyle() {
+    navigationController?.isNavigationBarHidden = false
+    navigationController?.navigationBar.isHidden = false
+    navigationController?.navigationBar.tintColor = DesignSystemColor.main03
+
+    let titleBarButtonItemFont: UIFont = .preferredFont(forTextStyle: .title3, weight: .semibold)
+    navigationController?.tabBarItem.setTitleTextAttributes([.font: titleBarButtonItemFont], for: .normal)
+    view.backgroundColor = DesignSystemColor.primaryBackground
   }
 
   func setupViewHierarchyAndConstraints() {
@@ -253,6 +264,7 @@ extension WorkoutEnvironmentSetupViewController: UIPageViewControllerDelegate, U
     if
       let currentViewController = pageViewController.viewControllers?.first,
       let currentIndex = contentViewControllers.firstIndex(of: currentViewController) {
+      pageScrollView?.isScrollEnabled = currentIndex == 0 ? false : true
       gwPageControl.select(at: currentIndex)
     }
   }
@@ -273,22 +285,11 @@ extension WorkoutEnvironmentSetupViewController: UIPageViewControllerDelegate, U
   }
 }
 
-// MARK: UIScrollViewDelegate
-
-extension WorkoutEnvironmentSetupViewController: UIScrollViewDelegate {
-  public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-    if pageViewController.viewControllers?.first == contentViewControllers.first {
-      scrollView.isScrollEnabled = false
-    }
-  }
-
-  public func scrollViewDidEndDragging(_: UIScrollView, willDecelerate _: Bool) {}
-}
-
 // MARK: WorkoutSelectViewDelegate
 
 extension WorkoutEnvironmentSetupViewController: WorkoutSelectViewDelegate {
   func nextButtonDidTap() {
+    pageScrollView?.isScrollEnabled = false
     gwPageControl.next()
     pageViewController.setViewControllers([workoutPeerSelectViewController], direction: .forward, animated: true) { [weak self] _ in
       self?.pageScrollView?.isScrollEnabled = true
