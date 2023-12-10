@@ -7,6 +7,29 @@ import Trinet
 
 enum ImageFormRepositoryError: Error {
   case invalidImageFormRepository
+  case invalidResponseCode
+  case notAccessObjectStorage
+  case notAccessGreenEye
+  case invalidFileType
+  case fileSizeTooLarge
+  case invalidFileCountOrFieldName
+
+  var code: Int {
+    switch self {
+    case .notAccessObjectStorage:
+      return 9000
+    case .notAccessGreenEye:
+      return 9100
+    case .invalidFileType:
+      return 9200
+    case .fileSizeTooLarge:
+      return 9300
+    case .invalidFileCountOrFieldName:
+      return 9400
+    default:
+      return 0
+    }
+  }
 }
 
 // MARK: - ImageFormRepository
@@ -37,10 +60,26 @@ public final class ImageFormRepository: ImageFormRepositoryRepresentable {
       }
     }
     .decode(type: GWResponse<[ImageForm]>.self, decoder: JSONDecoder())
-    .compactMap(\.data)
-    .map { imageForms in
-      return imageForms
+    .tryMap { gwResponse in
+      guard let code = gwResponse.code else {
+        throw ImageFormRepositoryError.invalidResponseCode
+      }
+      switch code {
+      case ImageFormRepositoryError.notAccessObjectStorage.code:
+        throw ImageFormRepositoryError.notAccessObjectStorage
+      case ImageFormRepositoryError.notAccessGreenEye.code:
+        throw ImageFormRepositoryError.notAccessGreenEye
+      case ImageFormRepositoryError.invalidFileType.code:
+        throw ImageFormRepositoryError.invalidFileType
+      case ImageFormRepositoryError.fileSizeTooLarge.code:
+        throw ImageFormRepositoryError.fileSizeTooLarge
+      case ImageFormRepositoryError.invalidFileCountOrFieldName.code:
+        throw ImageFormRepositoryError.invalidFileCountOrFieldName
+      default:
+        return gwResponse.data
+      }
     }
+    .compactMap { $0 }
     .eraseToAnyPublisher()
   }
 }
