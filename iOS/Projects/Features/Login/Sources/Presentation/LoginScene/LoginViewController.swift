@@ -23,6 +23,7 @@ final class LoginViewController: UIViewController {
   private let credentialSubject = PassthroughSubject<AuthorizationInfo, Never>()
   private let loginSubject = PassthroughSubject<Void, Never>()
 
+  private var timeObserverToken: Any?
   private let playerLayer: AVPlayerLayer? = {
     guard
       let bundle = Bundle(for: LoginViewController.self).path(forResource: "running", ofType: "mp4")
@@ -30,7 +31,8 @@ final class LoginViewController: UIViewController {
       return nil
     }
     let videoURL = URL(fileURLWithPath: bundle)
-    let player = AVPlayer(url: videoURL)
+    let playerItem = AVPlayerItem(url: videoURL)
+    let player = AVPlayer(playerItem: playerItem)
     let playerLayer = AVPlayerLayer(player: player)
     playerLayer.videoGravity = .resizeAspectFill // 영상을 화면에 꽉 차게 표시
     return playerLayer
@@ -77,11 +79,46 @@ final class LoginViewController: UIViewController {
     fatalError("init(coder:) has not been implemented")
   }
 
+  deinit {
+    if let timeObserverToken {
+      playerLayer?.player?.removeTimeObserver(timeObserverToken)
+      self.timeObserverToken = nil
+    }
+  }
+
   override public func viewDidLoad() {
     super.viewDidLoad()
     configureUI()
     bindViewModel()
     bindUI()
+  }
+
+  private func setupVideoPlayerDuration() {
+    // 재생 종료 시점 감지
+    guard let duration = playerLayer?.player?.currentItem?.asset.duration
+    else {
+      return
+    }
+    let endTime = CMTimeSubtract(duration, CMTimeMake(value: 5, timescale: 1)) // 종료 5초 전
+    timeObserverToken = playerLayer?.player?.addBoundaryTimeObserver(forTimes: [NSValue(time: endTime)], queue: .main) {
+      [weak self] in
+      self?.slowDownPlayback()
+    }
+  }
+
+  private func slowDownPlayback() {
+    // 재생 속도를 점차 감소
+    guard var rate = playerLayer?.player?.rate else { return }
+    let decelerationFactor: Float = 0.98 // 감속 계수: 각 단계마다 속도를 98%로 줄임
+    Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] timer in
+      if rate > 0.1 {
+        rate *= decelerationFactor
+        self?.playerLayer?.player?.rate = rate
+      } else {
+        timer.invalidate()
+        self?.playerLayer?.player?.pause()
+      }
+    }
   }
 }
 
@@ -103,6 +140,9 @@ private extension LoginViewController {
 
       // 그라디언트 배경 추가
       addGradientLayer()
+
+      // duration 설정
+      setupVideoPlayerDuration()
     }
 
     view.addSubview(logoImageView)
