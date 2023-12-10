@@ -7,13 +7,6 @@
 
 import UIKit
 
-// MARK: - ImageDownsamplingError
-
-public enum ImageDownsamplingError: Error {
-  case failImageSource
-  case failThumbnailImage
-}
-
 public extension UIImage {
   func downsampling(size: CGSize, scale: Scale) throws -> UIImage {
     let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary

@@ -343,12 +343,6 @@ extension SignUpProfileViewController: UIImagePickerControllerDelegate {
     didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
   ) {
     do {
-      //      if let image = try (info[.originalImage] as? UIImage)?.downsampling(size: profileImageButton.profileSize),
-      //         let imageData = image.pngData() {
-      //        profileImageButton.image = image
-      //        imageSetSubject.send(imageData)
-      //      }
-
       if let url = info[.imageURL] as? URL {
         let image = try Data(contentsOf: url).downsampling(size: profileImageButton.profileSize, scale: .x3)
         profileImageButton.image = image
