@@ -64,7 +64,6 @@ final class LoginViewController: UIViewController {
     textView.font = .systemFont(ofSize: 12, weight: .medium)
     textView.textColor = DesignSystemColor.primaryText
     textView.textAlignment = .center
-    textView.backgroundColor = DesignSystemColor.secondaryBackground
     return textView
   }()
 
