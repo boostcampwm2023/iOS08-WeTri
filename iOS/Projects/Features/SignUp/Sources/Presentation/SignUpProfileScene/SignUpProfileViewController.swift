@@ -199,7 +199,7 @@ private extension SignUpProfileViewController {
     )
     let output = viewModel.transform(input: input)
     output
-      .subscribe(on: DispatchQueue.main)
+      .receive(on: DispatchQueue.main)
       .sink { [weak self] state in
         self?.render(state: state)
       }
@@ -242,15 +242,13 @@ private extension SignUpProfileViewController {
     }
   }
 
-  func showAlert(message: String) {
+  private func showAlert(message: String) {
     let alertVC = UIAlertController(
       title: "잘못된 접근입니다.",
       message: message,
       preferredStyle: .alert
     )
-    let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
-      alertVC.dismiss(animated: true)
-    }
+    let confirmAction = UIAlertAction(title: "확인", style: .default)
     alertVC.addAction(confirmAction)
     present(alertVC, animated: true, completion: nil)
   }
@@ -264,7 +262,7 @@ private extension SignUpProfileViewController {
     let alertVC = UIAlertController(
       title: "프로필 이미지 설정",
       message: "선택해주세요.",
-      preferredStyle: .alert
+      preferredStyle: .actionSheet
     )
     let cameraAction = UIAlertAction(title: "카메라", style: .default) { [weak self] _ in
       self?.cameraAuth()
