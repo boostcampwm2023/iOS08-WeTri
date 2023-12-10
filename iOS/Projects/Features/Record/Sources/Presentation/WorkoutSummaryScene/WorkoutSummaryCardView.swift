@@ -181,20 +181,8 @@ final class WorkoutSummaryCardView: UIView {
   }
 
   func configure(with model: WorkoutSummaryModel) {
-    // 기록된 날짜 시간 설정
-    let dateFormatter = DateFormatter()
-    dateFormatter.dateFormat = "yyyy. MM. dd"
-    dateLabel.text = dateFormatter.string(from: model.createdAt)
-
-    let formatter = DateComponentsFormatter()
-    formatter.allowedUnits = [.hour, .minute, .second]
-    formatter.unitsStyle = .positional
-    formatter.zeroFormattingBehavior = .pad
-
-    // 시간초 설정
-    if let formattedString = formatter.string(from: TimeInterval(model.workoutTime)) {
-      timeItemView.configure(withTitle: "시간", value: "\(formattedString)")
-    }
+    dateLabel.text = model.createTimeString
+    timeItemView.configure(withTitle: "시간", value: model.workoutTimeString)
 
     // 지도 설정
     configureMapPolyline(with: model.locations)

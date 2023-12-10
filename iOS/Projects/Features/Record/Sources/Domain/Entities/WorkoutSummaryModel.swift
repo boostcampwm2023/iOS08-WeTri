@@ -16,9 +16,8 @@ struct WorkoutSummaryModel {
   let id: Int
 
   /// 운동한 시간
-  ///
-  /// 초(s)단위로 받아옵니다.
-  let workoutTime: Int
+  /// `00:00:00`단위로 설정됩니다.
+  let workoutTimeString: String
 
   /// 총 운동한 거리
   let distance: Int
@@ -36,7 +35,7 @@ struct WorkoutSummaryModel {
   let maximumHeartRate: Int?
 
   /// 운동 기록한 날짜
-  let createdAt: Date
+  let createTimeString: String
 
   /// 운동한 경로를 갖는 지도 이미지입니다.
   let mapScreenshots: URL

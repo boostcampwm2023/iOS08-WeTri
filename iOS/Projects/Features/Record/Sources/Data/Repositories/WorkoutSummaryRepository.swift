@@ -23,6 +23,20 @@ public struct WorkoutSummaryRepository: WorkoutSummaryRepositoryRepresentable {
     return jsonDecoder
   }()
 
+  private let recordDateFormatter: DateFormatter = {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy. MM. dd"
+    return dateFormatter
+  }()
+
+  private let timeFormatter: DateComponentsFormatter = {
+    let formatter = DateComponentsFormatter()
+    formatter.allowedUnits = [.hour, .minute, .second]
+    formatter.unitsStyle = .positional
+    formatter.zeroFormattingBehavior = .pad
+    return formatter
+  }()
+
   init(session: URLSessionProtocol) {
     provider = .init(session: session)
   }
@@ -57,13 +71,13 @@ public struct WorkoutSummaryRepository: WorkoutSummaryRepositoryRepresentable {
       }
       return .init(
         id: $0.id,
-        workoutTime: $0.workoutTime,
+        workoutTimeString: timeFormatter.string(from: TimeInterval($0.workoutTime)) ?? "-",
         distance: $0.distance,
         calorie: $0.calorie,
         averageHeartRate: $0.averageHeartRate,
         minimumHeartRate: $0.minimumHeartRate,
         maximumHeartRate: $0.maximumHeartRate,
-        createdAt: $0.createdAt,
+        createTimeString: recordDateFormatter.string(from: $0.createdAt),
         mapScreenshots: $0.mapScreenshots,
         locations: locations
       )
