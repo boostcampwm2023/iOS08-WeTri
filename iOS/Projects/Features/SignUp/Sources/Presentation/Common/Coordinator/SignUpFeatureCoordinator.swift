@@ -15,7 +15,7 @@ import UIKit
 // MARK: - SignUpFeatureCoordinatorFinishDelegate
 
 public protocol SignUpFeatureCoordinatorFinishDelegate: AnyObject {
-  func signUpFeatureCooridnatorDidFinished()
+  func signUpFeatureCoordinatorDidFinished()
 }
 
 // MARK: - SignUpFeatureCoordinator
@@ -47,7 +47,7 @@ public final class SignUpFeatureCoordinator: SignUpFeatureCoordinating {
 
   public func finish() {
     finishDelegate?.flowDidFinished(childCoordinator: self)
-    signUpFeatureFinishDelegate?.signUpFeatureCooridnatorDidFinished()
+    signUpFeatureFinishDelegate?.signUpFeatureCoordinatorDidFinished()
   }
 
   public func pushSingUpContainerViewController() {

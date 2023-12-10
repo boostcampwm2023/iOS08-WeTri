@@ -107,7 +107,7 @@ extension AppCoordinator: SplashCoordinatorFinishDelegate {
 // MARK: SignUpFeatureCoordinatorFinishDelegate
 
 extension AppCoordinator: SignUpFeatureCoordinatorFinishDelegate {
-  func signUpFeatureCooridnatorDidFinished() {
+  func signUpFeatureCoordinatorDidFinished() {
     showTabBarFlow()
   }
 }
