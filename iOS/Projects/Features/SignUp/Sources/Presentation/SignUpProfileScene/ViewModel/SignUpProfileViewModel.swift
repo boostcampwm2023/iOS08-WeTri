@@ -44,6 +44,7 @@ public final class SignUpProfileViewModel {
   private let nickNameCheckUseCase: NickNameCheckUseCaseRepresentable
   private let imageTransmitUseCase: ImageTransmitUseCaseRepresentable
   private let signUpUseCase: SignUpUseCaseRepresentable
+  private let userDefaultsMangerUseCase: SignUpUserDefaultsManagerUseCaseRepresentable
 
   private let newUserInformation: NewUserInformation
 
@@ -52,13 +53,15 @@ public final class SignUpProfileViewModel {
     nickNameCheckUseCase: NickNameCheckUseCaseRepresentable,
     imageTransmitUseCase: ImageTransmitUseCaseRepresentable,
     signUpUseCase: SignUpUseCaseRepresentable,
-    newUserInformation: NewUserInformation
+    newUserInformation: NewUserInformation,
+    userDefaultsManagerUseCase: SignUpUserDefaultsManagerUseCaseRepresentable
   ) {
     self.coordinator = coordinator
     self.nickNameCheckUseCase = nickNameCheckUseCase
     self.imageTransmitUseCase = imageTransmitUseCase
     self.signUpUseCase = signUpUseCase
     self.newUserInformation = newUserInformation
+    userDefaultsMangerUseCase = userDefaultsManagerUseCase
   }
 }
 
@@ -122,7 +125,7 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
         nickNamePublisher,
         genderBirthPublisher
       )
-      .map { [newUserInformation] (imageForm: ImageForm, nickName: String, genderBirth: GenderBirth) -> SignUpUser in
+      .map { [newUserInformation, userDefaultsMangerUseCase] (imageForm: ImageForm, nickName: String, genderBirth: GenderBirth) -> SignUpUser in
         let signUpUser = SignUpUser(
           provider: newUserInformation.provider.rawValue,
           nickname: nickName,
@@ -131,6 +134,7 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
           profileImage: imageForm.imageURL,
           mappedUserID: newUserInformation.mappedUserID
         )
+        userDefaultsMangerUseCase.setSignUpUserInformationAtUserDefaults(signUpUser)
         return signUpUser
       }
       .flatMap(signUpUseCase.signUp(signUpUser:))

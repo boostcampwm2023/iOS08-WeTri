@@ -59,7 +59,7 @@ public extension UserInformationManager {
   }
 
   func setUserProfileImageData(_ imageData: Data) {
-    defaults.setValue(imageData, forKey: UserInformation.userNickName.rawValue)
+    defaults.setValue(imageData, forKey: UserInformation.userProfileImage.rawValue)
   }
 
   func setBirthDayDate(_ date: Date?) {
