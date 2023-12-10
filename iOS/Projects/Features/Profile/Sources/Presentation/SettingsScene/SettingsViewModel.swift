@@ -14,6 +14,7 @@ import Log
 
 public struct SettingsViewModelInput {
   let profileSettingsPublisher: AnyPublisher<Void, Never>
+  let logoutPublisher: AnyPublisher<Void, Never>
 }
 
 public typealias SettingsViewModelOutput = AnyPublisher<SettingsState, Never>

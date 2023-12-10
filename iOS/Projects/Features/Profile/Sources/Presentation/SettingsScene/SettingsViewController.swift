@@ -19,6 +19,7 @@ final class SettingsViewController: UICollectionViewController {
   private let viewModel: SettingsViewModelRepresentable
 
   private let profileSettings: PassthroughSubject<Void, Never> = .init()
+  private let logoutSubject: PassthroughSubject<Void, Never> = .init()
 
   private var dataSource: SettingsDataSource?
 
@@ -63,8 +64,13 @@ final class SettingsViewController: UICollectionViewController {
   }
 
   private func bind() {
-    let output = viewModel.transform(input: .init(profileSettingsPublisher: profileSettings.eraseToAnyPublisher()))
-    output.sink { state in
+    viewModel.transform(
+      input: .init(
+        profileSettingsPublisher: profileSettings.eraseToAnyPublisher(),
+        logoutPublisher: logoutSubject.eraseToAnyPublisher()
+      )
+    )
+    .sink { state in
       switch state {
       case .idle:
         break
@@ -123,8 +129,13 @@ extension SettingsViewController {
       return
     }
 
-    if Item.allCases[indexPath.item] == .profileSetting {
+    switch Item.allCases[indexPath.item] {
+    case .profileSetting:
       profileSettings.send(())
+    case .logout:
+      logoutSubject.send(())
+    default:
+      break
     }
   }
 }
