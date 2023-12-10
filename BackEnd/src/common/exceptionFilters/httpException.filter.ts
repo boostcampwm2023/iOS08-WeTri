@@ -3,6 +3,7 @@ import {
   Catch,
   ExceptionFilter,
   HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 
 @Catch(HttpException)
@@ -13,13 +14,16 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus();
     const exceptionResponse = exception.getResponse();
 
-    const errorMessage = exceptionResponse['message'];
-    const statusCode = exceptionResponse['statusCode'];
-
+    let errorMessage = exceptionResponse['message'];
+    let statusCode = exceptionResponse['statusCode'];
+    let data = null;
+    if(status === HttpStatus.OK) {
+      data = exceptionResponse['data'];
+    }
     response.status(status).json({
       code: statusCode,
       errorMessage,
-      data: null,
+      data,
     });
   }
 }

@@ -1,6 +1,6 @@
 import { Redis } from 'ioredis';
 import { AuthAppleService } from './auth-apple.service';
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ProfilesService } from '../profiles/profiles.service';
 import { UsersService } from '../users/users.service';
@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import {
   InvalidTokenException,
   NicknameDuplicateException,
+  NotFirstLoginException,
   NotRefreshTokenException,
 } from './exceptions/auth.exception';
 import * as process from 'process';
@@ -134,7 +135,7 @@ export class AuthService {
         provider: 'apple',
       };
     } else {
-      return this.loginUser(user.profile.publicId);
+      throw new NotFirstLoginException(this.loginUser(user.profile.publicId));
     }
   }
 }

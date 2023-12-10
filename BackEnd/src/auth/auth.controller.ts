@@ -1,4 +1,4 @@
-import { Body, Controller, Headers, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Headers, HttpCode, HttpException, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RefreshTokenGuard } from './guard/bearerToken.guard';
 import { SignupDto } from './dto/signup.dto';
@@ -11,11 +11,12 @@ import {
 } from './dto/auth-response.dto';
 import { SignInDto } from './dto/signin.dto';
 import { SigninFirstResDto } from './dto/signinRedirectRes.dto';
+import { Response } from 'express';
 
 @ApiTags('Authentication')
 @Controller('api/v1/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @ApiOperation({ summary: '유저 회원가입' })
   @ApiBody({ description: 'The ID of the item', type: SignupDto })
@@ -85,6 +86,10 @@ export class AuthController {
   })
   @Post('apple/signin')
   async appleSignIn(@IdentityToken() token: string) {
-    return this.authService.appleSignIn(token);
+    const result = this.authService.appleSignIn(token);
+    // if (('isFirstLogined' in result)) {
+    //   throw new HttpException(result, HttpStatus.CREATED);
+    // } 
+    return result;
   }
 }

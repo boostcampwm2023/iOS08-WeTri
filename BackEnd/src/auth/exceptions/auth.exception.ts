@@ -1,5 +1,5 @@
 //auth와 관련된 exception을 모아둔 파일
-import { HttpException } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 export class NicknameDuplicateException extends HttpException {
   constructor() {
@@ -58,5 +58,12 @@ export class VerificationFailedIdentityToken extends HttpException {
     const response = { statusCode: 1020, message: 'apple login error.' };
     const httpCode = 400;
     super(response, httpCode);
+  }
+}
+
+export class NotFirstLoginException extends HttpException {
+  constructor(data) {
+    const response = { statusCode: null, message: null, data };
+    super(response, HttpStatus.OK);
   }
 }
