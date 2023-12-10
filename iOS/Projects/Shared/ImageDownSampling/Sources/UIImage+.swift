@@ -15,7 +15,7 @@ public enum ImageDownsamplingError: Error {
 }
 
 public extension UIImage {
-  func downsampling() throws -> UIImage {
+  func downsampling(size: CGSize) throws -> UIImage {
     let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
     guard let data = pngData(),
           let imageSource = CGImageSourceCreateWithData(

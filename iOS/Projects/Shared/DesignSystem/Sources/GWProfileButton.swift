@@ -20,6 +20,10 @@ public final class GWProfileButton: UIButton {
     }
   }
 
+  public var profileSize: CGSize {
+    return profileImageView.frame.size
+  }
+
   // MARK: UI Components
 
   private let profileImageView: UIImageView = {

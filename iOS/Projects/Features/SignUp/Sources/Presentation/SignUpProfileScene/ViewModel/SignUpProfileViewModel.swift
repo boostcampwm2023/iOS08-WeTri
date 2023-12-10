@@ -110,6 +110,7 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
 
     input.imageSetting
       .sink { data in
+        Log.make().debug("data크기 : \(data)")
         imageData = data
       }
       .store(in: &subscriptions)
