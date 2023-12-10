@@ -49,6 +49,8 @@ protocol WorkoutSessionContainerViewModelRepresentable {
 final class WorkoutSessionContainerViewModel {
   // MARK: - Properties
 
+  private var elapsedTime: Int = 0
+
   private var subscriptions: Set<AnyCancellable> = []
 
   private let oneSecondsTimerUseCase: OneSecondsTimerUseCaseRepresentable
@@ -92,11 +94,11 @@ extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepr
 
     let recordPublisher = mapURLPublisher
       .withLatestFrom(input.locationPublisher) {
-        return (url: $0, locations: $1.map { LocationDTO(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) })
+        return (url: $0, locations: $1.map { LocationModel(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) })
       }
-      .withLatestFrom(input.healthPublisher) { [dependency] tuple, health in
+      .withLatestFrom(input.healthPublisher) { [weak self, dependency] tuple, health in
         let workoutData = WorkoutDataForm(
-          workoutTime: Int(dependency.startDate.timeIntervalSince1970.rounded(.down)),
+          workoutTime: self?.elapsedTime ?? 0,
           distance: Int(health.distance?.rounded(.toNearestOrAwayFromZero) ?? 0),
           calorie: Int(health.calorie?.rounded(.toNearestOrAwayFromZero) ?? 0),
           imageURL: tuple.url,
@@ -130,6 +132,9 @@ extension WorkoutSessionContainerViewModel: WorkoutSessionContainerViewModelRepr
 
     let workoutTimerPublisher = oneSecondsTimerUseCase
       .oneSecondsTimerPublisher()
+      .handleEvents(receiveOutput: { [weak self] time in
+        self?.elapsedTime = time
+      })
       .map { WorkoutSessionContainerState.updateTime($0) }
 
     return Just(.idle).merge(with: recordErrorPublisher, workoutTimerPublisher).eraseToAnyPublisher()

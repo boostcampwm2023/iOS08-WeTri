@@ -14,6 +14,9 @@ import Foundation
 struct WorkoutSummaryViewModelInput {
   /// 화면이 로드될 때 이벤트가 한 번만 호출됩니다. 그 이후로는 바로 `finished`됩니다.
   let viewDidLoad: AnyPublisher<Void, Never>
+
+  /// `처음으로` 버튼이 눌렸을 때 이벤트가 호출됩니다.
+  let moveToFirstButtonPublisher: AnyPublisher<Void, Never>
 }
 
 typealias WorkoutSummaryViewModelOutput = AnyPublisher<WorkoutSummaryState, Never>
@@ -22,7 +25,7 @@ typealias WorkoutSummaryViewModelOutput = AnyPublisher<WorkoutSummaryState, Neve
 
 enum WorkoutSummaryState {
   case idle
-  case fetchSummary(WorkoutSummaryDTO)
+  case fetchSummary(WorkoutSummaryModel)
   case alert(Error)
 }
 
@@ -38,10 +41,14 @@ final class WorkoutSummaryViewModel {
   // MARK: - Properties
 
   private var subscriptions: Set<AnyCancellable> = []
-
+  private weak var coordinating: WorkoutSessionCoordinating?
   private let workoutSummaryUseCase: WorkoutSummaryUseCaseRepresentable
 
-  init(workoutSummaryUseCase: WorkoutSummaryUseCaseRepresentable) {
+  init(
+    coordinating: WorkoutSessionCoordinating?,
+    workoutSummaryUseCase: WorkoutSummaryUseCaseRepresentable
+  ) {
+    self.coordinating = coordinating
     self.workoutSummaryUseCase = workoutSummaryUseCase
   }
 }
@@ -54,6 +61,11 @@ extension WorkoutSummaryViewModel: WorkoutSummaryViewModelRepresentable {
     subscriptions.removeAll()
 
     // == Input Output Binding ==
+    input.moveToFirstButtonPublisher
+      .sink { [weak self] in
+        self?.coordinating?.setToMainRecord()
+      }
+      .store(in: &subscriptions)
 
     let fetchedWorkoutRecord = input.viewDidLoad
       .flatMap(workoutSummaryUseCase.workoutSummaryInformation)

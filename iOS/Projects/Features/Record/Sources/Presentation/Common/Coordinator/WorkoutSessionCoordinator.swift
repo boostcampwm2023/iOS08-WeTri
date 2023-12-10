@@ -81,6 +81,7 @@ struct WorkoutSessionComponents: WorkoutSessionDependency {
   ) {
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+    formatter.locale = .init(identifier: "ko_KR")
     let date = formatter.date(from: startDate)
 
     self.startDate = date ?? .now + 4
@@ -94,18 +95,31 @@ struct WorkoutSessionComponents: WorkoutSessionDependency {
   }
 }
 
+// MARK: - WorkoutSessionFinishDelegate
+
+public protocol WorkoutSessionFinishDelegate: AnyObject {
+  func moveToMainRecord()
+}
+
 // MARK: - WorkoutSessionCoordinator
 
 final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
   var navigationController: UINavigationController
   var childCoordinators: [Coordinating] = []
   weak var finishDelegate: CoordinatorFinishDelegate?
+  private weak var sessionFinishDelegate: WorkoutSessionFinishDelegate?
   var flow: CoordinatorFlow = .workout
   private let isMockEnvironment: Bool
   private let workoutSessionComponents: WorkoutSessionComponents
 
-  init(navigationController: UINavigationController, isMockEnvironment: Bool, workoutSessionComponents: WorkoutSessionComponents) {
+  init(
+    navigationController: UINavigationController,
+    sessionFinishDelegate: WorkoutSessionFinishDelegate?,
+    isMockEnvironment: Bool,
+    workoutSessionComponents: WorkoutSessionComponents
+  ) {
     self.navigationController = navigationController
+    self.sessionFinishDelegate = sessionFinishDelegate
     self.isMockEnvironment = isMockEnvironment
     self.workoutSessionComponents = workoutSessionComponents
   }
@@ -173,7 +187,7 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
     let session: URLSessionProtocol = isMockEnvironment ? MockURLSession(mockData: jsonData, mockResponse: .init()) : URLSession.shared
     let repository = WorkoutSummaryRepository(session: session)
     let useCase = WorkoutSummaryUseCase(repository: repository, workoutRecordID: recordID)
-    let viewModel = WorkoutSummaryViewModel(workoutSummaryUseCase: useCase)
+    let viewModel = WorkoutSummaryViewModel(coordinating: self, workoutSummaryUseCase: useCase)
     let workoutSummaryViewController = WorkoutSummaryViewController(viewModel: viewModel)
     navigationController.setViewControllers([workoutSummaryViewController], animated: true)
   }
@@ -188,9 +202,9 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
     navigationController.pushViewController(viewController, animated: true)
   }
 
-  func pushTapBarViewController() {
-    // TODO: 코디네이팅 종료에 관한 로직 생성
-    finishDelegate?.flowDidFinished(childCoordinator: self)
+  func setToMainRecord() {
+    finish()
+    sessionFinishDelegate?.moveToMainRecord()
   }
 }
 

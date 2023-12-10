@@ -7,6 +7,7 @@
 //
 
 import Combine
+import CombineCocoa
 import DesignSystem
 import UIKit
 
@@ -118,28 +119,43 @@ final class WorkoutSummaryViewController: UIViewController {
   }
 
   private func bind() {
-    let output = viewModel.transform(input: .init(viewDidLoad: viewDidLoadSubject.eraseToAnyPublisher()))
+    let output = viewModel.transform(
+      input: .init(
+        viewDidLoad: viewDidLoadSubject.eraseToAnyPublisher(),
+        moveToFirstButtonPublisher: homeButton.publisher(.touchUpInside).map { _ in }.eraseToAnyPublisher()
+      )
+    )
 
     output
       .receive(on: DispatchQueue.main)
       .sink { [weak self] state in
-        switch state {
-        case .idle:
-          break
-        case let .fetchSummary(model):
-          self?.summaryCardView.configure(with: model)
-        case let .alert(error):
-          self?.showAlert(with: error)
-        }
+        self?.render(state: state)
       }
       .store(in: &subscriptions)
+
+    writeButton.publisher(.touchUpInside)
+      .sink { [weak self] _ in
+        self?.showAlert(with: "준비중입니다.")
+      }
+      .store(in: &subscriptions)
+  }
+
+  private func render(state: WorkoutSummaryState) {
+    switch state {
+    case .idle:
+      break
+    case let .fetchSummary(model):
+      summaryCardView.configure(with: model)
+    case let .alert(error):
+      showAlert(with: error)
+    }
   }
 
   // MARK: - Custom Methods
 
   /// 에러 알림 문구를 보여줍니다.
-  private func showAlert(with error: Error) {
-    let alertController = UIAlertController(title: "알림", message: error.localizedDescription, preferredStyle: .alert)
+  private func showAlert(with value: Any) {
+    let alertController = UIAlertController(title: "알림", message: String(describing: value), preferredStyle: .alert)
     alertController.addAction(UIAlertAction(title: "확인", style: .default))
     present(alertController, animated: true)
   }
@@ -156,9 +172,4 @@ private extension WorkoutSummaryViewController {
     static let writeButton: String = "글쓰러 가기"
     static let initialScreenButton: String = "처음으로"
   }
-}
-
-@available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, xrOS 1.0, *)
-#Preview {
-  WorkoutSummaryViewController(viewModel: WorkoutSummaryViewModel(workoutSummaryUseCase: WorkoutSummaryUseCase(repository: WorkoutSummaryRepository(session: URLSession.shared), workoutRecordID: 0)))
 }

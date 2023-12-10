@@ -14,5 +14,5 @@ import Foundation
 protocol WorkoutSummaryRepositoryRepresentable {
   /// 운동 요약 데이터를 가져옵니다.
   /// - Parameter id: 운동 데이터의 고유 Identifier 값
-  func fetchWorkoutSummary(with id: Int) -> AnyPublisher<WorkoutSummaryDTO, Error>
+  func fetchWorkoutSummary(with id: Int) -> AnyPublisher<WorkoutSummaryModel, Error>
 }

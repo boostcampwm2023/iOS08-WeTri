@@ -11,7 +11,7 @@ import Combine
 // MARK: - WorkoutSummaryUseCaseRepresentable
 
 protocol WorkoutSummaryUseCaseRepresentable {
-  func workoutSummaryInformation() -> AnyPublisher<WorkoutSummaryDTO, Error>
+  func workoutSummaryInformation() -> AnyPublisher<WorkoutSummaryModel, Error>
 }
 
 // MARK: - WorkoutSummaryUseCase
@@ -29,7 +29,7 @@ struct WorkoutSummaryUseCase {
 // MARK: WorkoutSummaryUseCaseRepresentable
 
 extension WorkoutSummaryUseCase: WorkoutSummaryUseCaseRepresentable {
-  func workoutSummaryInformation() -> AnyPublisher<WorkoutSummaryDTO, Error> {
+  func workoutSummaryInformation() -> AnyPublisher<WorkoutSummaryModel, Error> {
     repository.fetchWorkoutSummary(with: workoutRecordID)
   }
 }

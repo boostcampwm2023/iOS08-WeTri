@@ -14,7 +14,7 @@ import Foundation
 public struct WorkoutRouteMapViewModelInput {
   let filterShouldUpdatePositionPublisher: AnyPublisher<KalmanFilterUpdateRequireElement, Never>
   let filterShouldUpdateHeadingPublisher: AnyPublisher<Double, Never>
-  let locationListPublisher: AnyPublisher<[LocationDTO], Never>
+  let locationListPublisher: AnyPublisher<[LocationModel], Never>
 }
 
 public typealias WorkoutRouteMapViewModelOutput = AnyPublisher<WorkoutRouteMapState, Never>

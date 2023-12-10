@@ -20,6 +20,6 @@ protocol WorkoutSessionCoordinating: Coordinating {
   /// 운동전 카운트 다운 화면으로 이동합니다.
   func pushCountDownBeforeWorkout()
 
-  /// 탭바 화면으로 이동합니다.
-  func pushTapBarViewController()
+  /// 메인 기록 화면으로 이동합니다.
+  func setToMainRecord()
 }

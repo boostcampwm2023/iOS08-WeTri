@@ -131,7 +131,7 @@ final class WorkoutRouteMapViewController: UIViewController {
 
   private func bind() {
     let locationPublisher = mapSnapshotterImageDataSubject.map {
-      $0.map { LocationDTO(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
+      $0.map { LocationModel(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
     }
     .eraseToAnyPublisher()
 

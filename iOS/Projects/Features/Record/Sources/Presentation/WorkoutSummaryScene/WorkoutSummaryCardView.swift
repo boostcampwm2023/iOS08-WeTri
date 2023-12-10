@@ -6,6 +6,7 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import CoreLocation
 import DesignSystem
 import MapKit
 import UIKit
@@ -129,12 +130,14 @@ final class WorkoutSummaryCardView: UIView {
     super.init(frame: frame)
     setupLayouts()
     setupConstraints()
+    mapView.delegate = self
   }
 
   required init?(coder: NSCoder) {
     super.init(coder: coder)
     setupLayouts()
     setupConstraints()
+    mapView.delegate = self
   }
 
   private func setupLayouts() {
@@ -177,15 +180,68 @@ final class WorkoutSummaryCardView: UIView {
     )
   }
 
-  func configure(with model: WorkoutSummaryDTO) {
-    dateLabel.text = model.createdAt
-    timeItemView.configure(withTitle: "시간", value: "\(model.workoutTime)")
+  func configure(with model: WorkoutSummaryModel) {
+    dateLabel.text = model.createTimeString
+    timeItemView.configure(withTitle: "시간", value: model.workoutTimeString)
+
+    // 지도 설정
+    configureMapPolyline(with: model.locations)
+
     distanceItemView.configure(withTitle: "거리", value: "\(model.distance)")
     caloriesItemView.configure(withTitle: "칼로리", value: "\(model.calorie)")
 
-    averageHeartRateItemView.configure(withTitle: "Avg.HR", value: "\(model.avgBPM.flatMap(String.init) ?? "-")")
-    minimumHeartRateItemView.configure(withTitle: "Min.HR", value: "\(model.minBPM.flatMap(String.init) ?? "-")")
-    maximumHeartRateItemView.configure(withTitle: "Max.HR", value: "\(model.maxBPM.flatMap(String.init) ?? "-")")
+    averageHeartRateItemView.configure(withTitle: "Avg.HR", value: "\(model.averageHeartRate.flatMap(String.init) ?? "-")")
+    minimumHeartRateItemView.configure(withTitle: "Min.HR", value: "\(model.minimumHeartRate.flatMap(String.init) ?? "-")")
+    maximumHeartRateItemView.configure(withTitle: "Max.HR", value: "\(model.maximumHeartRate.flatMap(String.init) ?? "-")")
+  }
+
+  private func createLocations(from locations: [LocationModel]) -> [CLLocation] {
+    if !locations.isEmpty {
+      return locations.map { CLLocation(latitude: $0.latitude, longitude: $0.longitude) }
+    } else {
+      // Default location
+      return [CLLocation(latitude: 37.22738768300735, longitude: 127.06500224609061)]
+    }
+  }
+
+  private func configureMapPolyline(with locations: [LocationModel]) {
+    let currentLocations = createLocations(from: locations)
+
+    let coordinates = currentLocations.map(\.coordinate)
+    let polyline = MKPolyline(coordinates: coordinates, count: coordinates.count)
+
+    mapView.removeOverlays(mapView.overlays)
+    mapView.addOverlay(polyline)
+    // 지도 뷰 업데이트
+    let latitudes = currentLocations.map(\.coordinate.latitude)
+    let longitudes = currentLocations.map(\.coordinate.longitude)
+    let maxLatitude = latitudes.max() ?? 0
+    let minLatitude = latitudes.min() ?? 0
+    let maxLongitude = longitudes.max() ?? 0
+    let minLongitude = longitudes.min() ?? 0
+    let region = MKCoordinateRegion(
+      center: .init(
+        latitude: (maxLatitude + minLatitude) / 2,
+        longitude: (maxLongitude + minLongitude) / 2
+      ),
+      span: .init()
+    )
+    mapView.setRegion(region, animated: true)
+  }
+}
+
+// MARK: MKMapViewDelegate
+
+extension WorkoutSummaryCardView: MKMapViewDelegate {
+  func mapView(_: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+    if let polyline = overlay as? MKPolyline {
+      let renderer = MKPolylineRenderer(polyline: polyline)
+      renderer.strokeColor = DesignSystemColor.main03
+      renderer.lineWidth = 3
+      return renderer
+    }
+
+    return MKOverlayRenderer(overlay: overlay)
   }
 }
 
