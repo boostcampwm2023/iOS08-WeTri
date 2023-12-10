@@ -9,6 +9,7 @@
 import AuthenticationServices
 import Combine
 import CombineCocoa
+import DesignSystem
 import Log
 import UIKit
 
@@ -21,10 +22,36 @@ final class LoginViewController: UIViewController {
   private let credentialSubject = PassthroughSubject<AuthorizationInfo, Never>()
   private let loginSubject = PassthroughSubject<Void, Never>()
 
+  private lazy var logoImageView: UIImageView = {
+    let imageView = UIImageView()
+    imageView.translatesAutoresizingMaskIntoConstraints = false
+    imageView.image = .logoImage
+    imageView.contentMode = .scaleAspectFit
+    return imageView
+  }()
+
   private lazy var appleLoginButton: ASAuthorizationAppleIDButton = {
     let button = ASAuthorizationAppleIDButton(type: .signIn, style: .black)
     button.translatesAutoresizingMaskIntoConstraints = false
     return button
+  }()
+
+  private let policyTextView: UITextView = {
+    let attributedString = NSMutableAttributedString(string: "가입을 진행할 경우, 서비스 약관 및\n개인정보 처리방침에 동의한것으로 간주합니다.")
+    attributedString.addAttribute(.link, value: PrivacyLink.link, range: NSRange(location: 12, length: 15))
+
+    let textView = UITextView()
+    textView.translatesAutoresizingMaskIntoConstraints = false
+    textView.attributedText = attributedString
+    textView.isEditable = false
+    textView.isScrollEnabled = false
+    textView.attributedText = attributedString
+    textView.dataDetectorTypes = .link
+    textView.font = .systemFont(ofSize: 12, weight: .medium)
+    textView.textColor = DesignSystemColor.primaryText
+    textView.textAlignment = .center
+    textView.backgroundColor = DesignSystemColor.secondaryBackground
+    return textView
   }()
 
   init(viewModel: LoginViewModelRepresentable) {
@@ -49,17 +76,42 @@ final class LoginViewController: UIViewController {
 
 private extension LoginViewController {
   func configureUI() {
-    view.backgroundColor = .systemBackground
+    view.backgroundColor = DesignSystemColor.secondaryBackground
 
     let safeArea = view.safeAreaLayoutGuide
+
+    view.addSubview(logoImageView)
+    NSLayoutConstraint.activate([
+      logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+      logoImageView.bottomAnchor.constraint(equalTo: view.centerYAnchor),
+      logoImageView.widthAnchor.constraint(equalToConstant: Metrics.imageViewSize),
+      logoImageView.heightAnchor.constraint(equalToConstant: Metrics.imageViewSize),
+    ])
+
     view.addSubview(appleLoginButton)
     NSLayoutConstraint.activate([
       appleLoginButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.componentInterval),
-      appleLoginButton.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: Metrics.componentInterval),
+      appleLoginButton.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: Metrics.logoButtonInterval),
       appleLoginButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.componentInterval),
       appleLoginButton.heightAnchor.constraint(equalToConstant: Metrics.buttonHeight),
     ])
+
+    view.addSubview(policyTextView)
+    NSLayoutConstraint.activate([
+      policyTextView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -Metrics.buttonPolicyInterval),
+      policyTextView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+    ])
   }
+}
+
+// MARK: - Metrics
+
+private enum Metrics {
+  static let componentInterval: CGFloat = 51
+  static let buttonHeight: CGFloat = 42
+  static let imageViewSize: CGFloat = 200
+  static let logoButtonInterval: CGFloat = 200
+  static let buttonPolicyInterval: CGFloat = 30
 }
 
 private extension LoginViewController {
@@ -110,13 +162,6 @@ private extension LoginViewController {
   }
 }
 
-// MARK: - Metrics
-
-private enum Metrics {
-  static let componentInterval: CGFloat = 51
-  static let buttonHeight: CGFloat = 50
-}
-
 // MARK: - LoginViewController + ASAuthorizationControllerDelegate
 
 extension LoginViewController: ASAuthorizationControllerDelegate {
@@ -143,4 +188,10 @@ extension LoginViewController: ASAuthorizationControllerPresentationContextProvi
   ) -> ASPresentationAnchor {
     return view.window!
   }
+}
+
+// MARK: - PrivacyLink
+
+private enum PrivacyLink {
+  static let link = "https://www.notion.so/geul-woll/207b7ec2bf544a199541d9d916efa17f?pvs=4"
 }
