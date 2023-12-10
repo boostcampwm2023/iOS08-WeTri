@@ -95,6 +95,7 @@ extension RecordFeatureCoordinator: CoordinatorFinishDelegate {
 
 extension RecordFeatureCoordinator: WorkoutSettingCoordinatorFinishDelegate {
   func workoutSettingCoordinatorDidFinished(workoutSessionComponents: WorkoutSessionComponents) {
+    childCoordinators.removeAll()
     navigationController.dismiss(animated: false)
     showWorkoutFlow(workoutSessionComponents)
   }
@@ -104,6 +105,7 @@ extension RecordFeatureCoordinator: WorkoutSettingCoordinatorFinishDelegate {
 
 extension RecordFeatureCoordinator: WorkoutSessionFinishDelegate {
   public func moveToMainRecord() {
+    childCoordinators.removeAll()
     start()
   }
 }

@@ -94,8 +94,6 @@ private extension WorkoutEnvironmentSetupViewController {
     navigationController?.navigationBar.isHidden = false
     navigationController?.navigationBar.tintColor = DesignSystemColor.main03
 
-    let titleBarButtonItemFont: UIFont = .preferredFont(forTextStyle: .title3, weight: .semibold)
-    navigationController?.tabBarItem.setTitleTextAttributes([.font: titleBarButtonItemFont], for: .normal)
     view.backgroundColor = DesignSystemColor.primaryBackground
   }
 

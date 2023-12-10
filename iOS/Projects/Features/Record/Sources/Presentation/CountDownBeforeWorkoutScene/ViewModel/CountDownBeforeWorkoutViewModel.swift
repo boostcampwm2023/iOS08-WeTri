@@ -37,10 +37,9 @@ protocol CountDownBeforeWorkoutViewModelRepresentable {
 final class CountDownBeforeWorkoutViewModel {
   // MARK: - Properties
 
-  weak var coordinator: WorkoutSessionCoordinating?
-  var timerUseCase: CountDownBeforeWorkoutStartTimerUseCaseRepresentable
+  private weak var coordinator: WorkoutSessionCoordinating?
+  private var timerUseCase: CountDownBeforeWorkoutStartTimerUseCaseRepresentable
   private var subscriptions: Set<AnyCancellable> = []
-  private var beforeWorkoutTimerSubject: CurrentValueSubject<String, Never> = .init("")
   init(coordinator: WorkoutSessionCoordinating, useCase: CountDownBeforeWorkoutStartTimerUseCaseRepresentable) {
     self.coordinator = coordinator
     timerUseCase = useCase
