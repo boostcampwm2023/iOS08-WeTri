@@ -223,6 +223,7 @@ private extension SignUpProfileViewController {
     case .failure:
       completionButton.isEnabled = false
     case let .customError(error):
+      Log.make().error("\(error)")
       if let profileImageError = error as? ImageFormRepositoryError {
         switch profileImageError {
         case .notAccessObjectStorage:

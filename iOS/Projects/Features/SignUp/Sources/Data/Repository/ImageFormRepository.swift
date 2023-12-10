@@ -62,19 +62,24 @@ public final class ImageFormRepository: ImageFormRepositoryRepresentable {
     .decode(type: GWResponse<[ImageForm]>.self, decoder: JSONDecoder())
     .tryMap { gwResponse in
       guard let code = gwResponse.code else {
-        throw ImageFormRepositoryError.invalidResponseCode
+        return gwResponse.data
       }
       switch code {
       case ImageFormRepositoryError.notAccessObjectStorage.code:
         throw ImageFormRepositoryError.notAccessObjectStorage
+
       case ImageFormRepositoryError.notAccessGreenEye.code:
         throw ImageFormRepositoryError.notAccessGreenEye
+
       case ImageFormRepositoryError.invalidFileType.code:
         throw ImageFormRepositoryError.invalidFileType
+
       case ImageFormRepositoryError.fileSizeTooLarge.code:
         throw ImageFormRepositoryError.fileSizeTooLarge
+
       case ImageFormRepositoryError.invalidFileCountOrFieldName.code:
         throw ImageFormRepositoryError.invalidFileCountOrFieldName
+
       default:
         return gwResponse.data
       }
