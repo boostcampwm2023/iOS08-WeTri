@@ -97,23 +97,9 @@ private extension RecordListViewController {
     let output = viewModel.transform(input: input)
     output
       .receive(on: DispatchQueue.main)
-      .sink(
-        receiveCompletion: { [weak self] completion in
-          switch completion {
-          case .finished:
-            Logger().debug("finished")
-          case let .failure(error as RecordUpdateUseCaseError) where error == .noRecord:
-            self?.workoutInformationCollectionView.isHidden = true
-            self?.noRecordsView.isHidden = false
-            Logger().error("\(error)")
-          case let .failure(error):
-            Logger().error("\(error)")
-          }
-        },
-        receiveValue: { [weak self] state in
-          self?.render(output: state)
-        }
-      )
+      .sink { [weak self] state in
+        self?.render(output: state)
+      }
       .store(in: &subscriptions)
   }
 
@@ -137,6 +123,10 @@ private extension RecordListViewController {
       guard let dayOfWeek = dateInfo.dayOfWeek else { return }
       todayLabel.text = "지금\n \(dateInfo.month)월 \(dateInfo.date)일 \(dayOfWeek)요일"
     case let .customError(error):
+      if let recordListViewModelError = (error as? RecordListViewModelError), recordListViewModelError == .recordUpdateFail {
+        workoutInformationCollectionView.isHidden = true
+        noRecordsView.isHidden = false
+      }
       Logger().error("\(error)")
     }
   }
