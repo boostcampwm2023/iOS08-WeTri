@@ -212,7 +212,11 @@ private extension WorkoutEnvironmentSetupViewController {
     var snapshot = workoutPeerTypesDataSource.snapshot()
     snapshot.deleteAllItems()
     snapshot.appendSections([0])
-    snapshot.appendItems(types)
+
+    // 중복 데이터 및 타입코드 순서에 맞게 정렬합니다.
+    let targetTypes = Array(Set(types))
+      .sorted { $0.typeCode < $1.typeCode }
+    snapshot.appendItems(targetTypes)
 
     DispatchQueue.main.async {
       workoutPeerTypesDataSource.apply(snapshot)
@@ -224,7 +228,10 @@ private extension WorkoutEnvironmentSetupViewController {
     var snapshot = workoutTypesDataSource.snapshot()
     snapshot.deleteAllItems()
     snapshot.appendSections([0])
-    snapshot.appendItems(types)
+
+    let targetTypes = Array(Set(types))
+      .sorted { $0.typeCode < $1.typeCode }
+    snapshot.appendItems(targetTypes)
 
     DispatchQueue.main.async {
       workoutTypesDataSource.apply(snapshot)
