@@ -13,7 +13,7 @@ import Foundation
 
 protocol WorkoutPeerRandomMatchingUseCaseRepresentable {
   func matchStart(workoutSetting: WorkoutSetting) -> AnyPublisher<Result<Void, Error>, Never>
-  func matchCancel()
+  func matchCancel(workoutTypeCode: Int)
   func isMatchedRandomPeer(isMatchedRandomPeersRequest: IsMatchedRandomPeersRequest) -> AnyPublisher<Result<IsMatchedRandomPeersResponse?, Error>, Never>
 }
 
@@ -33,8 +33,8 @@ extension WorkoutPeerRandomMatchingUseCase: WorkoutPeerRandomMatchingUseCaseRepr
     return repository.matchStart(workoutTypeCode: workoutSetting.workoutType.typeCode)
   }
 
-  func matchCancel() {
-    return repository.matchCancel()
+  func matchCancel(workoutTypeCode: Int) {
+    return repository.matchCancel(workoutTypeCode: workoutTypeCode)
   }
 
   /// 만약 매칭이 잡혔으면 response의 값을 내려주고,

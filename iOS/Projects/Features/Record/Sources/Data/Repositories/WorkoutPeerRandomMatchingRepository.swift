@@ -43,10 +43,10 @@ extension WorkoutPeerRandomMatchingRepository: WorkoutPeerRandomMatchingReposito
     }.eraseToAnyPublisher()
   }
 
-  func matchCancel() {
+  func matchCancel(workoutTypeCode: Int) {
     Task {
       do {
-        let _ = try await provider.request(.matchCancel, interceptor: TNKeychainInterceptor.shared)
+        let _ = try await provider.request(.matchCancel(matchCancelRequest: .init(workoutID: workoutTypeCode)), interceptor: TNKeychainInterceptor.shared)
       } catch {
         // TODO: ERROR Handling
       }
@@ -81,7 +81,7 @@ extension WorkoutPeerRandomMatchingRepository: WorkoutPeerRandomMatchingReposito
 
 enum RepositoryError: LocalizedError {
   case serverError
-  case unkwonError
+  case unknwonError
 }
 
 // MARK: - WorkoutPeerRandomMatchingRepository.WorkoutPeerRandomMatchingRepositoryEndPoint
@@ -90,7 +90,7 @@ extension WorkoutPeerRandomMatchingRepository {
   enum WorkoutPeerRandomMatchingRepositoryEndPoint: TNEndPoint {
     /// Property
     case matchStart(matchStartRequest: MatchStartRequest)
-    case matchCancel
+    case matchCancel(matchCancelRequest: MatchCancelRequest)
     case isMatchedRandomPeer(isMatchedRandomPeersRequest: IsMatchedRandomPeersRequest)
 
     /// TNEndPoint
@@ -123,7 +123,7 @@ extension WorkoutPeerRandomMatchingRepository {
       switch self {
       case let .matchStart(matchStartRequest): return matchStartRequest
       case let .isMatchedRandomPeer(isMatchedRandomPeersRequest): return isMatchedRandomPeersRequest
-      case .matchCancel: return nil
+      case let .matchCancel(typeCode): return typeCode
       }
     }
 
