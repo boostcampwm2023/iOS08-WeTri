@@ -212,21 +212,11 @@ final class WorkoutSummaryCardView: UIView {
 
     mapView.removeOverlays(mapView.overlays)
     mapView.addOverlay(polyline)
-    // 지도 뷰 업데이트
-    let latitudes = currentLocations.map(\.coordinate.latitude)
-    let longitudes = currentLocations.map(\.coordinate.longitude)
-    let maxLatitude = latitudes.max() ?? 0
-    let minLatitude = latitudes.min() ?? 0
-    let maxLongitude = longitudes.max() ?? 0
-    let minLongitude = longitudes.min() ?? 0
-    let region = MKCoordinateRegion(
-      center: .init(
-        latitude: (maxLatitude + minLatitude) / 2,
-        longitude: (maxLongitude + minLongitude) / 2
-      ),
-      span: .init()
-    )
-    mapView.setRegion(region, animated: true)
+
+    // Polyline을 기반으로 MapView의 visible map rect를 설정
+    let polylineBoundingMapRect = polyline.boundingMapRect
+    let adjustedRect = mapView.mapRectThatFits(polylineBoundingMapRect, edgePadding: UIEdgeInsets(top: 30, left: 30, bottom: 30, right: 30))
+    mapView.setVisibleMapRect(adjustedRect, animated: true)
   }
 }
 
