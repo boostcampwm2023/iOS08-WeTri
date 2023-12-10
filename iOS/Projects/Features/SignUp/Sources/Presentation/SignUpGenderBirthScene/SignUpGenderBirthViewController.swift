@@ -156,6 +156,7 @@ private extension SignUpGenderBirthViewController {
       genderStackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.safeAreaInterval),
       genderStackView.topAnchor.constraint(equalTo: genderLabel.bottomAnchor, constant: Metrics.componentInterval),
       genderStackView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.safeAreaInterval),
+      genderStackView.heightAnchor.constraint(equalToConstant: Metrics.genderButtonHeight),
     ])
 
     view.addSubview(birthLabel)
@@ -285,6 +286,7 @@ private enum Metrics {
   static let componentInterval: CGFloat = 9
   static let datePickerToNextButton: CGFloat = 5
   static let buttonHeight: CGFloat = 44
+  static let genderButtonHeight: CGFloat = 46
 }
 
 // MARK: - DateFormatter
