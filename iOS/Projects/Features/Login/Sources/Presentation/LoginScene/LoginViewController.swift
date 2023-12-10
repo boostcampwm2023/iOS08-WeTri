@@ -83,12 +83,6 @@ final class LoginViewController: UIViewController {
     configureUI()
     bindViewModel()
     bindUI()
-    
-    // 가우시안 블러 효과 추가
-    addBlurEffect()
-
-    // 그라디언트 배경 추가
-    addGradientLayer()
   }
 }
 
@@ -105,6 +99,11 @@ private extension LoginViewController {
       view.layer.addSublayer(playerLayer)
       playerLayer.frame = view.bounds
       playerLayer.player?.play()
+      // 가우시안 블러 효과 추가
+      addBlurEffect()
+
+      // 그라디언트 배경 추가
+      addGradientLayer()
     }
 
     view.addSubview(logoImageView)
