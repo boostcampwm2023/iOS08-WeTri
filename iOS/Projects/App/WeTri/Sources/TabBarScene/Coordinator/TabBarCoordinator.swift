@@ -34,7 +34,7 @@ final class TabBarCoordinator: TabBarCoordinating {
       return makePageNavigationController(page: $0)
     }
     let tabBarController = makeTabBarController(tabBarViewControllers: tabBarViewControllers)
-    navigationController.pushViewController(tabBarController, animated: false)
+    navigationController.pushViewController(tabBarController, animated: true)
   }
 
   private func makePageNavigationController(page: TabBarPage) -> UINavigationController {
@@ -73,7 +73,7 @@ final class TabBarCoordinator: TabBarCoordinating {
   private func makeTabBarController(
     tabBarViewControllers: [UIViewController]
   ) -> UITabBarController {
-    tabBarController.setViewControllers(tabBarViewControllers, animated: false)
+    tabBarController.setViewControllers(tabBarViewControllers, animated: true)
     return tabBarController
   }
 }
