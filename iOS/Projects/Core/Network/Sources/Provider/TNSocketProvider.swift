@@ -40,9 +40,9 @@ public struct TNSocketProvider<EndPoint: TNEndPoint>: TNSocketProvidable {
 
 // MARK: - WebSocketFrame
 
-struct WebSocketFrame<T: Codable>: Codable {
-  let event: String
-  let data: T
+public struct WebSocketFrame<T: Codable>: Codable {
+  public let event: String
+  public let data: T
 
   init(event: String = "workout_session", data: T) {
     self.event = event
