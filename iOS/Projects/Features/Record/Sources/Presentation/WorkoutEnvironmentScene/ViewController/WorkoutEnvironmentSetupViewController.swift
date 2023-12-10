@@ -32,24 +32,24 @@ public final class WorkoutEnvironmentSetupViewController: UIViewController {
   }
 
   private var subscriptions = Set<AnyCancellable>()
-  private var viewModel: WorkoutEnvironmentSetupViewModelRepresentable?
+  private let viewModel: WorkoutEnvironmentSetupViewModelRepresentable?
 
   // MARK: - WorkoutEnvironmentSetupViewModelInput
 
-  let requestWorkoutTypes = PassthroughSubject<Void, Never>()
-  let requestWorkoutPeerTypes = PassthroughSubject<Void, Never>()
-  let selectWorkoutType = PassthroughSubject<WorkoutType?, Never>()
-  let selectPeerType = PassthroughSubject<PeerType?, Never>()
-  let endWorkoutEnvironment = PassthroughSubject<Void, Never>()
-  let didTapStartButton = PassthroughSubject<Void, Never>()
+  private let requestWorkoutTypes = PassthroughSubject<Void, Never>()
+  private let requestWorkoutPeerTypes = PassthroughSubject<Void, Never>()
+  private let selectWorkoutType = PassthroughSubject<WorkoutType?, Never>()
+  private let selectPeerType = PassthroughSubject<PeerType?, Never>()
+  private let endWorkoutEnvironment = PassthroughSubject<Void, Never>()
+  private let didTapStartButton = PassthroughSubject<Void, Never>()
 
   // MARK: - ConatinerViewController Control Property
 
-  var workoutTypesDataSource: UICollectionViewDiffableDataSource<Int, WorkoutType>?
-  var workoutPeerTypesDataSource: UICollectionViewDiffableDataSource<Int, PeerType>?
+  private var workoutTypesDataSource: UICollectionViewDiffableDataSource<Int, WorkoutType>?
+  private var workoutPeerTypesDataSource: UICollectionViewDiffableDataSource<Int, PeerType>?
 
-  var workoutTypesCollectionView: UICollectionView?
-  var workoutPeerTypesCollectionView: UICollectionView?
+  private var workoutTypesCollectionView: UICollectionView?
+  private var workoutPeerTypesCollectionView: UICollectionView?
 
   private let workoutSelectViewController = WorkoutSelectViewController()
   private let workoutPeerSelectViewController = WorkoutPeerSelectViewController()
@@ -63,7 +63,7 @@ public final class WorkoutEnvironmentSetupViewController: UIViewController {
     return pageControl
   }()
 
-  lazy var pageViewController: UIPageViewController = {
+  private lazy var pageViewController: UIPageViewController = {
     let pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
     pageViewController.dataSource = self
     pageViewController.delegate = self
