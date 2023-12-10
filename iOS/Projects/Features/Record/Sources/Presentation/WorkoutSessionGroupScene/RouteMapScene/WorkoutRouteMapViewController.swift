@@ -342,7 +342,7 @@ private extension WorkoutRouteMapViewController {
   enum Constants {
     static let minimumAmountLocationCount: Int = 5
 
-    static let defaultPolyLineLocationList: [[Double]] = [[37.559986, 126.975230]]
+    static let defaultPolyLineLocationList: [[Double]] = [[37.22738768300735, 127.06500224609061]]
   }
 
   enum Metrics {
