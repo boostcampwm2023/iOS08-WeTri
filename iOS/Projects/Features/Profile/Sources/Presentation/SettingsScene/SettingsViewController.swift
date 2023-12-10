@@ -144,7 +144,14 @@ extension SettingsViewController {
     case .profileSetting:
       profileSettings.send(())
     case .logout:
-      logoutSubject.send(())
+      let alertController = UIAlertController(title: "알림", message: "정말 로그아웃 하시겠습니까?", preferredStyle: .alert)
+      let okAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+        self?.logoutSubject.send(())
+      }
+      let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+      alertController.addAction(okAction)
+      alertController.addAction(cancelAction)
+      present(alertController, animated: true)
     default:
       break
     }
