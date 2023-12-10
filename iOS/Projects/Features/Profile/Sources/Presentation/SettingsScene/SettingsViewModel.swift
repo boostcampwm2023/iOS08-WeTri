@@ -65,6 +65,13 @@ extension SettingsViewModel: SettingsViewModelRepresentable {
       .flatMap(useCase.logout)
       .share()
 
+    logoutPublisher
+      .filter { $0 == true }
+      .sink { [coordinating] _ in
+        coordinating?.moveToLogin()
+      }
+      .store(in: &subscriptions)
+
     let alertPublisher = logoutPublisher
       .filter { $0 == false }
       .map { _ in SettingsState.alert("로그아웃할 수 없습니다.") }
