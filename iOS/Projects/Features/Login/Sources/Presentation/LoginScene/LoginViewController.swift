@@ -45,7 +45,7 @@ final class LoginViewController: UIViewController {
   }()
 
   private lazy var appleLoginButton: ASAuthorizationAppleIDButton = {
-    let button = ASAuthorizationAppleIDButton(type: .signIn, style: .black)
+    let button = ASAuthorizationAppleIDButton(type: .signIn, style: .white)
     button.translatesAutoresizingMaskIntoConstraints = false
     return button
   }()
