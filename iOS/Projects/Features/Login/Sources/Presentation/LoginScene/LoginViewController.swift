@@ -23,9 +23,18 @@ final class LoginViewController: UIViewController {
   private let credentialSubject = PassthroughSubject<AuthorizationInfo, Never>()
   private let loginSubject = PassthroughSubject<Void, Never>()
 
-  private var player: AVPlayer!
-  private var playerLayer: AVPlayerLayer! // Bundle(for: Self.self).path(forResource: "Token", ofType: "json")
-  lazy var videoURL: URL = .init(fileURLWithPath: Bundle(for: Self.self).path(forResource: "running", ofType: "mp4")!)
+  private let playerLayer: AVPlayerLayer? = {
+    guard 
+      let bundle = Bundle(for: LoginViewController.self).path(forResource: "running", ofType: "mp4")
+    else {
+      return nil
+    }
+    let videoURL = URL(fileURLWithPath: bundle)
+    let player = AVPlayer(url: videoURL)
+    let playerLayer = AVPlayerLayer(player: player)
+    playerLayer.videoGravity = .resizeAspectFill // 영상을 화면에 꽉 차게 표시
+    return playerLayer
+  }()
 
   private lazy var logoImageView: UIImageView = {
     let imageView = UIImageView()
@@ -74,7 +83,12 @@ final class LoginViewController: UIViewController {
     configureUI()
     bindViewModel()
     bindUI()
-    startAnimation()
+    
+    // 가우시안 블러 효과 추가
+    addBlurEffect()
+
+    // 그라디언트 배경 추가
+    addGradientLayer()
   }
 }
 
@@ -85,6 +99,13 @@ private extension LoginViewController {
     view.backgroundColor = DesignSystemColor.secondaryBackground
 
     let safeArea = view.safeAreaLayoutGuide
+
+    // 비디오가 있으면 설정
+    if let playerLayer {
+      view.layer.addSublayer(playerLayer)
+      playerLayer.frame = view.bounds
+      playerLayer.player?.play()
+    }
 
     view.addSubview(logoImageView)
     NSLayoutConstraint.activate([
@@ -167,48 +188,19 @@ private extension LoginViewController {
     authorizationController.performRequests()
   }
 
-  func startAnimation() {
-    // AVPlayer 초기화
-    player = AVPlayer(url: videoURL)
-
-    // AVPlayerLayer 추가
-    playerLayer = AVPlayerLayer(player: player)
-    playerLayer.frame = view.bounds
-    view.layer.addSublayer(playerLayer)
-
-    // 가우시안 블러 및 검정색 필터 적용
-    applyFilters()
-
-    // 동영상 재생
-    player.play()
+  func addBlurEffect() {
+    let blurEffect = UIBlurEffect(style: .dark)
+    let blurredEffectView = UIVisualEffectView(effect: blurEffect)
+    blurredEffectView.frame = view.bounds
+    view.addSubview(blurredEffectView)
   }
 
-  func applyFilters() {
-    // 가우시안 블러 필터
-    let blurFilter = CIFilter(name: "CIGaussianBlur")
-    blurFilter?.setValue(30, forKey: kCIInputRadiusKey)
-
-    // 검정색 필터
-    let colorFilter = CIFilter(name: "CIColorMonochrome")
-    colorFilter?.setValue(CIColor(red: 0, green: 0, blue: 0), forKey: kCIInputColorKey)
-
-    if let playerItem = player.currentItem {
-      let videoComposition = AVVideoComposition(asset: playerItem.asset, applyingCIFiltersWithHandler: { request in
-        var output = request.sourceImage.clampedToExtent()
-
-        if let result = blurFilter?.outputImage?.cropped(to: request.sourceImage.extent) {
-          output = result
-        }
-
-        if let result = colorFilter?.outputImage?.cropped(to: request.sourceImage.extent) {
-          output = result
-        }
-
-        request.finish(with: output, context: nil)
-      })
-
-      playerItem.videoComposition = videoComposition
-    }
+  func addGradientLayer() {
+    let gradientLayer = CAGradientLayer()
+    gradientLayer.frame = view.bounds
+    gradientLayer.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
+    gradientLayer.locations = [0.0, 1.0]
+    view.layer.addSublayer(gradientLayer)
   }
 }
 
