@@ -9,6 +9,7 @@
 import Combine
 import CombineCocoa
 import DesignSystem
+import ImageDownSampling
 import Log
 import Photos
 import UIKit
