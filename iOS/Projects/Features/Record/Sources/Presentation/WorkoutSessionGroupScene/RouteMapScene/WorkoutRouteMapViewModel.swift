@@ -60,7 +60,6 @@ extension WorkoutRouteMapViewModel: WorkoutRouteMapViewModelRepresentable {
 
     input
       .filterShouldUpdateHeadingPublisher
-      .dropFirst(4)
       .sink { [kalmanUseCase] value in
         kalmanUseCase.updateHeading(value)
       }

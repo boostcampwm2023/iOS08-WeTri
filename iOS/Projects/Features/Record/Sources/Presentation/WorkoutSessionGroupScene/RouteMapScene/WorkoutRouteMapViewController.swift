@@ -157,7 +157,13 @@ final class WorkoutRouteMapViewController: UIViewController {
   }
 
   /// 스냅샷을 찍습니다. 거리의 위도 경도중 가장 큰값과 작은값을 적절하게 조합해서 사이즈를 만듭니다.
+  ///
+  /// 만약 스냅샷을 통해서 만들 Location의 데이터가 갯수가 적다면, mapCaptureDataSubject에 nil을 전송합니다.
   private func createMapSnapshot(with regionData: MapRegion) {
+    if locations.count < Constants.minimumAmountLocationCount {
+      locations = Constants.defaultPolyLineLocationList.map { .init(latitude: $0[0], longitude: $0[1]) }
+    }
+
     let coordinates = locations.map(\.coordinate)
     let polyLine = MKPolyline(coordinates: coordinates, count: coordinates.count)
     let span = MKCoordinateSpan(
@@ -200,7 +206,10 @@ final class WorkoutRouteMapViewController: UIViewController {
 
       self?.locations
         .forEach { location in
-          let currentCLLocationCoordinator2D = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+          let currentCLLocationCoordinator2D = CLLocationCoordinate2D(
+            latitude: location.coordinate.latitude,
+            longitude: location.coordinate.longitude
+          )
 
           // snapshot에서 현재 위도 경도에 대한 데이터가 어느 CGPoint에 있는지 찾아내고, 이를 Polyline을 그립니다.
           context.cgContext.addLine(to: snapshot.point(for: currentCLLocationCoordinator2D))
@@ -214,7 +223,13 @@ final class WorkoutRouteMapViewController: UIViewController {
   }
 
   private func updatePolyLine(_ value: KalmanFilterCensored?) {
-    guard let value else { return }
+    // 칼만 필터가 초기값이 튀기 때문에, 다음과 같이 Location의 갯수가 4 이하인 경우 폴리라인을 그리지 않습니다.
+    guard
+      let value,
+      locations.count > 4
+    else {
+      return
+    }
 
     let currentLocation = CLLocation(latitude: value.latitude, longitude: value.longitude)
     locations.append(currentLocation)
@@ -324,6 +339,12 @@ extension WorkoutRouteMapViewController: MKMapViewDelegate {
 // MARK: WorkoutRouteMapViewController.Metrics
 
 private extension WorkoutRouteMapViewController {
+  enum Constants {
+    static let minimumAmountLocationCount: Int = 5
+
+    static let defaultPolyLineLocationList: [[Double]] = [[37.22738768300735, 127.06500224609061]]
+  }
+
   enum Metrics {
     static let mapDistance: CLLocationDistance = 500
     static let horizontal: CGFloat = 24
