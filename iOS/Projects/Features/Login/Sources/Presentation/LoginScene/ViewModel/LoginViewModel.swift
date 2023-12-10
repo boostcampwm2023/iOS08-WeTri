@@ -32,11 +32,11 @@ enum LoginState {
 final class LoginViewModel {
   private var subscriptions: Set<AnyCancellable> = []
 
-  private let coordinator: LoginCoordinating
+  private let coordinator: LoginFeatureCoordinating
   private let authorizeUseCase: AuthorizeUseCaseRepresentable
 
   init(
-    coordinator: LoginCoordinating,
+    coordinator: LoginFeatureCoordinating,
     authorizeUseCase: AuthorizeUseCaseRepresentable
   ) {
     self.coordinator = coordinator
@@ -50,6 +50,7 @@ extension LoginViewModel: LoginViewModelRepresentable {
   func transform(input: LoginViewModelInput) -> LoginViewModelOutput {
     input.credential
       .flatMap(authorizeUseCase.authorize(authorizationInfo:))
+      .receive(on: DispatchQueue.main)
       .sink(receiveValue: { [weak self] loginResponse in
 
         if let token = loginResponse.token {
@@ -60,12 +61,11 @@ extension LoginViewModel: LoginViewModelRepresentable {
           }
           self?.authorizeUseCase.accessTokenSave(accessToken)
           self?.authorizeUseCase.refreshTokenSave(refreshToken)
-          self?.coordinator.finish(initialUser: nil, token: token)
+          self?.coordinator.finishLogin(initialUser: nil, token: token)
         }
 
         if let initialUser = loginResponse.initialUser {
-          Log.make().debug("\(initialUser.mappedUserID)")
-          self?.coordinator.finish(initialUser: initialUser, token: nil)
+          self?.coordinator.finishLogin(initialUser: initialUser, token: nil)
         }
       })
       .store(in: &subscriptions)

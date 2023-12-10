@@ -6,6 +6,7 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import Auth
 import Foundation
 
 // MARK: - InitialUser
@@ -13,21 +14,25 @@ import Foundation
 /// 처음 로그인 하는 유저의 Response를 담을 Entity
 public struct InitialUser {
   /// 처음 로그인 하는지 아닌지
-  let isFirstLogined: Bool
+  public let isFirstLogined: Bool
 
   ///
-  let mappedUserID: String
+  public let mappedUserID: String
 
   /// OAuth 로그인 종류
-  let provider: AuthProvider
+  public let provider: AuthProvider
+
+  public init(
+    isFirstLogined: Bool,
+    mappedUserID: String,
+    provider: AuthProvider
+  ) {
+    self.isFirstLogined = isFirstLogined
+    self.mappedUserID = mappedUserID
+    self.provider = provider
+  }
 }
 
 // MARK: Codable
 
 extension InitialUser: Codable {}
-
-// MARK: - AuthProvider
-
-enum AuthProvider: String, Codable {
-  case apple
-}

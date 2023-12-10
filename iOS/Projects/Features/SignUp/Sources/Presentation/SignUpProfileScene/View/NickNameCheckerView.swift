@@ -60,7 +60,7 @@ extension NickNameCheckerView {
 
 private extension NickNameCheckerView {
   func configureUI() {
-    backgroundColor = DesignSystemColor.primaryBackground
+    backgroundColor = DesignSystemColor.secondaryBackground
 
     addSubview(imageView)
     NSLayoutConstraint.activate([

@@ -169,7 +169,8 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
       id: id,
       workoutTypeCode: workoutSetting.workoutType,
       nickname: sessionPeerTypeOfMe.nickname,
-      userProfileImage: sessionPeerTypeOfMe.profileImageURL
+      userProfileImage: sessionPeerTypeOfMe.profileImageURL,
+      workoutMode: .random
     )
     coordinating?.finish(workoutSessionComponents: workoutSessionComponents)
   }

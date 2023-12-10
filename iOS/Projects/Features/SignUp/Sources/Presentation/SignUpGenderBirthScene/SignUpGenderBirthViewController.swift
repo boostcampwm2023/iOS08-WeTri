@@ -108,10 +108,10 @@ public final class SignUpGenderBirthViewController: UIViewController {
   }()
 
   private let nextButton: UIButton = {
-    var configuration = UIButton.Configuration.mainDisabled(title: "다음")
-    configuration.font = .preferredFont(forTextStyle: .headline, weight: .semibold)
-    configuration.titleAlignment = .center
-    let button = UIButton(configuration: configuration)
+    var configuration = UIButton.Configuration.main(label: "다음")
+    let button = UIButton()
+    button.configurationUpdateHandler = configuration
+    button.configuration?.font = .preferredFont(forTextStyle: .headline, weight: .semibold)
     button.translatesAutoresizingMaskIntoConstraints = false
     button.isEnabled = false
     return button
@@ -142,7 +142,7 @@ private extension SignUpGenderBirthViewController {
     view.addSubview(titleLabel)
     NSLayoutConstraint.activate([
       titleLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.safeAreaInterval),
-      titleLabel.topAnchor.constraint(equalTo: safeArea.topAnchor),
+      titleLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: Metrics.safeAreaInterval),
     ])
 
     view.addSubview(genderLabel)
@@ -182,9 +182,9 @@ private extension SignUpGenderBirthViewController {
     view.addSubview(nextButton)
     NSLayoutConstraint.activate([
       nextButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.safeAreaInterval),
-      nextButton.topAnchor.constraint(equalTo: datePicker.bottomAnchor, constant: Metrics.datePickerToNextButton),
       nextButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.safeAreaInterval),
       nextButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -Metrics.safeAreaInterval),
+      nextButton.heightAnchor.constraint(equalToConstant: Metrics.buttonHeight),
     ])
   }
 }
@@ -264,7 +264,6 @@ private extension SignUpGenderBirthViewController {
       break
     case let .success(genderBirth):
       genderBirthSubject.send(genderBirth)
-      nextButton.configuration = UIButton.Configuration.mainEnabled(title: "다음")
       nextButton.isEnabled = true
     case let .customError(error):
       Log.make().error("\(error)")
@@ -285,6 +284,7 @@ private enum Metrics {
   static let sectionInterval: CGFloat = 48
   static let componentInterval: CGFloat = 9
   static let datePickerToNextButton: CGFloat = 5
+  static let buttonHeight: CGFloat = 44
 }
 
 // MARK: - DateFormatter

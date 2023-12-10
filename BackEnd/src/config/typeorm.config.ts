@@ -14,4 +14,7 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   synchronize: false,
   logging: true,
   charset: 'utf8mb4',
+  extra: {
+    connectionLimit: 10,
+  }
 };

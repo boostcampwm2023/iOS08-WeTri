@@ -43,6 +43,11 @@ struct WorkoutSessionComponents: WorkoutSessionDependency {
   /// 실제 사용자(기기 사용자)의 프로필 이미지 URL 입니다.
   let userProfileImage: URL?
 
+  /// 사용자의 workoutMode를 판별해주는 변수 입니다.
+  ///
+  /// 솔로와, 랜덤매칭이 있습니다.
+  let workoutMode: WorkoutMode
+
   init(
     participants: [SessionPeerType],
     startDate: Date,
@@ -50,7 +55,8 @@ struct WorkoutSessionComponents: WorkoutSessionDependency {
     id: String,
     workoutTypeCode: WorkoutType,
     nickname: String,
-    userProfileImage: URL?
+    userProfileImage: URL?,
+    workoutMode: WorkoutMode
   ) {
     self.participants = participants
     self.startDate = startDate
@@ -59,6 +65,7 @@ struct WorkoutSessionComponents: WorkoutSessionDependency {
     self.workoutTypeCode = workoutTypeCode
     self.nickname = nickname
     self.userProfileImage = userProfileImage
+    self.workoutMode = workoutMode
   }
 
   /// 서버에서 받아오는 String String으로 만들어진 Date값을 Formatter을 활용하여 Date로 바꾸었습니다.
@@ -69,7 +76,8 @@ struct WorkoutSessionComponents: WorkoutSessionDependency {
     id: String,
     workoutTypeCode: WorkoutType,
     nickname: String,
-    userProfileImage: URL?
+    userProfileImage: URL?,
+    workoutMode: WorkoutMode
   ) {
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
@@ -83,6 +91,7 @@ struct WorkoutSessionComponents: WorkoutSessionDependency {
     self.workoutTypeCode = workoutTypeCode
     self.nickname = nickname
     self.userProfileImage = userProfileImage
+    self.workoutMode = workoutMode
   }
 }
 
@@ -129,8 +138,8 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
 
     let healthRepository = HealthRepository()
 
-    // TODO: 같이하기, 혼자하기 모드에 따라 session 주입을 다르게 해야합니다.
-    let socketRepository = WorkoutSocketRepository(session: MockWebSocketSession<WorkoutRealTimeModel>(), dependency: workoutSessionComponents)
+    let socketSession = makeSocketSessionBy(workoutMode: workoutSessionComponents.workoutMode)
+    let socketRepository = WorkoutSocketRepository(session: socketSession, dependency: workoutSessionComponents)
 
     let sessionUseCase = WorkoutSessionUseCase(
       healthRepository: healthRepository,
@@ -196,5 +205,16 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
   func setToMainRecord() {
     finish()
     sessionFinishDelegate?.moveToMainRecord()
+  }
+}
+
+private extension WorkoutSessionCoordinator {
+  func makeSocketSessionBy(workoutMode: WorkoutMode) -> URLSessionWebSocketProtocol {
+    switch workoutMode {
+    case .solo:
+      return MockWebSocketSession<WorkoutRealTimeModel>()
+    case .random:
+      return URLSession.shared
+    }
   }
 }
