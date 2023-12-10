@@ -26,6 +26,13 @@ public struct PostsRequestDTO: Encodable {
 
   /// 가져올 아이템 수를 의미합니다.
   let limit: Int?
+
+  enum CodingKeys: String, CodingKey {
+    case idLessThan = "where__id__less_then"
+    case idMoreThan = "where__id__more_then"
+    case orderCreatedAt = "order__createdAt"
+    case limit = "take"
+  }
 }
 
 // MARK: - Order
