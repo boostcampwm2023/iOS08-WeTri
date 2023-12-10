@@ -105,7 +105,10 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
       .eraseToAnyPublisher()
 
     let imageSettingResult = input.imageSetting
-      .flatMap { Just(SignUpProfileState.image($0)) }
+      .flatMap {
+        Log.make().debug("\($0)")
+        return Just(SignUpProfileState.image($0))
+      }
       .eraseToAnyPublisher()
 
     input.imageSetting
@@ -181,6 +184,7 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
     let success = Publishers
       .CombineLatest(nickNameCheckedResult, imageSettingResult)
       .flatMap { nickNameCheckState, _ in
+        Log.make().debug("들어옴-------------------_!!!!!!!!!!!!!!!!!!!!!!")
         if case let .checking(isChecked) = nickNameCheckState, isChecked {
           return Just(SignUpProfileState.success)
         }
