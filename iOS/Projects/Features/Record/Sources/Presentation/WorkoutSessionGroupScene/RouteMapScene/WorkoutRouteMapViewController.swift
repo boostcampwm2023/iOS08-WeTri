@@ -223,7 +223,7 @@ final class WorkoutRouteMapViewController: UIViewController {
   }
 
   private func updatePolyLine(_ value: KalmanFilterCensored?) {
-    // 칼만 필터가 초기값이 튀기 때문에, 다음과 같이 Location의 갯수가 3 이하인 경우 폴리라인을 그리지 않습니다.
+    // 칼만 필터가 초기값이 튀기 때문에, 다음과 같이 Location의 갯수가 4 이하인 경우 폴리라인을 그리지 않습니다.
     guard
       let value,
       locations.count > 4
