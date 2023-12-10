@@ -7,6 +7,7 @@
 //
 
 import Coordinator
+import Keychain
 import Log
 import Trinet
 import UIKit
@@ -68,7 +69,9 @@ extension ProfileCoordinator: ProfileCoordinating {
   }
 
   public func pushToSettings() {
-    let viewModel = SettingsViewModel(coordinating: self)
+    let repository = KeychainRepository(keychain: Keychain.shared)
+    let useCase = LogoutUseCase(keychainRepository: repository)
+    let viewModel = SettingsViewModel(coordinating: self, useCase: useCase)
     let viewController = SettingsViewController(viewModel: viewModel)
     viewController.hidesBottomBarWhenPushed = true
     navigationController.pushViewController(viewController, animated: true)

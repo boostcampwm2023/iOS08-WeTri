@@ -37,14 +37,17 @@ final class SettingsViewModel {
   // MARK: - Properties
 
   private weak var coordinating: ProfileCoordinating?
+  private let useCase: LogoutUseCaseRepresentable
+
   private var subscriptions: Set<AnyCancellable> = []
+
+  init(coordinating: ProfileCoordinating?, useCase: LogoutUseCaseRepresentable) {
+    self.coordinating = coordinating
+    self.useCase = useCase
+  }
 
   deinit {
     Log.make().debug("\(Self.self) deinitialized")
-  }
-
-  init(coordinating: ProfileCoordinating?) {
-    self.coordinating = coordinating
   }
 }
 
