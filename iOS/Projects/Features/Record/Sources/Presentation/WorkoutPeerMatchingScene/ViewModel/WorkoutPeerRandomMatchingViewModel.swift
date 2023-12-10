@@ -154,6 +154,7 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
     else {
       return
     }
+
     let peers = peersResponse.map { SessionPeerType(nickname: $0.nickname, id: $0.publicID, profileImageURL: URL(string: $0.profileImage)) }
     let sessionPeerTypeOfMe = SessionPeerType(
       nickname: userInformationUseCase.userNickName(),
