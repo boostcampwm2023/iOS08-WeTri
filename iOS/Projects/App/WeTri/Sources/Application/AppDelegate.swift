@@ -9,8 +9,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
   )
     -> Bool {
-    Keychain.shared.delete(key: "AccessToken")
-    Keychain.shared.delete(key: "RefreshToken")
     return true
   }
 
