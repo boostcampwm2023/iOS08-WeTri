@@ -199,7 +199,7 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
     let viewModel = CountDownBeforeWorkoutViewModel(coordinator: self, useCase: useCase)
 
     let viewController = CountDownBeforeWorkoutViewController(viewModel: viewModel)
-    navigationController.pushViewController(viewController, animated: true)
+    navigationController.setViewControllers([viewController], animated: true)
   }
 
   func setToMainRecord() {

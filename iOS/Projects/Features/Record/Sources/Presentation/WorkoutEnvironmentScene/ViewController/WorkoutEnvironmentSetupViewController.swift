@@ -31,83 +31,103 @@ public final class WorkoutEnvironmentSetupViewController: UIViewController {
     requestWorkoutPeerTypes.send()
   }
 
-  var cancellables = Set<AnyCancellable>()
-  var viewModel: WorkoutEnvironmentSetupViewModelRepresentable?
+  private var subscriptions = Set<AnyCancellable>()
+  private let viewModel: WorkoutEnvironmentSetupViewModelRepresentable?
 
   // MARK: - WorkoutEnvironmentSetupViewModelInput
 
-  let requestWorkoutTypes = PassthroughSubject<Void, Never>()
-  let requestWorkoutPeerTypes = PassthroughSubject<Void, Never>()
-  let selectWorkoutType = PassthroughSubject<WorkoutType?, Never>()
-  let selectPeerType = PassthroughSubject<PeerType?, Never>()
-  let endWorkoutEnvironment = PassthroughSubject<Void, Never>()
-  let didTapStartButton = PassthroughSubject<Void, Never>()
+  private let requestWorkoutTypes = PassthroughSubject<Void, Never>()
+  private let requestWorkoutPeerTypes = PassthroughSubject<Void, Never>()
+  private let selectWorkoutType = PassthroughSubject<WorkoutType?, Never>()
+  private let selectPeerType = PassthroughSubject<PeerType?, Never>()
+  private let endWorkoutEnvironment = PassthroughSubject<Void, Never>()
+  private let didTapStartButton = PassthroughSubject<Void, Never>()
 
   // MARK: - ConatinerViewController Control Property
 
-  var workoutTypesDataSource: UICollectionViewDiffableDataSource<Int, WorkoutType>?
-  var workoutPeerTypesDataSource: UICollectionViewDiffableDataSource<Int, PeerType>?
+  private var workoutTypesDataSource: UICollectionViewDiffableDataSource<Int, WorkoutType>?
+  private var workoutPeerTypesDataSource: UICollectionViewDiffableDataSource<Int, PeerType>?
 
-  var workoutTypesCollectionView: UICollectionView?
-  var workoutPeerTypesCollectionView: UICollectionView?
+  private var workoutTypesCollectionView: UICollectionView?
+  private var workoutPeerTypesCollectionView: UICollectionView?
 
   private let workoutSelectViewController = WorkoutSelectViewController()
   private let workoutPeerSelectViewController = WorkoutPeerSelectViewController()
+  private lazy var contentViewControllers = [workoutSelectViewController, workoutPeerSelectViewController]
+  private var pageScrollView: UIScrollView? = nil
 
-  private let pageControl: GWPageControl = {
+  private let gwPageControl: GWPageControl = {
     let pageControl = GWPageControl(count: Constant.countOfPage)
 
     pageControl.translatesAutoresizingMaskIntoConstraints = false
     return pageControl
   }()
 
-  lazy var contentNavigationController = UINavigationController(rootViewController: workoutSelectViewController)
+  private lazy var pageViewController: UIPageViewController = {
+    let pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+    pageViewController.dataSource = self
+    pageViewController.delegate = self
+
+    let scrollView = pageViewController.view.subviews
+      .compactMap { $0 as? UIScrollView }
+      .first
+    pageScrollView = scrollView
+    pageScrollView?.isScrollEnabled = false
+    pageScrollView?.delegate = self
+
+    pageViewController.view.translatesAutoresizingMaskIntoConstraints = false
+    return pageViewController
+  }()
 }
 
 private extension WorkoutEnvironmentSetupViewController {
   func setup() {
-    view.backgroundColor = DesignSystemColor.primaryBackground
+    setupStyle()
     setupViewHierarchyAndConstraints()
-    addNavigationGesture()
     bind()
 
     configureDataSource()
   }
 
+  func setupStyle() {
+    navigationController?.isNavigationBarHidden = false
+    navigationController?.navigationBar.isHidden = false
+    navigationController?.navigationBar.tintColor = DesignSystemColor.main03
+
+    let titleBarButtonItemFont: UIFont = .preferredFont(forTextStyle: .title3, weight: .semibold)
+    navigationController?.tabBarItem.setTitleTextAttributes([.font: titleBarButtonItemFont], for: .normal)
+    view.backgroundColor = DesignSystemColor.primaryBackground
+  }
+
   func setupViewHierarchyAndConstraints() {
     let safeArea = view.safeAreaLayoutGuide
 
-    view.addSubview(pageControl)
-    pageControl.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 0).isActive = true
-    pageControl.leadingAnchor
+    view.addSubview(gwPageControl)
+    gwPageControl.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 0).isActive = true
+    gwPageControl.leadingAnchor
       .constraint(equalTo: safeArea.leadingAnchor, constant: ConstraintsGuideLine.value + 11).isActive = true
-    pageControl.trailingAnchor
+    gwPageControl.trailingAnchor
       .constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
-    pageControl.heightAnchor.constraint(equalToConstant: 30).isActive = true
+    gwPageControl.heightAnchor.constraint(equalToConstant: 30).isActive = true
 
-    view.addSubview(contentNavigationController.view)
-    contentNavigationController.view.translatesAutoresizingMaskIntoConstraints = false
-    contentNavigationController.view.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor).isActive = true
-    contentNavigationController.view.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor).isActive = true
-    contentNavigationController.view.topAnchor.constraint(equalTo: pageControl.bottomAnchor).isActive = true
-    contentNavigationController.view.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor).isActive = true
-  }
-
-  func addNavigationGesture() {
-    guard let recognizer = contentNavigationController.interactivePopGestureRecognizer else { return }
-    recognizer.delegate = self
-    recognizer.isEnabled = true
-    contentNavigationController.delegate = self
+    view.addSubview(pageViewController.view)
+    if let viewController = contentViewControllers.first {
+      pageViewController.setViewControllers([viewController], direction: .forward, animated: false)
+    }
+    pageViewController.view.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor).isActive = true
+    pageViewController.view.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor).isActive = true
+    pageViewController.view.topAnchor.constraint(equalTo: gwPageControl.bottomAnchor).isActive = true
+    pageViewController.view.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor).isActive = true
   }
 
   func bind() {
+    workoutSelectViewController.delegate = self
+
     workoutTypesCollectionView = workoutSelectViewController.workoutTypesCollectionView
     workoutTypesCollectionView?.delegate = self
 
     workoutPeerTypesCollectionView = workoutPeerSelectViewController.pearTypeSelectCollectionView
     workoutPeerTypesCollectionView?.delegate = self
-
-    workoutSelectViewController.delegate = self
 
     bindViewModel()
     bindStartButton()
@@ -117,12 +137,12 @@ private extension WorkoutEnvironmentSetupViewController {
     workoutPeerSelectViewController
       .startButtonDidTapPublisher()
       .bind(to: didTapStartButton)
-      .store(in: &cancellables)
+      .store(in: &subscriptions)
   }
 
   func bindViewModel() {
     guard let viewModel else { return }
-    cancellables.removeAll()
+    subscriptions.removeAll()
 
     let input = WorkoutEnvironmentSetupViewModelInput(
       requestWorkoutTypes: requestWorkoutTypes.eraseToAnyPublisher(),
@@ -148,7 +168,7 @@ private extension WorkoutEnvironmentSetupViewController {
         case let .didSelectWorkoutPeerType(bool): workoutPeerSelectViewController.startButtonEnable(bool)
         }
       }
-      .store(in: &cancellables)
+      .store(in: &subscriptions)
   }
 
   func configureDataSource() {
@@ -232,21 +252,36 @@ private extension WorkoutEnvironmentSetupViewController {
   }
 }
 
-// MARK: UIGestureRecognizerDelegate
+// MARK: UIPageViewControllerDelegate, UIPageViewControllerDataSource
 
-extension WorkoutEnvironmentSetupViewController: UIGestureRecognizerDelegate {
-  public func gestureRecognizerShouldBegin(_: UIGestureRecognizer) -> Bool {
-    return contentNavigationController.viewControllers.count > 1
-  }
-}
-
-// MARK: UINavigationControllerDelegate
-
-extension WorkoutEnvironmentSetupViewController: UINavigationControllerDelegate {
-  public func navigationController(_: UINavigationController, didShow viewController: UIViewController, animated _: Bool) {
-    if viewController == workoutSelectViewController {
-      pageControl.select(at: 0)
+extension WorkoutEnvironmentSetupViewController: UIPageViewControllerDelegate, UIPageViewControllerDataSource {
+  public func pageViewController(
+    _ pageViewController: UIPageViewController,
+    didFinishAnimating _: Bool,
+    previousViewControllers _: [UIViewController],
+    transitionCompleted _: Bool
+  ) {
+    if
+      let currentViewController = pageViewController.viewControllers?.first,
+      let currentIndex = contentViewControllers.firstIndex(of: currentViewController) {
+      pageScrollView?.isScrollEnabled = currentIndex == 0 ? false : true
+      gwPageControl.select(at: currentIndex)
     }
+  }
+
+  public func pageViewController(_: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+    guard
+      let viewControllerIndex = contentViewControllers.firstIndex(of: viewController),
+      viewControllerIndex - 1 >= 0
+    else {
+      return nil
+    }
+    let previousIndex = viewControllerIndex - 1
+    return contentViewControllers[previousIndex]
+  }
+
+  public func pageViewController(_: UIPageViewController, viewControllerAfter _: UIViewController) -> UIViewController? {
+    return nil
   }
 }
 
@@ -254,8 +289,11 @@ extension WorkoutEnvironmentSetupViewController: UINavigationControllerDelegate 
 
 extension WorkoutEnvironmentSetupViewController: WorkoutSelectViewDelegate {
   func nextButtonDidTap() {
-    pageControl.next()
-    contentNavigationController.pushViewController(workoutPeerSelectViewController, animated: true)
+    pageScrollView?.isScrollEnabled = false
+    gwPageControl.next()
+    pageViewController.setViewControllers([workoutPeerSelectViewController], direction: .forward, animated: true) { [weak self] _ in
+      self?.pageScrollView?.isScrollEnabled = true
+    }
   }
 }
 

@@ -37,6 +37,7 @@ final class WorkoutEnvironmentSetUpCoordinator: WorkoutEnvironmentSetUpCoordinat
     let repository = WorkoutEnvironmentSetupNetworkRepository(session: URLSession.shared)
 
     let useCase = WorkoutEnvironmentSetupUseCase(repository: repository)
+
     let userInfoUseCase = UserInformationUseCase()
 
     let viewModel = WorkoutEnvironmentSetupViewModel(
@@ -46,8 +47,9 @@ final class WorkoutEnvironmentSetUpCoordinator: WorkoutEnvironmentSetUpCoordinat
     )
 
     let viewController = WorkoutEnvironmentSetupViewController(viewModel: viewModel)
+    viewController.hidesBottomBarWhenPushed = true
 
-    navigationController.pushViewController(viewController, animated: false)
+    navigationController.pushViewController(viewController, animated: true)
   }
 
   func pushPeerRandomMatchingViewController(workoutSetting: WorkoutSetting) {
