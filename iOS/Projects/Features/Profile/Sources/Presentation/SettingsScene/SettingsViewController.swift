@@ -70,13 +70,24 @@ final class SettingsViewController: UICollectionViewController {
         logoutPublisher: logoutSubject.eraseToAnyPublisher()
       )
     )
-    .sink { state in
+    .sink { [weak self] state in
       switch state {
       case .idle:
         break
+      case let .alert(message):
+        self?.showAlert(with: message)
       }
     }
     .store(in: &subscriptions)
+  }
+
+  // MARK: - Custom Methods
+
+  /// 에러 알림 문구를 보여줍니다.
+  private func showAlert(with value: Any) {
+    let alertController = UIAlertController(title: "알림", message: String(describing: value), preferredStyle: .alert)
+    alertController.addAction(UIAlertAction(title: "확인", style: .default))
+    present(alertController, animated: true)
   }
 }
 

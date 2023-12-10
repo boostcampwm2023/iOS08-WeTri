@@ -23,6 +23,7 @@ public typealias SettingsViewModelOutput = AnyPublisher<SettingsState, Never>
 
 public enum SettingsState {
   case idle
+  case alert(String)
 }
 
 // MARK: - SettingsViewModelRepresentable
@@ -60,13 +61,21 @@ extension SettingsViewModel: SettingsViewModelRepresentable {
     }
     subscriptions.removeAll()
 
+    let logoutPublisher = input.logoutPublisher
+      .flatMap(useCase.logout)
+      .share()
+
+    let alertPublisher = logoutPublisher
+      .filter { $0 == false }
+      .map { _ in SettingsState.alert("로그아웃할 수 없습니다.") }
+
     input.profileSettingsPublisher
       .sink { [coordinating] in
         coordinating?.moveToProfileSettings()
       }
       .store(in: &subscriptions)
 
-    let initialState: SettingsViewModelOutput = Just(.idle).eraseToAnyPublisher()
+    let initialState: SettingsViewModelOutput = Just(.idle).merge(with: alertPublisher).eraseToAnyPublisher()
 
     return initialState
   }
