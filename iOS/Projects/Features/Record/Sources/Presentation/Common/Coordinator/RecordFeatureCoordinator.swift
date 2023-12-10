@@ -87,7 +87,7 @@ extension RecordFeatureCoordinator: CoordinatorFinishDelegate {
     childCoordinators = childCoordinators.filter {
       $0.flow != childCoordinator.flow
     }
-    navigationController.popToRootViewController(animated: false)
+    navigationController.popToRootViewController(animated: true)
   }
 }
 
@@ -96,7 +96,7 @@ extension RecordFeatureCoordinator: CoordinatorFinishDelegate {
 extension RecordFeatureCoordinator: WorkoutSettingCoordinatorFinishDelegate {
   func workoutSettingCoordinatorDidFinished(workoutSessionComponents: WorkoutSessionComponents) {
     childCoordinators.removeAll()
-    navigationController.dismiss(animated: false)
+    navigationController.dismiss(animated: true)
     showWorkoutFlow(workoutSessionComponents)
   }
 }
