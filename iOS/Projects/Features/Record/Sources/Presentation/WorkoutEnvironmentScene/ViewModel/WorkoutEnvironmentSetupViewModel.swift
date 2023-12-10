@@ -168,7 +168,8 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
           id: "",
           workoutTypeCode: workoutSetting.workoutType,
           nickname: userInformationUseCase.userNickName(),
-          userProfileImage: userInformationUseCase.userProfileImageURL()
+          userProfileImage: userInformationUseCase.userProfileImageURL(),
+          workoutMode: .solo
         )
       )
     case .random:

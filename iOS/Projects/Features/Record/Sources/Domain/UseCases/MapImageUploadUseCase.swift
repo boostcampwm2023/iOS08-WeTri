@@ -17,7 +17,8 @@ struct MapImageUploadUseCase: MapImageUploadUseCaseRepresentable {
   }
 
   func uploadImage(included data: Data?) -> AnyPublisher<URL, Error> {
-    guard let data else {
+    guard let data
+    else {
       return Empty<URL, Error>().eraseToAnyPublisher()
     }
     return repository.upload(with: data)

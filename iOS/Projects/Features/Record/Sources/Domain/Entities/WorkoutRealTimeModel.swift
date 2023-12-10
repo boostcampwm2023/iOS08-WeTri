@@ -11,14 +11,14 @@ import Foundation
 // MARK: - WorkoutSession
 
 /// 소켓을 통해 받은 데이터 형식 입니다.
-struct WorkoutSession: Decodable {
+struct WorkoutSession: Codable {
   let event: String
   let data: SessionData
 }
 
 // MARK: - SessionData
 
-struct SessionData: Decodable {
+struct SessionData: Codable {
   let nickname: String
   let health: HealthData
   let id: String
@@ -34,7 +34,7 @@ struct SessionData: Decodable {
 
 // MARK: - HealthData
 
-struct HealthData: Decodable {
+struct HealthData: Codable {
   let calories: Double
   let distance: Double
 }
