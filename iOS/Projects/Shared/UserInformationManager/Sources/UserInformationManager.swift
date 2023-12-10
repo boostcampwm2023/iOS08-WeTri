@@ -28,7 +28,7 @@ public final class UserInformationManager {
     case userNickName = "UserNickName"
     case userProfileImage = "UserProfileImage"
     case birthDayDate = "BirthDayDate"
-    case userProfileImageURLData = "UserImageURLData"
+    case userProfileImageURL = "UserProfileImageURL"
   }
 }
 
@@ -45,8 +45,20 @@ public extension UserInformationManager {
     defaults.setValue(nameData, forKey: UserInformation.userNickName.rawValue)
   }
 
-  private func setUserProfileImageData(_ imageData: Data) {
-    
+  func setUserProfileImageData(url: URL?) {
+    guard let url else {
+      return
+    }
+
+    DispatchQueue.global().async { [weak self] in
+      guard let data = try? Data(contentsOf: url) else {
+        return
+      }
+      self?.setUserProfileImageData(data)
+    }
+  }
+
+  func setUserProfileImageData(_ imageData: Data) {
     defaults.setValue(imageData, forKey: UserInformation.userNickName.rawValue)
   }
 
@@ -56,15 +68,13 @@ public extension UserInformationManager {
     let data = Data(dateString.utf8)
     defaults.setValue(data, forKey: UserInformation.birthDayDate.rawValue)
   }
-  
+
   func setUserProfileImageURLString(url: URL?) {
-    guard
-      let url = url,
-      let data = try? Data(contentsOf: url) else {
+    guard let urlString = url?.absoluteString else {
       return
     }
-    
-    defaults.setValue(data, forKey: UserInformation.userProfileImageURLData.rawValue)
+    let data = Data(urlString.utf8)
+    defaults.setValue(data, forKey: UserInformation.userProfileImageURL.rawValue)
   }
 }
 
@@ -76,8 +86,7 @@ private extension UserInformationManager {
       data(.userNickName) != nil ||
       data(.birthDayDate) != nil ||
       data(.userProfileImage) != nil ||
-      data(.userProfileImageURLData) != nil
-     {
+      data(.userProfileImageURL) != nil {
       return
     }
 
