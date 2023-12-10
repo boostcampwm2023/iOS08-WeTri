@@ -35,7 +35,7 @@ public extension TargetDependency {
   static let cacher: TargetDependency = .project(target: "Cacher", path: .relativeToCore("Cacher"))
   static let userInformationManager: TargetDependency = .project(target: "UserInformationManager", path: .relativeToShared("UserInformationManager"))
   static let auth: TargetDependency = .project(target: "Auth", path: .relativeToShared("Auth"))
-  static let downSampling: TargetDependency = .project(target: "ImageDownSampling", path: .relativeToShared("ImageDownSampling"))
+  static let downSampling: TargetDependency = .project(target: "ImageDownsampling", path: .relativeToShared("ImageDownsampling"))
 
   static func feature(_ feature: Feature) -> TargetDependency {
     return .project(

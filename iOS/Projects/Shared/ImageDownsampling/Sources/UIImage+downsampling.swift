@@ -1,5 +1,5 @@
 //
-//  UIImage+.swift
+//  UIImage+downsampling.swift
 //  ProjectDescriptionHelpers
 //
 //  Created by 안종표 on 12/10/23.

@@ -9,9 +9,9 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project.makeModule(
-  name: "ImageDownSampling",
+  name: "ImageDownsampling",
   targets: .custom(
-    name: "ImageDownSampling",
+    name: "ImageDownsampling",
     product: .framework,
     testingOptions: []
   )
