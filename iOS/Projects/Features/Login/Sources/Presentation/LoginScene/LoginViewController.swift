@@ -24,7 +24,7 @@ final class LoginViewController: UIViewController {
   private let loginSubject = PassthroughSubject<Void, Never>()
 
   private let playerLayer: AVPlayerLayer? = {
-    guard 
+    guard
       let bundle = Bundle(for: LoginViewController.self).path(forResource: "running", ofType: "mp4")
     else {
       return nil
@@ -52,7 +52,7 @@ final class LoginViewController: UIViewController {
 
   private let policyTextView: UITextView = {
     let attributedString = NSMutableAttributedString(string: "가입을 진행할 경우, 서비스 약관 및\n개인정보 처리방침에 동의한것으로 간주합니다.")
-    attributedString.addAttribute(.link, value: PrivacyLink.link, range: NSRange(location: 12, length: 15))
+    attributedString.addAttribute(.link, value: PrivacyLink.link, range: NSRange(location: 12, length: 18))
 
     let textView = UITextView()
     textView.translatesAutoresizingMaskIntoConstraints = false
