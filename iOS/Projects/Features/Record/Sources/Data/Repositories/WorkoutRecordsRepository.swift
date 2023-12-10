@@ -8,6 +8,7 @@
 
 import Cacher
 import Combine
+import CommonNetworkingKeyManager
 import Foundation
 import Log
 import Trinet
@@ -38,8 +39,9 @@ struct WorkoutRecordsRepository: WorkoutRecordsRepositoryRepresentable {
       Task {
         do {
           let dateRequestDTO = try toDateRequestDTO(date: date)
+          print(dateRequestDTO)
           let key = makeKey(dateRequestDTO: dateRequestDTO)
-          let data = try await provider.request(.dateOfRecords(dateRequestDTO))
+          let data = try await provider.request(.dateOfRecords(dateRequestDTO), interceptor: TNKeychainInterceptor.shared)
           if !isToday {
             try cacheManager.set(cacheKey: key, data: data)
           }
@@ -142,30 +144,29 @@ enum WorkoutRecordsRepositoryEndPoint: TNEndPoint {
   var path: String {
     switch self {
     case .dateOfRecords:
-      return "records/me"
+      return "/api/v1/records/me"
     }
   }
 
   var method: TNMethod {
     switch self {
     case .dateOfRecords:
-      return .post
+      return .get
     }
   }
 
   var query: Encodable? {
-    return nil
-  }
-
-  var body: Encodable? {
     switch self {
     case let .dateOfRecords(dateRequestDTO):
-      return dateRequestDTO
+      return ["year": dateRequestDTO.year, "month": dateRequestDTO.month, "day": dateRequestDTO.day]
     }
   }
 
+  var body: Encodable? {
+    return nil
+  }
+
   var headers: TNHeaders {
-    // TODO:
-    return TNHeaders(headers: [])
+    return .default
   }
 }
