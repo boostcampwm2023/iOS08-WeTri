@@ -93,6 +93,7 @@ private extension CountDownBeforeWorkoutViewController {
 
   func setupStyles() {
     view.backgroundColor = DesignSystemColor.primaryBackground
+    hidesBottomBarWhenPushed = true
   }
 
   func bindViewModel() {

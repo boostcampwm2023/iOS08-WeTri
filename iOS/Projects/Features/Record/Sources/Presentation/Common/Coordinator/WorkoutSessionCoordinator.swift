@@ -173,6 +173,8 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
       healthDataProtocol: sessionViewController,
       locationTrackingProtocol: routeMapViewController
     )
+    viewController.hidesBottomBarWhenPushed = true
+
     navigationController.pushViewController(viewController, animated: true)
   }
 
@@ -189,6 +191,8 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
     let useCase = WorkoutSummaryUseCase(repository: repository, workoutRecordID: recordID)
     let viewModel = WorkoutSummaryViewModel(coordinating: self, workoutSummaryUseCase: useCase)
     let workoutSummaryViewController = WorkoutSummaryViewController(viewModel: viewModel)
+    workoutSummaryViewController.hidesBottomBarWhenPushed = true
+
     navigationController.setViewControllers([workoutSummaryViewController], animated: true)
   }
 
@@ -199,6 +203,8 @@ final class WorkoutSessionCoordinator: WorkoutSessionCoordinating {
     let viewModel = CountDownBeforeWorkoutViewModel(coordinator: self, useCase: useCase)
 
     let viewController = CountDownBeforeWorkoutViewController(viewModel: viewModel)
+    viewController.hidesBottomBarWhenPushed = true
+
     navigationController.setViewControllers([viewController], animated: true)
   }
 
