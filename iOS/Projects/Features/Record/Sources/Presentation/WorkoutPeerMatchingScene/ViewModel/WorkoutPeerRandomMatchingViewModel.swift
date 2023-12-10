@@ -177,7 +177,8 @@ extension WorkoutPeerRandomMatchingViewModel: WorkoutPeerRandomMatchingViewModel
   }
 
   private func cancelPeerRandomMatching() {
-    workoutPeerRandomMatchingUseCase.matchCancel()
+    let workoutTypeCode = workoutSetting.workoutType.typeCode
+    workoutPeerRandomMatchingUseCase.matchCancel(workoutTypeCode: workoutTypeCode)
     coordinating?.popPeerRandomMatchingViewController()
   }
 
