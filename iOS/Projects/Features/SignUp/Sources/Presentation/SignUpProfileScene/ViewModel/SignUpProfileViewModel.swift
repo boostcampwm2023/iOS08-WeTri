@@ -19,7 +19,7 @@ public struct SignUpProfileViewModelInput {
   let imageButtonTap: AnyPublisher<Void, Never>
   let imageSetting: AnyPublisher<Data, Never>
   let completeButtonTap: AnyPublisher<Void, Never>
-  let genderBirth: AnyPublisher<GenderBirth, Never>
+  let genderBirth: AnyPublisher<GenderBirth, Error>
 }
 
 public typealias SignUpProfileViewModelOutput = AnyPublisher<SignUpProfileState, Never>
@@ -73,19 +73,13 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
 
     var imageData: Data?
 
-    let imageFormSubject = PassthroughSubject<ImageForm, Never>()
-    let nickNameSubject = PassthroughSubject<String, Never>()
-    let completeSignUpSubject = PassthroughSubject<SignUpUser, Never>()
+    let nickNameSubject = PassthroughSubject<String, Error>()
 
-    var imageFormPubliser: AnyPublisher<ImageForm, Never> {
-      return imageFormSubject.eraseToAnyPublisher()
-    }
-
-    var nickNamePublisher: AnyPublisher<String, Never> {
+    var nickNamePublisher: AnyPublisher<String, Error> {
       return nickNameSubject.eraseToAnyPublisher()
     }
 
-    var genderBirthPublisher: AnyPublisher<GenderBirth, Never> {
+    var genderBirthPublisher: AnyPublisher<GenderBirth, Error> {
       return input.genderBirth.eraseToAnyPublisher()
     }
 
@@ -116,34 +110,19 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
       }
       .store(in: &subscriptions)
 
-    input.completeButtonTap
+    let imagePublisher = input.completeButtonTap
       .compactMap { imageData }
       .flatMap(imageTransmitUseCase.transmit)
-      .sink { completion in
-        switch completion {
-        case .finished: break
-        case let .failure(error):
-          Log.make().error("\(error)")
-        }
-      } receiveValue: { imageforms in
-        guard let imageForm = imageforms.first else {
-          return
-        }
-        imageFormSubject.send(imageForm)
-        Log.make().debug("이미지 폼스 : \(imageforms)")
-      }
-      .store(in: &subscriptions)
+      .compactMap(\.first)
+      .share()
 
-    Publishers
+    let completePublisher = Publishers
       .CombineLatest3(
-        imageFormPubliser,
+        imagePublisher,
         nickNamePublisher,
         genderBirthPublisher
       )
-      .sink { [weak self] imageForm, nickName, genderBirth in
-        guard let newUserInformation = self?.newUserInformation else {
-          return
-        }
+      .map { [newUserInformation] (imageForm: ImageForm, nickName: String, genderBirth: GenderBirth) -> SignUpUser in
         let signUpUser = SignUpUser(
           provider: newUserInformation.provider.rawValue,
           nickname: nickName,
@@ -152,20 +131,14 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
           profileImage: imageForm.imageURL,
           mappedUserID: newUserInformation.mappedUserID
         )
-        completeSignUpSubject.send(signUpUser)
+        return signUpUser
       }
-      .store(in: &subscriptions)
-
-    completeSignUpSubject
       .flatMap(signUpUseCase.signUp(signUpUser:))
+      .share()
+
+    completePublisher
       .receive(on: DispatchQueue.main)
-      .sink(receiveCompletion: { completion in
-        switch completion {
-        case .finished:
-          break
-        case let .failure(error):
-          Log.make().error("\(error)")
-        }
+      .sink(receiveCompletion: { _ in
       }, receiveValue: { [weak self] token in
         if let accessToken = token.accessToken,
            let refreshToken = token.refreshToken {
@@ -175,6 +148,14 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
         }
       })
       .store(in: &subscriptions)
+
+    let completeError = completePublisher
+      .map { _ in
+        return SignUpProfileState.idle
+      }
+      .catch { error in
+        Just(SignUpProfileState.customError(error))
+      }
 
     let initialState: SignUpProfileViewModelOutput = Just(.idle)
       .eraseToAnyPublisher()
@@ -190,7 +171,7 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
       .eraseToAnyPublisher()
 
     return Publishers
-      .Merge4(initialState, nickNameCheckedResult, image, success)
+      .Merge5(initialState, nickNameCheckedResult, image, success, completeError)
       .eraseToAnyPublisher()
   }
 }
