@@ -7,6 +7,7 @@
 //
 
 import AuthenticationServices
+import AVFoundation
 import Combine
 import CombineCocoa
 import DesignSystem
@@ -21,6 +22,10 @@ final class LoginViewController: UIViewController {
   private let viewModel: LoginViewModelRepresentable
   private let credentialSubject = PassthroughSubject<AuthorizationInfo, Never>()
   private let loginSubject = PassthroughSubject<Void, Never>()
+
+  private var player: AVPlayer!
+  private var playerLayer: AVPlayerLayer! // Bundle(for: Self.self).path(forResource: "Token", ofType: "json")
+  lazy var videoURL: URL = .init(fileURLWithPath: Bundle(for: Self.self).path(forResource: "running", ofType: "mp4")!)
 
   private lazy var logoImageView: UIImageView = {
     let imageView = UIImageView()
@@ -69,6 +74,7 @@ final class LoginViewController: UIViewController {
     configureUI()
     bindViewModel()
     bindUI()
+    startAnimation()
   }
 }
 
@@ -159,6 +165,50 @@ private extension LoginViewController {
     authorizationController.delegate = self
     authorizationController.presentationContextProvider = self
     authorizationController.performRequests()
+  }
+
+  func startAnimation() {
+    // AVPlayer 초기화
+    player = AVPlayer(url: videoURL)
+
+    // AVPlayerLayer 추가
+    playerLayer = AVPlayerLayer(player: player)
+    playerLayer.frame = view.bounds
+    view.layer.addSublayer(playerLayer)
+
+    // 가우시안 블러 및 검정색 필터 적용
+    applyFilters()
+
+    // 동영상 재생
+    player.play()
+  }
+
+  func applyFilters() {
+    // 가우시안 블러 필터
+    let blurFilter = CIFilter(name: "CIGaussianBlur")
+    blurFilter?.setValue(30, forKey: kCIInputRadiusKey)
+
+    // 검정색 필터
+    let colorFilter = CIFilter(name: "CIColorMonochrome")
+    colorFilter?.setValue(CIColor(red: 0, green: 0, blue: 0), forKey: kCIInputColorKey)
+
+    if let playerItem = player.currentItem {
+      let videoComposition = AVVideoComposition(asset: playerItem.asset, applyingCIFiltersWithHandler: { request in
+        var output = request.sourceImage.clampedToExtent()
+
+        if let result = blurFilter?.outputImage?.cropped(to: request.sourceImage.extent) {
+          output = result
+        }
+
+        if let result = colorFilter?.outputImage?.cropped(to: request.sourceImage.extent) {
+          output = result
+        }
+
+        request.finish(with: output, context: nil)
+      })
+
+      playerItem.videoComposition = videoComposition
+    }
   }
 }
 

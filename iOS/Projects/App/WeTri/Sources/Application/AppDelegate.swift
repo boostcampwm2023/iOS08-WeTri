@@ -1,3 +1,4 @@
+import Keychain
 import UIKit
 
 @main
@@ -5,8 +6,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
   func application(
     _: UIApplication,
     didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
-  )
-    -> Bool {
+  ) -> Bool {
+    Keychain.shared.delete(key: "AccessToken")
+    Keychain.shared.delete(key: "RefreshToken")
     return true
   }
 
