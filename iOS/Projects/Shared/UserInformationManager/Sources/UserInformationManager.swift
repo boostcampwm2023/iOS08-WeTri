@@ -28,7 +28,7 @@ public final class UserInformationManager {
     case userNickName = "UserNickName"
     case userProfileImage = "UserProfileImage"
     case birthDayDate = "BirthDayDate"
-    case userProfileImageURL = "UserImageURL"
+    case userProfileImageURL = "UserProfileImageURL"
   }
 }
 
@@ -45,29 +45,50 @@ public extension UserInformationManager {
     defaults.setValue(nameData, forKey: UserInformation.userNickName.rawValue)
   }
 
+  func setUserProfileImageData(url: URL?) {
+    guard let url else {
+      return
+    }
+
+    DispatchQueue.global().async { [weak self] in
+      guard let data = try? Data(contentsOf: url) else {
+        return
+      }
+      self?.setUserProfileImageData(data)
+    }
+  }
+
   func setUserProfileImageData(_ imageData: Data) {
     defaults.setValue(imageData, forKey: UserInformation.userNickName.rawValue)
   }
 
-  func setBirthDayDate(_ date: Date) {
+  func setBirthDayDate(_ date: Date?) {
+    let date = date ?? .now
     let dateString = dateFormatter.string(from: date)
     let data = Data(dateString.utf8)
     defaults.setValue(data, forKey: UserInformation.birthDayDate.rawValue)
+  }
+
+  func setUserProfileImageURLString(url: URL?) {
+    guard let urlString = url?.absoluteString else {
+      return
+    }
+    let data = Data(urlString.utf8)
+    defaults.setValue(data, forKey: UserInformation.userProfileImageURL.rawValue)
   }
 }
 
 /// Defaults이미지를 저장합니다.
 private extension UserInformationManager {
-  /// 만약 userDefaults에 값이 존재한다면 fakeData를 설정합니다.
+  /// 만약 userDefaults에 값이 존재하지 않는다면 fakeData를 설정합니다.
   func setDefaultsData() {
-//    guard
-//      data(.userNickName) == nil,
-//      data(.birthDayDate) == nil,
-//      data(.userProfileImage) == nil,
-//      data(.userProfileImageURL) == nil
-//    else {
-//      return
-//    }
+    if
+      data(.userNickName) != nil ||
+      data(.birthDayDate) != nil ||
+      data(.userProfileImage) != nil ||
+      data(.userProfileImageURL) != nil {
+      return
+    }
 
     let date = Date.now
     let formatter = DateFormatter()
@@ -79,9 +100,8 @@ private extension UserInformationManager {
     let name = Data("슈퍼맨".utf8)
     defaults.setValue(name, forKey: UserInformation.userNickName.rawValue)
 
-    let imageURLString = "https://www.catster.com/wp-content/uploads/2017/08/Pixiebob-cat.jpg"
-    let imageURLData = Data(imageURLString.utf8)
-    defaults.setValue(imageURLData, forKey: UserInformation.userProfileImageURL.rawValue)
+    let url = URL(string: "https://www.catster.com/wp-content/uploads/2017/08/Pixiebob-cat.jpg")
+    setUserProfileImageURLString(url: url)
 
     guard
       let path = Bundle(for: Self.self).path(forResource: DefaultsKey.imageKey, ofType: DefaultsKey.imageType),
