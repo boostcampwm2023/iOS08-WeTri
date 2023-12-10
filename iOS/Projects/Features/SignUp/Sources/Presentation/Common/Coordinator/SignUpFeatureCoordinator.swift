@@ -96,6 +96,6 @@ public final class SignUpFeatureCoordinator: SignUpFeatureCoordinating {
       signUpProfileViewController: signUpProfileViewController
     )
 
-    navigationController.pushViewController(signUpContainerViewController, animated: false)
+    navigationController.setViewControllers([signUpContainerViewController], animated: true)
   }
 }

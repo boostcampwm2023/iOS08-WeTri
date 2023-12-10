@@ -80,6 +80,7 @@ final class LoginViewController: UIViewController {
   }
 
   deinit {
+    Log.make().debug("\(Self.self) deinitialized")
     if let timeObserverToken {
       playerLayer?.player?.removeTimeObserver(timeObserverToken)
       self.timeObserverToken = nil
