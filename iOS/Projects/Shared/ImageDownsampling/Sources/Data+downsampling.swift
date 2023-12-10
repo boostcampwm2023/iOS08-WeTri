@@ -1,31 +1,24 @@
 //
-//  UIImage+downsampling.swift
-//  ProjectDescriptionHelpers
+//  Data+downsampling.swift
+//  ImageDownsampling
 //
 //  Created by 안종표 on 12/10/23.
+//  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
 import UIKit
 
-// MARK: - ImageDownsamplingError
-
-public enum ImageDownsamplingError: Error {
-  case failImageSource
-  case failThumbnailImage
-}
-
-public extension UIImage {
+public extension Data {
   func downsampling(size: CGSize, scale: Scale) throws -> UIImage {
     let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
-    guard let data = pngData(),
-          let imageSource = CGImageSourceCreateWithData(
-            data as CFData,
-            imageSourceOptions
-          )
+    guard let imageSource = CGImageSourceCreateWithData(
+      self as CFData,
+      imageSourceOptions
+    )
     else {
       throw ImageDownsamplingError.failImageSource
     }
-    let thumbnailMaxPixelSize = max(size.width, size.height) * scale.rawValue
+    let thumbnailMaxPixelSize = Swift.max(size.width, size.height) * scale.rawValue
     let downsampleOptions = [
       kCGImageSourceCreateThumbnailFromImageAlways: true,
       kCGImageSourceCreateThumbnailWithTransform: true,
