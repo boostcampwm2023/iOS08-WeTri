@@ -57,7 +57,7 @@ final class SessionWebSocketProtocolTests: XCTestCase {
       return
     }
 
-    let receivedModel = try JSONDecoder().decode(TestModel.self, from: jsonData)
-    XCTAssertEqual(receivedModel, testModel, "Received model does not match sent model")
+    let receivedModel = try JSONDecoder().decode(WebSocketFrame<TestModel>.self, from: jsonData)
+    XCTAssertEqual(receivedModel.data, testModel, "Received model does not match sent model")
   }
 }

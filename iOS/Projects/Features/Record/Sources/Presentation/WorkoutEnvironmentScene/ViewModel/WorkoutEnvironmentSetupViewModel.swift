@@ -163,7 +163,7 @@ extension WorkoutEnvironmentSetupViewModel: WorkoutEnvironmentSetupViewModelRepr
       coordinator?.finish(
         workoutSessionComponents: .init(
           participants: [sessionPeerTypeOfMe],
-          startDate: .now + 3,
+          startDate: .now + 6,
           roomID: "",
           id: "",
           workoutTypeCode: workoutSetting.workoutType,

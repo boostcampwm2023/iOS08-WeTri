@@ -8,37 +8,6 @@
 
 import Foundation
 
-// MARK: - WorkoutSession
-
-/// 소켓을 통해 받은 데이터 형식 입니다.
-struct WorkoutSession: Codable {
-  let event: String
-  let data: SessionData
-}
-
-// MARK: - SessionData
-
-struct SessionData: Codable {
-  let nickname: String
-  let health: HealthData
-  let id: String
-  let roomID: String
-
-  enum CodingKeys: String, CodingKey {
-    case nickname
-    case health
-    case id
-    case roomID = "roomId"
-  }
-}
-
-// MARK: - HealthData
-
-struct HealthData: Codable {
-  let calories: Double
-  let distance: Double
-}
-
 // MARK: - WorkoutRealTimeModel
 
 /// 운동 데이터를 송수신하는 모델입니다. 소켓 통신 시 사용합니다.

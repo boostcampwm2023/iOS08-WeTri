@@ -45,7 +45,7 @@ struct WorkoutSocketRepository {
       Log.make().debug("StringToWorkoutRealTimeModel에서 Decode에러 ")
       throw WorkoutSocketRepositoryError.invalidStringForConversion
     }
-    guard let workoutSessionModel = try? jsonDecoder.decode(WorkoutSession.self, from: jsonData) else {
+    guard let workoutSessionModel = try? jsonDecoder.decode(WebSocketFrame<WorkoutRealTimeModel>.self, from: jsonData) else {
       Log.make().debug("StringToWorkoutRealTimeModel에서 Decode에러 ")
       throw WorkoutSocketRepositoryError.invalidStringForConversion
     }
@@ -56,7 +56,7 @@ struct WorkoutSocketRepository {
       health: .init(
         distance: workoutSessionModel.data.health.distance,
         calories: workoutSessionModel.data.health.calories,
-        heartRate: nil
+        heartRate: workoutSessionModel.data.health.heartRate
       )
     )
   }

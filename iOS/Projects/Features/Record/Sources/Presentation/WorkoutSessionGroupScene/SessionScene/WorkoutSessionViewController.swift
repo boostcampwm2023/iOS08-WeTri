@@ -65,8 +65,8 @@ public final class WorkoutSessionViewController: UIViewController {
     self.viewModel = viewModel
     for participant in dependency.participants {
       Log.make().debug("사람 id는 \(participant.id), nickName: \(participant.nickname)")
-      userInfoByID[participant.id] = participant
-      realTimeModelByID[participant.id] = .init(distance: 0, calories: 0, heartRate: 0)
+      userInfoByID[participant.nickname] = participant
+      realTimeModelByID[participant.nickname] = .init(distance: 0, calories: 0, heartRate: 0)
     }
 
     super.init(nibName: nil, bundle: nil)
@@ -131,10 +131,10 @@ public final class WorkoutSessionViewController: UIViewController {
           self?.healthData = myHealthForm
         case let .fetchParticipantsIncludedMySelf(model):
           Log.make().debug("\(model)")
-          self?.realTimeModelByID[model.id] = model.health
+          self?.realTimeModelByID[model.nickname] = model.health
           var snapshot = self?.participantsDataSource?.snapshot()
 
-          snapshot?.reconfigureItems([model.id])
+          snapshot?.reconfigureItems([model.nickname])
           if let snapshot {
             let temp = snapshot.itemIdentifiers
             Log.make().debug("현재 snpahot의 아이템은 다음과 같습니다. \(temp)")

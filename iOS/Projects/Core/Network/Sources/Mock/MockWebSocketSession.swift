@@ -20,9 +20,7 @@ public final class MockWebSocketTask<DataModel: Codable>: WebSocketTaskProtocol 
 
   public func send(_ message: URLSessionWebSocketTask.Message) async throws {
     switch message {
-    case let .data(data):
-      let socketFrame = try jsonDecoder.decode(WebSocketFrame<DataModel>.self, from: data)
-      let jsonData = try jsonEncoder.encode(socketFrame.data)
+    case let .data(jsonData):
       guard let jsonString = String(data: jsonData, encoding: .utf8) else {
         throw MockWebSocketError.stringConversionFailed
       }
