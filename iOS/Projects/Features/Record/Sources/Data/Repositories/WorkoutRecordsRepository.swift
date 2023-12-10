@@ -39,7 +39,6 @@ struct WorkoutRecordsRepository: WorkoutRecordsRepositoryRepresentable {
       Task {
         do {
           let dateRequestDTO = try toDateRequestDTO(date: date)
-          print(dateRequestDTO)
           let key = makeKey(dateRequestDTO: dateRequestDTO)
           let data = try await provider.request(.dateOfRecords(dateRequestDTO), interceptor: TNKeychainInterceptor.shared)
           if !isToday {
