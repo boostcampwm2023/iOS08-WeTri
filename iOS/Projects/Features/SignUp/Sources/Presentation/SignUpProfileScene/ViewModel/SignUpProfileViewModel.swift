@@ -105,12 +105,13 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
       .eraseToAnyPublisher()
 
     let imageSettingResult = input.imageSetting
-      .flatMap { Just(SignUpProfileState.image($0)) }
+      .flatMap {
+        return Just(SignUpProfileState.image($0))
+      }
       .eraseToAnyPublisher()
 
     input.imageSetting
       .sink { data in
-        Log.make().debug("data크기 : \(data)")
         imageData = data
       }
       .store(in: &subscriptions)
