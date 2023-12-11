@@ -92,20 +92,7 @@ final class WorkoutSummaryCardView: UIView {
 
   private let caloriesItemView: WorkoutSummaryItemView = .init()
 
-  private let averageHeartRateItemView: WorkoutSummaryItemView = .init()
-
-  private let maximumHeartRateItemView: WorkoutSummaryItemView = .init()
-
-  private let minimumHeartRateItemView: WorkoutSummaryItemView = .init()
-
   private let activityStackView: UIStackView = {
-    let stackView = UIStackView()
-    stackView.distribution = .fillEqually
-    stackView.alignment = .center
-    return stackView
-  }()
-
-  private let heartRateStackView: UIStackView = {
     let stackView = UIStackView()
     stackView.distribution = .fillEqually
     stackView.alignment = .center
@@ -145,16 +132,12 @@ final class WorkoutSummaryCardView: UIView {
 
     containerRoundedView.addSubview(wholeStackView)
 
-    for view in [dateLabel, mapView, activityStackView, heartRateStackView] {
+    for view in [dateLabel, mapView, activityStackView] {
       wholeStackView.addArrangedSubview(view)
     }
 
     for activityItem in [timeItemView, distanceItemView, caloriesItemView] {
       activityStackView.addArrangedSubview(activityItem)
-    }
-
-    for heartRateItem in [averageHeartRateItemView, maximumHeartRateItemView, minimumHeartRateItemView] {
-      heartRateStackView.addArrangedSubview(heartRateItem)
     }
   }
 
@@ -189,10 +172,6 @@ final class WorkoutSummaryCardView: UIView {
 
     distanceItemView.configure(withTitle: "거리", value: "\(model.distance)m")
     caloriesItemView.configure(withTitle: "칼로리", value: "\(model.calorie)kcal")
-
-    averageHeartRateItemView.configure(withTitle: "Avg.HR", value: "\(model.averageHeartRate.flatMap(String.init) ?? "-")bpm")
-    minimumHeartRateItemView.configure(withTitle: "Min.HR", value: "\(model.minimumHeartRate.flatMap(String.init) ?? "-")bpm")
-    maximumHeartRateItemView.configure(withTitle: "Max.HR", value: "\(model.maximumHeartRate.flatMap(String.init) ?? "-")bpm")
   }
 
   private func createLocations(from locations: [LocationModel]) -> [CLLocation] {
