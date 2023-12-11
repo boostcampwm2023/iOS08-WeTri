@@ -33,7 +33,9 @@ final class ProfileSettingsViewController: UICollectionViewController {
     let layout = UICollectionViewCompositionalLayout { sectionNumber, environment in
       // Section을 위한 리스트 configuration 생성
       var configuration = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
-      configuration.headerMode = .supplementary
+      if sectionNumber == Section.header.rawValue {
+        configuration.headerMode = .supplementary
+      }
 
       // Header를 위한 Supplementary Item 등록
       let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(44))
@@ -136,7 +138,8 @@ private extension ProfileSettingsViewController {
       cell.contentConfiguration = configuration
     }
 
-    let headerRegistration = HeaderRegistration(elementKind: UICollectionView.elementKindSectionHeader) { _, _, _ in
+    let headerRegistration = HeaderRegistration(elementKind: UICollectionView.elementKindSectionHeader) { [weak self] headerView, _, _ in
+      headerView.configure(with: self?.headerViewData)
     }
 
     let dataSource = ProfileSettingsDataSource(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in
@@ -164,6 +167,9 @@ private extension ProfileSettingsViewController {
 
   private func updateProfileHeaders() {
     guard let dataSource else { return }
+
+    var snapshot = dataSource.snapshot()
+    snapshot.reloadSections([.header])
   }
 }
 
