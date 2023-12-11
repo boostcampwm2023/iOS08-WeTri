@@ -26,7 +26,7 @@ final class RecordListViewController: UIViewController {
   private let todayLabel: UILabel = {
     let label = UILabel()
     label.translatesAutoresizingMaskIntoConstraints = false
-    label.text = "오늘\n ??월 ??일 ?요일"
+    label.text = "오늘\n??월 ??일 ?요일"
     label.numberOfLines = 0
     label.font = .preferredFont(forTextStyle: .title1, weight: .bold)
     label.textColor = DesignSystemColor.primaryText
@@ -122,7 +122,7 @@ private extension RecordListViewController {
       noRecordsView.isHidden = true
     case let .sucessDateInfo(dateInfo):
       guard let dayOfWeek = dateInfo.dayOfWeek else { return }
-      todayLabel.text = "지금\n \(dateInfo.month)월 \(dateInfo.date)일 \(dayOfWeek)요일"
+      todayLabel.text = "지금\n\(dateInfo.month)월 \(dateInfo.date)일 \(dayOfWeek)요일"
     case let .customError(error):
       if let recordListViewModelError = (error as? RecordListViewModelError), recordListViewModelError == .recordUpdateFail {
         workoutInformationCollectionView.isHidden = true
