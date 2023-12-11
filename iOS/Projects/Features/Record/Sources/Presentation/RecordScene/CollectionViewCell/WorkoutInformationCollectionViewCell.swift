@@ -75,6 +75,7 @@ final class WorkoutInformationCollectionViewCell: UICollectionViewCell {
 private extension WorkoutInformationCollectionViewCell {
   func configureUI() {
     contentView.backgroundColor = DesignSystemColor.gray01
+    contentView.layer.cornerRadius = 8
 
     [sportLabel, startTimeLabel, endTimeLabel, distanceLabel].forEach {
       stackView.addArrangedSubview($0)
@@ -92,7 +93,7 @@ private extension WorkoutInformationCollectionViewCell {
 
 private enum Metrics {
   static let leadingTrailingpadding: CGFloat = 10
-  static let topBottomPadding: CGFloat = 47
+  static let topBottomPadding: CGFloat = 20
 }
 
 // MARK: - WorkoutInformation

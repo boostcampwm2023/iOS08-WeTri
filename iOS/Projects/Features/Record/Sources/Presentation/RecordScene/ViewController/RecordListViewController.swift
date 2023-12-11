@@ -26,7 +26,7 @@ final class RecordListViewController: UIViewController {
   private let todayLabel: UILabel = {
     let label = UILabel()
     label.translatesAutoresizingMaskIntoConstraints = false
-    label.text = "오늘\n ??월 ??일 ?요일"
+    label.text = "오늘\n??월 ??일 ?요일"
     label.numberOfLines = 0
     label.font = .preferredFont(forTextStyle: .title1, weight: .bold)
     label.textColor = DesignSystemColor.primaryText
@@ -55,6 +55,7 @@ final class RecordListViewController: UIViewController {
 
   private let noRecordsView: NoRecordsView = {
     let view = NoRecordsView()
+    view.layer.cornerRadius = 8
     view.translatesAutoresizingMaskIntoConstraints = false
     view.isHidden = true
     return view
@@ -121,7 +122,7 @@ private extension RecordListViewController {
       noRecordsView.isHidden = true
     case let .sucessDateInfo(dateInfo):
       guard let dayOfWeek = dateInfo.dayOfWeek else { return }
-      todayLabel.text = "지금\n \(dateInfo.month)월 \(dateInfo.date)일 \(dayOfWeek)요일"
+      todayLabel.text = "지금\n\(dateInfo.month)월 \(dateInfo.date)일 \(dayOfWeek)요일"
     case let .customError(error):
       if let recordListViewModelError = (error as? RecordListViewModelError), recordListViewModelError == .recordUpdateFail {
         workoutInformationCollectionView.isHidden = true
@@ -190,15 +191,14 @@ private extension RecordListViewController {
     }
 
     workoutInformationDataSource = WorkoutInformationDataSource(
-      collectionView: workoutInformationCollectionView,
-      cellProvider: { collectionView, indexPath, itemIdentifier in
-        return collectionView.dequeueConfiguredReusableCell(
-          using: cellRegistration,
-          for: indexPath,
-          item: itemIdentifier
-        )
-      }
-    )
+      collectionView: workoutInformationCollectionView
+    ) { collectionView, indexPath, itemIdentifier in
+      return collectionView.dequeueConfiguredReusableCell(
+        using: cellRegistration,
+        for: indexPath,
+        item: itemIdentifier
+      )
+    }
   }
 
   func configureSnapShot(items: [WorkoutInformationItem]) {

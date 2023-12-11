@@ -28,7 +28,14 @@ struct WorkoutRecordsRepository: WorkoutRecordsRepositoryRepresentable {
   private let provider: TNProvider<WorkoutRecordsRepositoryEndPoint>
   private let cacheManager = CacheManager.shared
   private let encoder = JSONEncoder()
-  private let decoder = JSONDecoder()
+  private let decoder: JSONDecoder = {
+    let jsonDecoder = JSONDecoder()
+    let dateFormatter = DateFormatter()
+    dateFormatter.locale = Locale(identifier: "ko_KR")
+    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+    jsonDecoder.dateDecodingStrategy = .formatted(dateFormatter)
+    return jsonDecoder
+  }()
 
   init(session: URLSessionProtocol) {
     provider = .init(session: session)
