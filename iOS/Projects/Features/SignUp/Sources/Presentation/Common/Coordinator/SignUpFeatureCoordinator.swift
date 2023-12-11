@@ -81,12 +81,15 @@ public final class SignUpFeatureCoordinator: SignUpFeatureCoordinating {
       keychainRepository: keyChainRepository
     )
 
+    let userDefaultsManagerUseCase = SignUpUserDefaultsManagerUseCase()
+
     let signUpProfileViewModel = SignUpProfileViewModel(
       coordinator: self,
       nickNameCheckUseCase: nickNameCheckUseCase,
       imageTransmitUseCase: imageTransmitUseCase,
       signUpUseCase: signUpUseCase,
-      newUserInformation: newUserInformation
+      newUserInformation: newUserInformation,
+      userDefaultsManagerUseCase: userDefaultsManagerUseCase
     )
 
     let signUpProfileViewController = SignUpProfileViewController(viewModel: signUpProfileViewModel)
