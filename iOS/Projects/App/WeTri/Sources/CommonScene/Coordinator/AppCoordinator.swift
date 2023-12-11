@@ -9,6 +9,7 @@
 import Auth
 import Coordinator
 import LoginFeature
+import OnboardingFeature
 import SignUpFeature
 import SplashFeature
 import UIKit
@@ -44,8 +45,9 @@ final class AppCoordinator: AppCoordinating {
   func showOnboardingFlow() {
     let onBoardingCoordinator = OnboardingCoordinator(
       navigationController: navigationController,
-      finishDelegate: self
+      onboardingFinishDelegate: self
     )
+
     childCoordinators.append(onBoardingCoordinator)
     onBoardingCoordinator.start()
   }
@@ -108,7 +110,7 @@ extension AppCoordinator: SplashCoordinatorFinishDelegate {
 
 extension AppCoordinator: SignUpFeatureCoordinatorFinishDelegate {
   func signUpFeatureCoordinatorDidFinished() {
-    showTabBarFlow()
+    showOnboardingFlow()
   }
 }
 
@@ -136,5 +138,14 @@ extension AppCoordinator: LoginFeatureFinishDelegate {
 extension AppCoordinator: TabBarFinishDelegate {
   func moveToLogin() {
     showLoginFlow()
+  }
+}
+
+// MARK: OnboardingFinishDelegate
+
+extension AppCoordinator: OnboardingFinishDelegate {
+  func finishOnboarding() {
+    showTabBarFlow()
+    childCoordinators = childCoordinators.filter { $0.flow != .onboarding }
   }
 }
