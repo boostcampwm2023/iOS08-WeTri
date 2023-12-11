@@ -17,7 +17,7 @@ struct RecordResponseDTO: Codable {
   let avgHeartRate: Int?
   let minHeartRate: Int?
   let maxHeartRate: Int?
-  let createdAt: String?
+  let createdAt: Date?
   let workout: WorkoutResponseDTO?
 }
 
@@ -44,28 +44,22 @@ extension Record {
     self.endTime = endTime
   }
 
-  private static func timeToTime(createdAt: String, workoutTime: Int) -> (startTime: String, endTime: String)? {
-    let startTime = createdAt.components(separatedBy: .whitespaces)[1]
-    guard let time = separateTime(startTime: startTime) else {
-      return nil
-    }
-    let startSeconds = time.toSeconds()
-    let endSeconds = startSeconds + workoutTime
-    let start = prettyStyle(time: timeToHourMinuteSecond(seconds: startSeconds))
-    let end = prettyStyle(time: timeToHourMinuteSecond(seconds: endSeconds))
-    return (start, end)
-  }
+  private static func timeToTime(createdAt: Date, workoutTime: Int) -> (startTime: String, endTime: String)? {
+    let dateComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: createdAt)
 
-  private static func separateTime(startTime: String) -> Time? {
-    let hhmmss = startTime.components(separatedBy: ":")
-    guard let hour = Int(hhmmss[0]),
-          let minute = Int(hhmmss[1]),
-          let second = Int(hhmmss[2])
+    guard
+      let hour = dateComponents.hour,
+      let minute = dateComponents.minute,
+      let second = dateComponents.second
     else {
       return nil
     }
 
-    return Time(hour: hour, minute: minute, second: second)
+    let startSeconds = Time(hour: hour, minute: minute, second: second).toSeconds()
+    let endSeconds = startSeconds + workoutTime
+    let start = prettyStyle(time: timeToHourMinuteSecond(seconds: startSeconds))
+    let end = prettyStyle(time: timeToHourMinuteSecond(seconds: endSeconds))
+    return (start, end)
   }
 
   private static func timeToHourMinuteSecond(seconds: Int) -> Time {
