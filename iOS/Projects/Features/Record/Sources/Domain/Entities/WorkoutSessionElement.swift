@@ -8,6 +8,8 @@
 
 import Foundation
 
+// MARK: - WorkoutSessionElement
+
 /// RandomMatching에서 WorkoutSession으로 화면전환 할 때 넘겨주는 데이터 입니다.
 struct WorkoutSessionElement {
   let startDate: Date
@@ -17,6 +19,7 @@ struct WorkoutSessionElement {
   private let formatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy-MM-dd HH:mm:SS"
+    formatter.locale = .init(identifier: "ko_KR")
     return formatter
   }()
 
@@ -24,6 +27,7 @@ struct WorkoutSessionElement {
   /// 현재 시간보다 과거거나, 서버에서 내려준 시간이 잘못되었을 경우
   /// 현재시간 + 4 초 후에 운동을 시작하는 것으로 세팅했습니다.
   init(startDateString: String, peers: [Peer], roomID: String) {
+    let parseString = startDateString.parseDateString() ?? ""
     var date = formatter.date(from: startDateString) ?? .now + 4
     if Date.now > date {
       date = Date.now + 4
@@ -37,5 +41,17 @@ struct WorkoutSessionElement {
     self.startDate = startDate
     self.peers = peers
     self.roomID = roomID
+  }
+}
+
+private extension String {
+  func parseDateString() -> String? {
+    let input = self
+    let pattern = /(?:\\)?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})(?:\\)?/
+
+    guard let match = input.firstMatch(of: pattern)?.output.1 else {
+      return nil
+    }
+    return .init(match)
   }
 }
