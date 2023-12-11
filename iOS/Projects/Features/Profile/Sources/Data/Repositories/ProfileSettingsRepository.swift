@@ -34,6 +34,13 @@ struct ProfileSettingsRepository: ProfileSettingsRepositoryRepresentable {
 
 // MARK: - ProfileSettingsRepositoryError
 
-private enum ProfileSettingsRepositoryError: Error {
+private enum ProfileSettingsRepositoryError: LocalizedError {
   case retrievalError
+
+  var errorDescription: String? {
+    switch self {
+    case .retrievalError:
+      return "프로필 데이터를 찾을 수 없습니다."
+    }
+  }
 }

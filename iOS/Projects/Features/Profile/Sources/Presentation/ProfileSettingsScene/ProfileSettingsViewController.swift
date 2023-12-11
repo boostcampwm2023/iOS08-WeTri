@@ -87,10 +87,24 @@ final class ProfileSettingsViewController: UICollectionViewController {
     case .idle:
       break
     case let .alert(error):
-      break
+      showAlert(message: error.localizedDescription)
     case let .profile(profile):
       break
     }
+  }
+
+  private func showAlert(
+    title: String = "알림",
+    message: String,
+    showCancel: Bool = false,
+    okActionHandler: ((UIAlertAction) -> Void)? = nil
+  ) {
+    let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+    alertController.addAction(.init(title: "확인", style: .default, handler: okActionHandler))
+    if showCancel {
+      alertController.addAction(.init(title: "취소", style: .cancel))
+    }
+    present(alertController, animated: true)
   }
 }
 
