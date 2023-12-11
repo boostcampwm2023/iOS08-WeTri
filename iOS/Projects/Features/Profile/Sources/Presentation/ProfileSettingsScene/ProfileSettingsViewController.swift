@@ -15,6 +15,8 @@ import UIKit
 final class ProfileSettingsViewController: UICollectionViewController {
   // MARK: Properties
 
+  private let viewDidLoadSubject: PassthroughSubject<Void, Never> = .init()
+
   private let viewModel: ProfileSettingsViewModelRepresentable
 
   private var subscriptions: Set<AnyCancellable> = []
@@ -62,6 +64,7 @@ final class ProfileSettingsViewController: UICollectionViewController {
     bind()
     setupDataSource()
     setupInitialSnapshots()
+    viewDidLoadSubject.send(())
   }
 
   // MARK: Configuration
@@ -72,14 +75,22 @@ final class ProfileSettingsViewController: UICollectionViewController {
   }
 
   private func bind() {
-    let output = viewModel.transform(input: .init())
-    output.sink { state in
-      switch state {
-      case .idle:
-        break
+    viewModel.transform(input: .init(viewDidLoad: viewDidLoadSubject.eraseToAnyPublisher()))
+      .sink { [weak self] state in
+        self?.render(state: state)
       }
+      .store(in: &subscriptions)
+  }
+
+  private func render(state: ProfileSettingsState) {
+    switch state {
+    case .idle:
+      break
+    case let .alert(error):
+      break
+    case let .profile(profile):
+      break
     }
-    .store(in: &subscriptions)
   }
 }
 
