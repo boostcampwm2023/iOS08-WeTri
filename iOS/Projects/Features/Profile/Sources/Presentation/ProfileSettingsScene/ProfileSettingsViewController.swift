@@ -176,5 +176,6 @@ private extension ProfileSettingsViewController {
 extension ProfileSettingsViewController {
   override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     collectionView.deselectItem(at: indexPath, animated: true)
+    showAlert(message: "준비중입니다.")
   }
 }
