@@ -76,7 +76,7 @@ final class AppCoordinator: AppCoordinating {
 
   func showTabBarFlow() {
     navigationController.isNavigationBarHidden = true
-    let tabBarCoordinator = TabBarCoordinator(navigationController: navigationController)
+    let tabBarCoordinator = TabBarCoordinator(navigationController: navigationController, tabBarFinishDelegate: self)
     childCoordinators.append(tabBarCoordinator)
     tabBarCoordinator.start()
   }
@@ -128,5 +128,13 @@ extension AppCoordinator: LoginFeatureFinishDelegate {
     if token != nil {
       showTabBarFlow()
     }
+  }
+}
+
+// MARK: TabBarFinishDelegate
+
+extension AppCoordinator: TabBarFinishDelegate {
+  func moveToLogin() {
+    showLoginFlow()
   }
 }

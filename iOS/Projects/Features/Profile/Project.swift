@@ -15,6 +15,7 @@ let project = Project.makeModule(
       .log,
       .coordinator,
       .commonNetworkingKeyManager,
+      .keychain,
       .userInformationManager,
     ],
     testDependencies: [],

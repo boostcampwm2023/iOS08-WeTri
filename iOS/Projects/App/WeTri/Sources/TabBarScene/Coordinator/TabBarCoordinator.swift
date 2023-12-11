@@ -13,20 +13,29 @@ import ProfileFeature
 import RecordFeature
 import UIKit
 
+// MARK: - TabBarFinishDelegate
+
+protocol TabBarFinishDelegate: AnyObject {
+  func moveToLogin()
+}
+
 // MARK: - TabBarCoordinator
 
 final class TabBarCoordinator: TabBarCoordinating {
   var navigationController: UINavigationController
   var childCoordinators: [Coordinating] = []
   weak var finishDelegate: CoordinatorFinishDelegate?
+  private weak var tabBarFinishDelegate: TabBarFinishDelegate?
   var flow: CoordinatorFlow = .tabBar
   var tabBarController: UITabBarController
 
   init(
     navigationController: UINavigationController,
+    tabBarFinishDelegate: TabBarFinishDelegate,
     tabBarController: UITabBarController = UITabBarController()
   ) {
     self.navigationController = navigationController
+    self.tabBarFinishDelegate = tabBarFinishDelegate
     self.tabBarController = tabBarController
   }
 
@@ -59,7 +68,11 @@ final class TabBarCoordinator: TabBarCoordinating {
       recordCoordinator.start()
 
     case .profile:
-      let profileCoordinator = ProfileCoordinator(navigationController: pageNavigationViewController, isMockEnvironment: false)
+      let profileCoordinator = ProfileCoordinator(
+        navigationController: pageNavigationViewController,
+        profileFinishDelegate: self,
+        isMockEnvironment: false
+      )
       childCoordinators.append(profileCoordinator)
       profileCoordinator.finishDelegate = self
       profileCoordinator.start()
@@ -83,6 +96,15 @@ extension TabBarCoordinator: CoordinatorFinishDelegate {
     childCoordinators = childCoordinators.filter {
       return $0.flow != childCoordinator.flow
     }
+  }
+}
+
+// MARK: ProfileFinishFinishDelegate
+
+extension TabBarCoordinator: ProfileFinishFinishDelegate {
+  func moveToLogin() {
+    finish()
+    tabBarFinishDelegate?.moveToLogin()
   }
 }
 

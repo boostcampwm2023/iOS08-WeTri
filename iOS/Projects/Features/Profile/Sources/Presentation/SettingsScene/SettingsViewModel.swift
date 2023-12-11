@@ -14,6 +14,7 @@ import Log
 
 public struct SettingsViewModelInput {
   let profileSettingsPublisher: AnyPublisher<Void, Never>
+  let logoutPublisher: AnyPublisher<Void, Never>
 }
 
 public typealias SettingsViewModelOutput = AnyPublisher<SettingsState, Never>
@@ -22,6 +23,7 @@ public typealias SettingsViewModelOutput = AnyPublisher<SettingsState, Never>
 
 public enum SettingsState {
   case idle
+  case alert(String)
 }
 
 // MARK: - SettingsViewModelRepresentable
@@ -36,14 +38,17 @@ final class SettingsViewModel {
   // MARK: - Properties
 
   private weak var coordinating: ProfileCoordinating?
+  private let useCase: LogoutUseCaseRepresentable
+
   private var subscriptions: Set<AnyCancellable> = []
+
+  init(coordinating: ProfileCoordinating?, useCase: LogoutUseCaseRepresentable) {
+    self.coordinating = coordinating
+    self.useCase = useCase
+  }
 
   deinit {
     Log.make().debug("\(Self.self) deinitialized")
-  }
-
-  init(coordinating: ProfileCoordinating?) {
-    self.coordinating = coordinating
   }
 }
 
@@ -56,13 +61,28 @@ extension SettingsViewModel: SettingsViewModelRepresentable {
     }
     subscriptions.removeAll()
 
+    let logoutPublisher = input.logoutPublisher
+      .flatMap(useCase.logout)
+      .share()
+
+    logoutPublisher
+      .filter { $0 == true }
+      .sink { [coordinating] _ in
+        coordinating?.moveToLogin()
+      }
+      .store(in: &subscriptions)
+
+    let alertPublisher = logoutPublisher
+      .filter { $0 == false }
+      .map { _ in SettingsState.alert("로그아웃할 수 없습니다.") }
+
     input.profileSettingsPublisher
       .sink { [coordinating] in
         coordinating?.moveToProfileSettings()
       }
       .store(in: &subscriptions)
 
-    let initialState: SettingsViewModelOutput = Just(.idle).eraseToAnyPublisher()
+    let initialState: SettingsViewModelOutput = Just(.idle).merge(with: alertPublisher).eraseToAnyPublisher()
 
     return initialState
   }

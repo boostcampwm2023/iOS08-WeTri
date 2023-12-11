@@ -11,15 +11,15 @@ import UserInformationManager
 
 // MARK: - SignUpUserDefaultsManagerUseCaseRepresentable
 
-protocol SignUpUserDefaultsManagerUseCaseRepresentable {
-  func setSignUpUserInformation(signUpUser: SignUpUser)
+public protocol SignUpUserDefaultsManagerUseCaseRepresentable {
+  func setSignUpUserInformationAtUserDefaults(_ signUpUserInformation: SignUpUser)
 }
 
 // MARK: - SignUpUserDefaultsManagerUseCase
 
-struct SignUpUserDefaultsManagerUseCase {
+public struct SignUpUserDefaultsManagerUseCase: SignUpUserDefaultsManagerUseCaseRepresentable {
   let manager = UserInformationManager.shared
-  func setSignUpUserInformationAtUserDefaults(_ signUpUserInformation: SignUpUser) {
+  public func setSignUpUserInformationAtUserDefaults(_ signUpUserInformation: SignUpUser) {
     // UserDefaults에 nickName을 저장합니다.
     manager.setUserName(signUpUserInformation.nickname)
 
