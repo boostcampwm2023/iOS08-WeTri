@@ -12,7 +12,7 @@ import Trinet
 
 // MARK: - UserInformationFetcher
 
-public final class UserInformationFetcher {
+public struct UserInformationFetcher {
   private let provider: TNProvider<ProfileFetch>
   public init(session: URLSessionProtocol = URLSession.shared) {
     provider = .init(session: session)

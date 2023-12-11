@@ -10,7 +10,6 @@ import Combine
 import CommonNetworkingKeyManager
 import Foundation
 import Trinet
-import UserInformationManager
 
 // MARK: - SplashTokenRepository
 
