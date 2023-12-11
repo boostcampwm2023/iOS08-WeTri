@@ -23,6 +23,8 @@ final class ProfileSettingsViewController: UICollectionViewController {
 
   private var dataSource: ProfileSettingsDataSource?
 
+  private var headerViewData: Profile?
+
   // MARK: Initializations
 
   init(viewModel: ProfileSettingsViewModelRepresentable) {
@@ -89,7 +91,8 @@ final class ProfileSettingsViewController: UICollectionViewController {
     case let .alert(error):
       showAlert(message: error.localizedDescription)
     case let .profile(profile):
-      break
+      headerViewData = profile
+      updateProfileHeaders()
     }
   }
 
@@ -154,6 +157,10 @@ private extension ProfileSettingsViewController {
     snapshot.appendSections([.main])
     snapshot.appendItems(Item.allCases, toSection: .main)
     dataSource.apply(snapshot, animatingDifferences: false)
+  }
+
+  private func updateProfileHeaders() {
+    guard let dataSource else { return }
   }
 }
 
