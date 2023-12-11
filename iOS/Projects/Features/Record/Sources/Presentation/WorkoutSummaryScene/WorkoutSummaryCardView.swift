@@ -21,7 +21,6 @@ private final class WorkoutSummaryItemView: UIView {
     let label = UILabel()
     label.textColor = DesignSystemColor.primaryText
     label.font = .preferredFont(forTextStyle: .title2)
-    label.text = "타이틀"
     label.textAlignment = .center
     return label
   }()
@@ -30,7 +29,6 @@ private final class WorkoutSummaryItemView: UIView {
     let label = UILabel()
     label.textColor = DesignSystemColor.primaryText
     label.font = .preferredFont(forTextStyle: .headline)
-    label.text = "120bpm"
     label.textAlignment = .center
     return label
   }()
