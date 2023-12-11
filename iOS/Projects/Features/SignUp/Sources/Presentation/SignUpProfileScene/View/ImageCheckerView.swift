@@ -1,5 +1,5 @@
 //
-//  NickNameCheckerView.swift
+//  ImageCheckerView.swift
 //  SignUpFeature
 //
 //  Created by 안종표 on 12/11/23.
@@ -8,19 +8,18 @@
 
 import Foundation
 
-final class NickNameCheckerView: CheckerView {
+final class ImageCheckerView: CheckerView {
   override init(frame: CGRect) {
     super.init(frame: frame)
-    label.text = "글자수는 2~20자, 특수문자는 사용할 수 없어요."
   }
 
   override func configureEnabled() {
     super.configureEnabled()
-    label.text = "사용가능한 닉네임이에요."
+    label.text = "이미지를 추가하셨습니다."
   }
 
   override func configureDisabled() {
     super.configureDisabled()
-    label.text = "글자수는 2~20자, 특수문자는 사용할 수 없어요."
+    label.text = "이미지를 추가해주세요."
   }
 }

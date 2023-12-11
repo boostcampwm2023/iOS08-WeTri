@@ -59,6 +59,12 @@ public final class SignUpProfileViewController: UIViewController {
     return button
   }()
 
+  private let imageCheckerView: ImageCheckerView = {
+    let view = ImageCheckerView(frame: .zero)
+    view.translatesAutoresizingMaskIntoConstraints = false
+    return view
+  }()
+
   private let nickNameLabel: UILabel = {
     let label = UILabel()
     label.translatesAutoresizingMaskIntoConstraints = false
@@ -74,7 +80,7 @@ public final class SignUpProfileViewController: UIViewController {
     return view
   }()
 
-  private let nickNameCheckerView: NickNameCheckerView = {
+  private let nickNameCheckerView: CheckerView = {
     let view = NickNameCheckerView(frame: .zero)
     view.translatesAutoresizingMaskIntoConstraints = false
     view.isHidden = true
@@ -123,10 +129,17 @@ private extension SignUpProfileViewController {
       profileImageButton.heightAnchor.constraint(equalToConstant: Metrics.profileImageButtonSize),
     ])
 
+    view.addSubview(imageCheckerView)
+    NSLayoutConstraint.activate([
+      imageCheckerView.topAnchor.constraint(equalTo: profileImageButton.bottomAnchor, constant: Metrics.componentInterval),
+      imageCheckerView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.safeAreaInterval),
+      imageCheckerView.widthAnchor.constraint(equalToConstant: Metrics.checkerWidth),
+    ])
+
     view.addSubview(nickNameLabel)
     NSLayoutConstraint.activate([
       nickNameLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.safeAreaInterval),
-      nickNameLabel.topAnchor.constraint(equalTo: profileImageButton.bottomAnchor, constant: Metrics.sectionInterval),
+      nickNameLabel.topAnchor.constraint(equalTo: imageCheckerView.bottomAnchor, constant: Metrics.sectionInterval),
     ])
 
     view.addSubview(nickNameBoxView)
@@ -140,7 +153,7 @@ private extension SignUpProfileViewController {
     NSLayoutConstraint.activate([
       nickNameCheckerView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.safeAreaInterval),
       nickNameCheckerView.topAnchor.constraint(equalTo: nickNameBoxView.bottomAnchor, constant: Metrics.componentInterval),
-      nickNameCheckerView.widthAnchor.constraint(equalToConstant: Metrics.nickNameCheckerWidth),
+      nickNameCheckerView.widthAnchor.constraint(equalToConstant: Metrics.checkerWidth),
     ])
 
     view.addSubview(completionButton)
@@ -242,8 +255,8 @@ private extension SignUpProfileViewController {
           showAlert(message: "다시 시도 해주세요.")
         }
       }
-    default:
-      break
+    case .image:
+      imageCheckerView.configureEnabled()
     }
   }
 
@@ -318,10 +331,10 @@ private extension SignUpProfileViewController {
   func showAlertAuth(
     _ type: String
   ) {
-    if let appName = Bundle.main.infoDictionary!["CFBundleDisplayName"] as? String {
+    if let appName = Bundle.main.infoDictionary!["CFBundleName"] as? String {
       let alertVC = UIAlertController(
         title: "설정",
-        message: "\(appName)이(가) \(type) 접근 허용되어 있지 않습니다. 설정화면으로 가시겠습니까?",
+        message: "\(appName)에 \(type) 접근 허용되어 있지 않습니다. 설정화면으로 가시겠습니까?",
         preferredStyle: .alert
       )
       let cancelAction = UIAlertAction(
@@ -334,7 +347,9 @@ private extension SignUpProfileViewController {
       }
       alertVC.addAction(cancelAction)
       alertVC.addAction(confirmAction)
-      present(alertVC, animated: true, completion: nil)
+      DispatchQueue.main.async { [weak self] in
+        self?.present(alertVC, animated: true, completion: nil)
+      }
     }
   }
 
@@ -416,8 +431,9 @@ private enum Metrics {
   static let componentInterval: CGFloat = 9
   static let buttonInterval: CGFloat = 132
   static let profileImageButtonSize: CGFloat = 100
-  static let nickNameCheckerWidth: CGFloat = 175
-  static let nickNameCheckerHeight: CGFloat = 24
+  static let checkerWidth: CGFloat = 175
+  static let checkerHeight: CGFloat = 24
   static let buttonHeight: CGFloat = 44
   static let buttonSafeAreaInterval: CGFloat = 30
+  static let checkerComponentInterval: CGFloat = 21
 }
