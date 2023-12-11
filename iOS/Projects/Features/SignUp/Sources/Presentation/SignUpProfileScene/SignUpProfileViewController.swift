@@ -394,8 +394,8 @@ extension SignUpProfileViewController: UIImagePickerControllerDelegate {
           return
         }
         imageSetSubject.send(downsampledData)
-        dismiss(animated: true)
       }
+      dismiss(animated: true)
     } catch {
       Log.make().error("\(error)")
       profileImageButton.image = UIImage(systemName: "person.fill")
