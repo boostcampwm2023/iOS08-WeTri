@@ -77,6 +77,7 @@ public final class SignUpProfileViewController: UIViewController {
   private let nickNameCheckerView: NickNameCheckerView = {
     let view = NickNameCheckerView(frame: .zero)
     view.translatesAutoresizingMaskIntoConstraints = false
+    view.isHidden = true
     return view
   }()
 
@@ -103,6 +104,8 @@ private extension SignUpProfileViewController {
   func configureUI() {
     view.backgroundColor = DesignSystemColor.secondaryBackground
     view.addGestureRecognizer(tapGestureRecognizer)
+
+    nickNameEnabled()
 
     let safeArea = view.safeAreaLayoutGuide
 
@@ -155,6 +158,7 @@ private extension SignUpProfileViewController {
   }
 
   func nickNameDisabled() {
+    nickNameCheckerView.isHidden = false
     nickNameBoxView.configureDisabled()
     nickNameCheckerView.configureDisabled()
   }

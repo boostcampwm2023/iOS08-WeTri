@@ -22,12 +22,13 @@ final class NickNameBoxView: UIView {
     return nickNameDidChangedSubject.eraseToAnyPublisher()
   }
 
-  let textField: UITextField = {
+  lazy var textField: UITextField = {
     let textField = UITextField()
     textField.translatesAutoresizingMaskIntoConstraints = false
     textField.font = .systemFont(ofSize: 16, weight: .semibold)
     textField.textColor = DesignSystemColor.primaryText
     textField.placeholder = "닉네임을 입력해주세요!"
+    textField.delegate = self
     return textField
   }()
 
@@ -109,6 +110,17 @@ extension NickNameBoxView {
     layer.borderColor = DesignSystemColor.error.cgColor
     textField.textColor = DesignSystemColor.error
     cancelButton.tintColor = DesignSystemColor.error
+  }
+}
+
+// MARK: UITextFieldDelegate
+
+extension NickNameBoxView: UITextFieldDelegate {
+  func textField(_ textField: UITextField, shouldChangeCharactersIn _: NSRange, replacementString string: String) -> Bool {
+    guard let currentText = textField.text else {
+      return false
+    }
+    return (currentText.count + string.count) <= 20
   }
 }
 
