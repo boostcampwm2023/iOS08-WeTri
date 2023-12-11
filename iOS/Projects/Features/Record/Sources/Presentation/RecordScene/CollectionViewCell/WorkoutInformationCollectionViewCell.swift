@@ -82,7 +82,8 @@ private extension WorkoutInformationCollectionViewCell {
     }
     contentView.addSubview(stackView)
     NSLayoutConstraint.activate([
-      stackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+      stackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Metrics.topBottomPadding),
+      stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: Metrics.topBottomPadding),
       stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Metrics.leadingTrailingpadding),
       stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Metrics.leadingTrailingpadding),
     ])
