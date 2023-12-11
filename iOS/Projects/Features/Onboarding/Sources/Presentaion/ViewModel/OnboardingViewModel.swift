@@ -14,6 +14,7 @@ import Foundation
 public struct OnboardingViewModelInput {
   let shouldPresentMapAuthorizationPublisher: AnyPublisher<Void, Never>
   let shouldPresentHealthAuthorizationPublisher: AnyPublisher<Void, Never>
+  let finishAuthorizationPublisher: AnyPublisher<Void, Never>
 }
 
 public typealias OnboardingViewModelOutput = AnyPublisher<OnboardingState, Never>
@@ -40,8 +41,10 @@ public final class OnboardingViewModel {
   // MARK: - Properties
 
   private var useCase: OnboardingPropertyLoadUseCaseRepresentable
-  public init(useCase: OnboardingPropertyLoadUseCaseRepresentable) {
+  private var coordinator: OnboardingCoordinating
+  public init(useCase: OnboardingPropertyLoadUseCaseRepresentable, coordinator: OnboardingCoordinating) {
     self.useCase = useCase
+    self.coordinator = coordinator
   }
 
   private var subscriptions: Set<AnyCancellable> = []
@@ -70,6 +73,15 @@ extension OnboardingViewModel: OnboardingViewModelRepresentable {
         return .shouldPresentHealthAuthorization(response)
       }
       .eraseToAnyPublisher()
+
+    input.finishAuthorizationPublisher
+      .receive(on: RunLoop.main)
+      .sink(receiveCompletion: { [coordinator] _ in
+        coordinator.finishOnBoardingFlow()
+      }, receiveValue: { _ in
+        return
+      })
+      .store(in: &subscriptions)
 
     let initialState: OnboardingViewModelOutput = Just(.idle).eraseToAnyPublisher()
 

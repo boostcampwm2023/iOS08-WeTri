@@ -10,6 +10,12 @@ import Coordinator
 import Foundation
 import UIKit
 
+// MARK: - OnboardingFinishDelegate
+
+public protocol OnboardingFinishDelegate {
+  func finishOnboarding()
+}
+
 // MARK: - OnboardingCoordinating
 
 public protocol OnboardingCoordinating: Coordinating {
@@ -26,25 +32,36 @@ public final class OnboardingCoordinator: OnboardingCoordinating {
 
   public var finishDelegate: CoordinatorFinishDelegate?
 
+  public let onboardingFinishDelegate: OnboardingFinishDelegate?
+
   public let flow: CoordinatorFlow = .onboarding
 
   public func start() {
     startOnboardingFlow()
   }
 
-  public init(navigationController: UINavigationController, finishDelegate: CoordinatorFinishDelegate? = nil) {
+  public init(
+    navigationController: UINavigationController,
+    finishDelegate: CoordinatorFinishDelegate? = nil,
+    onboardingFinishDelegate: OnboardingFinishDelegate
+  ) {
     self.navigationController = navigationController
     self.finishDelegate = finishDelegate
+    self.onboardingFinishDelegate = onboardingFinishDelegate
   }
 
   public func startOnboardingFlow() {
     let repository = OnboardingPropertyLoadRepository()
     let useCase = OnboardingPropertyLoadUseCase(repository: repository)
-    let viewModel = OnboardingViewModel(useCase: useCase)
+    let viewModel = OnboardingViewModel(useCase: useCase, coordinator: self)
     let viewController = OnboardingViewController(viewModel: viewModel)
 
     navigationController.setViewControllers([viewController], animated: true)
   }
 
-  public func finishOnBoardingFlow() {}
+  public func finishOnBoardingFlow() {
+    childCoordinators.removeAll()
+
+    onboardingFinishDelegate?.finishOnboarding()
+  }
 }

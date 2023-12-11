@@ -45,7 +45,7 @@ final class TabBarCoordinator: TabBarCoordinating {
     }
     let tabBarController = makeTabBarController(tabBarViewControllers: tabBarViewControllers)
     UITabBar.appearance().tintColor = DesignSystemColor.main03
-    navigationController.pushViewController(tabBarController, animated: true)
+    navigationController.setViewControllers([tabBarController], animated: true)
   }
 
   private func makePageNavigationController(page: TabBarPage) -> UINavigationController {

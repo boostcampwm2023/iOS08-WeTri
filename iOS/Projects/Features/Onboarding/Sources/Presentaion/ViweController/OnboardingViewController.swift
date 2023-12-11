@@ -9,7 +9,9 @@
 import Combine
 import CombineCocoa
 import CombineExtension
+import CoreLocation
 import DesignSystem
+import HealthKit
 import Log
 import UIKit
 
@@ -22,8 +24,11 @@ public final class OnboardingViewController: UIViewController {
 
   private let shouldPresentMapAuthorizationSubject: PassthroughSubject<Void, Never> = .init()
   private let shouldPresentHealthAuthorizationSubject: PassthroughSubject<Void, Never> = .init()
+  private let finishAuthProcessSubject: PassthroughSubject<Void, Never> = .init()
 
   private var subscriptions: Set<AnyCancellable> = []
+
+  var locationManager: CLLocationManager? = nil
 
   // MARK: UI Components
 
@@ -61,6 +66,14 @@ public final class OnboardingViewController: UIViewController {
   }()
 
   private let nextButton: UIButton = {
+    let button = UIButton(configuration: .plain())
+    button.configurationUpdateHandler = UIButton.Configuration.main(label: "다음")
+
+    button.translatesAutoresizingMaskIntoConstraints = false
+    return button
+  }()
+
+  private let authRequestButton: UIButton = {
     let button = UIButton(configuration: .plain())
     button.configurationUpdateHandler = UIButton.Configuration.main(label: "다음")
 
@@ -136,6 +149,16 @@ private extension OnboardingViewController {
     nextButton.trailingAnchor
       .constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
     nextButton.heightAnchor.constraint(equalToConstant: Metrics.nextButtonHeight).isActive = true
+
+    view.addSubview(authRequestButton)
+    authRequestButton.bottomAnchor
+      .constraint(equalTo: safeArea.bottomAnchor, constant: -Metrics.nextButtonBottomToSafeAreaBottomSpacing).isActive = true
+    authRequestButton.leadingAnchor
+      .constraint(equalTo: safeArea.leadingAnchor, constant: ConstraintsGuideLine.value).isActive = true
+    authRequestButton.trailingAnchor
+      .constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
+    authRequestButton.heightAnchor.constraint(equalToConstant: Metrics.nextButtonHeight).isActive = true
+    authRequestButton.isHidden = true
   }
 
   func setupStyles() {
@@ -145,12 +168,14 @@ private extension OnboardingViewController {
   func bind() {
     bindViewModel()
     bindNextButtonDidTap()
+    bindAuthRequestButtonDidTap()
   }
 
   func bindViewModel() {
     let input = OnboardingViewModelInput(
       shouldPresentMapAuthorizationPublisher: shouldPresentMapAuthorizationSubject.eraseToAnyPublisher(),
-      shouldPresentHealthAuthorizationPublisher: shouldPresentHealthAuthorizationSubject.eraseToAnyPublisher()
+      shouldPresentHealthAuthorizationPublisher: shouldPresentHealthAuthorizationSubject.eraseToAnyPublisher(),
+      finishAuthorizationPublisher: finishAuthProcessSubject.eraseToAnyPublisher()
     )
     viewModel.transform(input: input)
       .sink { [weak self] state in
@@ -166,6 +191,38 @@ private extension OnboardingViewController {
       .store(in: &subscriptions)
   }
 
+  func bindAuthRequestButtonDidTap() {
+    authRequestButton.publisher(.touchUpInside)
+      .sink { [weak self] _ in
+        self?.requestLocationAuth()
+      }
+      .store(in: &subscriptions)
+  }
+
+  func requestLocationAuth() {
+    locationManager = CLLocationManager()
+    locationManager?.delegate = self
+    locationManager?.requestAlwaysAuthorization()
+  }
+
+  func requestHealAuth() {
+    let healthStore = HKHealthStore()
+    let healthDataTypeValues: Set<HKQuantityType> = [
+      HKQuantityType(.heartRate),
+      HKQuantityType(.distanceWalkingRunning),
+      HKQuantityType(.distanceCycling),
+      HKQuantityType(.distanceSwimming),
+      HKQuantityType(.activeEnergyBurned),
+    ]
+    healthStore.requestAuthorization(toShare: nil, read: healthDataTypeValues) { [weak self] _, error in
+      Log.make().debug("여기 한번 실행 되어요?")
+      self?.finishAuthProcessSubject.send(completion: .finished)
+      if let error {
+        Log.make(with: .healthKit).error("Received an HealthKit error type: \(error)")
+      }
+    }
+  }
+
   func applyState(state: OnboardingState) {
     switch state {
     case let .errorState(error):
@@ -174,7 +231,10 @@ private extension OnboardingViewController {
          .idle:
       break
     case let .shouldPresentMapAuthorization(onboardingScenePropertyDTO): updateViewProperty(by: onboardingScenePropertyDTO)
-    case let .shouldPresentHealthAuthorization(onboardingScenePropertyDTO): updateViewProperty(by: onboardingScenePropertyDTO)
+    case let .shouldPresentHealthAuthorization(onboardingScenePropertyDTO):
+      updateViewProperty(by: onboardingScenePropertyDTO)
+      nextButton.isHidden = true
+      authRequestButton.isHidden = false
     }
   }
 
@@ -194,5 +254,16 @@ private extension OnboardingViewController {
     static let titleAndSubtitleSpacing: CGFloat = 15
     static let nextButtonBottomToSafeAreaBottomSpacing: CGFloat = 23
     static let nextButtonHeight: CGFloat = 44
+  }
+}
+
+// MARK: CLLocationManagerDelegate
+
+extension OnboardingViewController: CLLocationManagerDelegate {
+  /// 위치정보를 활용에 대한 데이터를 바꾸고 실행하게 합니다.
+  public func locationManagerDidChangeAuthorization(_: CLLocationManager) {
+    // 헬스 데이터를 요청하기 전, 사용자가 다음 버튼을 누르는 것을 방지합니다.
+    authRequestButton.isUserInteractionEnabled = false
+    requestHealAuth()
   }
 }
