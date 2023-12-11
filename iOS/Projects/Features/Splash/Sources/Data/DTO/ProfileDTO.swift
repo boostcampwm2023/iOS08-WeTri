@@ -21,11 +21,19 @@ public struct ProfileDTO: Decodable {
   let gender: String
 
   /// 생일
-  let birthdate: Date
+  let birthdate: String
 
   /// 프로필 이미지
   let profileImage: URL
 
   /// 사용자의 퍼블릭 아이디 입니다.
   let publicID: String
+
+  enum CodingKeys: String, CodingKey {
+    case nickname
+    case gender
+    case birthdate
+    case profileImage
+    case publicID = "publicId"
+  }
 }

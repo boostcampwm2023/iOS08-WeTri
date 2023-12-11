@@ -25,13 +25,22 @@ struct PersistencyRepository: PersistencyRepositoryRepresentable {
   func reissueUserProfileInformation() {
     Task {
       let jsonDecoder = JSONDecoder()
-      let data = try await provider.request(.fetchProfile, interceptor: TNKeychainInterceptor.shared)
-      guard let profileDTO = try? jsonDecoder.decode(GWResponse<ProfileDTO>.self, from: data).data else {
+
+      guard
+        let data = try? await provider.request(.fetchProfile, interceptor: TNKeychainInterceptor.shared),
+        let profileDTO = try? jsonDecoder.decode(GWResponse<ProfileDTO>.self, from: data).data
+      else {
         return
       }
       UserInformationManager.shared.setUserName(profileDTO.nickname)
+
       UserInformationManager.shared.setUserProfileImageData(url: profileDTO.profileImage)
-      UserInformationManager.shared.setBirthDayDate(profileDTO.birthdate)
+
+      let formatter = DateFormatter()
+      formatter.dateFormat = "yyyy-MM-dd"
+      let date = formatter.date(from: profileDTO.birthdate)
+      UserInformationManager.shared.setBirthDayDate(date)
+
       UserInformationManager.shared.setUserProfileImageURLString(url: profileDTO.profileImage)
     }
   }
@@ -59,7 +68,7 @@ private enum ProfileFetch: TNEndPoint {
     }
   }
 
-  var method: TNMethod { .post }
+  var method: TNMethod { .get }
   var query: Encodable? { nil }
   var body: Encodable? { nil }
   var headers: TNHeaders { .default }
