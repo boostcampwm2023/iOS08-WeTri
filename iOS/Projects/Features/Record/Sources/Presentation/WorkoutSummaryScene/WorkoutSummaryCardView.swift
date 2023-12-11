@@ -8,6 +8,7 @@
 
 import CoreLocation
 import DesignSystem
+import Log
 import MapKit
 import UIKit
 
@@ -178,8 +179,8 @@ final class WorkoutSummaryCardView: UIView {
     if !locations.isEmpty {
       return locations.map { CLLocation(latitude: $0.latitude, longitude: $0.longitude) }
     } else {
-      // Default location
-      return [CLLocation(latitude: 37.22738768300735, longitude: 127.06500224609061)]
+      Log.make().error("\(#function) ---- location값이 존재하지 않습니다.")
+      return []
     }
   }
 
