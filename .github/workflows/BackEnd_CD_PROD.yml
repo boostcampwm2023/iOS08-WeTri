@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - release
+    tags:
+      - 'v*'
 
 jobs:
   deploy:
@@ -24,12 +26,11 @@ jobs:
           context: .
           file: ./BackEnd/Dockerfile
           push: true
-          tags: ${{ secrets.NCP_CONTAINER_REGISTRY_PROD }}/my-app:latest
+          tags: ${{ secrets.NCP_CONTAINER_REGISTRY_PROD }}/my-app:${{ github.ref_name }}
           platforms: linux/amd64
 
       - name: SSH to Internal Server and Deploy
         run: |
           sshpass -p ${{ secrets.BASTION_PASSWORD_PROD }} ssh -o StrictHostKeyChecking=no ${{ secrets.BASTION_USER_PROD }}@${{ secrets.BASTION_HOST_PROD }} -tt "
-            docker pull ${{ secrets.NCP_CONTAINER_REGISTRY_PROD }}/my-app:latest;
-            docker service update --force --image ${{ secrets.NCP_CONTAINER_REGISTRY_PROD }}/my-app:latest my-app --update-parallelism 1 --update-delay 10s
+            docker service update --force --with-registry-auth --image ${{ secrets.NCP_CONTAINER_REGISTRY_PROD }}/my-app:${{ github.ref_name }} my-app
           "
