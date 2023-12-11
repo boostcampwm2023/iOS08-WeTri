@@ -43,6 +43,7 @@ final class WorkoutSelectViewController: UIViewController {
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCollectionViewLayout())
     collectionView.register(WorkoutSelectTypeCell.self, forCellWithReuseIdentifier: WorkoutSelectTypeCell.identifier)
     collectionView.backgroundColor = UIColor.clear
+    collectionView.isScrollEnabled = false
 
     collectionView.translatesAutoresizingMaskIntoConstraints = false
     return collectionView
@@ -70,8 +71,7 @@ private extension WorkoutSelectViewController {
       trailing: Metrics.cellInsets
     )
 
-    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                           heightDimension: .fractionalWidth(0.55))
+    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalWidth(0.55))
     let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
 
     let section = NSCollectionLayoutSection(group: group)
@@ -91,13 +91,13 @@ private extension WorkoutSelectViewController {
 
     view.addSubview(workoutTypesCollectionView)
     workoutTypesCollectionView.topAnchor
-      .constraint(equalTo: workoutSelectDescriptionLabel.bottomAnchor, constant: 12).isActive = true
+      .constraint(equalTo: workoutSelectDescriptionLabel.bottomAnchor, constant: Metrics.descriptionAndWorkoutCollectionViewSpacing).isActive = true
     workoutTypesCollectionView.leadingAnchor
       .constraint(equalTo: safeArea.leadingAnchor, constant: ConstraintsGuideLine.value).isActive = true
     workoutTypesCollectionView.trailingAnchor
       .constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
     workoutTypesCollectionView.bottomAnchor
-      .constraint(equalTo: view.bottomAnchor, constant: -15).isActive = true
+      .constraint(equalTo: view.bottomAnchor, constant: Metrics.workoutTypeCollectionViewBottomSpacing).isActive = true
 
     view.addSubview(nextButton)
     nextButton.leadingAnchor
@@ -105,7 +105,8 @@ private extension WorkoutSelectViewController {
     nextButton.trailingAnchor
       .constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
     nextButton.bottomAnchor
-      .constraint(equalTo: safeArea.bottomAnchor, constant: -28).isActive = true
+      .constraint(equalTo: safeArea.bottomAnchor, constant: Metrics.nextButtonAndBottomAnchorSpacing).isActive = true
+    nextButton.heightAnchor.constraint(equalToConstant: Metrics.nextButtonHeight).isActive = true
   }
 
   func bind() {
@@ -118,6 +119,13 @@ private extension WorkoutSelectViewController {
 
   enum Metrics {
     static let cellInsets: CGFloat = 5
+
+    static let descriptionAndWorkoutCollectionViewSpacing: CGFloat = 12
+
+    static let workoutTypeCollectionViewBottomSpacing: CGFloat = -15
+
+    static let nextButtonAndBottomAnchorSpacing: CGFloat = -28
+    static let nextButtonHeight: CGFloat = 44
   }
 }
 

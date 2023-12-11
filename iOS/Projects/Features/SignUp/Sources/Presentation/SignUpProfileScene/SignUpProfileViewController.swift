@@ -260,7 +260,7 @@ private extension SignUpProfileViewController {
 private extension SignUpProfileViewController {
   /// 버튼을 눌렀을 때, 카메라로 찍을지 앨범에서 고를지 선택하기 위한 얼럿
   func showAlertSelect() {
-    let alertVC = UIAlertController(
+    let actionSheet = UIAlertController(
       title: "프로필 이미지 설정",
       message: "선택해주세요.",
       preferredStyle: .actionSheet
@@ -271,9 +271,11 @@ private extension SignUpProfileViewController {
     let albumAction = UIAlertAction(title: "앨범", style: .default) { [weak self] _ in
       self?.albumAuth()
     }
-    alertVC.addAction(cameraAction)
-    alertVC.addAction(albumAction)
-    present(alertVC, animated: true, completion: nil)
+    let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+    actionSheet.addAction(cameraAction)
+    actionSheet.addAction(albumAction)
+    actionSheet.addAction(cancelAction)
+    present(actionSheet, animated: true, completion: nil)
   }
 
   /// 앨범 접근 권한 판별하는 함수
@@ -369,6 +371,7 @@ extension SignUpProfileViewController: UIImagePickerControllerDelegate {
     didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
   ) {
     do {
+      // 앨범에서 사진 선택할 때
       if let url = info[.imageURL] as? URL {
         let imageData = try Data(contentsOf: url)
         let image = try imageData.downsampling(size: profileImageButton.profileSize, scale: .x3)
@@ -377,9 +380,18 @@ extension SignUpProfileViewController: UIImagePickerControllerDelegate {
           return
         }
         imageSetSubject.send(downsampledData)
+      } else {
+        // 카메라에서 사진 선택할 때
+        guard let image = info[.originalImage] as? UIImage else {
+          return
+        }
+        profileImageButton.image = try image.downsampling(size: profileImageButton.profileSize, scale: .x3)
+        guard let downsampledData = image.pngData() else {
+          return
+        }
+        imageSetSubject.send(downsampledData)
+        dismiss(animated: true)
       }
-
-      dismiss(animated: true)
     } catch {
       Log.make().error("\(error)")
       profileImageButton.image = UIImage(systemName: "person.fill")

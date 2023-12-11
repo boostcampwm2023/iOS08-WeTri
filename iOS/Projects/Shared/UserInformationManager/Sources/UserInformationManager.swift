@@ -13,9 +13,7 @@ import Foundation
 public final class UserInformationManager {
   public static let shared = UserInformationManager()
 
-  private init() {
-    setDefaultsData()
-  }
+  private init() {}
 
   private let defaults = UserDefaults.standard
   private let dateFormatter = {
@@ -75,45 +73,5 @@ public extension UserInformationManager {
     }
     let data = Data(urlString.utf8)
     defaults.setValue(data, forKey: UserInformation.userProfileImageURL.rawValue)
-  }
-}
-
-/// Defaults이미지를 저장합니다.
-private extension UserInformationManager {
-  /// 만약 userDefaults에 값이 존재하지 않는다면 fakeData를 설정합니다.
-  func setDefaultsData() {
-    if
-      data(.userNickName) != nil ||
-      data(.birthDayDate) != nil ||
-      data(.userProfileImage) != nil ||
-      data(.userProfileImageURL) != nil {
-      return
-    }
-
-    let date = Date.now
-    let formatter = DateFormatter()
-    formatter.dateFormat = "yyyy-MM-dd"
-    let dateString = formatter.string(from: date)
-    let dateData = Data(dateString.utf8)
-    defaults.setValue(dateData, forKey: UserInformation.birthDayDate.rawValue)
-
-    let name = Data("슈퍼맨".utf8)
-    defaults.setValue(name, forKey: UserInformation.userNickName.rawValue)
-
-    let url = URL(string: "https://www.catster.com/wp-content/uploads/2017/08/Pixiebob-cat.jpg")
-    setUserProfileImageURLString(url: url)
-
-    guard
-      let path = Bundle(for: Self.self).path(forResource: DefaultsKey.imageKey, ofType: DefaultsKey.imageType),
-      let imageData = try? Data(contentsOf: URL(filePath: path))
-    else {
-      return
-    }
-    defaults.setValue(imageData, forKey: UserInformation.userProfileImage.rawValue)
-  }
-
-  private enum DefaultsKey {
-    static let imageKey = "DefaultsProfileImage"
-    static let imageType = "png"
   }
 }
