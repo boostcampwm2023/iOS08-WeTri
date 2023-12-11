@@ -163,7 +163,8 @@ final class WorkoutRouteMapViewController: UIViewController {
   /// 만약 스냅샷을 통해서 만들 Location의 데이터가 갯수가 적다면, mapCaptureDataSubject에 nil을 전송합니다.
   private func createMapSnapshot(with regionData: MapRegion) {
     if locations.count < Constants.minimumAmountLocationCount {
-      locations = Constants.defaultPolyLineLocationList.map { .init(latitude: $0[0], longitude: $0[1]) }
+      mapCaptureDataSubject.send(nil)
+      return
     }
 
     let coordinates = locations.map(\.coordinate)
@@ -226,10 +227,7 @@ final class WorkoutRouteMapViewController: UIViewController {
 
   private func updatePolyLine(_ value: KalmanFilterCensored?) {
     // 칼만 필터가 초기값이 튀기 때문에, 다음과 같이 Location의 갯수가 4 이하인 경우 폴리라인을 그리지 않습니다.
-    guard
-      let value,
-      locations.count > 4
-    else {
+    guard let value else {
       return
     }
 
@@ -303,6 +301,7 @@ extension WorkoutRouteMapViewController: CLLocationManagerDelegate {
       (newLocation.coordinate.latitude - prevLocation.coordinate.latitude) / timeDistance,
       (newLocation.coordinate.longitude - prevLocation.coordinate.longitude) / timeDistance
     )
+    prevLocation = newLocation
 
     kalmanFilterShouldUpdatePositionSubject.send(
       .init(
