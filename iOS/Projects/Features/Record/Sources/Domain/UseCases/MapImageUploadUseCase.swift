@@ -16,11 +16,14 @@ struct MapImageUploadUseCase: MapImageUploadUseCaseRepresentable {
     self.repository = repository
   }
 
-  func uploadImage(included data: Data?) -> AnyPublisher<URL, Error> {
+  func uploadImage(included data: Data?) -> AnyPublisher<URL?, Never> {
     guard let data
     else {
-      return Empty<URL, Error>().eraseToAnyPublisher()
+      return Just(nil).eraseToAnyPublisher()
     }
     return repository.upload(with: data)
+      .map { $0 }
+      .catch { _ in Just(nil) }
+      .eraseToAnyPublisher()
   }
 }

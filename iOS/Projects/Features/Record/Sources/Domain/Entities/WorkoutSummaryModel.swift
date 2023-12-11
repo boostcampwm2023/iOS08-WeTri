@@ -38,7 +38,7 @@ struct WorkoutSummaryModel {
   let createTimeString: String
 
   /// 운동한 경로를 갖는 지도 이미지입니다.
-  let mapScreenshots: URL
+  let mapScreenshots: URL?
 
   /// 운동 위치 정보
   let locations: [LocationModel]
