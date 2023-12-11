@@ -8,6 +8,7 @@
 
 import CommonNetworkingKeyManager
 import Foundation
+import Log
 import Trinet
 
 // MARK: - UserInformationFetcher
@@ -29,13 +30,16 @@ public struct UserInformationFetcher {
         return
       }
       UserInformationManager.shared.setUserName(profileDTO.nickname)
+      Log.make().debug("\(profileDTO.nickname)")
 
       UserInformationManager.shared.setUserProfileImageData(url: profileDTO.profileImage)
+      Log.make().debug("\(profileDTO.profileImage)")
 
       let formatter = DateFormatter()
       formatter.dateFormat = "yyyy-MM-dd"
       let date = formatter.date(from: profileDTO.birthdate)
       UserInformationManager.shared.setBirthDayDate(date)
+      Log.make().debug("\(date ?? .now)")
 
       UserInformationManager.shared.setUserProfileImageURLString(url: profileDTO.profileImage)
     }
@@ -58,12 +62,6 @@ private enum ProfileFetch: TNEndPoint {
   var query: Encodable? { nil }
   var body: Encodable? { nil }
   var headers: TNHeaders { .default }
-}
-
-// MARK: - TokenError
-
-private enum TokenError: Error {
-  case noData
 }
 
 // MARK: - ProfileDTO
