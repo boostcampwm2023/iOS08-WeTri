@@ -30,5 +30,6 @@ jobs:
       - name: SSH to Internal Server and Deploy
         run: |
           sshpass -p ${{ secrets.BASTION_PASSWORD_PROD }} ssh -o StrictHostKeyChecking=no ${{ secrets.BASTION_USER_PROD }}@${{ secrets.BASTION_HOST_PROD }} -tt "
+            docker pull ${{ secrets.NCP_CONTAINER_REGISTRY }}/my-app:latest;
             docker service update --force --image ${{ secrets.NCP_CONTAINER_REGISTRY }}/my-app:latest my-app --update-parallelism 1 --update-delay 10s
           "
