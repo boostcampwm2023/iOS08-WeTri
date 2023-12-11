@@ -10,6 +10,7 @@ import Combine
 import CommonNetworkingKeyManager
 import Foundation
 import Trinet
+import UserInformationManager
 
 // MARK: - SplashTokenRepository
 
@@ -62,6 +63,8 @@ public struct SplashTokenRepository: SplashTokenRepositoryRepresentable {
     }
     .eraseToAnyPublisher()
   }
+
+  public func reissueUserProfileInformation() {}
 }
 
 // MARK: - ReissueEndPoint
@@ -69,6 +72,7 @@ public struct SplashTokenRepository: SplashTokenRepositoryRepresentable {
 private enum ReissueEndPoint: TNEndPoint {
   case accessToken
   case refreshToken
+  case fetchProfile
 
   var path: String {
     switch self {
@@ -76,6 +80,8 @@ private enum ReissueEndPoint: TNEndPoint {
       return "api/v1/auth/token/access"
     case .refreshToken:
       return "api/v1/auth/token/refresh"
+    case .fetchProfile:
+      return "/api/v1/profiles/me"
     }
   }
 

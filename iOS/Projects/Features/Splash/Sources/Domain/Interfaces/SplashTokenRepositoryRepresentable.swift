@@ -15,3 +15,11 @@ public protocol SplashTokenRepositoryRepresentable {
   func reissueAccessToken() -> AnyPublisher<ReissueAccessTokenDTO, Error>
   func reissueRefreshToken() -> AnyPublisher<ReissueRefreshTokenDTO, Error>
 }
+
+// MARK: - PersistencyRepositoryRepresentable
+
+public protocol PersistencyRepositoryRepresentable {
+  func reissueUserProfileInformation()
+  func saveAccessToken(accessToken: Data)
+  func saveRefreshToken(refreshToken: Data)
+}
