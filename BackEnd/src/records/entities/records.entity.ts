@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { Post } from '../../posts/entities/posts.entity';
 import { Profile } from '../../profiles/entities/profiles.entity';
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Workout } from '../../workouts/entities/workout.entity';
 
@@ -81,6 +81,7 @@ export class Record {
     example: 'https://www.naver.com',
     description: 'map capture을 의미합니다.',
   })
+  @IsOptional()
   @IsString()
   @Column()
   mapCapture: string;

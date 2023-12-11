@@ -55,7 +55,14 @@ final class WorkoutSummaryViewController: UIViewController {
     return button
   }()
 
-  private let stackView: UIStackView = {
+  private let cardStackView: UIStackView = {
+    let stackView = UIStackView()
+    stackView.axis = .vertical
+    stackView.spacing = 30
+    return stackView
+  }()
+
+  private let buttonStackView: UIStackView = {
     let stackView = UIStackView()
     stackView.axis = .vertical
     stackView.spacing = 18
@@ -88,27 +95,36 @@ final class WorkoutSummaryViewController: UIViewController {
   // MARK: Configuration
 
   private func setupLayouts() {
-    view.addSubview(stackView)
+    view.addSubview(cardStackView)
+    view.addSubview(buttonStackView)
 
-    for view in [titleLabel, summaryCardView, writeButton, homeButton] {
-      stackView.addArrangedSubview(view)
+    for view in [titleLabel, summaryCardView] {
+      cardStackView.addArrangedSubview(view)
+    }
+
+    for view in [writeButton, homeButton] {
+      buttonStackView.addArrangedSubview(view)
     }
   }
 
   private func setupConstraints() {
     let safeArea: UILayoutGuide = view.safeAreaLayoutGuide
 
-    stackView.translatesAutoresizingMaskIntoConstraints = false
+    cardStackView.translatesAutoresizingMaskIntoConstraints = false
+    buttonStackView.translatesAutoresizingMaskIntoConstraints = false
     writeButton.translatesAutoresizingMaskIntoConstraints = false
     homeButton.translatesAutoresizingMaskIntoConstraints = false
 
     NSLayoutConstraint.activate(
       [
-        stackView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: Metrics.stackViewTop),
-        stackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.horizontal),
-        stackView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.horizontal),
+        cardStackView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: Metrics.stackViewTop),
+        cardStackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.horizontal),
+        cardStackView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.horizontal),
         writeButton.heightAnchor.constraint(equalToConstant: Metrics.buttonHeight),
         homeButton.heightAnchor.constraint(equalToConstant: Metrics.buttonHeight),
+        buttonStackView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -Metrics.buttonStackViewBottom),
+        buttonStackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.horizontal),
+        buttonStackView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Metrics.horizontal),
       ]
     )
   }
@@ -166,6 +182,8 @@ private extension WorkoutSummaryViewController {
     static let stackViewTop: CGFloat = 12
     static let horizontal: CGFloat = 24
     static let buttonHeight: CGFloat = 44
+
+    static let buttonStackViewBottom: CGFloat = 76
   }
 
   enum Constants {

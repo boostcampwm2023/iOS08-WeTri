@@ -8,6 +8,7 @@
 
 import CoreLocation
 import DesignSystem
+import Log
 import MapKit
 import UIKit
 
@@ -20,7 +21,6 @@ private final class WorkoutSummaryItemView: UIView {
     let label = UILabel()
     label.textColor = DesignSystemColor.primaryText
     label.font = .preferredFont(forTextStyle: .title2)
-    label.text = "타이틀"
     label.textAlignment = .center
     return label
   }()
@@ -29,7 +29,6 @@ private final class WorkoutSummaryItemView: UIView {
     let label = UILabel()
     label.textColor = DesignSystemColor.primaryText
     label.font = .preferredFont(forTextStyle: .headline)
-    label.text = "120bpm"
     label.textAlignment = .center
     return label
   }()
@@ -84,7 +83,27 @@ final class WorkoutSummaryCardView: UIView {
     return label
   }()
 
-  private let mapView: MKMapView = .init()
+  private let emptyStateLabel: UILabel = {
+    let label = UILabel()
+    label.font = .preferredFont(forTextStyle: .callout, weight: .bold)
+    label.text = Strings.emptyStateLabel
+    label.textAlignment = .center
+    label.textColor = DesignSystemColor.primaryText
+    return label
+  }()
+
+  private let emptyStateImageView: UIImageView = {
+    let imageView = UIImageView(image: .mapEmptyStateImage)
+    imageView.contentMode = .scaleAspectFit
+    imageView.backgroundColor = .clear
+    return imageView
+  }()
+
+  private let mapView: MKMapView = {
+    let mapView = MKMapView()
+    mapView.isHidden = true
+    return mapView
+  }()
 
   private let timeItemView: WorkoutSummaryItemView = .init()
 
@@ -92,20 +111,7 @@ final class WorkoutSummaryCardView: UIView {
 
   private let caloriesItemView: WorkoutSummaryItemView = .init()
 
-  private let averageHeartRateItemView: WorkoutSummaryItemView = .init()
-
-  private let maximumHeartRateItemView: WorkoutSummaryItemView = .init()
-
-  private let minimumHeartRateItemView: WorkoutSummaryItemView = .init()
-
   private let activityStackView: UIStackView = {
-    let stackView = UIStackView()
-    stackView.distribution = .fillEqually
-    stackView.alignment = .center
-    return stackView
-  }()
-
-  private let heartRateStackView: UIStackView = {
     let stackView = UIStackView()
     stackView.distribution = .fillEqually
     stackView.alignment = .center
@@ -145,16 +151,14 @@ final class WorkoutSummaryCardView: UIView {
 
     containerRoundedView.addSubview(wholeStackView)
 
-    for view in [dateLabel, mapView, activityStackView, heartRateStackView] {
+    for view in [dateLabel, emptyStateImageView, emptyStateLabel, mapView, activityStackView] {
       wholeStackView.addArrangedSubview(view)
     }
 
+    wholeStackView.setCustomSpacing(0, after: emptyStateImageView)
+
     for activityItem in [timeItemView, distanceItemView, caloriesItemView] {
       activityStackView.addArrangedSubview(activityItem)
-    }
-
-    for heartRateItem in [averageHeartRateItemView, maximumHeartRateItemView, minimumHeartRateItemView] {
-      heartRateStackView.addArrangedSubview(heartRateItem)
     }
   }
 
@@ -162,6 +166,7 @@ final class WorkoutSummaryCardView: UIView {
     containerRoundedView.translatesAutoresizingMaskIntoConstraints = false
     wholeStackView.translatesAutoresizingMaskIntoConstraints = false
     mapView.translatesAutoresizingMaskIntoConstraints = false
+    emptyStateImageView.translatesAutoresizingMaskIntoConstraints = false
 
     NSLayoutConstraint.activate(
       [
@@ -175,7 +180,9 @@ final class WorkoutSummaryCardView: UIView {
         wholeStackView.trailingAnchor.constraint(equalTo: containerRoundedView.trailingAnchor, constant: -Metrics.wholeStackViewInset),
         wholeStackView.bottomAnchor.constraint(equalTo: containerRoundedView.bottomAnchor, constant: -Metrics.wholeStackViewBottomInset),
 
-        mapView.heightAnchor.constraint(equalTo: mapView.widthAnchor, multiplier: 0.66),
+        mapView.heightAnchor.constraint(equalTo: mapView.widthAnchor, multiplier: Metrics.mapViewMultiplerByWidth),
+
+        emptyStateImageView.heightAnchor.constraint(equalTo: emptyStateImageView.widthAnchor, multiplier: Metrics.mapViewMultiplerByWidth),
       ]
     )
   }
@@ -184,23 +191,27 @@ final class WorkoutSummaryCardView: UIView {
     dateLabel.text = model.createTimeString
     timeItemView.configure(withTitle: "시간", value: model.workoutTimeString)
 
+    Log.make(with: .workoutSummary).debug("\(#function) ---- location값: \(model.locations)")
+    // 좌표값이 존재한다면
+    if model.locations.count > 5 {
+      mapView.isHidden = false
+      emptyStateImageView.isHidden = true
+      emptyStateLabel.isHidden = true
+    }
+
     // 지도 설정
     configureMapPolyline(with: model.locations)
 
     distanceItemView.configure(withTitle: "거리", value: "\(model.distance)m")
     caloriesItemView.configure(withTitle: "칼로리", value: "\(model.calorie)kcal")
-
-    averageHeartRateItemView.configure(withTitle: "Avg.HR", value: "\(model.averageHeartRate.flatMap(String.init) ?? "-")bpm")
-    minimumHeartRateItemView.configure(withTitle: "Min.HR", value: "\(model.minimumHeartRate.flatMap(String.init) ?? "-")bpm")
-    maximumHeartRateItemView.configure(withTitle: "Max.HR", value: "\(model.maximumHeartRate.flatMap(String.init) ?? "-")bpm")
   }
 
   private func createLocations(from locations: [LocationModel]) -> [CLLocation] {
     if !locations.isEmpty {
       return locations.map { CLLocation(latitude: $0.latitude, longitude: $0.longitude) }
     } else {
-      // Default location
-      return [CLLocation(latitude: 37.22738768300735, longitude: 127.06500224609061)]
+      Log.make(with: .workoutSummary).error("\(#function) ---- location값이 존재하지 않습니다.")
+      return []
     }
   }
 
@@ -243,5 +254,11 @@ private extension WorkoutSummaryCardView {
     static let wholeStackViewSpacing: CGFloat = 24
     static let wholeStackViewInset: CGFloat = 12
     static let wholeStackViewBottomInset: CGFloat = 30
+
+    static let mapViewMultiplerByWidth: CGFloat = 0.5
+  }
+
+  enum Strings {
+    static let emptyStateLabel: String = "운동한 거리가 너무 짧습니다."
   }
 }
