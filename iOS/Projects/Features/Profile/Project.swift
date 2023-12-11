@@ -15,7 +15,7 @@ let project = Project.makeModule(
       .log,
       .coordinator,
       .commonNetworkingKeyManager,
-      .userInformationManager
+      .userInformationManager,
     ],
     testDependencies: [],
     resources: "Resources/**"

@@ -169,6 +169,7 @@ private extension ProfileSettingsViewController {
     guard let dataSource else { return }
 
     var snapshot = dataSource.snapshot()
+
     snapshot.reloadSections([.header])
   }
 }
