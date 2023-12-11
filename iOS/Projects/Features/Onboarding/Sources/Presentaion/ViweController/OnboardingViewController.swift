@@ -215,7 +215,6 @@ private extension OnboardingViewController {
       HKQuantityType(.activeEnergyBurned),
     ]
     healthStore.requestAuthorization(toShare: nil, read: healthDataTypeValues) { [weak self] _, error in
-      Log.make().debug("여기 한번 실행 되어요?")
       self?.finishAuthProcessSubject.send(completion: .finished)
       if let error {
         Log.make(with: .healthKit).error("Received an HealthKit error type: \(error)")
