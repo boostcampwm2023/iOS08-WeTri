@@ -57,6 +57,7 @@ final class LoginViewController: UIViewController {
     attributedString.addAttribute(.link, value: PrivacyLink.link, range: NSRange(location: 12, length: 18))
 
     let textView = UITextView()
+    textView.backgroundColor = .clear
     textView.translatesAutoresizingMaskIntoConstraints = false
     textView.attributedText = attributedString
     textView.isEditable = false
@@ -64,7 +65,7 @@ final class LoginViewController: UIViewController {
     textView.attributedText = attributedString
     textView.dataDetectorTypes = .link
     textView.font = .systemFont(ofSize: 12, weight: .medium)
-    textView.textColor = DesignSystemColor.primaryText
+    textView.textColor = .white
     textView.textAlignment = .center
     return textView
   }()
