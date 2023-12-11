@@ -104,6 +104,7 @@ public final class SignUpGenderBirthViewController: UIViewController {
     datePicker.datePickerMode = .date
     datePicker.locale = Locale(identifier: "ko-KR")
     datePicker.isHidden = true
+    datePicker.maximumDate = .now
     return datePicker
   }()
 
