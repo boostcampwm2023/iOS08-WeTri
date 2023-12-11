@@ -1,5 +1,5 @@
 //
-//  NickNameCheckerView.swift
+//  CheckerView.swift
 //  SignUpFeature
 //
 //  Created by 안종표 on 12/4/23.
@@ -9,9 +9,9 @@
 import DesignSystem
 import UIKit
 
-// MARK: - NickNameCheckerView
+// MARK: - CheckerView
 
-final class NickNameCheckerView: UIView {
+final class CheckerView: UIView {
   private let imageView: UIImageView = {
     let imageView = UIImageView()
     imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -42,7 +42,7 @@ final class NickNameCheckerView: UIView {
   }
 }
 
-extension NickNameCheckerView {
+extension CheckerView {
   func configureEnabled() {
     label.text = "사용가능한 닉네임이에요."
     label.textColor = DesignSystemColor.main03
@@ -58,7 +58,7 @@ extension NickNameCheckerView {
   }
 }
 
-private extension NickNameCheckerView {
+private extension CheckerView {
   func configureUI() {
     backgroundColor = DesignSystemColor.secondaryBackground
 

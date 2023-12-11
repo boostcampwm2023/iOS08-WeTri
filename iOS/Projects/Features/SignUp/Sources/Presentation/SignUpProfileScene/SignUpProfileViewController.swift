@@ -74,8 +74,8 @@ public final class SignUpProfileViewController: UIViewController {
     return view
   }()
 
-  private let nickNameCheckerView: NickNameCheckerView = {
-    let view = NickNameCheckerView(frame: .zero)
+  private let nickNameCheckerView: CheckerView = {
+    let view = CheckerView(frame: .zero)
     view.translatesAutoresizingMaskIntoConstraints = false
     return view
   }()
