@@ -180,9 +180,9 @@ final class WorkoutSummaryCardView: UIView {
         wholeStackView.trailingAnchor.constraint(equalTo: containerRoundedView.trailingAnchor, constant: -Metrics.wholeStackViewInset),
         wholeStackView.bottomAnchor.constraint(equalTo: containerRoundedView.bottomAnchor, constant: -Metrics.wholeStackViewBottomInset),
 
-        mapView.heightAnchor.constraint(equalTo: mapView.widthAnchor, multiplier: 0.66),
+        mapView.heightAnchor.constraint(equalTo: mapView.widthAnchor, multiplier: Metrics.mapViewMultiplerByWidth),
 
-        emptyStateImageView.heightAnchor.constraint(equalTo: emptyStateImageView.widthAnchor, multiplier: 0.66),
+        emptyStateImageView.heightAnchor.constraint(equalTo: emptyStateImageView.widthAnchor, multiplier: Metrics.mapViewMultiplerByWidth),
       ]
     )
   }
@@ -254,6 +254,8 @@ private extension WorkoutSummaryCardView {
     static let wholeStackViewSpacing: CGFloat = 24
     static let wholeStackViewInset: CGFloat = 12
     static let wholeStackViewBottomInset: CGFloat = 30
+
+    static let mapViewMultiplerByWidth: CGFloat = 0.5
   }
 
   enum Strings {
