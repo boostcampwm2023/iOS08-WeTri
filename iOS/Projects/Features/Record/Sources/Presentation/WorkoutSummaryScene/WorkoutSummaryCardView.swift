@@ -182,6 +182,13 @@ final class WorkoutSummaryCardView: UIView {
     dateLabel.text = model.createTimeString
     timeItemView.configure(withTitle: "시간", value: model.workoutTimeString)
 
+    Log.make(with: .workoutSummary).debug("\(#function) ---- location값: \(model.locations)")
+    // 좌표값이 존재한다면
+    if model.locations.count > 5 {
+      mapView.isHidden = false
+      emptyStateImageView.isHidden = true
+    }
+
     // 지도 설정
     configureMapPolyline(with: model.locations)
 
@@ -193,7 +200,7 @@ final class WorkoutSummaryCardView: UIView {
     if !locations.isEmpty {
       return locations.map { CLLocation(latitude: $0.latitude, longitude: $0.longitude) }
     } else {
-      Log.make().error("\(#function) ---- location값이 존재하지 않습니다.")
+      Log.make(with: .workoutSummary).error("\(#function) ---- location값이 존재하지 않습니다.")
       return []
     }
   }
