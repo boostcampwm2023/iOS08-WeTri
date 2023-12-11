@@ -29,7 +29,7 @@ final class AppCoordinator: AppCoordinating {
   }
 
   func start() {
-    showOnboardingFlow()
+    showSplashFlow()
   }
 
   private func showSplashFlow() {
