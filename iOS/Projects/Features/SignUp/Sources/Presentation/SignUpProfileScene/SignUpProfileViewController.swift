@@ -327,10 +327,10 @@ private extension SignUpProfileViewController {
   func showAlertAuth(
     _ type: String
   ) {
-    if let appName = Bundle.main.infoDictionary!["CFBundleDisplayName"] as? String {
+    if let appName = Bundle.main.infoDictionary!["CFBundleName"] as? String {
       let alertVC = UIAlertController(
         title: "설정",
-        message: "\(appName)이(가) \(type) 접근 허용되어 있지 않습니다. 설정화면으로 가시겠습니까?",
+        message: "\(appName)에 \(type) 접근 허용되어 있지 않습니다. 설정화면으로 가시겠습니까?",
         preferredStyle: .alert
       )
       let cancelAction = UIAlertAction(
@@ -343,7 +343,9 @@ private extension SignUpProfileViewController {
       }
       alertVC.addAction(cancelAction)
       alertVC.addAction(confirmAction)
-      present(alertVC, animated: true, completion: nil)
+      DispatchQueue.main.async { [weak self] in
+        self?.present(alertVC, animated: true, completion: nil)
+      }
     }
   }
 
