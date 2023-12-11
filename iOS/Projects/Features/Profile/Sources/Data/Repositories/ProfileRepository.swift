@@ -91,9 +91,9 @@ extension ProfileEndPoint: TNEndPoint {
   var path: String {
     switch self {
     case .fetchProfile:
-      return "/api/v1/profiles"
+      return "/api/v1/profiles/me"
     case .fetchPosts:
-      return "/api/v1/posts"
+      return "/api/v1/profiles/me/posts"
     }
   }
 

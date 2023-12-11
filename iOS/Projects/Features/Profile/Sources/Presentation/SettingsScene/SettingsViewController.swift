@@ -19,6 +19,7 @@ final class SettingsViewController: UICollectionViewController {
   private let viewModel: SettingsViewModelRepresentable
 
   private let profileSettings: PassthroughSubject<Void, Never> = .init()
+  private let logoutSubject: PassthroughSubject<Void, Never> = .init()
 
   private var dataSource: SettingsDataSource?
 
@@ -63,14 +64,30 @@ final class SettingsViewController: UICollectionViewController {
   }
 
   private func bind() {
-    let output = viewModel.transform(input: .init(profileSettingsPublisher: profileSettings.eraseToAnyPublisher()))
-    output.sink { state in
+    viewModel.transform(
+      input: .init(
+        profileSettingsPublisher: profileSettings.eraseToAnyPublisher(),
+        logoutPublisher: logoutSubject.eraseToAnyPublisher()
+      )
+    )
+    .sink { [weak self] state in
       switch state {
       case .idle:
         break
+      case let .alert(message):
+        self?.showAlert(with: message)
       }
     }
     .store(in: &subscriptions)
+  }
+
+  // MARK: - Custom Methods
+
+  /// 에러 알림 문구를 보여줍니다.
+  private func showAlert(with value: Any) {
+    let alertController = UIAlertController(title: "알림", message: String(describing: value), preferredStyle: .alert)
+    alertController.addAction(UIAlertAction(title: "확인", style: .default))
+    present(alertController, animated: true)
   }
 }
 
@@ -123,8 +140,20 @@ extension SettingsViewController {
       return
     }
 
-    if Item.allCases[indexPath.item] == .profileSetting {
+    switch Item.allCases[indexPath.item] {
+    case .profileSetting:
       profileSettings.send(())
+    case .logout:
+      let alertController = UIAlertController(title: "알림", message: "정말 로그아웃 하시겠습니까?", preferredStyle: .alert)
+      let okAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+        self?.logoutSubject.send(())
+      }
+      let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+      alertController.addAction(okAction)
+      alertController.addAction(cancelAction)
+      present(alertController, animated: true)
+    default:
+      break
     }
   }
 }

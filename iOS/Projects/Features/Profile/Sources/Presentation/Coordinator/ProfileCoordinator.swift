@@ -7,9 +7,16 @@
 //
 
 import Coordinator
+import Keychain
 import Log
 import Trinet
 import UIKit
+
+// MARK: - ProfileFinishFinishDelegate
+
+public protocol ProfileFinishFinishDelegate: AnyObject {
+  func moveToLogin()
+}
 
 // MARK: - ProfileCoordinator
 
@@ -17,14 +24,17 @@ public final class ProfileCoordinator {
   public var navigationController: UINavigationController
   public var childCoordinators: [Coordinating] = []
   public weak var finishDelegate: CoordinatorFinishDelegate?
+  private weak var profileFinishDelegate: ProfileFinishFinishDelegate?
   public var flow: CoordinatorFlow = .profile
   private let isMockEnvironment: Bool
 
   public init(
     navigationController: UINavigationController,
+    profileFinishDelegate: ProfileFinishFinishDelegate,
     isMockEnvironment: Bool = false
   ) {
     self.navigationController = navigationController
+    self.profileFinishDelegate = profileFinishDelegate
     self.isMockEnvironment = isMockEnvironment
   }
 
@@ -58,7 +68,10 @@ public final class ProfileCoordinator {
 // MARK: ProfileCoordinating
 
 extension ProfileCoordinator: ProfileCoordinating {
-  public func moveToLogin() {}
+  public func moveToLogin() {
+    finish()
+    profileFinishDelegate?.moveToLogin()
+  }
 
   public func moveToProfileSettings() {
     let viewModel = ProfileSettingsViewModel(coordinating: self)
@@ -68,7 +81,9 @@ extension ProfileCoordinator: ProfileCoordinating {
   }
 
   public func pushToSettings() {
-    let viewModel = SettingsViewModel(coordinating: self)
+    let repository = KeychainRepository(keychain: Keychain.shared)
+    let useCase = LogoutUseCase(keychainRepository: repository)
+    let viewModel = SettingsViewModel(coordinating: self, useCase: useCase)
     let viewController = SettingsViewController(viewModel: viewModel)
     viewController.hidesBottomBarWhenPushed = true
     navigationController.pushViewController(viewController, animated: true)
