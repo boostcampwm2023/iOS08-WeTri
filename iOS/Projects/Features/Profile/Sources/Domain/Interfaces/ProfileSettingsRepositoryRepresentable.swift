@@ -8,4 +8,6 @@
 
 import Foundation
 
-protocol ProfileSettingsRepositoryRepresentable {}
+protocol ProfileSettingsRepositoryRepresentable {
+  func userInformation() throws -> Profile
+}

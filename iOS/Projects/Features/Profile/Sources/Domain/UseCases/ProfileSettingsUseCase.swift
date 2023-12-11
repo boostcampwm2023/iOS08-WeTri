@@ -14,4 +14,8 @@ struct ProfileSettingsUseCase: ProfileSettingsUseCaseRepresentable {
   init(repository: ProfileSettingsRepositoryRepresentable) {
     self.repository = repository
   }
+
+  func userInformation() throws -> Profile {
+    return try repository.userInformation()
+  }
 }

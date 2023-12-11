@@ -8,4 +8,6 @@
 
 import Foundation
 
-protocol ProfileSettingsUseCaseRepresentable {}
+protocol ProfileSettingsUseCaseRepresentable {
+  func userInformation() throws -> Profile
+}
