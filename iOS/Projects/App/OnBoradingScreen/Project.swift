@@ -9,7 +9,7 @@ let project = Project.makeModule(
     dependencies: [
       .feature(.signUp),
       .feature(.onboarding),
-      .coordinator
+      .coordinator,
     ]
   )
 )
