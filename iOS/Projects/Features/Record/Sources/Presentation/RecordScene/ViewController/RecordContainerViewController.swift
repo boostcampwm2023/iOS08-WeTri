@@ -84,6 +84,6 @@ private extension RecordContainerViewController {
 
 private enum Metrics {
   static let componentInterval: CGFloat = 24
-  static let bottomInterval: CGFloat = 215
+  static let bottomInterval: CGFloat = 160
   static let calendarHeight: CGFloat = 51
 }
