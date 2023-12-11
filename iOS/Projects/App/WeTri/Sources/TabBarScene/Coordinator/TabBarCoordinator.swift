@@ -7,6 +7,7 @@
 //
 
 import Coordinator
+import DesignSystem
 import HomeFeature
 import ProfileFeature
 import RecordFeature
@@ -39,10 +40,11 @@ final class TabBarCoordinator: TabBarCoordinating {
   }
 
   func start() {
-    let tabBarViewControllers = TabBarPage.allCases.map {
+    let tabBarViewControllers = [TabBarPage.record, TabBarPage.profile].map {
       return makePageNavigationController(page: $0)
     }
     let tabBarController = makeTabBarController(tabBarViewControllers: tabBarViewControllers)
+    UITabBar.appearance().tintColor = DesignSystemColor.main03
     navigationController.pushViewController(tabBarController, animated: true)
   }
 
@@ -56,12 +58,6 @@ final class TabBarCoordinator: TabBarCoordinating {
 
   private func startTabBarCoordinator(page: TabBarPage, pageNavigationViewController: UINavigationController) {
     switch page {
-    case .home:
-      let homeCoordinator = HomeCoordinator(navigationController: pageNavigationViewController, delegate: self)
-      childCoordinators.append(homeCoordinator)
-      homeCoordinator.finishDelegate = self
-      homeCoordinator.start()
-
     case .record:
       let recordCoordinator = RecordFeatureCoordinator(
         navigationController: pageNavigationViewController,
@@ -80,6 +76,8 @@ final class TabBarCoordinator: TabBarCoordinating {
       childCoordinators.append(profileCoordinator)
       profileCoordinator.finishDelegate = self
       profileCoordinator.start()
+    default:
+      break
     }
   }
 
@@ -135,7 +133,7 @@ private extension TabBarPage {
     case .home:
       return UIImage(systemName: "house")
     case .record:
-      return UIImage(systemName: "star")
+      return UIImage(systemName: "figure.run")
     case .profile:
       return UIImage(systemName: "person")
     }
@@ -146,7 +144,7 @@ private extension TabBarPage {
     case .home:
       return UIImage(systemName: "house.fill")
     case .record:
-      return UIImage(systemName: "star.fill")
+      return UIImage(systemName: "figure.run")
     case .profile:
       return UIImage(systemName: "person.fill")
     }

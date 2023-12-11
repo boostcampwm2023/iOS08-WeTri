@@ -14,4 +14,13 @@ public struct Profile {
 
   /// 프로필 닉네임
   let nickname: String
+
+  /// 사용자의 생년월일
+  let birth: String?
+
+  init(profileData: Data, nickname: String, birth: String? = nil) {
+    self.profileData = profileData
+    self.nickname = nickname
+    self.birth = birth
+  }
 }

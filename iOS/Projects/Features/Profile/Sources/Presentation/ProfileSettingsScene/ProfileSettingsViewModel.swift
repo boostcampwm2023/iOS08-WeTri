@@ -11,7 +11,9 @@ import Foundation
 
 // MARK: - ProfileSettingsViewModelInput
 
-public struct ProfileSettingsViewModelInput {}
+public struct ProfileSettingsViewModelInput {
+  let viewDidLoad: AnyPublisher<Void, Never>
+}
 
 public typealias ProfileSettingsViewModelOutput = AnyPublisher<ProfileSettingsState, Never>
 
@@ -19,6 +21,8 @@ public typealias ProfileSettingsViewModelOutput = AnyPublisher<ProfileSettingsSt
 
 public enum ProfileSettingsState {
   case idle
+  case alert(Error)
+  case profile(Profile)
 }
 
 // MARK: - ProfileSettingsViewModelRepresentable
@@ -33,22 +37,27 @@ final class ProfileSettingsViewModel {
   // MARK: - Properties
 
   private weak var coordinating: ProfileCoordinating?
+  private let useCase: ProfileSettingsUseCase
 
   private var subscriptions: Set<AnyCancellable> = []
 
-  init(coordinating: ProfileCoordinating? = nil) {
+  init(coordinating: ProfileCoordinating?, useCase: ProfileSettingsUseCase) {
     self.coordinating = coordinating
+    self.useCase = useCase
   }
 }
 
 // MARK: ProfileSettingsViewModelRepresentable
 
 extension ProfileSettingsViewModel: ProfileSettingsViewModelRepresentable {
-  public func transform(input _: ProfileSettingsViewModelInput) -> ProfileSettingsViewModelOutput {
+  public func transform(input: ProfileSettingsViewModelInput) -> ProfileSettingsViewModelOutput {
     subscriptions.removeAll()
 
-    let initialState: ProfileSettingsViewModelOutput = Just(.idle).eraseToAnyPublisher()
+    let profilePublisher = input.viewDidLoad
+      .tryMap(useCase.userInformation)
+      .map(ProfileSettingsState.profile)
+      .catch { Just(.alert($0)) }
 
-    return initialState
+    return Just(.idle).merge(with: profilePublisher).eraseToAnyPublisher()
   }
 }

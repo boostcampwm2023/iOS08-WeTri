@@ -74,7 +74,9 @@ extension ProfileCoordinator: ProfileCoordinating {
   }
 
   public func moveToProfileSettings() {
-    let viewModel = ProfileSettingsViewModel(coordinating: self)
+    let repository = ProfileSettingsRepository(persistency: .shared)
+    let useCase = ProfileSettingsUseCase(repository: repository)
+    let viewModel = ProfileSettingsViewModel(coordinating: self, useCase: useCase)
     let viewController = ProfileSettingsViewController(viewModel: viewModel)
     viewController.hidesBottomBarWhenPushed = true
     navigationController.pushViewController(viewController, animated: true)

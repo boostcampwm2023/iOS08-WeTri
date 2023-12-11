@@ -84,6 +84,14 @@ final class ProfileSettingsHeaderView: UICollectionReusableView {
       ]
     )
   }
+
+  func configure(with model: Profile?) {
+    if let model {
+      imageView.image = UIImage(data: model.profileData)
+      nicknameLabel.text = model.nickname
+      birthLabel.text = model.birth
+    }
+  }
 }
 
 // MARK: ProfileSettingsHeaderView.Metrics
