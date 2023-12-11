@@ -37,6 +37,9 @@ public enum LogCategory: String {
 
   /// Socket 로그를 담당합니다.
   case socket
+
+  /// 운동 요약 화면의 로그를 담당합니다.
+  case workoutSummary
 }
 
 private extension String {
