@@ -7,6 +7,7 @@
 //
 
 import Combine
+import CommonNetworkingKeyManager
 import Foundation
 import Trinet
 
@@ -48,7 +49,7 @@ public struct WorkoutSummaryRepository: WorkoutSummaryRepositoryRepresentable {
       Future<Data, Error> { promise in
         Task {
           do {
-            let data = try await provider.request(.init(recordID: id))
+            let data = try await provider.request(.init(recordID: id), interceptor: TNKeychainInterceptor.shared)
             promise(.success(data))
           } catch {
             promise(.failure(error))
