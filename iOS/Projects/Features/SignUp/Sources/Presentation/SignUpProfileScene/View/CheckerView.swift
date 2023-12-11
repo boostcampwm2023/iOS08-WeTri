@@ -11,7 +11,7 @@ import UIKit
 
 // MARK: - CheckerView
 
-final class CheckerView: UIView {
+class CheckerView: UIView {
   private let imageView: UIImageView = {
     let imageView = UIImageView()
     imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -21,10 +21,9 @@ final class CheckerView: UIView {
     return imageView
   }()
 
-  private let label: UILabel = {
+  let label: UILabel = {
     let label = UILabel()
     label.translatesAutoresizingMaskIntoConstraints = false
-    label.text = "글자수는 2~20자, 특수문자는 사용할 수 없어요."
     label.textColor = DesignSystemColor.error
     label.font = .systemFont(ofSize: 12)
     return label
@@ -40,18 +39,14 @@ final class CheckerView: UIView {
   required init?(coder _: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
-}
 
-extension CheckerView {
   func configureEnabled() {
-    label.text = "사용가능한 닉네임이에요."
     label.textColor = DesignSystemColor.main03
     imageView.image = UIImage(systemName: "checkmark.bubble")
     imageView.tintColor = DesignSystemColor.main03
   }
 
   func configureDisabled() {
-    label.text = "글자수는 2~20자, 특수문자는 사용할 수 없어요."
     label.textColor = DesignSystemColor.error
     imageView.image = UIImage(systemName: "exclamationmark.bubble")
     imageView.tintColor = DesignSystemColor.error
