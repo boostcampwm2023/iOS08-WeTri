@@ -59,6 +59,12 @@ public final class SignUpProfileViewController: UIViewController {
     return button
   }()
 
+  private let imageCheckerView: ImageCheckerView = {
+    let view = ImageCheckerView(frame: .zero)
+    view.translatesAutoresizingMaskIntoConstraints = false
+    return view
+  }()
+
   private let nickNameLabel: UILabel = {
     let label = UILabel()
     label.translatesAutoresizingMaskIntoConstraints = false
@@ -120,10 +126,17 @@ private extension SignUpProfileViewController {
       profileImageButton.heightAnchor.constraint(equalToConstant: Metrics.profileImageButtonSize),
     ])
 
+    view.addSubview(imageCheckerView)
+    NSLayoutConstraint.activate([
+      imageCheckerView.topAnchor.constraint(equalTo: profileImageButton.bottomAnchor, constant: Metrics.componentInterval),
+      imageCheckerView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.safeAreaInterval),
+      imageCheckerView.widthAnchor.constraint(equalToConstant: Metrics.checkerWidth),
+    ])
+
     view.addSubview(nickNameLabel)
     NSLayoutConstraint.activate([
       nickNameLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.safeAreaInterval),
-      nickNameLabel.topAnchor.constraint(equalTo: profileImageButton.bottomAnchor, constant: Metrics.sectionInterval),
+      nickNameLabel.topAnchor.constraint(equalTo: imageCheckerView.bottomAnchor, constant: Metrics.sectionInterval),
     ])
 
     view.addSubview(nickNameBoxView)
@@ -137,7 +150,7 @@ private extension SignUpProfileViewController {
     NSLayoutConstraint.activate([
       nickNameCheckerView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.safeAreaInterval),
       nickNameCheckerView.topAnchor.constraint(equalTo: nickNameBoxView.bottomAnchor, constant: Metrics.componentInterval),
-      nickNameCheckerView.widthAnchor.constraint(equalToConstant: Metrics.nickNameCheckerWidth),
+      nickNameCheckerView.widthAnchor.constraint(equalToConstant: Metrics.checkerWidth),
     ])
 
     view.addSubview(completionButton)
@@ -238,8 +251,8 @@ private extension SignUpProfileViewController {
           showAlert(message: "다시 시도 해주세요.")
         }
       }
-    default:
-      break
+    case .image:
+      imageCheckerView.configureEnabled()
     }
   }
 
@@ -412,8 +425,9 @@ private enum Metrics {
   static let componentInterval: CGFloat = 9
   static let buttonInterval: CGFloat = 132
   static let profileImageButtonSize: CGFloat = 100
-  static let nickNameCheckerWidth: CGFloat = 175
-  static let nickNameCheckerHeight: CGFloat = 24
+  static let checkerWidth: CGFloat = 175
+  static let checkerHeight: CGFloat = 24
   static let buttonHeight: CGFloat = 44
   static let buttonSafeAreaInterval: CGFloat = 30
+  static let checkerComponentInterval: CGFloat = 21
 }

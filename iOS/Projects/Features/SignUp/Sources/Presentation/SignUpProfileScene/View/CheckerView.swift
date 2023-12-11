@@ -26,6 +26,7 @@ class CheckerView: UIView {
     label.translatesAutoresizingMaskIntoConstraints = false
     label.textColor = DesignSystemColor.error
     label.font = .systemFont(ofSize: 12)
+    label.textAlignment = .center
     return label
   }()
 

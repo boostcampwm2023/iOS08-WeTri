@@ -175,7 +175,7 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
       .eraseToAnyPublisher()
 
     return Publishers
-      .Merge5(initialState, nickNameCheckedResult, image, success, completeError)
+      .Merge6(initialState, nickNameCheckedResult, image, success, completeError, imageSettingResult)
       .eraseToAnyPublisher()
   }
 }
