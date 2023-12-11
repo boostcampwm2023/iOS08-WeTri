@@ -260,7 +260,7 @@ private extension SignUpProfileViewController {
 private extension SignUpProfileViewController {
   /// 버튼을 눌렀을 때, 카메라로 찍을지 앨범에서 고를지 선택하기 위한 얼럿
   func showAlertSelect() {
-    let alertVC = UIAlertController(
+    let actionSheet = UIAlertController(
       title: "프로필 이미지 설정",
       message: "선택해주세요.",
       preferredStyle: .actionSheet
@@ -271,9 +271,11 @@ private extension SignUpProfileViewController {
     let albumAction = UIAlertAction(title: "앨범", style: .default) { [weak self] _ in
       self?.albumAuth()
     }
-    alertVC.addAction(cameraAction)
-    alertVC.addAction(albumAction)
-    present(alertVC, animated: true, completion: nil)
+    let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+    actionSheet.addAction(cameraAction)
+    actionSheet.addAction(albumAction)
+    actionSheet.addAction(cancelAction)
+    present(actionSheet, animated: true, completion: nil)
   }
 
   /// 앨범 접근 권한 판별하는 함수
