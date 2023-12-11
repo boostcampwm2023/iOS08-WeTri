@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - RecordResponseDTO
 
-struct RecordResponseDTO {
+struct RecordResponseDTO: Codable {
   let workoutTime: Int?
   let distance: Int?
   let calorie: Int?
@@ -18,16 +18,19 @@ struct RecordResponseDTO {
   let minHeartRate: Int?
   let maxHeartRate: Int?
   let createdAt: String?
-  let workout: String?
+  let workout: WorkoutResponseDTO?
 }
 
-// MARK: Codable
+// MARK: - WorkoutResponseDTO
 
-extension RecordResponseDTO: Codable {}
+struct WorkoutResponseDTO: Codable {
+  /// 운동 이름
+  let name: String?
+}
 
 extension Record {
   init?(dto: RecordResponseDTO) {
-    guard let workout = dto.workout,
+    guard let workout = dto.workout?.name,
           let distance = dto.distance,
           let createdAt = dto.createdAt,
           let workoutTime = dto.workoutTime,
