@@ -14,7 +14,7 @@ import Foundation
 /// 처음 로그인 하는 유저의 Response를 담을 Entity
 public struct InitialUser {
   /// 처음 로그인 하는지 아닌지
-  public let isFirstLogined: Bool
+  public let isFirstLogined: Bool?
 
   ///
   public let mappedUserID: String
