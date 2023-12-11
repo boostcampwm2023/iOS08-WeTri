@@ -30,7 +30,7 @@ final class ProfileSettingsViewController: UICollectionViewController {
   init(viewModel: ProfileSettingsViewModelRepresentable) {
     self.viewModel = viewModel
 
-    let layout = UICollectionViewCompositionalLayout { _, environment in
+    let layout = UICollectionViewCompositionalLayout { sectionNumber, environment in
       // Section을 위한 리스트 configuration 생성
       var configuration = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
       configuration.headerMode = .supplementary
@@ -45,7 +45,9 @@ final class ProfileSettingsViewController: UICollectionViewController {
 
       // Section에 header 추가
       let section = NSCollectionLayoutSection.list(using: configuration, layoutEnvironment: environment)
-      section.boundarySupplementaryItems = [header]
+      if sectionNumber == Section.header.rawValue {
+        section.boundarySupplementaryItems = [header]
+      }
 
       return section
     }
@@ -117,7 +119,8 @@ private extension ProfileSettingsViewController {
   typealias ListCellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Item>
   typealias HeaderRegistration = UICollectionView.SupplementaryRegistration<ProfileSettingsHeaderView>
 
-  enum Section {
+  enum Section: Int {
+    case header
     case main
   }
 
@@ -154,7 +157,7 @@ private extension ProfileSettingsViewController {
   private func setupInitialSnapshots() {
     guard let dataSource else { return }
     var snapshot = ProfileSettingsSnapshot()
-    snapshot.appendSections([.main])
+    snapshot.appendSections([.header, .main])
     snapshot.appendItems(Item.allCases, toSection: .main)
     dataSource.apply(snapshot, animatingDifferences: false)
   }
