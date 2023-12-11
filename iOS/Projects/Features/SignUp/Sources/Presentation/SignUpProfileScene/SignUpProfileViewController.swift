@@ -59,7 +59,7 @@ public final class SignUpProfileViewController: UIViewController {
     return button
   }()
 
-  private let imageCheckerView: ImageCheckerView = {
+  private let imageCheckerView: CheckerView = {
     let view = ImageCheckerView(frame: .zero)
     view.translatesAutoresizingMaskIntoConstraints = false
     return view
@@ -84,6 +84,13 @@ public final class SignUpProfileViewController: UIViewController {
     let view = NickNameCheckerView(frame: .zero)
     view.translatesAutoresizingMaskIntoConstraints = false
     view.isHidden = true
+    return view
+  }()
+
+  private let nickNameDuplicatingCheckerView: CheckerView = {
+    let view = NickNameDuplicatingCheckerView()
+    view.translatesAutoresizingMaskIntoConstraints = false
+    view.configureEnabled()
     return view
   }()
 
@@ -154,6 +161,13 @@ private extension SignUpProfileViewController {
       nickNameCheckerView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.safeAreaInterval),
       nickNameCheckerView.topAnchor.constraint(equalTo: nickNameBoxView.bottomAnchor, constant: Metrics.componentInterval),
       nickNameCheckerView.widthAnchor.constraint(equalToConstant: Metrics.checkerWidth),
+    ])
+
+    view.addSubview(nickNameDuplicatingCheckerView)
+    NSLayoutConstraint.activate([
+      nickNameDuplicatingCheckerView.topAnchor.constraint(equalTo: nickNameCheckerView.bottomAnchor, constant: Metrics.checkerInteval),
+      nickNameDuplicatingCheckerView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Metrics.safeAreaInterval),
+      nickNameDuplicatingCheckerView.widthAnchor.constraint(equalToConstant: Metrics.checkerWidth),
     ])
 
     view.addSubview(completionButton)
@@ -255,6 +269,16 @@ private extension SignUpProfileViewController {
           showAlert(message: "다시 시도 해주세요.")
         }
       }
+
+      if let profileViewModelError = error as? SignUpProfileViewModelError {
+        switch profileViewModelError {
+        case .duplicateNickName:
+          nickNameDuplicatingCheckerView.configureDisabled()
+        default:
+          nickNameDuplicatingCheckerView.configureEnabled()
+        }
+      }
+
     case .image:
       imageCheckerView.configureEnabled()
     }
@@ -436,4 +460,5 @@ private enum Metrics {
   static let buttonHeight: CGFloat = 44
   static let buttonSafeAreaInterval: CGFloat = 30
   static let checkerComponentInterval: CGFloat = 21
+  static let checkerInteval: CGFloat = 21
 }
