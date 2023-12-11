@@ -85,7 +85,18 @@ final class WorkoutSummaryCardView: UIView {
     return label
   }()
 
-  private let mapView: MKMapView = .init()
+  private let emptyStateImageView: UIImageView = {
+    let imageView = UIImageView(image: .mapEmptyStateImage)
+    imageView.contentMode = .scaleAspectFit
+    imageView.backgroundColor = .clear
+    return imageView
+  }()
+
+  private let mapView: MKMapView = {
+    let mapView = MKMapView()
+    mapView.isHidden = true
+    return mapView
+  }()
 
   private let timeItemView: WorkoutSummaryItemView = .init()
 
@@ -133,7 +144,7 @@ final class WorkoutSummaryCardView: UIView {
 
     containerRoundedView.addSubview(wholeStackView)
 
-    for view in [dateLabel, mapView, activityStackView] {
+    for view in [dateLabel, emptyStateImageView, mapView, activityStackView] {
       wholeStackView.addArrangedSubview(view)
     }
 
@@ -146,6 +157,7 @@ final class WorkoutSummaryCardView: UIView {
     containerRoundedView.translatesAutoresizingMaskIntoConstraints = false
     wholeStackView.translatesAutoresizingMaskIntoConstraints = false
     mapView.translatesAutoresizingMaskIntoConstraints = false
+    emptyStateImageView.translatesAutoresizingMaskIntoConstraints = false
 
     NSLayoutConstraint.activate(
       [
@@ -160,6 +172,8 @@ final class WorkoutSummaryCardView: UIView {
         wholeStackView.bottomAnchor.constraint(equalTo: containerRoundedView.bottomAnchor, constant: -Metrics.wholeStackViewBottomInset),
 
         mapView.heightAnchor.constraint(equalTo: mapView.widthAnchor, multiplier: 0.66),
+
+        emptyStateImageView.heightAnchor.constraint(equalTo: emptyStateImageView.widthAnchor, multiplier: 0.66),
       ]
     )
   }
