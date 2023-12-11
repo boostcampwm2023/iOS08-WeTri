@@ -5,5 +5,6 @@ let workspace = Workspace(
   name: "WeTri",
   projects: [
     "Projects/App/WeTri",
+    "Projects/App/OnBoradingScreen",
   ]
 )
