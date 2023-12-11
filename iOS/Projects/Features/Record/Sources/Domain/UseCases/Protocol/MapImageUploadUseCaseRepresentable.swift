@@ -10,5 +10,5 @@ import Combine
 import Foundation
 
 protocol MapImageUploadUseCaseRepresentable {
-  func uploadImage(included data: Data?) -> AnyPublisher<URL, Error>
+  func uploadImage(included data: Data?) -> AnyPublisher<URL?, Never>
 }

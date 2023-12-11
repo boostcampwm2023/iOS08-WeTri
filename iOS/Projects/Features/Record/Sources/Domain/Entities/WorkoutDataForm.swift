@@ -20,7 +20,7 @@ public struct WorkoutDataForm: Encodable {
   let calorie: Int?
 
   /// 지도 경로 스크린샷 URL
-  let imageURL: URL
+  let imageURL: URL?
 
   /// 운동 ID
   let workoutID: Int
