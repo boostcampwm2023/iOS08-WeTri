@@ -22,29 +22,6 @@ struct PersistencyRepository: PersistencyRepositoryRepresentable {
     provider = .init(session: session)
   }
 
-  func reissueUserProfileInformation() {
-    Task {
-      let jsonDecoder = JSONDecoder()
-
-      guard
-        let data = try? await provider.request(.fetchProfile, interceptor: TNKeychainInterceptor.shared),
-        let profileDTO = try? jsonDecoder.decode(GWResponse<ProfileDTO>.self, from: data).data
-      else {
-        return
-      }
-      UserInformationManager.shared.setUserName(profileDTO.nickname)
-
-      UserInformationManager.shared.setUserProfileImageData(url: profileDTO.profileImage)
-
-      let formatter = DateFormatter()
-      formatter.dateFormat = "yyyy-MM-dd"
-      let date = formatter.date(from: profileDTO.birthdate)
-      UserInformationManager.shared.setBirthDayDate(date)
-
-      UserInformationManager.shared.setUserProfileImageURLString(url: profileDTO.profileImage)
-    }
-  }
-
   func saveAccessToken(accessToken: Data) {
     Keychain.shared.delete(key: Tokens.accessToken)
     Keychain.shared.save(key: Tokens.accessToken, data: accessToken)

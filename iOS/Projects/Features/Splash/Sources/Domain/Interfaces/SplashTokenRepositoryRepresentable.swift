@@ -19,7 +19,6 @@ public protocol SplashTokenRepositoryRepresentable {
 // MARK: - PersistencyRepositoryRepresentable
 
 public protocol PersistencyRepositoryRepresentable {
-  func reissueUserProfileInformation()
   func saveAccessToken(accessToken: Data)
   func saveRefreshToken(refreshToken: Data)
 }

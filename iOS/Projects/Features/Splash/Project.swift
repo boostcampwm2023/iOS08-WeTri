@@ -7,7 +7,7 @@ let project = Project.makeModule(
   targets: .feature(
     .splash,
     testingOptions: [.unitTest],
-    dependencies: [.designSystem, .log, .commonNetworkingKeyManager, .trinet, .keychain],
+    dependencies: [.designSystem, .log, .commonNetworkingKeyManager, .trinet, .keychain, .userInformationManager],
     testDependencies: []
   )
 )

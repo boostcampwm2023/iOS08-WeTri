@@ -8,6 +8,7 @@
 
 import Combine
 import Foundation
+import UserInformationManager
 
 // MARK: - SplashUseCase
 
@@ -49,7 +50,7 @@ public struct SplashUseCase: SplashUseCaseRepresentable {
       }
       .map { accessTokenData in
         persistencyRepository.saveAccessToken(accessToken: accessTokenData)
-        persistencyRepository.reissueUserProfileInformation()
+        UserInformationFetcher().reissueUserProfileInformation()
       }
       .map { return true } // 모든 로직이 성공
       .catch { _ in Just(false) } // Error가 발생하면 false 리턴
