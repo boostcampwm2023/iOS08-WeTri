@@ -33,11 +33,13 @@ final class ProfileSettingsViewModel {
   // MARK: - Properties
 
   private weak var coordinating: ProfileCoordinating?
+  private let useCase: ProfileSettingsUseCase
 
   private var subscriptions: Set<AnyCancellable> = []
 
-  init(coordinating: ProfileCoordinating? = nil) {
+  init(coordinating: ProfileCoordinating?, useCase: ProfileSettingsUseCase) {
     self.coordinating = coordinating
+    self.useCase = useCase
   }
 }
 
