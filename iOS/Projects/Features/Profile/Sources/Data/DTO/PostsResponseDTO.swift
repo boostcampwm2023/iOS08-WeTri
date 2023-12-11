@@ -49,7 +49,7 @@ struct PagingMetaData: Codable {
   /// 받아온 데이터 중 제일 마지막의 ID값
   ///
   /// 다음에 요청으로 보낼 id값입니다.
-  let lastID: Int
+  let lastID: Int?
 
   /// 받아온 데이터 개수
   let count: Int
