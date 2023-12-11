@@ -55,6 +55,7 @@ final class RecordListViewController: UIViewController {
 
   private let noRecordsView: NoRecordsView = {
     let view = NoRecordsView()
+    view.layer.cornerRadius = 8
     view.translatesAutoresizingMaskIntoConstraints = false
     view.isHidden = true
     return view
@@ -190,15 +191,14 @@ private extension RecordListViewController {
     }
 
     workoutInformationDataSource = WorkoutInformationDataSource(
-      collectionView: workoutInformationCollectionView,
-      cellProvider: { collectionView, indexPath, itemIdentifier in
-        return collectionView.dequeueConfiguredReusableCell(
-          using: cellRegistration,
-          for: indexPath,
-          item: itemIdentifier
-        )
-      }
-    )
+      collectionView: workoutInformationCollectionView
+    ) { collectionView, indexPath, itemIdentifier in
+      return collectionView.dequeueConfiguredReusableCell(
+        using: cellRegistration,
+        for: indexPath,
+        item: itemIdentifier
+      )
+    }
   }
 
   func configureSnapShot(items: [WorkoutInformationItem]) {
