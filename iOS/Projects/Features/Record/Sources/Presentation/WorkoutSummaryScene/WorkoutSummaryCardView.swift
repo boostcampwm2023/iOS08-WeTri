@@ -83,6 +83,15 @@ final class WorkoutSummaryCardView: UIView {
     return label
   }()
 
+  private let emptyStateLabel: UILabel = {
+    let label = UILabel()
+    label.font = .preferredFont(forTextStyle: .callout, weight: .bold)
+    label.text = Strings.emptyStateLabel
+    label.textAlignment = .center
+    label.textColor = DesignSystemColor.primaryText
+    return label
+  }()
+
   private let emptyStateImageView: UIImageView = {
     let imageView = UIImageView(image: .mapEmptyStateImage)
     imageView.contentMode = .scaleAspectFit
@@ -142,9 +151,11 @@ final class WorkoutSummaryCardView: UIView {
 
     containerRoundedView.addSubview(wholeStackView)
 
-    for view in [dateLabel, emptyStateImageView, mapView, activityStackView] {
+    for view in [dateLabel, emptyStateImageView, emptyStateLabel, mapView, activityStackView] {
       wholeStackView.addArrangedSubview(view)
     }
+
+    wholeStackView.setCustomSpacing(0, after: emptyStateImageView)
 
     for activityItem in [timeItemView, distanceItemView, caloriesItemView] {
       activityStackView.addArrangedSubview(activityItem)
@@ -185,6 +196,7 @@ final class WorkoutSummaryCardView: UIView {
     if model.locations.count > 5 {
       mapView.isHidden = false
       emptyStateImageView.isHidden = true
+      emptyStateLabel.isHidden = true
     }
 
     // 지도 설정
@@ -242,5 +254,9 @@ private extension WorkoutSummaryCardView {
     static let wholeStackViewSpacing: CGFloat = 24
     static let wholeStackViewInset: CGFloat = 12
     static let wholeStackViewBottomInset: CGFloat = 30
+  }
+
+  enum Strings {
+    static let emptyStateLabel: String = "운동한 거리가 너무 짧습니다."
   }
 }
