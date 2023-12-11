@@ -67,3 +67,14 @@ export class NotFirstLoginException extends HttpException {
     super(response, HttpStatus.OK);
   }
 }
+
+export class NicknameDuplicate202Exception extends HttpException {
+  constructor() {
+    const response = {
+      statusCode: null,
+      message: null,
+    };
+    const httpCode = 202;
+    super(response, httpCode);
+  }
+}

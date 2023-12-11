@@ -6,7 +6,7 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 import { Post } from '../posts/entities/posts.entity';
 import { PaginateProfilePostDto } from './dto/paginate-profile-post.dto';
 import { CommonService } from '../common/common.service';
-import { NicknameDuplicateException } from '../auth/exceptions/auth.exception';
+import { NicknameDuplicate202Exception } from '../auth/exceptions/auth.exception';
 import { getProfilePostsQueryOptions } from './queryOptions/get-profilePosts-queryOptions';
 
 @Injectable()
@@ -36,7 +36,7 @@ export class ProfilesService {
       },
     });
     if(result) {
-      throw new NicknameDuplicateException();
+      throw new NicknameDuplicate202Exception();
     }
     return null;
   }
