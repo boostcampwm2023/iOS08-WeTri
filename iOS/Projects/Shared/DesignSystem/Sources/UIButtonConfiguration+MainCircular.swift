@@ -24,6 +24,7 @@ public extension UIButton.Configuration {
     plainConfiguration.cornerStyle = .capsule
     plainConfiguration.baseForegroundColor = DesignSystemColor.secondaryBackground
     plainConfiguration.title = title
+    plainConfiguration.attributedTitle?.foregroundColor = DesignSystemColor.primaryText
 
     return plainConfiguration
   }
@@ -39,6 +40,7 @@ public extension UIButton.Configuration {
     plainConfiguration.cornerStyle = .capsule
     plainConfiguration.baseForegroundColor = DesignSystemColor.secondaryBackground
     plainConfiguration.title = title
+    plainConfiguration.attributedTitle?.foregroundColor = DesignSystemColor.primaryText
 
     return plainConfiguration
   }
