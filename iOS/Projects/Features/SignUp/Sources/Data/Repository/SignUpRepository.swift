@@ -16,6 +16,7 @@ import Trinet
 
 enum SignUpRepositoryError: Error {
   case invalidData
+  case invalidDuplicate
 }
 
 // MARK: - SignUpRepository
@@ -44,7 +45,7 @@ public struct SignUpRepository: SignUpRepositoryRepresentable {
   }
 
   public func duplicateTest(nickName: String) -> AnyPublisher<Bool, Never> {
-    return Future<Bool, Never> { promise in
+    return Future<Bool, Error> { promise in
       Task {
         do {
           let (_, response) = try await provider.requestResponse(.duplicate(NickNameDuplicateRequestDTO(nickname: nickName)))
@@ -54,17 +55,25 @@ public struct SignUpRepository: SignUpRepositoryRepresentable {
           switch httpResponse.statusCode {
           // 중복이 아닌 경우
           case 201:
-            return promise(.success(false))
+            promise(.success(false))
+            return
           // 중복인 경우
           case 202:
-            return promise(.success(true))
+            promise(.success(true))
+            return
           default:
-            return promise(.success(false))
+            promise(.failure(SignUpRepositoryError.invalidDuplicate))
+            return
           }
         } catch {
           Log.make().error("\(error)")
+          promise(.failure(error))
         }
       }
+    }
+    .catch { error in
+      Log.make().error("\(error)")
+      return Empty<Bool, Never>()
     }
     .map { result in
       return result
