@@ -24,11 +24,13 @@ final class WorkoutPeerRandomMatchingViewController: UIViewController {
 
   private var subscriptions: Set<AnyCancellable> = []
 
+  private var matchingDescriptionLabelQueue: [String] = []
+
   // MARK: UI Components
 
   private let matchingDescriptionLabel: UILabel = {
     let label = UILabel()
-    label.text = "초기 값 입니다."
+    label.text = "대전 상대를 검색중입니다."
     label.font = .preferredFont(forTextStyle: .largeTitle, weight: .bold)
     label.contentMode = .scaleAspectFit
     label.numberOfLines = 1
@@ -91,6 +93,7 @@ private extension WorkoutPeerRandomMatchingViewController {
     setupHierarchyAndConstraints()
     bind()
     didTapCancelButton()
+    bindMatchingDescriptionLabel()
   }
 
   func setupStyles() {
@@ -138,6 +141,22 @@ private extension WorkoutPeerRandomMatchingViewController {
       .bind(to: cancelButtonDidTapPublisher)
       .store(in: &subscriptions)
   }
+
+  func bindMatchingDescriptionLabel() {
+    matchingDescriptionLabelQueue = Constants.initTextList
+
+    Timer.publish(every: 0.4, on: RunLoop.main, in: .common)
+      .autoconnect()
+      .subscribe(on: RunLoop.main)
+      .sink { [weak self] _ in
+        guard let text = self?.matchingDescriptionLabelQueue.removeFirst() else {
+          return
+        }
+        self?.matchingDescriptionLabel.text = text
+        self?.matchingDescriptionLabelQueue.append(text)
+      }
+      .store(in: &subscriptions)
+  }
 }
 
 // MARK: WorkoutPeerRandomMatchingViewController.Metrics
@@ -146,5 +165,13 @@ private extension WorkoutPeerRandomMatchingViewController {
   enum Metrics {
     static let labelTopConstraints: CGFloat = 222
     static let componentSpacing: CGFloat = 30
+  }
+
+  enum Constants {
+    static let initTextList: [String] = [
+      "대전 상대를 검색중입니다.",
+      "대전 상대를 검색중입니다..",
+      "대전 상대를 검색중입니다...",
+    ]
   }
 }
