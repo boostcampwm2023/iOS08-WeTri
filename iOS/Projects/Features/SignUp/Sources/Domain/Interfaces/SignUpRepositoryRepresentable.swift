@@ -12,4 +12,5 @@ import Foundation
 
 public protocol SignUpRepositoryRepresentable {
   func signUp(signUpUser: SignUpUser) -> AnyPublisher<Token, Error>
+  func duplicateTest(nickName: String) -> AnyPublisher<Bool, Never>
 }

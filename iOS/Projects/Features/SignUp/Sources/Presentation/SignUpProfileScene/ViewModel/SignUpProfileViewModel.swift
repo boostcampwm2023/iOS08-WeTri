@@ -12,6 +12,16 @@ import Foundation
 import Keychain
 import Log
 
+// MARK: - SignUpProfileViewModelError
+
+enum SignUpProfileViewModelError: Error {
+  case none
+  case invalidBinding
+  case invalidNickNameCheck
+  case invalidTokenPublisher
+  case duplicateNickName
+}
+
 // MARK: - SignUpProfileViewModelInput
 
 public struct SignUpProfileViewModelInput {
@@ -164,10 +174,21 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
     let initialState: SignUpProfileViewModelOutput = Just(.idle)
       .eraseToAnyPublisher()
 
+    let nickNameDuplicateTestResult = input.nickNameTextFieldEditting
+      .debounce(for: .seconds(0.7), scheduler: DispatchQueue.global())
+      .flatMap(signUpUseCase.duplicateTest(with:))
+      .map { isDuplicated in
+        if isDuplicated {
+          return SignUpProfileState.customError(SignUpProfileViewModelError.duplicateNickName)
+        }
+        return SignUpProfileState.customError(SignUpProfileViewModelError.none)
+      }
+      .share()
+
     let success = Publishers
-      .CombineLatest(nickNameCheckedResult, imageSettingResult)
-      .flatMap { nickNameCheckState, _ in
-        if case let .checking(isChecked) = nickNameCheckState, isChecked {
+      .CombineLatest3(nickNameCheckedResult, imageSettingResult, nickNameDuplicateTestResult)
+      .flatMap { nickNameCheckState, _, isDuplicated in
+        if case let .checking(isChecked) = nickNameCheckState, isChecked, case .customError(SignUpProfileViewModelError.none) = isDuplicated {
           return Just(SignUpProfileState.success)
         }
         return Just(SignUpProfileState.failure)
@@ -175,7 +196,7 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
       .eraseToAnyPublisher()
 
     return Publishers
-      .Merge6(initialState, nickNameCheckedResult, image, success, completeError, imageSettingResult)
+      .Merge7(initialState, nickNameCheckedResult, image, success, completeError, imageSettingResult, nickNameDuplicateTestResult)
       .eraseToAnyPublisher()
   }
 }
@@ -184,12 +205,4 @@ extension SignUpProfileViewModel: SignUpProfileViewModelRepresentable {
 
 public protocol SignUpProfileViewModelRepresentable {
   func transform(input: SignUpProfileViewModelInput) -> SignUpProfileViewModelOutput
-}
-
-// MARK: - SignUpProfileViewModelError
-
-enum SignUpProfileViewModelError: Error {
-  case invalidBinding
-  case invalidNickNameCheck
-  case invalidTokenPublisher
 }

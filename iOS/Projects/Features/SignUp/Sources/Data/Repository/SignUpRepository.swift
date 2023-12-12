@@ -16,6 +16,7 @@ import Trinet
 
 enum SignUpRepositoryError: Error {
   case invalidData
+  case invalidDuplicate
 }
 
 // MARK: - SignUpRepository
@@ -42,23 +43,65 @@ public struct SignUpRepository: SignUpRepositoryRepresentable {
     .compactMap(\.data)
     .eraseToAnyPublisher()
   }
+
+  public func duplicateTest(nickName: String) -> AnyPublisher<Bool, Never> {
+    return Future<Bool, Error> { promise in
+      Task {
+        do {
+          let (_, response) = try await provider.requestResponse(.duplicate(NickNameDuplicateRequestDTO(nickname: nickName)))
+          guard let httpResponse = response as? HTTPURLResponse else {
+            return promise(.success(false))
+          }
+          switch httpResponse.statusCode {
+          // 중복이 아닌 경우
+          case 201:
+            promise(.success(false))
+            return
+          // 중복인 경우
+          case 202:
+            promise(.success(true))
+            return
+          default:
+            promise(.failure(SignUpRepositoryError.invalidDuplicate))
+            return
+          }
+        } catch {
+          Log.make().error("\(error)")
+          promise(.failure(error))
+        }
+      }
+    }
+    .catch { error in
+      Log.make().error("\(error)")
+      return Empty<Bool, Never>()
+    }
+    .map { result in
+      return result
+    }
+    .eraseToAnyPublisher()
+  }
 }
 
 // MARK: - SignUpRepositoryEndPoint
 
 private enum SignUpRepositoryEndPoint: TNEndPoint {
   case signup(SignUpUser)
+  case duplicate(NickNameDuplicateRequestDTO)
 
   var path: String {
     switch self {
     case .signup:
       return "/api/v1/auth/signup"
+    case .duplicate:
+      return "/api/v1/profiles/nickname-availability"
     }
   }
 
   var method: TNMethod {
     switch self {
     case .signup:
+      return .post
+    case .duplicate:
       return .post
     }
   }
@@ -71,6 +114,8 @@ private enum SignUpRepositoryEndPoint: TNEndPoint {
     switch self {
     case let .signup(signUpUser):
       return signUpUser
+    case let .duplicate(nickName):
+      return nickName
     }
   }
 

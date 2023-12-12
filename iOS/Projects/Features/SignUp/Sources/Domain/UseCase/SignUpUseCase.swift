@@ -15,6 +15,7 @@ import Foundation
 
 public protocol SignUpUseCaseRepresentable {
   func signUp(signUpUser: SignUpUser) -> AnyPublisher<Token, Error>
+  func duplicateTest(with nickName: String) -> AnyPublisher<Bool, Never>
   func accessTokenSave(_ token: String)
   func refreshTokenSave(_ token: String)
 }
@@ -35,6 +36,11 @@ public final class SignUpUseCase: SignUpUseCaseRepresentable {
 
   public func signUp(signUpUser: SignUpUser) -> AnyPublisher<Token, Error> {
     return signUpRepository.signUp(signUpUser: signUpUser)
+      .eraseToAnyPublisher()
+  }
+
+  public func duplicateTest(with nickName: String) -> AnyPublisher<Bool, Never> {
+    return signUpRepository.duplicateTest(nickName: nickName)
       .eraseToAnyPublisher()
   }
 
