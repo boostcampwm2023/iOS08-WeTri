@@ -427,14 +427,11 @@ extension SignUpProfileViewController: UIImagePickerControllerDelegate {
         imageSetSubject.send(downsampledData)
       } else {
         // 카메라에서 사진 선택할 때
-        guard let image = info[.originalImage] as? UIImage else {
-          return
+        if let image = try (info[.originalImage] as? UIImage)?.downsampling(size: profileImageButton.profileSize, scale: .x3),
+           let imageData = image.pngData() {
+          profileImageButton.image = image
+          imageSetSubject.send(imageData)
         }
-        profileImageButton.image = try image.downsampling(size: profileImageButton.profileSize, scale: .x3)
-        guard let downsampledData = image.pngData() else {
-          return
-        }
-        imageSetSubject.send(downsampledData)
       }
       dismiss(animated: true)
     } catch {

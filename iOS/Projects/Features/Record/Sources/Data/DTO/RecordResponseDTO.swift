@@ -45,48 +45,16 @@ extension Record {
   }
 
   private static func timeToTime(createdAt: Date, workoutTime: Int) -> (startTime: String, endTime: String)? {
-    let dateComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: createdAt)
+    let endDate = createdAt
+    let startDate = endDate - Double(workoutTime)
+    let formatter = DateFormatter()
+    formatter.dateFormat = "HH:mm:ss"
+    formatter.timeZone = .init(abbreviation: "UTC")
 
-    guard
-      let hour = dateComponents.hour,
-      let minute = dateComponents.minute,
-      let second = dateComponents.second
-    else {
-      return nil
-    }
+    // 날짜를 문자열로 변환
+    let startDateString = formatter.string(from: startDate)
+    let endDateString = formatter.string(from: endDate)
 
-    let startSeconds = Time(hour: hour, minute: minute, second: second).toSeconds()
-    let endSeconds = startSeconds + workoutTime
-    let start = prettyStyle(time: timeToHourMinuteSecond(seconds: startSeconds))
-    let end = prettyStyle(time: timeToHourMinuteSecond(seconds: endSeconds))
-    return (start, end)
-  }
-
-  private static func timeToHourMinuteSecond(seconds: Int) -> Time {
-    var seconds = seconds
-    let hour = seconds / 3600
-    seconds %= 3600
-    let minute = seconds / 60
-    seconds %= 60
-    return Time(hour: hour, minute: minute, second: seconds)
-  }
-
-  private static func prettyStyle(time: Time) -> String {
-    let formattedHour = String(format: "%02d", time.hour)
-    let formattedMinute = String(format: "%02d", time.minute)
-    let formattedSecond = String(format: "%02d", time.second)
-    return "\(formattedHour):\(formattedMinute):\(formattedSecond)"
-  }
-}
-
-// MARK: - Time
-
-private struct Time {
-  let hour: Int
-  let minute: Int
-  let second: Int
-
-  func toSeconds() -> Int {
-    return hour * 3600 + minute * 60 + second
+    return (startDateString, endDateString)
   }
 }

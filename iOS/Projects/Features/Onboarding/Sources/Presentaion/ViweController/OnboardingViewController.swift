@@ -162,7 +162,7 @@ private extension OnboardingViewController {
   }
 
   func setupStyles() {
-    view.backgroundColor = .white
+    view.backgroundColor = DesignSystemColor.primaryBackground
   }
 
   func bind() {

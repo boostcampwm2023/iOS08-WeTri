@@ -22,7 +22,7 @@ public extension UIButton.Configuration {
 
     plainConfiguration.titleAlignment = .center
     plainConfiguration.cornerStyle = .capsule
-    plainConfiguration.baseForegroundColor = DesignSystemColor.secondaryBackground
+    plainConfiguration.baseForegroundColor = .white
     plainConfiguration.title = title
 
     return plainConfiguration
