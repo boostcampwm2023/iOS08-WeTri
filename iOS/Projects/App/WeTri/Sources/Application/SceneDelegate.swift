@@ -6,9 +6,6 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
-import LoginFeature
-import RecordFeature
-import SignUpFeature
 import UIKit
 
 import DesignSystem
@@ -22,9 +19,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     window = UIWindow(windowScene: windowScene)
     let navigationController = UINavigationController()
     window?.rootViewController = navigationController
-    let coordinator = SignUpFeatureCoordinator(navigationController: navigationController, newUserInformation: NewUserInformation(mappedUserID: "", provider: .apple), isMockEnvironment: false)
-//    let coordinator = RecordFeatureCoordinator(navigationController: navigationController, isMockEnvironment: true)
-//    coordinating = coordinator
+    let coordinator = AppCoordinator(navigationController: navigationController)
+    coordinating = coordinator
     coordinator.start()
     window?.makeKeyAndVisible()
   }
