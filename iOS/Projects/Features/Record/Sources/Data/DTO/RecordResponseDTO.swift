@@ -49,6 +49,7 @@ extension Record {
     let startDate = endDate - Double(workoutTime)
     let formatter = DateFormatter()
     formatter.dateFormat = "HH:mm:ss"
+    formatter.timeZone = .init(abbreviation: "UTC")
 
     // 날짜를 문자열로 변환
     let startDateString = formatter.string(from: startDate)
