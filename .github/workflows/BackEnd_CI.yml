@@ -1,0 +1,29 @@
+name: BackEnd-CI
+
+on:
+  push:
+    branches: 'feature/BE/*'
+  pull_request:
+    branches: 'develop'
+    types: [opened, synchronize, reopened, labeled]
+
+jobs:
+  test:
+    if: contains(github.event.pull_request.labels.*.name, '💻백엔드')
+    runs-on: self-hosted
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v3
+
+      - name: node 세팅
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      - name: 의존성 설치
+        run: npm install
+        working-directory: ./BackEnd
+
+      - name: 테스트 진행
+        run: npm test
+        working-directory: ./BackEnd

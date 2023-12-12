@@ -1,0 +1,66 @@
+name: iOS-CI
+
+on:
+  push:
+    branches: "feature/iOS/*"
+  pull_request:
+    branches: "develop"
+    types: [labeled, opened, synchronize, reopened]
+
+jobs:
+  swift-format:
+    if: contains(github.event.pull_request.labels.*.name, '📱 iOS')
+    runs-on: macos-13
+    env:
+      working-directory: ./iOS
+
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Swiftformat
+        run: brew install swiftformat
+
+      - name: Run Swiftformat
+        run: swiftformat ./Projects --config .swiftformat
+        working-directory: ${{env.working-directory}}
+
+      - name: Check for changes
+        run: |
+          git diff
+          if [[ `git status --porcelain` ]]; then
+            echo "Code was formatted. Failing the job."
+            exit 1
+          fi
+        working-directory: ${{env.working-directory}}
+
+  tuist-test:
+    if: contains(github.event.pull_request.labels.*.name, '📱 iOS')
+    runs-on: macos-13
+    env:
+      working-directory: ./iOS
+
+    steps:
+      - name: Xcode Version Settings
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "15.0.1"
+
+      - name: Code Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Tuist
+        run: brew install tuist
+        working-directory: ${{env.working-directory}}
+
+      - name: Print Tuist Version
+        run: tuist version
+        working-directory: ${{env.working-directory}}
+
+      - name: Run Tuist Test
+        run: make ci
+        working-directory: ${{env.working-directory}}
+
+      - name: Tuist Build
+        run: make build
+        working-directory: ${{env.working-directory}}

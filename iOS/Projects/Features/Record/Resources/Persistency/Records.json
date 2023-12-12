@@ -1,0 +1,102 @@
+{
+  "code": null,
+  "errorMessage": null,
+  "data": [
+    {
+      "id": 170,
+      "workoutTime": 4,
+      "distance": 125,
+      "calorie": 1,
+      "avgHeartRate": 0,
+      "minHeartRate": 0,
+      "maxHeartRate": 0,
+      "createdAt": "2023-12-11T20:07:48.083Z",
+      "mapCapture": null,
+      "gps": "37.1235/127.3837",
+      "isPosted": false,
+      "workout": {
+        "name": "달리기"
+      }
+    },
+    {
+      "id": 171,
+      "workoutTime": 4,
+      "distance": 125,
+      "calorie": 1,
+      "avgHeartRate": 0,
+      "minHeartRate": 0,
+      "maxHeartRate": 0,
+      "createdAt": "2023-12-11T20:07:48.083Z",
+      "mapCapture": null,
+      "gps": "37.1235/127.3837",
+      "isPosted": false,
+      "workout": {
+        "name": "달리기"
+      }
+    },
+    {
+      "id": 172,
+      "workoutTime": 4,
+      "distance": 125,
+      "calorie": 1,
+      "avgHeartRate": 0,
+      "minHeartRate": 0,
+      "maxHeartRate": 0,
+      "createdAt": "2023-12-11T20:07:48.083Z",
+      "mapCapture": null,
+      "gps": "37.1235/127.3837",
+      "isPosted": false,
+      "workout": {
+        "name": "달리기"
+      }
+    },
+    {
+      "id": 173,
+      "workoutTime": 4,
+      "distance": 125,
+      "calorie": 1,
+      "avgHeartRate": 0,
+      "minHeartRate": 0,
+      "maxHeartRate": 0,
+      "createdAt": "2023-12-11T20:07:48.083Z",
+      "mapCapture": null,
+      "gps": "37.1235/127.3837",
+      "isPosted": false,
+      "workout": {
+        "name": "달리기"
+      }
+    },
+    {
+      "id": 174,
+      "workoutTime": 4,
+      "distance": 125,
+      "calorie": 1,
+      "avgHeartRate": 0,
+      "minHeartRate": 0,
+      "maxHeartRate": 0,
+      "createdAt": "2023-12-11T20:07:48.083Z",
+      "mapCapture": null,
+      "gps": "37.1235/127.3837",
+      "isPosted": false,
+      "workout": {
+        "name": "달리기"
+      }
+    },
+    {
+      "id": 175,
+      "workoutTime": 4,
+      "distance": 125,
+      "calorie": 1,
+      "avgHeartRate": 0,
+      "minHeartRate": 0,
+      "maxHeartRate": 0,
+      "createdAt": "2023-12-11T20:07:48.083Z",
+      "mapCapture": null,
+      "gps": "37.1235/127.3837",
+      "isPosted": false,
+      "workout": {
+        "name": "달리기"
+      }
+    },
+  ]
+}
