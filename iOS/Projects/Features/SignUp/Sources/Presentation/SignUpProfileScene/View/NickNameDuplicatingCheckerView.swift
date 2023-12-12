@@ -9,8 +9,8 @@
 import Foundation
 
 final class NickNameDuplicatingCheckerView: CheckerView {
-  override init(frame _: CGRect) {
-    super.init(frame: .zero)
+  override init(frame: CGRect) {
+    super.init(frame: frame)
   }
 
   override func configureEnabled() {
