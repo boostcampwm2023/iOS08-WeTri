@@ -114,7 +114,7 @@ private extension RecordListViewController {
           sport: $0.mode.description,
           startTime: $0.startTime,
           endTime: $0.endTime,
-          distance: "\($0.distance)km"
+          distance: "\($0.distance)m"
         )
       }
       configureSnapShot(items: workoutInformationItems)
