@@ -7,17 +7,18 @@
 //
 
 import Combine
-import CommonNetworkingKeyManager
 import Foundation
-import Keychain
+import UserInformationManager
 
 // MARK: - SplashUseCase
 
 public struct SplashUseCase: SplashUseCaseRepresentable {
   private let repository: SplashTokenRepositoryRepresentable
+  private let persistencyRepository: PersistencyRepositoryRepresentable
 
-  public init(repository: SplashTokenRepositoryRepresentable) {
+  public init(repository: SplashTokenRepositoryRepresentable, persistencyRepository: PersistencyRepositoryRepresentable) {
     self.repository = repository
+    self.persistencyRepository = persistencyRepository
   }
 
   /// 토큰을 재발급받습니다.
@@ -37,8 +38,7 @@ public struct SplashUseCase: SplashUseCaseRepresentable {
         return data
       }
       .map { refreshTokenData in
-        Keychain.shared.delete(key: Tokens.refreshToken)
-        Keychain.shared.save(key: Tokens.refreshToken, data: refreshTokenData)
+        persistencyRepository.saveRefreshToken(refreshToken: refreshTokenData)
       }
       .flatMap(repository.reissueAccessToken)
       .map(\.accessToken)
@@ -49,8 +49,8 @@ public struct SplashUseCase: SplashUseCaseRepresentable {
         return data
       }
       .map { accessTokenData in
-        Keychain.shared.delete(key: Tokens.accessToken)
-        Keychain.shared.save(key: Tokens.accessToken, data: accessTokenData)
+        persistencyRepository.saveAccessToken(accessToken: accessTokenData)
+        UserInformationFetcher().reissueUserProfileInformation()
       }
       .map { return true } // 모든 로직이 성공
       .catch { _ in Just(false) } // Error가 발생하면 false 리턴

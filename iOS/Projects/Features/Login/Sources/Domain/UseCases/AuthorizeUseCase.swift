@@ -10,6 +10,7 @@ import Combine
 import CommonNetworkingKeyManager
 import Foundation
 import Log
+import UserInformationManager
 
 // MARK: - AuthorizeUseCase
 
@@ -32,6 +33,7 @@ final class AuthorizeUseCase: AuthorizeUseCaseRepresentable {
 
   func accessTokenSave(_ token: String) {
     keychainRepository.save(key: Tokens.accessToken, value: token)
+    UserInformationFetcher().reissueUserProfileInformation()
   }
 
   func refreshTokenSave(_ token: String) {

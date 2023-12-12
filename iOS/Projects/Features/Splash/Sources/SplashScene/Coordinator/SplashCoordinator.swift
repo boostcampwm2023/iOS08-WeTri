@@ -42,7 +42,8 @@ public final class SplashCoordinator {
   public func start() {
     let session = URLSession.shared
     let repository = SplashTokenRepository(session: session)
-    let useCase = SplashUseCase(repository: repository)
+    let persistencyRepository = PersistencyRepository()
+    let useCase = SplashUseCase(repository: repository, persistencyRepository: persistencyRepository)
     let viewModel = SplashViewModel(coordinator: self, useCase: useCase)
     let viewController = SplashViewController(viewModel: viewModel)
     navigationController.pushViewController(viewController, animated: false)

@@ -308,7 +308,9 @@ private extension SignUpProfileViewController {
         if state == .authorized {
           self?.openPhotoLibrary()
         } else {
-          self?.dismiss(animated: true)
+          DispatchQueue.main.async { [weak self] in
+            self?.dismiss(animated: true)
+          }
         }
       }
     default:
