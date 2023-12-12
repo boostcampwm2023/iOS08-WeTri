@@ -1,0 +1,9 @@
+{
+  "code": 201,
+  "errorMessage": null,
+  "data": {
+    "isFirstLogined": true,
+    "mappedUserID": "1233498sdafksdjhfk...",
+    "provider": "apple"
+  }
+}

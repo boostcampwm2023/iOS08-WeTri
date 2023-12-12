@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "WeTri-Logo.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
