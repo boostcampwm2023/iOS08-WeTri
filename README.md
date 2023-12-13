@@ -108,7 +108,7 @@
 HealthKit의 건강 데이터, WebSocket의 실시간 통신, MapKit의 지도 기반 화면까지. 이 세 가지의 기술이 어떻게 하나의 화면에서 조화롭게 작동할 수 있도록 했을까요? 저는 이 세 가지를 결합하여 사용자들이 운동 거리를 실시간으로 확인할 수 있도록 UI를 구성했고, 동시에 사용자들이 운동하며 지나온 거리를 지도를 통해 확인할 수 있도록 구현했습니다. 이 과정에서 제가 마주한 도전과 성공, 그리고 때로는 실패한 순간들을 공유하고 싶습니다.
 
 
-> 이 모든 과정을 더 깊이 있게 탐구하고 싶으시다면, [WeTri GitHub Wiki](https://github.com/boostcampwm2023/iOS08-WeTri/wiki/HealthKit,-MapKit-그리고-WebSocket을-조화롭게)를 방문해 주세요. 저와 팀원간 여정을 담은 기술 문서와 함께, 이 기능을 실제로 구현하기까지의 스토리를 공유하고 있습니다. 
+> 이 모든 과정을 더 깊이 있게 탐구하고 싶으시다면, [HealthKit, MapKit, WebSocket, 렛츠고! 좌충우돌 프로젝트 기행](https://github.com/boostcampwm2023/iOS08-WeTri/wiki#%EF%B8%8F-healthkit-mapkit-websocket-렛츠고-좌충우돌-프로젝트-기행)를 방문해 주세요. 저와 팀원간 여정을 담은 기술 문서와 함께, 이 기능을 실제로 구현하기까지의 스토리를 공유하고 있습니다. 
 
 <br/>
 
