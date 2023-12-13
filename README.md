@@ -41,14 +41,20 @@
 <br/>
 
 ## 🏗️ 아키텍처
+
 ### 🍎 iOS
+
 #### ModularArchitecture
+
 ![image](https://hackmd.io/_uploads/rJn3AYLLa.png)
+
 - Feature 단위로 모듈을 나눠서 개발하였습니다.
     - 각 Demo앱을 만들어서 앱을 동작함으로써 기능별로 앱을 수정하거나 실행할 때, 프로젝트 빌드 시간을 80% 줄임으로써 일의 효율을 높였습니다.
 
 #### Clean Architecture & MVVM-C
-![image](https://hackmd.io/_uploads/HkhjFt8IT.png)
+
+![image](https://github.com/boostcampwm2023/iOS08-WeTri/assets/56383948/b337eaae-2393-417a-8a3c-7716b5a05e64)
+
 - 각 Feature 내부에서 CleanArchitecture를 통해 Data, Domain, Presentation으로 레이어를 분리하였습니다.
 - DataLayer
     - DTO와 Repository를 통해 비즈니스 로직이 서버와의 독립성을 갖도록 하였습니다.
@@ -66,7 +72,7 @@
 
 #### BE 아키텍처
 
-![image](https://github.com/boostcampwm2023/iOS08-WeTri/assets/56383948/ba8685e2-000d-40eb-b9db-1f7f2fd71413)
+![image](https://github.com/boostcampwm2023/iOS08-WeTri/assets/56383948/19d51b08-9e9d-4dc1-b85f-4104a9ec25e8)
 
 - NestJs의 life cycle을 의미하기도 합니다.
 - Module에는 Controller, Service, Repository등이 포함되어 있고 저희는 이러한 Module 단위로 작업을 진행했습니다.
