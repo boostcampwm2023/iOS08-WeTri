@@ -14,6 +14,14 @@
 
 또한 **실시간 랜덤매칭으로 서로 경쟁하며 운동할 수 있는**앱 입니다.
 
+
+|                                   iOS                                   |                                   iOS                                   |                                  iOS                                   |                                 BE                                  |                                  BE                                   |
+| :---------------------------------------------------------------------: | :---------------------------------------------------------------------: | :--------------------------------------------------------------------: | :-----------------------------------------------------------------: | :-------------------------------------------------------------------: |
+| <img src="https://github.com/JongPyoAhn.png" width=400px alt="안종표"/> | <img src="https://github.com/MaraMincho.png" width=400px alt="정다함"/> | <img src="https://github.com/WhiteHyun.png" width=400px alt="홍승현"/> | <img src="https://github.com/sjy982.png" width=400px alt="신정용"/> | <img src="https://github.com/wonholim.png" width=400px alt="임원호"/> |
+|              [S020\_안종표](https://github.com/JongPyoAhn)              |              [S035\_정다함](https://github.com/MaraMincho)              |              [S043\_홍승현](https://github.com/WhiteHyun)              |              [J078\_신정용](https://github.com/sjy982)              |              [J130\_임원호](https://github.com/wonholim)              |
+
+
+
 <br/>
 
 ## 🔥 프로젝트 주요 화면
@@ -83,7 +91,7 @@
 
 이미지 데이터를 서버에 보낼 때, JSON이 아닌 **`Multipart/form-data`** 형식을 통해 데이터를 보내는 과정에서 일어났던 문제점과 사용자로부터 이미지를 입력받으면서 발생한 `메모리관련 이슈와 최적화 과정`을 공유해드리고 싶습니다.
 
-> 궁금하시다면, 아래를 클릭해주세요 (링크는 WeTri GitHub Wiki로 연결되어있습니다!)
+> 이 모든 과정을 더 깊이 있게 탐구하고 싶으시다면, 아래 링크를 방문해 주세요. 저와 팀원간 여정을 담은 기술 문서와 함께, 이 기능을 실제로 구현하기까지의 스토리를 공유하고 있습니다.
 
 ### [💾 이미지 처리와 최적화 그리고 메모리 스파이크 해결!](https://github.com/boostcampwm2023/iOS08-WeTri/wiki#-%EC%9D%B4%EB%AF%B8%EC%A7%80-%EC%B2%98%EB%A6%AC%EC%99%80-%EC%B5%9C%EC%A0%81%ED%99%94-%EA%B7%B8%EB%A6%AC%EA%B3%A0-%EB%A9%94%EB%AA%A8%EB%A6%AC-%EC%8A%A4%ED%8C%8C%EC%9D%B4%ED%81%AC-%ED%95%B4%EA%B2%B0)
 
@@ -97,7 +105,7 @@
 아이폰에서 제공하는 CoreLocation데이터를 통해서 위치정보의 값들과 **칼만필터**를 통해서 노이즈를 줄이는 방법을 고안하였습니다.칼만필터가 뭘까? 백지 상태에서부터 끝날때는 자이로 센서를 활용한 위치 보정방식을 고안하여 리팩토링 하고싶다는 생각까지 여정을 공유하고 싶습니다.
 
 
-> 궁금하시다면, 아래를 클릭해주세요 (링크는 WeTri GitHub Wiki로 연결되어있습니다!)
+> 이 모든 과정을 더 깊이 있게 탐구하고 싶으시다면, 아래 링크를 방문해 주세요. 저와 팀원간 여정을 담은 기술 문서와 함께, 이 기능을 실제로 구현하기까지의 스토리를 공유하고 있습니다.
 
 ### [👉 GPS 오차를 보정하기 위한 칼만 필터 구현기 🗺️](https://github.com/boostcampwm2023/iOS08-WeTri/wiki/GPS%EC%98%A4%EC%B0%A8%EB%A5%BC-%EB%B3%B4%EC%A0%95%ED%95%98%EA%B8%B0-%EC%9C%84%ED%95%9C-%EC%B9%BC%EB%A7%8C-%ED%95%84%ED%84%B0-%EA%B5%AC%ED%98%84%EA%B8%B0-%F0%9F%97%BA%EF%B8%8F)
 
@@ -109,9 +117,9 @@
 
 HealthKit의 건강 데이터, WebSocket의 실시간 통신, MapKit의 지도 기반 화면까지. 이 세 가지의 기술이 어떻게 하나의 화면에서 조화롭게 작동할 수 있도록 했을까요? 저는 이 세 가지를 결합하여 사용자들이 운동 거리를 실시간으로 확인할 수 있도록 UI를 구성했고, 동시에 사용자들이 운동하며 지나온 거리를 지도를 통해 확인할 수 있도록 구현했습니다. 이 과정에서 제가 마주한 도전과 성공, 그리고 때로는 실패한 순간들을 공유하고 싶습니다.
 
-> 궁금하시다면, 아래를 클릭해주세요 (링크는 WeTri GitHub Wiki로 연결되어있습니다!)
+> 이 모든 과정을 더 깊이 있게 탐구하고 싶으시다면, 아래 링크를 방문해 주세요. 저와 팀원간 여정을 담은 기술 문서와 함께, 이 기능을 실제로 구현하기까지의 스토리를 공유하고 있습니다.
 
-### [HealthKit, MapKit, WebSocket, 렛츠고! 좌충우돌 프로젝트 기행](https://github.com/boostcampwm2023/iOS08-WeTri/wiki#%EF%B8%8F-healthkit-mapkit-websocket-렛츠고-좌충우돌-프로젝트-기행)
+### [🗺️ HealthKit, MapKit, WebSocket, 렛츠고! 좌충우돌 프로젝트 기행](https://github.com/boostcampwm2023/iOS08-WeTri/wiki#%EF%B8%8F-healthkit-mapkit-websocket-렛츠고-좌충우돌-프로젝트-기행)
 
 <br/>
 
@@ -123,10 +131,9 @@ WebSocket Server는 분산 환경에서 독릭접인 존재입니다.
 이 여러 WebSocket Server 간의 어떻게 메시지를 교환하고, 사용자 세션 및 상태 정보를 동기화 시킬 수 있었을까요?
 저는 Redis와 Redis pub/sub을 이용해서 구현해줬습니다.
 
-> 궁금하시다면, 아래를 클릭해주세요 (링크는 WeTri GitHub Wiki로 연결되어있습니다!)
+> 이 모든 과정을 더 깊이 있게 탐구하고 싶으시다면, 아래 링크를 방문해 주세요. 저와 팀원간 여정을 담은 기술 문서와 함께, 이 기능을 실제로 구현하기까지의 스토리를 공유하고 있습니다.
 
 ### [🐣 분산 환경에서 WebSocket과 Redis를 활용한 나의 여정]()
-
 
 <br/>
 
@@ -136,7 +143,7 @@ WebSocket Server는 분산 환경에서 독릭접인 존재입니다.
 
 WeTri 프로젝트를 진행하면서, 클라우드 인프라, 배포에 대해 걱정하지 않도록 **`책임`** 을 지고 학습하고 구축해보았습니다. Classic 환경에서 VPC 환경으로, 수동 배포에서 자동 배포를 구현하면서 발생했던 **`문제를 어떻게 해결했는지 글`** 로 담았습니다.
 
-> 궁금하시다면, 아래를 클릭해주세요 (링크는 WeTri GitHub Wiki로 연결되어있습니다!)
+> 이 모든 과정을 더 깊이 있게 탐구하고 싶으시다면, 아래 링크를 방문해 주세요. 저와 팀원간 여정을 담은 기술 문서와 함께, 이 기능을 실제로 구현하기까지의 스토리를 공유하고 있습니다.
 
 ### [☁️ Wetri 클라우드 인프라와 CI/CD 구축](https://github.com/boostcampwm2023/iOS08-WeTri/wiki#%EF%B8%8F-wetri-%ED%81%B4%EB%9D%BC%EC%9A%B0%EB%93%9C-%EC%9D%B8%ED%94%84%EB%9D%BC%EC%99%80-cicd-%EA%B5%AC%EC%B6%95)
 
@@ -152,11 +159,3 @@ WeTri 프로젝트를 진행하면서, 클라우드 인프라, 배포에 대해 
 
 - `squash merge`를 사용합니다.
 - approve한 사람이 최소 **2명 이상**이어야 merge 가능합니다.
-
-<br/>
-
-|                                   iOS                                   |                                   iOS                                   |                                  iOS                                   |                                 BE                                  |                                  BE                                   |
-| :---------------------------------------------------------------------: | :---------------------------------------------------------------------: | :--------------------------------------------------------------------: | :-----------------------------------------------------------------: | :-------------------------------------------------------------------: |
-| <img src="https://github.com/JongPyoAhn.png" width=400px alt="안종표"/> | <img src="https://github.com/MaraMincho.png" width=400px alt="정다함"/> | <img src="https://github.com/WhiteHyun.png" width=400px alt="홍승현"/> | <img src="https://github.com/sjy982.png" width=400px alt="신정용"/> | <img src="https://github.com/wonholim.png" width=400px alt="임원호"/> |
-|              [S020\_안종표](https://github.com/JongPyoAhn)              |              [S035\_정다함](https://github.com/MaraMincho)              |              [S043\_홍승현](https://github.com/WhiteHyun)              |              [J078\_신정용](https://github.com/sjy982)              |              [J130\_임원호](https://github.com/wonholim)              |
-
