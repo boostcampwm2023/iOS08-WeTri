@@ -64,7 +64,12 @@
 
 ### 💻 BE
 
+![image](https://github.com/boostcampwm2023/iOS08-WeTri/assets/56383948/ba8685e2-000d-40eb-b9db-1f7f2fd71413)
 
+- NestJs의 life cycle을 의미하기도 합니다.
+- Module에는 Controller, Service, Repository등이 포함되어 있고 저희는 이러한 Module 단위로 작업을 진행했습니다.
+- Exception Filter는 Global로 둠으로써 모든 예외는 한 곳에서 처리되도록 구현했습니다.
+- 예외가 발생하지 않으면 Global Interceptor에 들어오게 됩니다.역할은 iOS와 맞춰둔 데이터 형식으로 Format 합니다.
 
 
 ## 💪 기술 스택
@@ -93,7 +98,7 @@
 
 > 이 모든 과정을 더 깊이 있게 탐구하고 싶으시다면, 아래 링크를 방문해 주세요. 저와 팀원간 여정을 담은 기술 문서와 함께, 이 기능을 실제로 구현하기까지의 스토리를 공유하고 있습니다.
 
-### [💾 이미지 처리와 최적화 그리고 메모리 스파이크 해결!](https://github.com/boostcampwm2023/iOS08-WeTri/wiki#-%EC%9D%B4%EB%AF%B8%EC%A7%80-%EC%B2%98%EB%A6%AC%EC%99%80-%EC%B5%9C%EC%A0%81%ED%99%94-%EA%B7%B8%EB%A6%AC%EA%B3%A0-%EB%A9%94%EB%AA%A8%EB%A6%AC-%EC%8A%A4%ED%8C%8C%EC%9D%B4%ED%81%AC-%ED%95%B4%EA%B2%B0)
+### [💾 이미지 처리와 최적화 그리고 메모리 스파이크 해결!](https://github.com/boostcampwm2023/iOS08-WeTri/wiki#-%EC%9D%B4%EB%AF%B8%EC%A7%80-%EC%B2%98%EB%A6%AC%EC%99%80-%EC%B5%9C%EC%A0%81%ED%99%94-%EA%B7%B8%EB%A6%AC%EA%B3%A0-%EB%A9%94%EB%AA%A8%EB%A6%AC-%EC%8A%A4%ED%8C%8C%EC%9D%B4%ED%81%AC-%ED%95%B4%EA%B2%B0) 👈 클릭
 
 
 <br/>
@@ -107,7 +112,7 @@
 
 > 이 모든 과정을 더 깊이 있게 탐구하고 싶으시다면, 아래 링크를 방문해 주세요. 저와 팀원간 여정을 담은 기술 문서와 함께, 이 기능을 실제로 구현하기까지의 스토리를 공유하고 있습니다.
 
-### [👉 GPS 오차를 보정하기 위한 칼만 필터 구현기 🗺️](https://github.com/boostcampwm2023/iOS08-WeTri/wiki/GPS%EC%98%A4%EC%B0%A8%EB%A5%BC-%EB%B3%B4%EC%A0%95%ED%95%98%EA%B8%B0-%EC%9C%84%ED%95%9C-%EC%B9%BC%EB%A7%8C-%ED%95%84%ED%84%B0-%EA%B5%AC%ED%98%84%EA%B8%B0-%F0%9F%97%BA%EF%B8%8F)
+### [🗺️ GPS 오차를 보정하기 위한 칼만 필터 구현기](https://github.com/boostcampwm2023/iOS08-WeTri/wiki/GPS%EC%98%A4%EC%B0%A8%EB%A5%BC-%EB%B3%B4%EC%A0%95%ED%95%98%EA%B8%B0-%EC%9C%84%ED%95%9C-%EC%B9%BC%EB%A7%8C-%ED%95%84%ED%84%B0-%EA%B5%AC%ED%98%84%EA%B8%B0-%F0%9F%97%BA%EF%B8%8F) 👈 클릭
 
 <br/>
 
@@ -119,7 +124,7 @@ HealthKit의 건강 데이터, WebSocket의 실시간 통신, MapKit의 지도 �
 
 > 이 모든 과정을 더 깊이 있게 탐구하고 싶으시다면, 아래 링크를 방문해 주세요. 저와 팀원간 여정을 담은 기술 문서와 함께, 이 기능을 실제로 구현하기까지의 스토리를 공유하고 있습니다.
 
-### [🗺️ HealthKit, MapKit, WebSocket, 렛츠고! 좌충우돌 프로젝트 기행](https://github.com/boostcampwm2023/iOS08-WeTri/wiki#%EF%B8%8F-healthkit-mapkit-websocket-렛츠고-좌충우돌-프로젝트-기행)
+### [🗺️ HealthKit, MapKit, WebSocket, 렛츠고! 좌충우돌 프로젝트 기행](https://github.com/boostcampwm2023/iOS08-WeTri/wiki#%EF%B8%8F-healthkit-mapkit-websocket-렛츠고-좌충우돌-프로젝트-기행) 👈 클릭
 
 <br/>
 
@@ -133,7 +138,7 @@ WebSocket Server는 분산 환경에서 독릭접인 존재입니다.
 
 > 이 모든 과정을 더 깊이 있게 탐구하고 싶으시다면, 아래 링크를 방문해 주세요. 저와 팀원간 여정을 담은 기술 문서와 함께, 이 기능을 실제로 구현하기까지의 스토리를 공유하고 있습니다.
 
-### [🐣 분산 환경에서 WebSocket과 Redis를 활용한 나의 여정]()
+### [🐣 분산 환경에서 WebSocket과 Redis를 활용한 나의 여정](https://github.com/boostcampwm2023/iOS08-WeTri/wiki#-%EB%B6%84%EC%82%B0-%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C-websocket%EA%B3%BC-redis%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%9C-%EB%82%98%EC%9D%98-%EC%97%AC%EC%A0%95) 👈 클릭
 
 <br/>
 
@@ -145,7 +150,7 @@ WeTri 프로젝트를 진행하면서, 클라우드 인프라, 배포에 대해 
 
 > 이 모든 과정을 더 깊이 있게 탐구하고 싶으시다면, 아래 링크를 방문해 주세요. 저와 팀원간 여정을 담은 기술 문서와 함께, 이 기능을 실제로 구현하기까지의 스토리를 공유하고 있습니다.
 
-### [☁️ Wetri 클라우드 인프라와 CI/CD 구축](https://github.com/boostcampwm2023/iOS08-WeTri/wiki#%EF%B8%8F-wetri-%ED%81%B4%EB%9D%BC%EC%9A%B0%EB%93%9C-%EC%9D%B8%ED%94%84%EB%9D%BC%EC%99%80-cicd-%EA%B5%AC%EC%B6%95)
+### [☁️ Wetri 클라우드 인프라와 CI/CD 구축](https://github.com/boostcampwm2023/iOS08-WeTri/wiki#%EF%B8%8F-wetri-%ED%81%B4%EB%9D%BC%EC%9A%B0%EB%93%9C-%EC%9D%B8%ED%94%84%EB%9D%BC%EC%99%80-cicd-%EA%B5%AC%EC%B6%95) 👈 클릭
 
 <br/>
 
