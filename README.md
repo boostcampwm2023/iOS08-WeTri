@@ -130,7 +130,7 @@ HealthKit의 건강 데이터, WebSocket의 실시간 통신, MapKit의 지도 �
 
 ### J078_신정용 - `분산 환경에서 WebSocket과 Redis를 활용한 나의 여정`
 
-<img width="2100" alt="Redis Pub/Sub" src="https://gist.github.com/assets/56383948/3ba65234-b72e-4987-9de1-52af65fd063f">
+![image](https://github.com/boostcampwm2023/iOS08-WeTri/assets/57972338/b5360598-cfe1-488d-aae5-351932daffa6)
 
 WebSocket Server는 분산 환경에서 독릭접인 존재입니다. 
 이 여러 WebSocket Server 간의 어떻게 메시지를 교환하고, 사용자 세션 및 상태 정보를 동기화 시킬 수 있었을까요?
