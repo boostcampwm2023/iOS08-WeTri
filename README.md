@@ -132,7 +132,7 @@ WebSocket Server는 분산 환경에서 독릭접인 존재입니다.
 
 ### J130_임원호 - `클라우드 VPC 환경 구축도 CI/CD도 처음이었던, WeTri 인프라 구축`
 
-![WeTri_최종 인프라 구축](https://gist.github.com/assets/56383948/5686abff-5a59-4bc7-8475-aa3b65b9afde)
+![image](https://github.com/boostcampwm2023/iOS08-WeTri/assets/56383948/0468d0aa-0067-499f-9062-985161dbdd60)
 
 WeTri 프로젝트를 진행하면서, 클라우드 인프라, 배포에 대해 걱정하지 않도록 **`책임`** 을 지고 학습하고 구축해보았습니다. Classic 환경에서 VPC 환경으로, 수동 배포에서 자동 배포를 구현하면서 발생했던 **`문제를 어떻게 해결했는지 글`** 로 담았습니다.
 
