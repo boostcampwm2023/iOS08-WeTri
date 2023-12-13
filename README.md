@@ -97,7 +97,9 @@
 아이폰에서 제공하는 CoreLocation데이터를 통해서 위치정보의 값들과 **칼만필터**를 통해서 노이즈를 줄이는 방법을 고안하였습니다.칼만필터가 뭘까? 백지 상태에서부터 끝날때는 자이로 센서를 활용한 위치 보정방식을 고안하여 리팩토링 하고싶다는 생각까지 여정을 공유하고 싶습니다.
 
 
-> 이 모든 과정을 더 깊이 있게 탐구하고 싶으시다면, [WeTri GitHub Wiki](https://github.com/boostcampwm2023/iOS08-WeTri/wiki#-ios)를 방문해 주세요. 저와 팀원간 여정을 담은 기술 문서와 함께, 이 기능을 실제로 구현하기까지의 스토리를 공유하고 있습니다. 
+> 궁금하시다면, 아래를 클릭해주세요 (링크는 WeTri GitHub Wiki로 연결되어있습니다!)
+
+### [👉 GPS 오차를 보정하기 위한 칼만 필터 구현기 🗺️](https://github.com/boostcampwm2023/iOS08-WeTri/wiki/GPS%EC%98%A4%EC%B0%A8%EB%A5%BC-%EB%B3%B4%EC%A0%95%ED%95%98%EA%B8%B0-%EC%9C%84%ED%95%9C-%EC%B9%BC%EB%A7%8C-%ED%95%84%ED%84%B0-%EA%B5%AC%ED%98%84%EA%B8%B0-%F0%9F%97%BA%EF%B8%8F)
 
 <br/>
 
@@ -107,11 +109,9 @@
 
 HealthKit의 건강 데이터, WebSocket의 실시간 통신, MapKit의 지도 기반 화면까지. 이 세 가지의 기술이 어떻게 하나의 화면에서 조화롭게 작동할 수 있도록 했을까요? 저는 이 세 가지를 결합하여 사용자들이 운동 거리를 실시간으로 확인할 수 있도록 UI를 구성했고, 동시에 사용자들이 운동하며 지나온 거리를 지도를 통해 확인할 수 있도록 구현했습니다. 이 과정에서 제가 마주한 도전과 성공, 그리고 때로는 실패한 순간들을 공유하고 싶습니다.
 
-
 > 궁금하시다면, 아래를 클릭해주세요 (링크는 WeTri GitHub Wiki로 연결되어있습니다!)
-### [GPS 오차를 보정하기 위한 칼만 필터 구현기 🗺️](https://github.com/boostcampwm2023/iOS08-WeTri/wiki/GPS%EC%98%A4%EC%B0%A8%EB%A5%BC-%EB%B3%B4%EC%A0%95%ED%95%98%EA%B8%B0-%EC%9C%84%ED%95%9C-%EC%B9%BC%EB%A7%8C-%ED%95%84%ED%84%B0-%EA%B5%AC%ED%98%84%EA%B8%B0-%F0%9F%97%BA%EF%B8%8F)
 
-
+### [HealthKit, MapKit, WebSocket, 렛츠고! 좌충우돌 프로젝트 기행](https://github.com/boostcampwm2023/iOS08-WeTri/wiki#%EF%B8%8F-healthkit-mapkit-websocket-렛츠고-좌충우돌-프로젝트-기행)
 
 <br/>
 
