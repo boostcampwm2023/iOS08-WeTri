@@ -64,6 +64,8 @@
 
 ### 💻 BE
 
+#### BE 아키텍처
+
 ![image](https://github.com/boostcampwm2023/iOS08-WeTri/assets/56383948/ba8685e2-000d-40eb-b9db-1f7f2fd71413)
 
 - NestJs의 life cycle을 의미하기도 합니다.
@@ -71,6 +73,13 @@
 - Exception Filter는 Global로 둠으로써 모든 예외는 한 곳에서 처리되도록 구현했습니다.
 - 예외가 발생하지 않으면 Global Interceptor에 들어오게 됩니다.역할은 iOS와 맞춰둔 데이터 형식으로 Format 합니다.
 
+#### BE 배포 구조
+
+![image](https://github.com/boostcampwm2023/iOS08-WeTri/assets/56383948/edfb7da2-8bed-4f68-b8c8-e51de033e525)
+
+#### BE 인프라 아키텍처
+
+![image](https://github.com/boostcampwm2023/iOS08-WeTri/assets/56383948/0468d0aa-0067-499f-9062-985161dbdd60)
 
 ## 💪 기술 스택
 
