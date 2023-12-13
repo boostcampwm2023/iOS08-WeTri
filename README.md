@@ -1,7 +1,8 @@
 # WeTri
 
-<img src="https://github.com/JongPyoAhn/Python/assets/68585628/5629bb2c-a641-4306-a689-c46a7f7299fd">
-
+<div align="center">
+<img src="https://github.com/JongPyoAhn/Python/assets/68585628/5629bb2c-a641-4306-a689-c46a7f7299fd" width="30%"/>
+</div>
 
 > **우리가 함께 만드는, 트라이애슬론 🏃🏻 | 🏊‍♂️ | 🚴**
 >
@@ -12,8 +13,6 @@
 트라이애슬론 커뮤니티와 수영, 달리기, 사이클링에 대한 기록을 할 수 있습니다.
 
 또한 **실시간 랜덤매칭으로 서로 경쟁하며 운동할 수 있는**앱 입니다.
-
-- 우리의 아이콘과 앱 탄생 이유?
 
 <br/>
 
