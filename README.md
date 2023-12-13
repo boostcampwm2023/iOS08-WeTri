@@ -30,13 +30,6 @@
 |운동선택 및 매칭 화면|-|
 |![Screen Recording 2023-12-13 at 9 12 51 AM](https://github.com/boostcampwm2023/iOS08-WeTri/assets/57972338/5b73add5-a547-4043-9fea-bf36872a17da)|-|
 
-
-|요약화면(위치값이 적을 때)|요약화면(위치값이 있을 때)|
-|:-:|:-:|
-|![RPReplay_Final1702430990](https://hackmd.io/_uploads/BJ7OJ9IL6.gif)|![Simulator Screen Recording - iPhone 15 Pro - 2023-12-13 at 10 40 08](https://github.com/boostcampwm2023/iOS08-WeTri/assets/57972338/d04ae085-f59b-4b6c-acc1-55a3e5f21b93)|
-|프로필화면|설정화면|
-|![RPReplay_Final1702430990](https://github.com/boostcampwm2023/iOS08-WeTri/assets/57972338/881a1291-adfa-422c-a80b-42145a441a2e)|![RPReplay_Final1702430990](https://github.com/boostcampwm2023/iOS08-WeTri/assets/57972338/114f91ac-5a38-41a7-aaeb-ffb66338ad01)|
-
 <br/>
 
 ## 🏗️ 아키텍처
