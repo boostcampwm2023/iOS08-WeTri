@@ -76,12 +76,17 @@ final class HomeViewController: UIViewController {
 
 private extension HomeViewController {
   func setup() {
+    setCollectionViewDelegate()
     setDataSource()
     setupStyles()
     setupHierarchyAndConstraints()
     setNavigationItem()
     bind()
     testCollectionViewDataSource()
+  }
+
+  func setCollectionViewDelegate() {
+    feedListCollectionView.delegate = self
   }
 
   func setDataSource() {
