@@ -65,6 +65,7 @@ class FeedItemCollectionViewCell: UICollectionViewCell {
     label.text = "2023.12.07"
     label.font = .preferredFont(forTextStyle: .subheadline)
     label.textColor = DesignSystemColor.primaryText
+    label.contentMode = .scaleAspectFit
 
     label.translatesAutoresizingMaskIntoConstraints = false
     return label

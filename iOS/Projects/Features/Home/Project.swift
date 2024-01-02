@@ -15,7 +15,7 @@ let project = Project.makeModule(
       .combineExtension,
       .coordinator,
       .commonNetworkingKeyManager,
-      .downSampling
+      .downSampling,
     ],
     testDependencies: []
   )
