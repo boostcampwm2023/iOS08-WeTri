@@ -24,6 +24,8 @@ final class HomeViewController: UIViewController {
 
   private var fetchFeedPublisher: PassthroughSubject<Void, Never> = .init()
 
+  private var feedCount: Int = 0
+
   // MARK: UI Components
 
   private let button: UIButton = .init(configuration: .mainEnabled(title: "test button"))
@@ -81,15 +83,24 @@ private extension HomeViewController {
   func setup() {
     setCollectionViewDelegate()
     setDataSource()
+    addSection()
     setupStyles()
     setupHierarchyAndConstraints()
     setNavigationItem()
     bind()
-    testCollectionViewDataSource()
+    fetchFeedPublisher.send()
   }
 
   func setCollectionViewDelegate() {
     feedListCollectionView.delegate = self
+  }
+
+  func addSection() {
+    guard var snapshot = dataSource?.snapshot() else {
+      return
+    }
+    snapshot.appendSections([0])
+    dataSource?.apply(snapshot)
   }
 
   func setDataSource() {
@@ -147,21 +158,11 @@ private extension HomeViewController {
     }
     var snapshot = dataSource.snapshot()
     snapshot.appendItems(item)
-    dataSource.apply(snapshot)
-  }
-
-  func testCollectionViewDataSource() {
-    guard let dataSource else {
-      return
+    DispatchQueue.main.async {
+      dataSource.apply(snapshot)
     }
-    var snapshot = dataSource.snapshot()
-    snapshot.appendSections([0])
-    let fakeData = fakeData()
-    let data = try! JSONEncoder().encode(fakeData)
-    let string = String(data: data, encoding: .utf8)!
-    Log.make().debug("\(string)")
-    snapshot.appendItems(fakeData, toSection: 0)
-    dataSource.apply(snapshot)
+
+    feedCount = snapshot.numberOfItems
   }
 
   enum Constants {
@@ -184,144 +185,15 @@ private extension HomeViewController {
 
     return UICollectionViewCompositionalLayout(section: section)
   }
-
-  func fakeData() -> [FeedElement] {
-    return [
-      .init(
-        ID: 1,
-        publicID: "",
-        nickName: "정다함",
-        publishDate: .now,
-        profileImage: URL(string: "https://i.ytimg.com/vi/fzzjgBAaWZw/hqdefault.jpg"),
-        sportText: "달리기",
-        content: "오운완. 오늘도 운동 조졌음. 기분은 좋네 ^^",
-        postImages: [
-          URL(string: "https://cdn.seniordaily.co.kr/news/photo/202108/2444_1812_1557.jpg"),
-          URL(string: "https://t1.daumcdn.net/thumb/R1280x0/?fname=http://t1.daumcdn.net/brunch/service/guest/image/7MpZeU0-hBKjmb4tKFHR-Skd7bA.JPG"),
-          URL(string: "https://t1.daumcdn.net/brunch/service/guest/image/9xI2XnpJpggfVZV6l1opHBwyeqU.JPG"),
-        ],
-        like: 2
-      ),
-
-      .init(
-        ID: 2,
-        publicID: "",
-        nickName: "고양이 애호가",
-        publishDate: .now,
-        profileImage: URL(string: "https://ca.slack-edge.com/T05N9HAKPFW-U05PCNTCV9N-8bbbd8736a14-512"),
-        sportText: "수영",
-        content: "고양이 애호가입니다. 차린건 없지만 고양이 보고가세요",
-        postImages: [
-          URL(string: "https://i.ytimg.com/vi/YCaGYUIfdy4/maxresdefault.jpg")!,
-          URL(string: "https://www.cats.org.uk/uploads/images/featurebox_sidebar_kids/grief-and-loss.jpg")!,
-          URL(string: "https://www.telegraph.co.uk/content/dam/pets/2017/01/06/1-JS117202740-yana-two-face-cat-news_trans_NvBQzQNjv4BqJNqHJA5DVIMqgv_1zKR2kxRY9bnFVTp4QZlQjJfe6H0.jpg?imwidth=450")!,
-        ],
-        like: 2
-      ),
-
-      .init(
-        ID: 3,
-        publicID: "",
-        nickName: "고양이 애호가",
-        publishDate: .now,
-        profileImage: URL(string: "https://ca.slack-edge.com/T05N9HAKPFW-U05PCNTCV9N-8bbbd8736a14-512"),
-        sportText: "수영",
-        content: "고양이 애호가입니다. 차린건 없지만 고양이 보고가세요",
-        postImages: [
-          URL(string: "https://i.ytimg.com/vi/YCaGYUIfdy4/maxresdefault.jpg")!,
-          URL(string: "https://www.cats.org.uk/uploads/images/featurebox_sidebar_kids/grief-and-loss.jpg")!,
-          URL(string: "https://www.telegraph.co.uk/content/dam/pets/2017/01/06/1-JS117202740-yana-two-face-cat-news_trans_NvBQzQNjv4BqJNqHJA5DVIMqgv_1zKR2kxRY9bnFVTp4QZlQjJfe6H0.jpg?imwidth=450")!,
-        ],
-        like: 4
-      ),
-
-      .init(
-        ID: 4,
-        publicID: "",
-        nickName: "고양이 애호가",
-        publishDate: .now,
-        profileImage: URL(string: "https://ca.slack-edge.com/T05N9HAKPFW-U05PCNTCV9N-8bbbd8736a14-512"),
-        sportText: "수영",
-        content: "고양이 애호가입니다. 차린건 없지만 고양이 보고가세요",
-        postImages: [
-          URL(string: "https://i.ytimg.com/vi/YCaGYUIfdy4/maxresdefault.jpg")!,
-          URL(string: "https://www.cats.org.uk/uploads/images/featurebox_sidebar_kids/grief-and-loss.jpg")!,
-          URL(string: "https://www.telegraph.co.uk/content/dam/pets/2017/01/06/1-JS117202740-yana-two-face-cat-news_trans_NvBQzQNjv4BqJNqHJA5DVIMqgv_1zKR2kxRY9bnFVTp4QZlQjJfe6H0.jpg?imwidth=450")!,
-        ],
-        like: 4
-      ),
-
-      .init(
-        ID: 5,
-        publicID: "",
-        nickName: "고양이 애호가",
-        publishDate: .now,
-        profileImage: URL(string: "https://ca.slack-edge.com/T05N9HAKPFW-U05PCNTCV9N-8bbbd8736a14-512"),
-        sportText: "수영",
-        content: "고양이 애호가입니다. 차린건 없지만 고양이 보고가세요",
-        postImages: [
-          URL(string: "https://i.ytimg.com/vi/YCaGYUIfdy4/maxresdefault.jpg")!,
-          URL(string: "https://www.cats.org.uk/uploads/images/featurebox_sidebar_kids/grief-and-loss.jpg")!,
-          URL(string: "https://www.telegraph.co.uk/content/dam/pets/2017/01/06/1-JS117202740-yana-two-face-cat-news_trans_NvBQzQNjv4BqJNqHJA5DVIMqgv_1zKR2kxRY9bnFVTp4QZlQjJfe6H0.jpg?imwidth=450")!,
-        ],
-        like: 4
-      ),
-
-      .init(
-        ID: 6,
-        publicID: "",
-        nickName: "고양이 애호가",
-        publishDate: .now,
-        profileImage: URL(string: "https://ca.slack-edge.com/T05N9HAKPFW-U05PCNTCV9N-8bbbd8736a14-512"),
-        sportText: "수영",
-        content: "고양이 애호가입니다. 차린건 없지만 고양이 보고가세요",
-        postImages: [
-          URL(string: "https://i.ytimg.com/vi/YCaGYUIfdy4/maxresdefault.jpg")!,
-          URL(string: "https://www.cats.org.uk/uploads/images/featurebox_sidebar_kids/grief-and-loss.jpg")!,
-          URL(string: "https://www.telegraph.co.uk/content/dam/pets/2017/01/06/1-JS117202740-yana-two-face-cat-news_trans_NvBQzQNjv4BqJNqHJA5DVIMqgv_1zKR2kxRY9bnFVTp4QZlQjJfe6H0.jpg?imwidth=450")!,
-        ],
-        like: 4
-      ),
-
-      .init(
-        ID: 7,
-        publicID: "",
-        nickName: "고양이 애호가",
-        publishDate: .now,
-        profileImage: URL(string: "https://ca.slack-edge.com/T05N9HAKPFW-U05PCNTCV9N-8bbbd8736a14-512"),
-        sportText: "수영",
-        content: "고양이 애호가입니다. 차린건 없지만 고양이 보고가세요",
-        postImages: [
-          URL(string: "https://i.ytimg.com/vi/YCaGYUIfdy4/maxresdefault.jpg")!,
-          URL(string: "https://www.cats.org.uk/uploads/images/featurebox_sidebar_kids/grief-and-loss.jpg")!,
-          URL(string: "https://www.telegraph.co.uk/content/dam/pets/2017/01/06/1-JS117202740-yana-two-face-cat-news_trans_NvBQzQNjv4BqJNqHJA5DVIMqgv_1zKR2kxRY9bnFVTp4QZlQjJfe6H0.jpg?imwidth=450")!,
-        ],
-        like: 4
-      ),
-
-      .init(
-        ID: 8,
-        publicID: "",
-        nickName: "고양이 애호가",
-        publishDate: .now,
-        profileImage: URL(string: "https://ca.slack-edge.com/T05N9HAKPFW-U05PCNTCV9N-8bbbd8736a14-512"),
-        sportText: "수영",
-        content: "고양이 애호가입니다. 차린건 없지만 고양이 보고가세요",
-        postImages: [
-          URL(string: "https://i.ytimg.com/vi/YCaGYUIfdy4/maxresdefault.jpg")!,
-          URL(string: "https://www.cats.org.uk/uploads/images/featurebox_sidebar_kids/grief-and-loss.jpg")!,
-          URL(string: "https://www.telegraph.co.uk/content/dam/pets/2017/01/06/1-JS117202740-yana-two-face-cat-news_trans_NvBQzQNjv4BqJNqHJA5DVIMqgv_1zKR2kxRY9bnFVTp4QZlQjJfe6H0.jpg?imwidth=450")!,
-        ],
-        like: 4
-      ),
-    ]
-  }
 }
 
 // MARK: UICollectionViewDelegate
 
 extension HomeViewController: UICollectionViewDelegate {
-  func scrollViewDidEndDragging(_: UIScrollView, willDecelerate _: Bool) {
-    fetchFeedPublisher.send()
+  func collectionView(_: UICollectionView, willDisplay _: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+    // 만약 셀이 모자르다면 요청을 보냄
+    if (feedCount - 1) - indexPath.row < 3 {
+      fetchFeedPublisher.send()
+    }
   }
 }
