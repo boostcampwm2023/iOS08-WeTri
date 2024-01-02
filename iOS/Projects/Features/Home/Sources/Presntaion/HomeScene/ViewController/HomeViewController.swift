@@ -8,6 +8,7 @@
 
 import Combine
 import DesignSystem
+import Log
 import UIKit
 
 // MARK: - HomeViewController
@@ -19,7 +20,9 @@ final class HomeViewController: UIViewController {
 
   private var subscriptions: Set<AnyCancellable> = []
 
-  var dataSource: UICollectionViewDiffableDataSource<Int, FeedElement>? = nil
+  private var dataSource: UICollectionViewDiffableDataSource<Int, FeedElement>? = nil
+
+  private var fetchFeedPublisher: PassthroughSubject<Void, Never> = .init()
 
   // MARK: UI Components
 
@@ -116,11 +119,18 @@ private extension HomeViewController {
   }
 
   func bind() {
-    let output = viewModel.transform(input: .init())
-    output.sink { state in
+    let output = viewModel.transform(
+      input: HomeViewModelInput(
+        requestFeedPublisher: fetchFeedPublisher.eraseToAnyPublisher()
+      )
+    )
+
+    output.sink { [weak self] state in
       switch state {
       case .idle:
         break
+      case let .fetched(feed):
+        self?.updateFeed(feed)
       }
     }
     .store(in: &subscriptions)
@@ -131,13 +141,26 @@ private extension HomeViewController {
     navigationItem.leftBarButtonItem = titleBarButtonItem
   }
 
+  func updateFeed(_ item: [FeedElement]) {
+    guard let dataSource else {
+      return
+    }
+    var snapshot = dataSource.snapshot()
+    snapshot.appendItems(item)
+    dataSource.apply(snapshot)
+  }
+
   func testCollectionViewDataSource() {
     guard let dataSource else {
       return
     }
     var snapshot = dataSource.snapshot()
     snapshot.appendSections([0])
-    snapshot.appendItems(fakeData(), toSection: 0)
+    let fakeData = fakeData()
+    let data = try! JSONEncoder().encode(fakeData)
+    let string = String(data: data, encoding: .utf8)!
+    Log.make().debug("\(string)")
+    snapshot.appendItems(fakeData, toSection: 0)
     dataSource.apply(snapshot)
   }
 
@@ -292,5 +315,13 @@ private extension HomeViewController {
         like: 4
       ),
     ]
+  }
+}
+
+// MARK: UICollectionViewDelegate
+
+extension HomeViewController: UICollectionViewDelegate {
+  func scrollViewDidEndDragging(_: UIScrollView, willDecelerate _: Bool) {
+    fetchFeedPublisher.send()
   }
 }

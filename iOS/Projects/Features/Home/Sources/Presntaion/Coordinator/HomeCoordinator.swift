@@ -37,7 +37,11 @@ public final class HomeCoordinator: HomeCoordinating {
   }
 
   public func pushHome() {
-    let viewModel = HomeViewModel()
+    let repository = FeedRepository(session: URLSession.shared)
+
+    let useCase = HomeUseCase(feedRepositoryRepresentable: repository)
+
+    let viewModel = HomeViewModel(useCase: useCase)
 
     let viewController = HomeViewController(viewModel: viewModel)
 

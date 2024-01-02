@@ -8,9 +8,3 @@
 
 import Log
 import UIKit
-
-extension HomeViewController: UICollectionViewDelegate {
-  func scrollViewDidEndDragging(_: UIScrollView, willDecelerate _: Bool) {
-    Log.make().debug("스크롤 끝남")
-  }
-}
