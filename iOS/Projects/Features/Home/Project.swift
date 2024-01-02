@@ -7,7 +7,16 @@ let project = Project.makeModule(
   targets: .feature(
     .home,
     testingOptions: [.unitTest],
-    dependencies: [.designSystem, .log, .combineCocoa, .trinet, .combineExtension, .coordinator, .commonNetworkingKeyManager],
+    dependencies: [
+      .designSystem,
+      .log,
+      .combineCocoa,
+      .trinet,
+      .combineExtension,
+      .coordinator,
+      .commonNetworkingKeyManager,
+      .downSampling
+    ],
     testDependencies: []
   )
 )
