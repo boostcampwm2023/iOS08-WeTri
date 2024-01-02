@@ -222,6 +222,70 @@ private extension HomeViewController {
         ],
         like: 4
       ),
+
+      .init(
+        ID: 5,
+        publicID: "",
+        nickName: "고양이 애호가",
+        publishDate: .now,
+        profileImage: URL(string: "https://ca.slack-edge.com/T05N9HAKPFW-U05PCNTCV9N-8bbbd8736a14-512"),
+        sportText: "수영",
+        content: "고양이 애호가입니다. 차린건 없지만 고양이 보고가세요",
+        postImages: [
+          URL(string: "https://i.ytimg.com/vi/YCaGYUIfdy4/maxresdefault.jpg")!,
+          URL(string: "https://www.cats.org.uk/uploads/images/featurebox_sidebar_kids/grief-and-loss.jpg")!,
+          URL(string: "https://www.telegraph.co.uk/content/dam/pets/2017/01/06/1-JS117202740-yana-two-face-cat-news_trans_NvBQzQNjv4BqJNqHJA5DVIMqgv_1zKR2kxRY9bnFVTp4QZlQjJfe6H0.jpg?imwidth=450")!,
+        ],
+        like: 4
+      ),
+
+      .init(
+        ID: 6,
+        publicID: "",
+        nickName: "고양이 애호가",
+        publishDate: .now,
+        profileImage: URL(string: "https://ca.slack-edge.com/T05N9HAKPFW-U05PCNTCV9N-8bbbd8736a14-512"),
+        sportText: "수영",
+        content: "고양이 애호가입니다. 차린건 없지만 고양이 보고가세요",
+        postImages: [
+          URL(string: "https://i.ytimg.com/vi/YCaGYUIfdy4/maxresdefault.jpg")!,
+          URL(string: "https://www.cats.org.uk/uploads/images/featurebox_sidebar_kids/grief-and-loss.jpg")!,
+          URL(string: "https://www.telegraph.co.uk/content/dam/pets/2017/01/06/1-JS117202740-yana-two-face-cat-news_trans_NvBQzQNjv4BqJNqHJA5DVIMqgv_1zKR2kxRY9bnFVTp4QZlQjJfe6H0.jpg?imwidth=450")!,
+        ],
+        like: 4
+      ),
+
+      .init(
+        ID: 7,
+        publicID: "",
+        nickName: "고양이 애호가",
+        publishDate: .now,
+        profileImage: URL(string: "https://ca.slack-edge.com/T05N9HAKPFW-U05PCNTCV9N-8bbbd8736a14-512"),
+        sportText: "수영",
+        content: "고양이 애호가입니다. 차린건 없지만 고양이 보고가세요",
+        postImages: [
+          URL(string: "https://i.ytimg.com/vi/YCaGYUIfdy4/maxresdefault.jpg")!,
+          URL(string: "https://www.cats.org.uk/uploads/images/featurebox_sidebar_kids/grief-and-loss.jpg")!,
+          URL(string: "https://www.telegraph.co.uk/content/dam/pets/2017/01/06/1-JS117202740-yana-two-face-cat-news_trans_NvBQzQNjv4BqJNqHJA5DVIMqgv_1zKR2kxRY9bnFVTp4QZlQjJfe6H0.jpg?imwidth=450")!,
+        ],
+        like: 4
+      ),
+
+      .init(
+        ID: 8,
+        publicID: "",
+        nickName: "고양이 애호가",
+        publishDate: .now,
+        profileImage: URL(string: "https://ca.slack-edge.com/T05N9HAKPFW-U05PCNTCV9N-8bbbd8736a14-512"),
+        sportText: "수영",
+        content: "고양이 애호가입니다. 차린건 없지만 고양이 보고가세요",
+        postImages: [
+          URL(string: "https://i.ytimg.com/vi/YCaGYUIfdy4/maxresdefault.jpg")!,
+          URL(string: "https://www.cats.org.uk/uploads/images/featurebox_sidebar_kids/grief-and-loss.jpg")!,
+          URL(string: "https://www.telegraph.co.uk/content/dam/pets/2017/01/06/1-JS117202740-yana-two-face-cat-news_trans_NvBQzQNjv4BqJNqHJA5DVIMqgv_1zKR2kxRY9bnFVTp4QZlQjJfe6H0.jpg?imwidth=450")!,
+        ],
+        like: 4
+      ),
     ]
   }
 }

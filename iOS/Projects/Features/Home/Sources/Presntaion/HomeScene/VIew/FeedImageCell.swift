@@ -6,6 +6,7 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import Cacher
 import ImageDownsampling
 import UIKit
 
@@ -23,6 +24,12 @@ final class FeedImageCell: UICollectionViewCell {
   @available(*, unavailable)
   required init?(coder _: NSCoder) {
     fatalError("cant use this init")
+  }
+
+  override func prepareForReuse() {
+    super.prepareForReuse()
+
+    feedImage.image = nil
   }
 
   private func setupViewHierarchyAndConstraints() {
@@ -44,13 +51,16 @@ final class FeedImageCell: UICollectionViewCell {
     guard let imageURL else {
       return
     }
-
-    DispatchQueue.global().async {
-      guard let data = try? Data(contentsOf: imageURL) else { return }
-      DispatchQueue.main.async { [weak self] in
-        self?.feedImage.image = UIImage(data: data)
-        self?.layoutIfNeeded()
+    guard let data = MemoryCacheManager.shared.fetch(cacheKey: imageURL.absoluteString) else {
+      DispatchQueue.global().async {
+        guard let data = try? Data(contentsOf: imageURL) else { return }
+        DispatchQueue.main.async { [weak self] in
+          self?.feedImage.image = UIImage(data: data)
+          self?.layoutIfNeeded()
+        }
       }
+      return
     }
+    feedImage.image = UIImage(data: data)
   }
 }

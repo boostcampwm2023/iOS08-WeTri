@@ -6,6 +6,7 @@
 //  Copyright © 2023 kr.codesquad.boostcamp8. All rights reserved.
 //
 
+import Cacher
 import DesignSystem
 import UIKit
 
@@ -22,6 +23,12 @@ class FeedItemCollectionViewCell: UICollectionViewCell {
   @available(*, unavailable)
   required init?(coder _: NSCoder) {
     fatalError("생성할 수 없습니다.")
+  }
+
+  override func prepareForReuse() {
+    super.prepareForReuse()
+
+    profileImage.image = nil
   }
 
   // MARK: - Property
@@ -311,10 +318,10 @@ extension FeedItemCollectionViewCell {
       return
     }
 
+    let url = url.compactMap { $0 }
     snapshot.deleteAllItems()
     snapshot.appendSections([0])
-    let url = url.compactMap { $0 }
-    snapshot.appendItems(Array(Set(url)), toSection: 0)
+    snapshot.appendItems(url, toSection: 0)
     dataSource?.apply(snapshot)
   }
 }
