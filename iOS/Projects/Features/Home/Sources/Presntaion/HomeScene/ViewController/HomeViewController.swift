@@ -22,7 +22,8 @@ final class HomeViewController: UIViewController {
 
   private var dataSource: UICollectionViewDiffableDataSource<Int, FeedElement>? = nil
 
-  private var fetchFeedPublisher: PassthroughSubject<Void, Never> = .init()
+  private let fetchFeedPublisher: PassthroughSubject<Void, Never> = .init()
+  private let didDisplayFeedPublisher: PassthroughSubject<Void, Never> = .init()
 
   private var feedCount: Int = 0
 
@@ -132,7 +133,8 @@ private extension HomeViewController {
   func bind() {
     let output = viewModel.transform(
       input: HomeViewModelInput(
-        requestFeedPublisher: fetchFeedPublisher.eraseToAnyPublisher()
+        requestFeedPublisher: fetchFeedPublisher.eraseToAnyPublisher(),
+        didDisplayFeed: didDisplayFeedPublisher.eraseToAnyPublisher()
       )
     )
 
@@ -158,8 +160,9 @@ private extension HomeViewController {
     }
     var snapshot = dataSource.snapshot()
     snapshot.appendItems(item)
-    DispatchQueue.main.async {
+    DispatchQueue.main.async { [weak self] in
       dataSource.apply(snapshot)
+      self?.didDisplayFeedPublisher.send()
     }
 
     feedCount = snapshot.numberOfItems

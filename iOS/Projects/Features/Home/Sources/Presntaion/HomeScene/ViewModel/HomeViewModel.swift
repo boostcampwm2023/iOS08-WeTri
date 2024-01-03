@@ -13,6 +13,7 @@ import Foundation
 
 public struct HomeViewModelInput {
   let requestFeedPublisher: AnyPublisher<Void, Never>
+  let didDisplayFeed: AnyPublisher<Void, Never>
 }
 
 public typealias HomeViewModelOutput = AnyPublisher<HomeState, Never>
@@ -35,7 +36,7 @@ protocol HomeViewModelRepresentable {
 final class HomeViewModel {
   // MARK: - Properties
 
-  private let useCase: HomeUseCaseRepresentable
+  private var useCase: HomeUseCaseRepresentable
   private var subscriptions: Set<AnyCancellable> = []
   var tempID: Int = 0
   init(useCase: HomeUseCaseRepresentable) {
@@ -57,6 +58,12 @@ extension HomeViewModel: HomeViewModelRepresentable {
         return HomeState.fetched(feed: feed)
       }
       .eraseToAnyPublisher()
+
+    input.didDisplayFeed
+      .sink { [weak self] _ in
+        self?.useCase.didDisplayFeed()
+      }
+      .store(in: &subscriptions)
 
     let initialState: HomeViewModelOutput = Just(.idle).eraseToAnyPublisher()
 

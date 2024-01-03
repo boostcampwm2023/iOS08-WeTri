@@ -13,18 +13,19 @@ import Foundation
 
 public protocol HomeUseCaseRepresentable {
   func fetchFeed() -> AnyPublisher<[FeedElement], Never>
+  mutating func didDisplayFeed()
 }
 
 // MARK: - HomeUseCase
 
 public struct HomeUseCase: HomeUseCaseRepresentable {
-  let feedRepositoryRepresentable: FeedRepositoryRepresentable
-  var latestFeedPage = 0
+  private let feedRepositoryRepresentable: FeedRepositoryRepresentable
 
-  var pipeLine: PassthroughSubject<Int, Never> = .init()
-  let checkManager: FetchCheckManager = .init()
+  private var latestFeedPage = 0
+  private var feedElementPublisher: PassthroughSubject<[FeedElement], Never> = .init()
+  private let checkManager: FetchCheckManager = .init()
 
-  init(feedRepositoryRepresentable: FeedRepositoryRepresentable) {
+  public init(feedRepositoryRepresentable: FeedRepositoryRepresentable) {
     self.feedRepositoryRepresentable = feedRepositoryRepresentable
   }
 
@@ -33,7 +34,11 @@ public struct HomeUseCase: HomeUseCaseRepresentable {
       return Empty().eraseToAnyPublisher()
     }
     checkManager[latestFeedPage] = true
-    return feedRepositoryRepresentable.fetchFeed(at: latestFeedPage)
+    return feedElementPublisher.eraseToAnyPublisher()
+  }
+
+  public mutating func didDisplayFeed() {
+    latestFeedPage += 1
   }
 }
 
