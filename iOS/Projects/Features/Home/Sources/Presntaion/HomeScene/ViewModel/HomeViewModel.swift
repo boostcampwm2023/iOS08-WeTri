@@ -14,6 +14,7 @@ import Foundation
 public struct HomeViewModelInput {
   let requestFeedPublisher: AnyPublisher<Void, Never>
   let didDisplayFeed: AnyPublisher<Void, Never>
+  let refreshFeedPublisher: AnyPublisher<Void, Never>
 }
 
 public typealias HomeViewModelOutput = AnyPublisher<HomeState, Never>
@@ -23,6 +24,7 @@ public typealias HomeViewModelOutput = AnyPublisher<HomeState, Never>
 public enum HomeState {
   case idle
   case fetched(feed: [FeedElement])
+  case refresh(feed: [FeedElement])
 }
 
 // MARK: - HomeViewModelRepresentable
@@ -52,7 +54,7 @@ extension HomeViewModel: HomeViewModelRepresentable {
 
     let fetched: HomeViewModelOutput = input.requestFeedPublisher
       .flatMap { [useCase] _ in
-        useCase.fetchFeed()
+        return useCase.fetchFeed()
       }
       .map { feed in
         return HomeState.fetched(feed: feed)
@@ -65,9 +67,18 @@ extension HomeViewModel: HomeViewModelRepresentable {
       }
       .store(in: &subscriptions)
 
+    let refreshed: HomeViewModelOutput = input.refreshFeedPublisher
+      .flatMap { [useCase] _ in
+        return useCase.refreshFeed()
+      }
+      .map { feed in
+        return HomeState.refresh(feed: feed)
+      }
+      .eraseToAnyPublisher()
+
     let initialState: HomeViewModelOutput = Just(.idle).eraseToAnyPublisher()
 
-    return initialState.merge(with: fetched)
+    return initialState.merge(with: fetched, refreshed)
       .eraseToAnyPublisher()
   }
 }

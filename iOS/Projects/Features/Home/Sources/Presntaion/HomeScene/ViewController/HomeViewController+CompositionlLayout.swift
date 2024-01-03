@@ -1,5 +1,5 @@
 //
-//  HomeViewController+CompositionalLayout.swift
+//  HomeViewController+CompositionlLayout.swift
 //  HomeFeature
 //
 //  Created by MaraMincho on 1/3/24.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-private extension HomeViewController {
+extension HomeViewController {
   static func makeFeedCollectionViewLayout() -> UICollectionViewCompositionalLayout {
     let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
