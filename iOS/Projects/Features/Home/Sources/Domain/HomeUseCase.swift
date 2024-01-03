@@ -13,6 +13,7 @@ import Foundation
 
 public protocol HomeUseCaseRepresentable {
   func fetchFeed() -> AnyPublisher<[FeedElement], Never>
+  func refreshFeed() -> AnyPublisher<[FeedElement], Never>
   mutating func didDisplayFeed()
 }
 
@@ -34,7 +35,11 @@ public struct HomeUseCase: HomeUseCaseRepresentable {
       return Empty().eraseToAnyPublisher()
     }
     checkManager[latestFeedPage] = true
-    return feedElementPublisher.eraseToAnyPublisher()
+    return feedRepositoryRepresentable.fetchFeed(at: latestFeedPage)
+  }
+
+  public func refreshFeed() -> AnyPublisher<[FeedElement], Never> {
+    return feedRepositoryRepresentable.refreshFeed()
   }
 
   public mutating func didDisplayFeed() {

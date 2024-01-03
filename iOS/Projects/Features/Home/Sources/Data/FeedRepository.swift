@@ -16,15 +16,32 @@ import Trinet
 public struct FeedRepository: FeedRepositoryRepresentable {
   let decoder = JSONDecoder()
   let provider: TNProvider<FeedEndPoint>
+
   init(session: URLSessionProtocol = URLSession.shared) {
     provider = .init(session: session)
   }
 
   public func fetchFeed(at page: Int) -> AnyPublisher<[FeedElement], Never> {
     return Future<[FeedElement], Error> { promise in
-      Task { [provider] in
+      Task {
         do {
           let data = try await provider.request(.fetchPosts(page: page), interceptor: TNKeychainInterceptor.shared)
+          let feedElementList = try decoder.decode([FeedElement].self, from: data)
+          promise(.success(feedElementList))
+        } catch {
+          promise(.failure(error))
+        }
+      }
+    }
+    .catch { _ in return Empty() }
+    .eraseToAnyPublisher()
+  }
+
+  public func refreshFeed() -> AnyPublisher<[FeedElement], Never> {
+    return Future<[FeedElement], Error> { promise in
+      Task { [provider] in
+        do {
+          let data = try await provider.request(.refreshFeed, interceptor: TNKeychainInterceptor.shared)
           let feedElementList = try decoder.decode([FeedElement].self, from: data)
           promise(.success(feedElementList))
         } catch {
@@ -41,6 +58,8 @@ public struct FeedRepository: FeedRepositoryRepresentable {
 
 public enum FeedEndPoint: TNEndPoint {
   case fetchPosts(page: Int)
+  case refreshFeed
+
   public var path: String {
     return ""
   }
@@ -57,6 +76,8 @@ public enum FeedEndPoint: TNEndPoint {
     switch self {
     case let .fetchPosts(page):
       return page
+    case .refreshFeed:
+      return nil
     }
   }
 

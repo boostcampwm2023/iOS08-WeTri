@@ -13,4 +13,5 @@ import Foundation
 
 public protocol FeedRepositoryRepresentable {
   func fetchFeed(at page: Int) -> AnyPublisher<[FeedElement], Never>
+  func refreshFeed() -> AnyPublisher<[FeedElement], Never>
 }
