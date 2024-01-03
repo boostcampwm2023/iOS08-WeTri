@@ -11,7 +11,10 @@ import Foundation
 
 // MARK: - HomeViewModelInput
 
-public struct HomeViewModelInput {}
+public struct HomeViewModelInput {
+  let requestFeedPublisher: AnyPublisher<Void, Never>
+  let didDisplayFeed: AnyPublisher<Void, Never>
+}
 
 public typealias HomeViewModelOutput = AnyPublisher<HomeState, Never>
 
@@ -19,6 +22,7 @@ public typealias HomeViewModelOutput = AnyPublisher<HomeState, Never>
 
 public enum HomeState {
   case idle
+  case fetched(feed: [FeedElement])
 }
 
 // MARK: - HomeViewModelRepresentable
@@ -32,17 +36,38 @@ protocol HomeViewModelRepresentable {
 final class HomeViewModel {
   // MARK: - Properties
 
+  private var useCase: HomeUseCaseRepresentable
   private var subscriptions: Set<AnyCancellable> = []
+  var tempID: Int = 0
+  init(useCase: HomeUseCaseRepresentable) {
+    self.useCase = useCase
+  }
 }
 
 // MARK: HomeViewModelRepresentable
 
 extension HomeViewModel: HomeViewModelRepresentable {
-  public func transform(input _: HomeViewModelInput) -> HomeViewModelOutput {
+  public func transform(input: HomeViewModelInput) -> HomeViewModelOutput {
     subscriptions.removeAll()
+
+    let fetched: HomeViewModelOutput = input.requestFeedPublisher
+      .flatMap { [useCase] _ in
+        useCase.fetchFeed()
+      }
+      .map { feed in
+        return HomeState.fetched(feed: feed)
+      }
+      .eraseToAnyPublisher()
+
+    input.didDisplayFeed
+      .sink { [weak self] _ in
+        self?.useCase.didDisplayFeed()
+      }
+      .store(in: &subscriptions)
 
     let initialState: HomeViewModelOutput = Just(.idle).eraseToAnyPublisher()
 
-    return initialState
+    return initialState.merge(with: fetched)
+      .eraseToAnyPublisher()
   }
 }
