@@ -17,7 +17,6 @@ let project = Project.makeModule(
       .commonNetworkingKeyManager,
       .downSampling,
     ],
-    testDependencies: [],
-    resources: "Resources/**"
+    testDependencies: []
   )
 )
