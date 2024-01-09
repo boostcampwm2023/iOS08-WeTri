@@ -22,7 +22,13 @@ final class WorkoutHistorySelectViewController: UIViewController {
 
   // MARK: UI Components
 
-  private let button: UIButton = .init(configuration: .mainEnabled(title: "test button"))
+  private lazy var workoutHistoryCollectionView: UICollectionView = {
+    let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCompositionalLayout())
+    collectionView.register(WorkoutHistoryCell.self, forCellWithReuseIdentifier: WorkoutHistoryCell.identifier)
+    collectionView.delegate = self
+    collectionView.translatesAutoresizingMaskIntoConstraints = false
+    return collectionView
+  }()
 
   // MARK: Initializations
 
@@ -51,6 +57,7 @@ final class WorkoutHistorySelectViewController: UIViewController {
 private extension WorkoutHistorySelectViewController {
   func setup() {
     setupStyles()
+    setupNavigationItem()
     setupHierarchyAndConstraints()
     bind()
   }
@@ -60,7 +67,11 @@ private extension WorkoutHistorySelectViewController {
   }
 
   func setupStyles() {
-    view.backgroundColor = DesignSystemColor.main03
+    view.backgroundColor = DesignSystemColor.primaryBackground
+  }
+
+  func setupNavigationItem() {
+    navigationItem.title = "운동을 선택하세요"
   }
 
   func bind() {
@@ -77,6 +88,28 @@ private extension WorkoutHistorySelectViewController {
   enum Metrics {}
 }
 
-// MARK: UINavigationControllerDelegate
+// MARK: UICollectionViewDelegate
 
-extension WorkoutHistorySelectViewController: UINavigationControllerDelegate {}
+extension WorkoutHistorySelectViewController: UICollectionViewDelegate {}
+
+private extension WorkoutHistorySelectViewController {
+  func makeCompositionalLayout() -> UICollectionViewCompositionalLayout {
+    let item = NSCollectionLayoutItem(
+      layoutSize: .init(
+        widthDimension: .fractionalWidth(1),
+        heightDimension: .fractionalHeight(1)
+      )
+    )
+
+    let group = NSCollectionLayoutGroup(
+      layoutSize: .init(
+        widthDimension: .fractionalHeight(1),
+        heightDimension: .fractionalHeight(1 / 9)
+      )
+    )
+
+    let section = NSCollectionLayoutSection(group: group)
+
+    return .init(section: section)
+  }
+}
