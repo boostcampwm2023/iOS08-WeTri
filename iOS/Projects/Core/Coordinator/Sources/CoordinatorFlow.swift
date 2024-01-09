@@ -20,5 +20,4 @@ public enum CoordinatorFlow {
   case onboarding
   case profile
   case home
-  case writeBoard
 }
