@@ -20,7 +20,6 @@ final class ContainerViewController: UINavigationController {
   private var subscriptions: Set<AnyCancellable> = []
 
   private var cancelWriteBoardPublisher: PassthroughSubject<Void, Never> = .init()
-  private var dismissAlertPublisher: PassthroughSubject<Void, Never> = .init()
   private var confirmAlertPublisher: PassthroughSubject<Void, Never> = .init()
 
   // MARK: Initializations
@@ -56,6 +55,7 @@ private extension ContainerViewController {
   func setup() {
     setupStyles()
     bind()
+    presentationController?.delegate = self
   }
 
   func setupStyles() {
@@ -66,7 +66,6 @@ private extension ContainerViewController {
     let output = viewModel.transform(
       input: .init(
         showAlertPublisher: cancelWriteBoardPublisher.eraseToAnyPublisher(),
-        dismissAlertPublisher: dismissAlertPublisher.eraseToAnyPublisher(),
         dismissWriteBoardPublisher: confirmAlertPublisher.eraseToAnyPublisher()
       )
     )
@@ -74,9 +73,6 @@ private extension ContainerViewController {
       switch state {
       case .showAlert:
         self?.showFinishAlert()
-
-      case .dismissAlert:
-        self?.dismissAlertPublisher.send()
 
       case .idle:
         break
@@ -90,7 +86,8 @@ private extension ContainerViewController {
 
 extension ContainerViewController: UIAdaptivePresentationControllerDelegate {
   func presentationControllerShouldDismiss(_: UIPresentationController) -> Bool {
-    return true
+    showFinishAlert()
+    return false
   }
 
   private func showFinishAlert() {
@@ -100,9 +97,7 @@ extension ContainerViewController: UIAdaptivePresentationControllerDelegate {
       preferredStyle: .alert
     )
 
-    let cancelHandler: (UIAlertAction) -> Void = { [weak self] _ in
-      self?.dismissAlertPublisher.send()
-    }
+    let cancelHandler: (UIAlertAction) -> Void = { _ in return }
 
     let confirmHandler: (UIAlertAction) -> Void = { [weak self] _ in
       self?.confirmAlertPublisher.send()
@@ -113,5 +108,6 @@ extension ContainerViewController: UIAdaptivePresentationControllerDelegate {
 
     alertController.addAction(cancelAction)
     alertController.addAction(confirmAction)
+    present(alertController, animated: true)
   }
 }

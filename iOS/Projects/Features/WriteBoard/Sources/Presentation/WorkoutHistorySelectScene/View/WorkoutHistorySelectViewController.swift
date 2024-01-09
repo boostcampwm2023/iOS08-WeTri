@@ -60,7 +60,7 @@ private extension WorkoutHistorySelectViewController {
   }
 
   func setupStyles() {
-    view.backgroundColor = DesignSystemColor.primaryBackground
+    view.backgroundColor = DesignSystemColor.main03
   }
 
   func bind() {

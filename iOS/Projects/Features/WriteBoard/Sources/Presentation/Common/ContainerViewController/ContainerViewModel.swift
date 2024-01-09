@@ -13,7 +13,6 @@ import Foundation
 
 public struct ContainerViewModelInput {
   let showAlertPublisher: AnyPublisher<Void, Never>
-  let dismissAlertPublisher: AnyPublisher<Void, Never>
   let dismissWriteBoardPublisher: AnyPublisher<Void, Never>
 }
 
@@ -24,7 +23,6 @@ public typealias ContainerViewModelOutput = AnyPublisher<ContainerState, Never>
 public enum ContainerState {
   case idle
   case showAlert
-  case dismissAlert
 }
 
 // MARK: - ContainerViewModelRepresentable
@@ -58,11 +56,6 @@ extension ContainerViewModel: ContainerViewModelRepresentable {
       .map { _ in ContainerState.showAlert }
       .eraseToAnyPublisher()
 
-    let dismissAlert: ContainerViewModelOutput = input
-      .dismissAlertPublisher
-      .map { _ in ContainerState.dismissAlert }
-      .eraseToAnyPublisher()
-
     input.dismissWriteBoardPublisher
       .sink { [weak self] _ in
         self?.coordinator?.cancelWriteBoard()
@@ -71,6 +64,6 @@ extension ContainerViewModel: ContainerViewModelRepresentable {
 
     let initialState: ContainerViewModelOutput = Just(.idle).eraseToAnyPublisher()
 
-    return initialState.merge(with: showAlert, dismissAlert).eraseToAnyPublisher()
+    return initialState.merge(with: showAlert).eraseToAnyPublisher()
   }
 }

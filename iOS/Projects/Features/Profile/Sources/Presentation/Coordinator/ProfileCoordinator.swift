@@ -11,6 +11,7 @@ import Keychain
 import Log
 import Trinet
 import UIKit
+import WriteBoardFeature
 
 // MARK: - ProfileFinishFinishDelegate
 
@@ -91,5 +92,21 @@ extension ProfileCoordinator: ProfileCoordinating {
     navigationController.pushViewController(viewController, animated: true)
   }
 
-  public func presentWriteBoard() {}
+  public func presentWriteBoard() {
+    let writeBoardCoordinator = WriteBoardCoordinator(
+      navigationController: navigationController,
+      delegate: self
+    )
+    childCoordinators.append(writeBoardCoordinator)
+    writeBoardCoordinator.start()
+  }
+}
+
+// MARK: CoordinatorFinishDelegate
+
+extension ProfileCoordinator: CoordinatorFinishDelegate {
+  public func flowDidFinished(childCoordinator: Coordinating) {
+    childCoordinators = childCoordinators.filter { $0.flow != childCoordinator.flow }
+    childCoordinator.childCoordinators.removeAll()
+  }
 }

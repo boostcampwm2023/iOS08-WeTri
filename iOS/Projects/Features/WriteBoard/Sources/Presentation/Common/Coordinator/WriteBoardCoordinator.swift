@@ -37,7 +37,7 @@ public final class WriteBoardCoordinator: WriteBoardFeatureCoordinating {
 
   public init(
     navigationController: UINavigationController,
-    delegate: CoordinatorFinishDelegate
+    delegate: CoordinatorFinishDelegate?
   ) {
     self.navigationController = navigationController
     finishDelegate = delegate
@@ -52,7 +52,7 @@ public final class WriteBoardCoordinator: WriteBoardFeatureCoordinating {
     let vc = ContainerViewController(viewModel: viewModel)
     containerViewController = vc
 
-    vc.modalPresentationStyle = .fullScreen
+    vc.modalPresentationStyle = .automatic
     navigationController.present(vc, animated: true)
     pushWorkoutHistorySelectScene()
   }
@@ -61,12 +61,16 @@ public final class WriteBoardCoordinator: WriteBoardFeatureCoordinating {
     let viewModel = WorkoutHistorySelectViewModel()
     let viewController = WorkoutHistorySelectViewController(viewModel: viewModel)
 
-    containerViewController?.setViewControllers([viewController], animated: true)
+    containerViewController?.pushViewController(viewController, animated: false)
   }
 
   public func pushWriteBoardScene() {}
 
   public func didFinishWriteBoard() {}
 
-  public func cancelWriteBoard() {}
+  public func cancelWriteBoard() {
+    childCoordinators.removeAll()
+    navigationController.dismiss(animated: true)
+    finishDelegate?.flowDidFinished(childCoordinator: self)
+  }
 }
