@@ -77,6 +77,6 @@ private extension WorkoutHistorySelectViewController {
   enum Metrics {}
 }
 
-extension WorkoutHistorySelectViewController: UINavigationControllerDelegate {
-  
-}
+// MARK: UINavigationControllerDelegate
+
+extension WorkoutHistorySelectViewController: UINavigationControllerDelegate {}

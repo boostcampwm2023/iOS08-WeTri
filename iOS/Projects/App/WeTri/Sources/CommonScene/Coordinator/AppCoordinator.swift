@@ -12,6 +12,7 @@ import LoginFeature
 import OnboardingFeature
 import SignUpFeature
 import SplashFeature
+import WriteBoardFeature
 import UIKit
 
 // MARK: - AppCoordinator
@@ -81,6 +82,15 @@ final class AppCoordinator: AppCoordinating {
     let tabBarCoordinator = TabBarCoordinator(navigationController: navigationController, tabBarFinishDelegate: self)
     childCoordinators.append(tabBarCoordinator)
     tabBarCoordinator.start()
+  }
+  
+  func showWriteBoardFlow(navigationController: UINavigationController) {
+    let coordinator = WriteBoardCoordinator(
+      navigationController: navigationController,
+      delegate: self
+    )
+    childCoordinators.append(coordinator)
+    coordinator.start()
   }
 }
 

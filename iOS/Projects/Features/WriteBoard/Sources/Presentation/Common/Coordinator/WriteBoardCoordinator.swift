@@ -20,7 +20,6 @@ public protocol WriteBoardFeatureFinishDelegate: AnyObject {
 // MARK: - WriteBoardFeatureCoordinating
 
 public protocol WriteBoardFeatureCoordinating: Coordinating {
-  func pushWorkoutHistorySelectScene()
   func pushWriteBoardScene()
   func didFinishWriteBoard()
   func cancelWriteBoard()
@@ -30,14 +29,13 @@ public protocol WriteBoardFeatureCoordinating: Coordinating {
 
 public final class WriteBoardCoordinator: WriteBoardFeatureCoordinating {
   public var navigationController: UINavigationController
-
   public var childCoordinators: [Coordinating] = []
-
   public weak var finishDelegate: CoordinatorFinishDelegate?
-
   public var flow: CoordinatorFlow = .writeBoard
 
-  init(
+  private var containerViewController: UINavigationController?
+
+  public init(
     navigationController: UINavigationController,
     delegate: CoordinatorFinishDelegate
   ) {
@@ -46,10 +44,25 @@ public final class WriteBoardCoordinator: WriteBoardFeatureCoordinating {
   }
 
   public func start() {
+    pushContainerViewController()
+  }
+
+  private func pushContainerViewController() {
+    let viewModel = ContainerViewModel(coordinator: self)
+    let vc = ContainerViewController(viewModel: viewModel)
+    containerViewController = vc
+
+    vc.modalPresentationStyle = .fullScreen
+    navigationController.present(vc, animated: true)
     pushWorkoutHistorySelectScene()
   }
 
-  public func pushWorkoutHistorySelectScene() {}
+  private func pushWorkoutHistorySelectScene() {
+    let viewModel = WorkoutHistorySelectViewModel()
+    let viewController = WorkoutHistorySelectViewController(viewModel: viewModel)
+
+    containerViewController?.setViewControllers([viewController], animated: true)
+  }
 
   public func pushWriteBoardScene() {}
 

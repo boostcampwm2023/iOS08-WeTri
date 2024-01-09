@@ -1,4 +1,4 @@
-// 
+//
 //  ContainerViewModel.swift
 //  WriteBoardFeature
 //
@@ -11,7 +11,11 @@ import Foundation
 
 // MARK: - ContainerViewModelInput
 
-public struct ContainerViewModelInput {}
+public struct ContainerViewModelInput {
+  let showAlertPublisher: AnyPublisher<Void, Never>
+  let dismissAlertPublisher: AnyPublisher<Void, Never>
+  let dismissWriteBoardPublisher: AnyPublisher<Void, Never>
+}
 
 public typealias ContainerViewModelOutput = AnyPublisher<ContainerState, Never>
 
@@ -19,6 +23,8 @@ public typealias ContainerViewModelOutput = AnyPublisher<ContainerState, Never>
 
 public enum ContainerState {
   case idle
+  case showAlert
+  case dismissAlert
 }
 
 // MARK: - ContainerViewModelRepresentable
@@ -27,20 +33,44 @@ protocol ContainerViewModelRepresentable {
   func transform(input: ContainerViewModelInput) -> ContainerViewModelOutput
 }
 
-final class ContainerViewModel {
+// MARK: - ContainerViewModel
 
+final class ContainerViewModel {
   // MARK: - Properties
 
+  private weak var coordinator: WriteBoardFeatureCoordinating?
+
   private var subscriptions: Set<AnyCancellable> = []
+
+  init(coordinator: WriteBoardFeatureCoordinating) {
+    self.coordinator = coordinator
+  }
 }
+
+// MARK: ContainerViewModelRepresentable
 
 extension ContainerViewModel: ContainerViewModelRepresentable {
   public func transform(input: ContainerViewModelInput) -> ContainerViewModelOutput {
     subscriptions.removeAll()
 
+    let showAlert: ContainerViewModelOutput = input
+      .showAlertPublisher
+      .map { _ in ContainerState.showAlert }
+      .eraseToAnyPublisher()
+
+    let dismissAlert: ContainerViewModelOutput = input
+      .dismissAlertPublisher
+      .map { _ in ContainerState.dismissAlert }
+      .eraseToAnyPublisher()
+
+    input.dismissWriteBoardPublisher
+      .sink { [weak self] _ in
+        self?.coordinator?.cancelWriteBoard()
+      }
+      .store(in: &subscriptions)
 
     let initialState: ContainerViewModelOutput = Just(.idle).eraseToAnyPublisher()
 
-    return initialState
+    return initialState.merge(with: showAlert, dismissAlert).eraseToAnyPublisher()
   }
 }

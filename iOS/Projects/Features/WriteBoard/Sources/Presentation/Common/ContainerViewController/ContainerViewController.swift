@@ -1,4 +1,4 @@
-// 
+//
 //  ContainerViewController.swift
 //  WriteBoardFeature
 //
@@ -10,17 +10,18 @@ import Combine
 import DesignSystem
 import UIKit
 
-final class ContainerViewController: UINavigationController {
+// MARK: - ContainerViewController
 
+final class ContainerViewController: UINavigationController {
   // MARK: Properties
 
   private let viewModel: ContainerViewModelRepresentable
 
   private var subscriptions: Set<AnyCancellable> = []
 
-  // MARK: UI Components
-
-  private let button: UIButton = .init(configuration: .mainEnabled(title: "test button"))
+  private var cancelWriteBoardPublisher: PassthroughSubject<Void, Never> = .init()
+  private var dismissAlertPublisher: PassthroughSubject<Void, Never> = .init()
+  private var confirmAlertPublisher: PassthroughSubject<Void, Never> = .init()
 
   // MARK: Initializations
 
@@ -41,37 +42,76 @@ final class ContainerViewController: UINavigationController {
     setup()
   }
 
+  private enum AlertHelper {
+    static var title: String { "정말 종료하시겠습니까?" }
+    static var description: String { "지금까지 작성했던 모든 것들이 사라집니다." }
 
+    static var cancelDescription: String { "취소" }
+
+    static var confimDescription: String { "확인" }
+  }
 }
 
 private extension ContainerViewController {
   func setup() {
     setupStyles()
-    setupHierarchyAndConstraints()
     bind()
   }
-  
-  func setupHierarchyAndConstraints() {
-    let safeArea = view.safeAreaLayoutGuide
-    
-  }
-  
+
   func setupStyles() {
     view.backgroundColor = DesignSystemColor.primaryBackground
   }
-  
+
   func bind() {
-    let output = viewModel.transform(input: .init())
-    output.sink { state in
+    let output = viewModel.transform(
+      input: .init(
+        showAlertPublisher: cancelWriteBoardPublisher.eraseToAnyPublisher(),
+        dismissAlertPublisher: dismissAlertPublisher.eraseToAnyPublisher(),
+        dismissWriteBoardPublisher: confirmAlertPublisher.eraseToAnyPublisher()
+      )
+    )
+    output.sink { [weak self] state in
       switch state {
+      case .showAlert:
+        self?.showFinishAlert()
+
+      case .dismissAlert:
+        self?.dismissAlertPublisher.send()
+
       case .idle:
         break
       }
     }
     .store(in: &subscriptions)
   }
-  
-  enum Metrics {
-    
+}
+
+// MARK: UIAdaptivePresentationControllerDelegate
+
+extension ContainerViewController: UIAdaptivePresentationControllerDelegate {
+  func presentationControllerShouldDismiss(_: UIPresentationController) -> Bool {
+    return true
+  }
+
+  private func showFinishAlert() {
+    let alertController = UIAlertController(
+      title: AlertHelper.title,
+      message: AlertHelper.description,
+      preferredStyle: .alert
+    )
+
+    let cancelHandler: (UIAlertAction) -> Void = { [weak self] _ in
+      self?.dismissAlertPublisher.send()
+    }
+
+    let confirmHandler: (UIAlertAction) -> Void = { [weak self] _ in
+      self?.confirmAlertPublisher.send()
+    }
+
+    let cancelAction = UIAlertAction(title: AlertHelper.cancelDescription, style: .default, handler: cancelHandler)
+    let confirmAction = UIAlertAction(title: AlertHelper.confimDescription, style: .default, handler: confirmHandler)
+
+    alertController.addAction(cancelAction)
+    alertController.addAction(confirmAction)
   }
 }
