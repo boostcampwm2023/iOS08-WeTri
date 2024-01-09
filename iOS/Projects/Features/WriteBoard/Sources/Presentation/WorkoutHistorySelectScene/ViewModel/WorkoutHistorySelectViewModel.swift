@@ -1,5 +1,5 @@
-// 
-//  SelectWorkoutViewModel.swift
+//
+//  WorkoutHistorySelectViewModel.swift
 //  WriteBoardFeature
 //
 //  Created by MaraMincho on 1/9/24.
@@ -27,17 +27,19 @@ protocol SelectWorkoutViewModelRepresentable {
   func transform(input: SelectWorkoutViewModelInput) -> SelectWorkoutViewModelOutput
 }
 
-final class SelectWorkoutViewModel {
+// MARK: - WorkoutHistorySelectViewModel
 
+final class WorkoutHistorySelectViewModel {
   // MARK: - Properties
 
   private var subscriptions: Set<AnyCancellable> = []
 }
 
-extension SelectWorkoutViewModel: SelectWorkoutViewModelRepresentable {
-  public func transform(input: SelectWorkoutViewModelInput) -> SelectWorkoutViewModelOutput {
-    subscriptions.removeAll()
+// MARK: SelectWorkoutViewModelRepresentable
 
+extension WorkoutHistorySelectViewModel: SelectWorkoutViewModelRepresentable {
+  public func transform(input _: SelectWorkoutViewModelInput) -> SelectWorkoutViewModelOutput {
+    subscriptions.removeAll()
 
     let initialState: SelectWorkoutViewModelOutput = Just(.idle).eraseToAnyPublisher()
 

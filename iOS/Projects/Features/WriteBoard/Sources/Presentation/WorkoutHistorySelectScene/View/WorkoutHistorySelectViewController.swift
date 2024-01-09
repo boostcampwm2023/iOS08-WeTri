@@ -1,5 +1,5 @@
-// 
-//  SelectWorkoutViewController.swift
+//
+//  WorkoutHistorySelectViewController.swift
 //  WriteBoardFeature
 //
 //  Created by MaraMincho on 1/9/24.
@@ -8,11 +8,12 @@
 
 import Combine
 import DesignSystem
-import UIKit
 import Log
+import UIKit
 
-final class SelectWorkoutViewController: UIViewController {
+// MARK: - WorkoutHistorySelectViewController
 
+final class WorkoutHistorySelectViewController: UIViewController {
   // MARK: Properties
 
   private let viewModel: SelectWorkoutViewModelRepresentable
@@ -29,6 +30,7 @@ final class SelectWorkoutViewController: UIViewController {
     self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
   }
+
   deinit {
     Log.make().debug("\(Self.self) did be deinit")
   }
@@ -44,26 +46,23 @@ final class SelectWorkoutViewController: UIViewController {
     super.viewDidLoad()
     setup()
   }
-
-
 }
 
-private extension SelectWorkoutViewController {
+private extension WorkoutHistorySelectViewController {
   func setup() {
     setupStyles()
     setupHierarchyAndConstraints()
     bind()
   }
-  
+
   func setupHierarchyAndConstraints() {
     let safeArea = view.safeAreaLayoutGuide
-    
   }
-  
+
   func setupStyles() {
     view.backgroundColor = DesignSystemColor.primaryBackground
   }
-  
+
   func bind() {
     let output = viewModel.transform(input: .init())
     output.sink { state in
@@ -74,8 +73,6 @@ private extension SelectWorkoutViewController {
     }
     .store(in: &subscriptions)
   }
-  
-  enum Metrics {
-    
-  }
+
+  enum Metrics {}
 }
