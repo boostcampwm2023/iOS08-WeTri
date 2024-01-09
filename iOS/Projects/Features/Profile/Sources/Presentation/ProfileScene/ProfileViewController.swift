@@ -11,6 +11,7 @@ public final class ProfileViewController: UICollectionViewController {
 
   private let viewDidLoadSubject: PassthroughSubject<Void, Never> = .init()
   private let didTapSettingButtonSubject: PassthroughSubject<Void, Never> = .init()
+  private let didTapWriteBarButtonSubject: PassthroughSubject<Void, Never> = .init()
   private let paginationEventSubject: PassthroughSubject<ProfileItem, Never> = .init()
 
   private var subscriptions: Set<AnyCancellable> = []
@@ -61,13 +62,25 @@ public final class ProfileViewController: UICollectionViewController {
   private func setupStyles() {
     collectionView.backgroundColor = DesignSystemColor.primaryBackground
     navigationItem.backButtonDisplayMode = .minimal
-    navigationItem.rightBarButtonItem = .init(
+
+    let settingBarButtonItem = UIBarButtonItem(
       image: .init(systemName: "gearshape"),
       style: .plain,
       target: self,
-      action: #selector(didTapSettingButton)
+      action: #selector(didTapSettingBarButton)
     )
-    navigationItem.rightBarButtonItem?.tintColor = DesignSystemColor.primaryText
+
+    let writeBoardBarButtonItem = UIBarButtonItem(
+      image: .init(systemName: "plus.square"),
+      style: .plain,
+      target: self,
+      action: #selector(didTapWriteBarButton)
+    )
+
+    let rightBarButtonItems = [writeBoardBarButtonItem, settingBarButtonItem]
+    rightBarButtonItems.forEach { $0.tintColor = DesignSystemColor.primaryText }
+
+    navigationItem.rightBarButtonItems = rightBarButtonItems
   }
 
   private func bind() {
@@ -76,7 +89,8 @@ public final class ProfileViewController: UICollectionViewController {
         viewDidLoadPublisher: viewDidLoadSubject.eraseToAnyPublisher(),
         didTapSettingButtonPublisher: didTapSettingButtonSubject.eraseToAnyPublisher(),
         paginationEventPublisher: paginationEventSubject.eraseToAnyPublisher(),
-        refreshPostsPublisher: refreshControl.publisher(.valueChanged).map { _ in () }.eraseToAnyPublisher()
+        refreshPostsPublisher: refreshControl.publisher(.valueChanged).map { _ in () }.eraseToAnyPublisher(),
+        writeBoardPublisher: didTapWriteBarButtonSubject.eraseToAnyPublisher()
       )
     )
     .receive(on: RunLoop.main)
@@ -100,8 +114,13 @@ public final class ProfileViewController: UICollectionViewController {
   // MARK: - Custom Methods
 
   @objc
-  private func didTapSettingButton() {
-    didTapSettingButtonSubject.send(())
+  private func didTapSettingBarButton() {
+    didTapSettingButtonSubject.send()
+  }
+
+  @objc
+  private func didTapWriteBarButton() {
+    didTapWriteBarButtonSubject.send()
   }
 
   /// 에러 알림 문구를 보여줍니다.

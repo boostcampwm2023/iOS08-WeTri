@@ -90,4 +90,6 @@ extension ProfileCoordinator: ProfileCoordinating {
     viewController.hidesBottomBarWhenPushed = true
     navigationController.pushViewController(viewController, animated: true)
   }
+
+  public func presentWriteBoard() {}
 }
