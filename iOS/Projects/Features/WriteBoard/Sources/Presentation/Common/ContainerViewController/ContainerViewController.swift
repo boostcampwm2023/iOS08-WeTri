@@ -1,5 +1,5 @@
-//
-//  WorkoutHistorySelectViewController.swift
+// 
+//  ContainerViewController.swift
 //  WriteBoardFeature
 //
 //  Created by MaraMincho on 1/9/24.
@@ -8,15 +8,13 @@
 
 import Combine
 import DesignSystem
-import Log
 import UIKit
 
-// MARK: - WorkoutHistorySelectViewController
+final class ContainerViewController: UINavigationController {
 
-final class WorkoutHistorySelectViewController: UIViewController {
   // MARK: Properties
 
-  private let viewModel: SelectWorkoutViewModelRepresentable
+  private let viewModel: ContainerViewModelRepresentable
 
   private var subscriptions: Set<AnyCancellable> = []
 
@@ -26,13 +24,9 @@ final class WorkoutHistorySelectViewController: UIViewController {
 
   // MARK: Initializations
 
-  init(viewModel: SelectWorkoutViewModelRepresentable) {
+  init(viewModel: ContainerViewModelRepresentable) {
     self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
-  }
-
-  deinit {
-    Log.make().debug("\(Self.self) did be deinit")
   }
 
   @available(*, unavailable)
@@ -46,23 +40,26 @@ final class WorkoutHistorySelectViewController: UIViewController {
     super.viewDidLoad()
     setup()
   }
+
+
 }
 
-private extension WorkoutHistorySelectViewController {
+private extension ContainerViewController {
   func setup() {
     setupStyles()
     setupHierarchyAndConstraints()
     bind()
   }
-
+  
   func setupHierarchyAndConstraints() {
     let safeArea = view.safeAreaLayoutGuide
+    
   }
-
+  
   func setupStyles() {
     view.backgroundColor = DesignSystemColor.primaryBackground
   }
-
+  
   func bind() {
     let output = viewModel.transform(input: .init())
     output.sink { state in
@@ -73,10 +70,8 @@ private extension WorkoutHistorySelectViewController {
     }
     .store(in: &subscriptions)
   }
-
-  enum Metrics {}
-}
-
-extension WorkoutHistorySelectViewController: UINavigationControllerDelegate {
   
+  enum Metrics {
+    
+  }
 }
