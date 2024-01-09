@@ -206,14 +206,10 @@ final class WorkoutRouteMapViewController: UIViewController {
 
       self?.locations
         .forEach { location in
-          let currentCLLocationCoordinator2D = CLLocationCoordinate2D(
-            latitude: location.latitude,
-            longitude: location.longitude
-          )
 
           // snapshot에서 현재 위도 경도에 대한 데이터가 어느 CGPoint에 있는지 찾아내고, 이를 Polyline을 그립니다.
-          context.cgContext.addLine(to: snapshot.point(for: currentCLLocationCoordinator2D))
-          context.cgContext.move(to: snapshot.point(for: currentCLLocationCoordinator2D))
+          context.cgContext.addLine(to: snapshot.point(for: location))
+          context.cgContext.move(to: snapshot.point(for: location))
         }
 
       // 현재 컨텍스트 에서 여태 그린 Path를 적용합니다.
