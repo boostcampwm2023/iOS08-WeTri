@@ -127,6 +127,10 @@ final class WorkoutHistoryCell: UITableViewCell {
     static let imageAndContentSpacing: CGFloat = 15
 
     static let contentViewAndItemSpacing: CGFloat = 12
+
+    static let middleLabelWidth: CGFloat = 82
+
+    static let imageViewWidthAndHeight: CGFloat = 53
   }
 }
 
@@ -145,17 +149,18 @@ private extension WorkoutHistoryCell {
     itemStackView.topAnchor
       .constraint(equalTo: contentView.topAnchor, constant: Metrics.contentViewAndItemSpacing).isActive = true
     itemStackView.leadingAnchor
-      .constraint(equalTo: contentView.leadingAnchor, constant: 23).isActive = true
+      .constraint(equalTo: contentView.leadingAnchor, constant: ConstraintsGuideLine.value).isActive = true
     itemStackView.trailingAnchor
-      .constraint(equalTo: contentView.trailingAnchor, constant: -23).isActive = true
+      .constraint(equalTo: contentView.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
     itemStackView.bottomAnchor
       .constraint(equalTo: contentView.bottomAnchor, constant: -Metrics.contentViewAndItemSpacing).isActive = true
 
-    workoutTitleLabel.widthAnchor.constraint(equalToConstant: 82).isActive = true
-    dateLabel.widthAnchor.constraint(equalToConstant: 82).isActive = true
+    workoutTitleLabel.widthAnchor.constraint(equalToConstant: Metrics.middleLabelWidth).isActive = true
 
-    workoutImageView.widthAnchor.constraint(equalToConstant: 53).isActive = true
-    workoutImageView.heightAnchor.constraint(equalToConstant: 53).isActive = true
+    dateLabel.widthAnchor.constraint(equalToConstant: Metrics.middleLabelWidth).isActive = true
+
+    workoutImageView.widthAnchor.constraint(equalToConstant: Metrics.imageViewWidthAndHeight).isActive = true
+    workoutImageView.heightAnchor.constraint(equalToConstant: Metrics.imageViewWidthAndHeight).isActive = true
   }
 
   func makeShadowAndRounded() {
