@@ -11,11 +11,11 @@ import UIKit
 
 // MARK: - WorkoutHistoryCell
 
-final class WorkoutHistoryCell: UICollectionViewCell {
+final class WorkoutHistoryCell: UITableViewCell {
   static let identifier = "WorkoutHistoryCell"
 
-  override init(frame: CGRect) {
-    super.init(frame: frame)
+  override init(style _: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+    super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
     setup()
   }
 
@@ -29,6 +29,8 @@ final class WorkoutHistoryCell: UICollectionViewCell {
     label.textColor = DesignSystemColor.primaryText
     label.font = .preferredFont(forTextStyle: .title2)
     label.text = "사이클"
+    label.textAlignment = .right
+    label.setContentHuggingPriority(.required, for: .horizontal)
 
     label.translatesAutoresizingMaskIntoConstraints = false
     return label
@@ -36,7 +38,7 @@ final class WorkoutHistoryCell: UICollectionViewCell {
 
   private let workoutDistanceLabel: UILabel = {
     let label = UILabel()
-    label.textColor = DesignSystemColor.gray03
+    label.textColor = DesignSystemColor.primaryText
     label.font = .preferredFont(forTextStyle: .headline)
     label.text = "1.5 km"
 
@@ -58,17 +60,21 @@ final class WorkoutHistoryCell: UICollectionViewCell {
     label.textColor = DesignSystemColor.primaryText
     label.font = .preferredFont(forTextStyle: .body)
     label.text = "1월 10일"
+    label.textAlignment = .right
 
+    label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
     label.translatesAutoresizingMaskIntoConstraints = false
     return label
   }()
 
   private let timeLabel: UILabel = {
     let label = UILabel()
-    label.textColor = DesignSystemColor.gray03
+    label.textColor = DesignSystemColor.primaryText
     label.font = .preferredFont(forTextStyle: .body)
     label.text = "06:00 ~ 06:30 (30분)"
+    label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
 
+    label.translatesAutoresizingMaskIntoConstraints = false
     return label
   }()
 
@@ -76,35 +82,40 @@ final class WorkoutHistoryCell: UICollectionViewCell {
     let stackView = UIStackView(arrangedSubviews: [dateLabel, timeLabel])
     stackView.axis = .horizontal
     stackView.spacing = Metrics.footerSpacing
+    stackView.distribution = .fillProportionally
 
     stackView.translatesAutoresizingMaskIntoConstraints = false
     return stackView
   }()
-  
+
   private lazy var descriptionContentStackView: UIStackView = {
     let stackView = UIStackView(arrangedSubviews: [
-      header, footer
+      header, footer,
     ])
     stackView.spacing = Metrics.headerAndFooterSpacing
     stackView.axis = .vertical
-    
+
     stackView.translatesAutoresizingMaskIntoConstraints = false
     return stackView
   }()
 
   private let workoutImageView: UIImageView = {
     let configure: UIImage.SymbolConfiguration = .init(font: .boldSystemFont(ofSize: 35))
-    let image = UIImage(systemName: "figure.run", withConfiguration: configure)
+    var image = UIImage(systemName: "figure.run", withConfiguration: configure)
+
     let imageView = UIImageView(image: image)
+    imageView.contentMode = .scaleAspectFit
+    imageView.setContentHuggingPriority(.required, for: .horizontal)
+    imageView.tintColor = DesignSystemColor.primaryText
 
     imageView.translatesAutoresizingMaskIntoConstraints = false
     return imageView
   }()
-  
+
   private lazy var itemStackView: UIStackView = {
-    let stackView = UIStackView(arrangedSubviews: [ workoutImageView, descriptionContentStackView])
+    let stackView = UIStackView(arrangedSubviews: [workoutImageView, descriptionContentStackView])
     stackView.spacing = Metrics.imageAndContentSpacing
-    
+
     stackView.translatesAutoresizingMaskIntoConstraints = false
     return stackView
   }()
@@ -114,27 +125,37 @@ final class WorkoutHistoryCell: UICollectionViewCell {
     static let footerSpacing: CGFloat = 12
     static let headerAndFooterSpacing: CGFloat = 9
     static let imageAndContentSpacing: CGFloat = 15
-    
+
     static let contentViewAndItemSpacing: CGFloat = 12
   }
 }
 
 private extension WorkoutHistoryCell {
   func setup() {
-    makeShadowAndRounded()
+    setupStyle()
     setupViewHierarchyAndConstraints()
   }
 
+  func setupStyle() {
+    contentView.backgroundColor = DesignSystemColor.secondaryBackground
+  }
+
   func setupViewHierarchyAndConstraints() {
-    addSubview(itemStackView)
+    contentView.addSubview(itemStackView)
     itemStackView.topAnchor
       .constraint(equalTo: contentView.topAnchor, constant: Metrics.contentViewAndItemSpacing).isActive = true
     itemStackView.leadingAnchor
-      .constraint(equalTo: contentView.leadingAnchor, constant: Metrics.contentViewAndItemSpacing).isActive = true
+      .constraint(equalTo: contentView.leadingAnchor, constant: 23).isActive = true
     itemStackView.trailingAnchor
-      .constraint(equalTo: contentView.trailingAnchor, constant: -Metrics.contentViewAndItemSpacing).isActive = true
+      .constraint(equalTo: contentView.trailingAnchor, constant: -23).isActive = true
     itemStackView.bottomAnchor
       .constraint(equalTo: contentView.bottomAnchor, constant: -Metrics.contentViewAndItemSpacing).isActive = true
+
+    workoutTitleLabel.widthAnchor.constraint(equalToConstant: 82).isActive = true
+    dateLabel.widthAnchor.constraint(equalToConstant: 82).isActive = true
+
+    workoutImageView.widthAnchor.constraint(equalToConstant: 53).isActive = true
+    workoutImageView.heightAnchor.constraint(equalToConstant: 53).isActive = true
   }
 
   func makeShadowAndRounded() {

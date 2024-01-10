@@ -20,14 +20,18 @@ final class WorkoutHistorySelectViewController: UIViewController {
 
   private var subscriptions: Set<AnyCancellable> = []
 
+  private var dataSource: UITableViewDiffableDataSource<Int, UUID>? = nil
+
   // MARK: UI Components
 
-  private lazy var workoutHistoryCollectionView: UICollectionView = {
-    let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCompositionalLayout())
-    collectionView.register(WorkoutHistoryCell.self, forCellWithReuseIdentifier: WorkoutHistoryCell.identifier)
-    collectionView.delegate = self
-    collectionView.translatesAutoresizingMaskIntoConstraints = false
-    return collectionView
+  private lazy var workoutHistoryTableView: UITableView = {
+    let tableView = UITableView(frame: .zero, style: .plain)
+    tableView.register(WorkoutHistoryCell.self, forCellReuseIdentifier: WorkoutHistoryCell.identifier)
+    tableView.estimatedRowHeight = UITableView.automaticDimension
+    tableView.delegate = self
+
+    tableView.translatesAutoresizingMaskIntoConstraints = false
+    return tableView
   }()
 
   // MARK: Initializations
@@ -52,18 +56,56 @@ final class WorkoutHistorySelectViewController: UIViewController {
     super.viewDidLoad()
     setup()
   }
+
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+  }
 }
 
 private extension WorkoutHistorySelectViewController {
   func setup() {
+    setDataSource()
     setupStyles()
     setupNavigationItem()
     setupHierarchyAndConstraints()
     bind()
+    setFakeData()
   }
 
   func setupHierarchyAndConstraints() {
     let safeArea = view.safeAreaLayoutGuide
+
+    view.addSubview(workoutHistoryTableView)
+    workoutHistoryTableView.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
+    workoutHistoryTableView.leadingAnchor
+      .constraint(equalTo: safeArea.leadingAnchor).isActive = true
+    workoutHistoryTableView.trailingAnchor
+      .constraint(equalTo: safeArea.trailingAnchor).isActive = true
+    workoutHistoryTableView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor).isActive = true
+  }
+
+  func setDataSource() {
+    dataSource = .init(tableView: workoutHistoryTableView) { tableView, _, _ in
+      guard let cell = tableView.dequeueReusableCell(withIdentifier: WorkoutHistoryCell.identifier) as? WorkoutHistoryCell else {
+        return UITableViewCell()
+      }
+
+      return cell
+    }
+    guard let dataSource else { return }
+
+    var snapshot = dataSource.snapshot()
+    snapshot.appendSections([0])
+    dataSource.apply(snapshot)
+  }
+
+  func setFakeData() {
+    guard let dataSource else {
+      return
+    }
+    var snapshot = dataSource.snapshot()
+    snapshot.appendItems([.init(), .init(), .init()])
+    dataSource.apply(snapshot)
   }
 
   func setupStyles() {
@@ -88,28 +130,10 @@ private extension WorkoutHistorySelectViewController {
   enum Metrics {}
 }
 
-// MARK: UICollectionViewDelegate
+// MARK: UITableViewDelegate
 
-extension WorkoutHistorySelectViewController: UICollectionViewDelegate {}
-
-private extension WorkoutHistorySelectViewController {
-  func makeCompositionalLayout() -> UICollectionViewCompositionalLayout {
-    let item = NSCollectionLayoutItem(
-      layoutSize: .init(
-        widthDimension: .fractionalWidth(1),
-        heightDimension: .fractionalHeight(1)
-      )
-    )
-
-    let group = NSCollectionLayoutGroup(
-      layoutSize: .init(
-        widthDimension: .fractionalHeight(1),
-        heightDimension: .fractionalHeight(1 / 9)
-      )
-    )
-
-    let section = NSCollectionLayoutSection(group: group)
-
-    return .init(section: section)
+extension WorkoutHistorySelectViewController: UITableViewDelegate {
+  func tableView(_: UITableView, estimatedHeightForRowAt _: IndexPath) -> CGFloat {
+    return 80
   }
 }
