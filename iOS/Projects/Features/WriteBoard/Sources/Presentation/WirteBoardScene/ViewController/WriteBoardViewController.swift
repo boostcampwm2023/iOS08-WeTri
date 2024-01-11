@@ -49,6 +49,7 @@ final class WriteBoardViewController: UIViewController {
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .makeAttachPictureCollectionViewLayout())
     collectionView.register(AttachPictureCollectionViewCell.self, forCellWithReuseIdentifier: AttachPictureCollectionViewCell.identifier)
     collectionView.delegate = self
+    collectionView.backgroundColor = .clear
 
     collectionView.translatesAutoresizingMaskIntoConstraints = false
     return collectionView
@@ -106,12 +107,13 @@ private extension WriteBoardViewController {
     }
     guard
       var snapshot = attachPictureCollectionViewDataSource?.snapshot(),
-      let addPicImage = Constants.addPictureImage
+      let addPicImage = Constants.addPictureImage,
+      let testImage = UIImage(systemName: "figure.run")
     else {
       return
     }
     snapshot.appendSections([0])
-    snapshot.appendItems([addPicImage])
+    snapshot.appendItems([addPicImage, testImage])
     attachPictureCollectionViewDataSource?.apply(snapshot)
   }
 
@@ -125,7 +127,6 @@ private extension WriteBoardViewController {
   func setupHierarchyAndConstraints() {
     let safeArea = view.safeAreaLayoutGuide
 
-    contentScrollView.backgroundColor = .cyan
     view.addSubview(contentScrollView)
     contentScrollView.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
     contentScrollView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor).isActive = true
@@ -150,13 +151,13 @@ private extension WriteBoardViewController {
       .constraint(equalTo: workoutHistoryDescriptionView.leadingAnchor).isActive = true
 
     contentScrollView.addSubview(attachPictureCollectionView)
-    attachPictureCollectionView.backgroundColor = .red
     attachPictureCollectionView.topAnchor
       .constraint(equalTo: attachPictureTitleLabel.bottomAnchor, constant: Metrics.attachPictureBottomSpacing).isActive = true
     attachPictureCollectionView.leadingAnchor
       .constraint(equalTo: safeArea.leadingAnchor).isActive = true
-    attachPictureTitleLabel.trailingAnchor
+    attachPictureCollectionView.trailingAnchor
       .constraint(equalTo: safeArea.trailingAnchor).isActive = true
+    attachPictureCollectionView.heightAnchor.constraint(equalToConstant: 99).isActive = true
   }
 
   func setupStyles() {
@@ -202,24 +203,40 @@ extension WriteBoardViewController: UICollectionViewDelegate {}
 extension UICollectionViewLayout {
   static func makeAttachPictureCollectionViewLayout() -> UICollectionViewLayout {
     let itemSize = NSCollectionLayoutSize(
-      widthDimension: .estimated(attachPictureCollectionViewCellConstants.width),
+      widthDimension: .absolute(attachPictureCollectionViewCellConstants.width),
       heightDimension: .fractionalHeight(1)
     )
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
+    item.contentInsets = .init(
+      top: 0,
+      leading: attachPictureCollectionViewCellConstants.itemLeadingAndTrailingInset,
+      bottom: 0,
+      trailing: attachPictureCollectionViewCellConstants.itemLeadingAndTrailingInset
+    )
 
     let groupSize = NSCollectionLayoutSize(
       widthDimension: .fractionalWidth(1),
-      heightDimension: .estimated(attachPictureCollectionViewCellConstants.height)
+      heightDimension: .absolute(attachPictureCollectionViewCellConstants.height)
     )
     let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+    group.contentInsets = .init(
+      top: 0,
+      leading: attachPictureCollectionViewCellConstants.groupLeadingAndTrailingInset,
+      bottom: 0,
+      trailing: attachPictureCollectionViewCellConstants.groupLeadingAndTrailingInset
+    )
 
     let section = NSCollectionLayoutSection(group: group)
 
     return UICollectionViewCompositionalLayout(section: section)
   }
 
-  enum attachPictureCollectionViewCellConstants {
+  private enum attachPictureCollectionViewCellConstants {
     static let height: CGFloat = 94
     static let width: CGFloat = 94
+
+    static let itemLeadingAndTrailingInset: CGFloat = 6
+
+    static let groupLeadingAndTrailingInset: CGFloat = 29
   }
 }

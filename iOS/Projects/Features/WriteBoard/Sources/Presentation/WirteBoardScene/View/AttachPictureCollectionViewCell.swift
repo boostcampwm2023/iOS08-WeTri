@@ -39,20 +39,20 @@ final class AttachPictureCollectionViewCell: UICollectionViewCell {
 private extension AttachPictureCollectionViewCell {
   func setup() {
     setupStyle()
-    makeShadowAndRounded()
     setupViewHierarchyAndConstraints()
+    makeShadowAndRounded()
   }
 
   func setupStyle() {
-    backgroundView?.backgroundColor = DesignSystemColor.primaryBackground
+    backgroundColor = DesignSystemColor.primaryBackground
   }
 
   func setupViewHierarchyAndConstraints() {
-    contentView.addSubview(contentImageView)
-    contentImageView.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-    contentImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-    contentImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-    contentImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
+    addSubview(contentImageView)
+    contentImageView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+    contentImageView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+    contentImageView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+    contentImageView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
   }
 
   func makeShadowAndRounded() {
