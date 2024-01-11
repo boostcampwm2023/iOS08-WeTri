@@ -9,7 +9,7 @@
 import Foundation
 
 /// 기록 목록을 표시하기위해 사용하는 모델입니다.
-struct Record: Codable, Hashable {
+public struct Record: Codable, Hashable {
   /// 현재 운동의 날짜를 나타냅니다.
   let dateString: String
 
