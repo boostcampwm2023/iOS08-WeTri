@@ -8,6 +8,7 @@
 
 import Combine
 import DesignSystem
+import Log
 import UIKit
 
 // MARK: - WriteBoardViewController
@@ -55,6 +56,27 @@ final class WriteBoardViewController: UIViewController {
     return collectionView
   }()
 
+  private let boardDetailTitleLabel: UILabel = {
+    let label = UILabel()
+    label.text = "게시할 내용"
+    label.textColor = DesignSystemColor.primaryText
+    label.font = .preferredFont(forTextStyle: .title2)
+
+    label.translatesAutoresizingMaskIntoConstraints = false
+    return label
+  }()
+
+  private let boardDetailTextView: UITextView = {
+    let textView = UITextView()
+    textView.textColor = DesignSystemColor.primaryText
+    textView.font = .preferredFont(forTextStyle: .body)
+    textView.contentInset = .init(top: 0, left: Metrics.pictureTitleLabelLeadingSpacing, bottom: 0, right: Metrics.pictureTitleLabelLeadingSpacing)
+    textView.backgroundColor = DesignSystemColor.gray01
+
+    textView.translatesAutoresizingMaskIntoConstraints = false
+    return textView
+  }()
+
   private lazy var completeBarButtonItem: UIBarButtonItem = {
     let button = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(completeButtonDidTap))
 
@@ -78,6 +100,11 @@ final class WriteBoardViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     setup()
+  }
+
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    contentScrollView.contentSize = .init(width: view.frame.width, height: boardDetailTextView.frame.maxY)
   }
 }
 
@@ -146,7 +173,7 @@ private extension WriteBoardViewController {
 
     contentScrollView.addSubview(attachPictureTitleLabel)
     attachPictureTitleLabel.topAnchor
-      .constraint(equalTo: workoutHistoryDescriptionView.bottomAnchor, constant: Metrics.historyViewBottomSpacing).isActive = true
+      .constraint(equalTo: workoutHistoryDescriptionView.bottomAnchor, constant: Metrics.groupBottomSpacing).isActive = true
     attachPictureTitleLabel.leadingAnchor
       .constraint(equalTo: workoutHistoryDescriptionView.leadingAnchor).isActive = true
 
@@ -158,10 +185,26 @@ private extension WriteBoardViewController {
     attachPictureCollectionView.trailingAnchor
       .constraint(equalTo: safeArea.trailingAnchor).isActive = true
     attachPictureCollectionView.heightAnchor.constraint(equalToConstant: 99).isActive = true
+
+    contentScrollView.addSubview(boardDetailTitleLabel)
+    boardDetailTitleLabel.topAnchor
+      .constraint(equalTo: attachPictureCollectionView.bottomAnchor, constant: Metrics.groupBottomSpacing).isActive = true
+    boardDetailTitleLabel.leadingAnchor
+      .constraint(equalTo: workoutHistoryDescriptionView.leadingAnchor).isActive = true
+
+    contentScrollView.addSubview(boardDetailTextView)
+    boardDetailTextView.topAnchor
+      .constraint(equalTo: boardDetailTitleLabel.bottomAnchor, constant: Metrics.inGroupTitleAndContentSpacing).isActive = true
+    boardDetailTextView.leadingAnchor
+      .constraint(equalTo: safeArea.leadingAnchor, constant: ConstraintsGuideLine.value).isActive = true
+    boardDetailTextView.trailingAnchor
+      .constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
+    boardDetailTextView.heightAnchor.constraint(equalToConstant: 500).isActive = true
   }
 
   func setupStyles() {
     view.backgroundColor = DesignSystemColor.secondaryBackground
+    modalPresentationCapturesStatusBarAppearance = true
   }
 
   func bind() {
@@ -183,10 +226,12 @@ private extension WriteBoardViewController {
   enum Metrics {
     static let historyViewTopSpacing: CGFloat = 6
 
-    static let historyViewBottomSpacing: CGFloat = 18
+    static let groupBottomSpacing: CGFloat = 18
 
     static let pictureTitleLabelLeadingSpacing: CGFloat = ConstraintsGuideLine.value + 9
     static let attachPictureBottomSpacing: CGFloat = 9
+
+    static let inGroupTitleAndContentSpacing: CGFloat = 9
   }
 
   enum Constants {
@@ -238,5 +283,13 @@ extension UICollectionViewLayout {
     static let itemLeadingAndTrailingInset: CGFloat = 6
 
     static let groupLeadingAndTrailingInset: CGFloat = 29
+  }
+}
+
+// MARK: - WriteBoardViewController + UIScrollViewDelegate
+
+extension WriteBoardViewController: UIScrollViewDelegate {
+  func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    Log.make().debug("Yes, \(scrollView.isScrollEnabled)")
   }
 }
