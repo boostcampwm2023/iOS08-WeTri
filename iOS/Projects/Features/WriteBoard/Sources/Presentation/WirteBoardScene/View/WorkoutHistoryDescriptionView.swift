@@ -22,10 +22,10 @@ final class WorkoutHistoryDescriptionView: UIView {
   private func makeTableCellStackView(_ record: Record) -> UIStackView {
     let tableCellStackView: UIStackView = {
       let stackView = UIStackView(arrangedSubviews: [
-        WorkoutHistoryTableCellView(titleString: Constants.workoutName, description: record.name),
-        WorkoutHistoryTableCellView(titleString: Constants.date, description: record.dateString),
-        WorkoutHistoryTableCellView(titleString: Constants.time, description: record.durationTime + " (" + record.startTime + "~" + record.endTime + ")"),
-        WorkoutHistoryTableCellView(titleString: Constants.distance, description: String(format: "%01f", Double(record.distance) / 1000) + "km"),
+        WorkoutHistoryDescriptionRowView(titleString: Constants.workoutName, description: record.name),
+        WorkoutHistoryDescriptionRowView(titleString: Constants.date, description: record.dateString),
+        WorkoutHistoryDescriptionRowView(titleString: Constants.time, description: record.durationTime + " (" + record.startTime + "~" + record.endTime + ")"),
+        WorkoutHistoryDescriptionRowView(titleString: Constants.distance, description: String(format: "%01f", Double(record.distance) / 1000) + "km"),
       ])
       stackView.axis = .vertical
       stackView.spacing = Constants.cellSpacing
@@ -91,7 +91,7 @@ final class WorkoutHistoryDescriptionView: UIView {
 
 // MARK: - WorkoutHistoryTableCellView
 
-private final class WorkoutHistoryTableCellView: UIView {
+private final class WorkoutHistoryDescriptionRowView: UIView {
   init(titleString: String, description: String) {
     super.init(frame: .zero)
     titleLabel.text = titleString
