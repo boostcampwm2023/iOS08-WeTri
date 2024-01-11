@@ -33,10 +33,10 @@ final class WriteBoardViewModel {
   // MARK: - Properties
 
   private var subscriptions: Set<AnyCancellable> = []
-  
+
   private let currentRecord: Record
   init(record: Record) {
-    self.currentRecord = record
+    currentRecord = record
   }
 }
 

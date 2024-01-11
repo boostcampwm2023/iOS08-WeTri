@@ -8,6 +8,8 @@
 
 import Foundation
 
+// MARK: - Record
+
 /// 기록 목록을 표시하기위해 사용하는 모델입니다.
 public struct Record: Codable, Hashable {
   /// 현재 운동의 날짜를 나타냅니다.
@@ -34,13 +36,17 @@ extension Record {
   var durationTime: String {
     guard
       let endDate = DateFormatter.HHmmFormatter.date(from: endTime),
-      let startDate = DateFormatter.HHmmFormatter.date(from: startTime) else {
+      let startDate = DateFormatter.HHmmFormatter.date(from: startTime)
+    else {
       return ""
     }
     let timeInterval = endDate.timeIntervalSince(startDate)
     let hours = Int(timeInterval / 3600)
     let minutes = Int((timeInterval.truncatingRemainder(dividingBy: 3600)) / 60)
-    return "\(hours):\(minutes)"
+    if minutes == 0 {
+      return hours == 0 ? "" : "(\(hours)시간)"
+    }
+    return hours == 0 ? "(\(minutes)분)" : "(\(hours)시간\(minutes)분)"
   }
 }
 

@@ -19,10 +19,9 @@ final class WriteBoardViewController: UIViewController {
 
   private var subscriptions: Set<AnyCancellable> = []
 
-  // MARK: UI Components
+  // MARK: UI Component
 
-  private let button: UIButton = .init(configuration: .mainEnabled(title: "test button"))
-
+  
   // MARK: Initializations
 
   init(viewModel: WriteBoardViewModelRepresentable) {

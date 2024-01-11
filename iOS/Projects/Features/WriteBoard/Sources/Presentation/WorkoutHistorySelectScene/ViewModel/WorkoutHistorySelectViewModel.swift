@@ -43,7 +43,7 @@ final class WorkoutHistorySelectViewModel {
 extension WorkoutHistorySelectViewModel: SelectWorkoutViewModelRepresentable {
   public func transform(input: SelectWorkoutViewModelInput) -> SelectWorkoutViewModelOutput {
     subscriptions.removeAll()
-    
+
     input.selectCell
       .sink { [weak self] record in
         self?.writeBoardCoordinator?.pushWriteBoardScene(record: record)
