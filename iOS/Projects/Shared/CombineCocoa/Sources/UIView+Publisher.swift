@@ -18,9 +18,10 @@ public extension UIView {
     public typealias Output = UIGestureRecognizer
     public typealias Failure = Never
 
-    let targetView: UIView
-    let gesture: UIGestureRecognizer
-    init(targetView: UIView, gesture: UIGestureRecognizer) {
+    private let targetView: UIView
+    private let gesture: UIGestureRecognizer
+
+    public init(targetView: UIView, gesture: UIGestureRecognizer) {
       self.targetView = targetView
       self.gesture = gesture
     }
