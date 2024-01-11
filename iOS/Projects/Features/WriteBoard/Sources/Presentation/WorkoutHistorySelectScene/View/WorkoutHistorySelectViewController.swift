@@ -20,7 +20,7 @@ final class WorkoutHistorySelectViewController: UIViewController {
 
   private var subscriptions: Set<AnyCancellable> = []
 
-  private var dataSource: UITableViewDiffableDataSource<Int, UUID>? = nil
+  private var dataSource: UITableViewDiffableDataSource<Int, Record>? = nil
 
   // MARK: UI Components
 
@@ -85,11 +85,11 @@ private extension WorkoutHistorySelectViewController {
   }
 
   func setDataSource() {
-    dataSource = .init(tableView: workoutHistoryTableView) { tableView, _, _ in
+    dataSource = .init(tableView: workoutHistoryTableView) { tableView, _, itemIdentifier in
       guard let cell = tableView.dequeueReusableCell(withIdentifier: WorkoutHistoryCell.identifier) as? WorkoutHistoryCell else {
         return UITableViewCell()
       }
-
+      cell.configure(itemIdentifier)
       return cell
     }
     guard let dataSource else { return }
@@ -104,7 +104,11 @@ private extension WorkoutHistorySelectViewController {
       return
     }
     var snapshot = dataSource.snapshot()
-    snapshot.appendItems([.init(), .init(), .init()])
+    snapshot.appendItems([
+      .init(dateString: "11월 9일", workoutID: 2, startTime: "06:00", endTime: "06:30", distance: 500),
+      .init(dateString: "11월 7일", workoutID: 1, startTime: "06:00", endTime: "07:00", distance: 1500),
+      .init(dateString: "11월 6일", workoutID: 3, startTime: "06:00", endTime: "06:30", distance: 1000),
+    ])
     dataSource.apply(snapshot)
   }
 
@@ -135,5 +139,10 @@ private extension WorkoutHistorySelectViewController {
 extension WorkoutHistorySelectViewController: UITableViewDelegate {
   func tableView(_: UITableView, estimatedHeightForRowAt _: IndexPath) -> CGFloat {
     return 80
+  }
+
+  func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    let item = dataSource?.snapshot().itemIdentifiers[indexPath.row]
+    
   }
 }

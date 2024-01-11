@@ -64,7 +64,12 @@ public final class WriteBoardCoordinator: WriteBoardFeatureCoordinating {
     containerViewController?.pushViewController(viewController, animated: false)
   }
 
-  public func pushWriteBoardScene() {}
+  public func pushWriteBoardScene() {
+    let viewModel = WriteBoardViewModel()
+    let viewController = WriteBoardViewController(viewModel: viewModel)
+
+    containerViewController?.pushViewController(viewController, animated: true)
+  }
 
   public func didFinishWriteBoard() {}
 

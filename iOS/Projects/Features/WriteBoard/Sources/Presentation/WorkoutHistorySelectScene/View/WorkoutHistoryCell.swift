@@ -100,8 +100,7 @@ final class WorkoutHistoryCell: UITableViewCell {
   }()
 
   private let workoutImageView: UIImageView = {
-    let configure: UIImage.SymbolConfiguration = .init(font: .boldSystemFont(ofSize: 35))
-    var image = UIImage(systemName: "figure.run", withConfiguration: configure)
+    var image = UIImage(systemName: "figure.run", withConfiguration: UIImage.configure)
 
     let imageView = UIImageView(image: image)
     imageView.contentMode = .scaleAspectFit
@@ -178,4 +177,51 @@ private extension WorkoutHistoryCell {
     layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: radius).cgPath
     layer.cornerRadius = radius
   }
+}
+
+extension WorkoutHistoryCell {
+  func configure(_ record: Record) {
+    workoutImageView.image = record.image
+    workoutTitleLabel.text = record.name
+    workoutDistanceLabel.text = record.kmDistance
+    dateLabel.text = record.dateString
+    timeLabel.text = record.timeDescription
+  }
+}
+
+private extension Record {
+  var timeDescription: String {
+    return "\(startTime) ~ \(endTime) \(durationTime)"
+  }
+  var kmDistance: String {
+    return String(Double(distance) / 1000) + "km"
+  }
+  var name: String {
+    switch workoutID {
+    case 1:
+      return "달리기"
+    case 2:
+      return "수영"
+    case 3:
+      return "사이클"
+    default:
+      return "달리기"
+    }
+  }
+  var image: UIImage? {
+    switch workoutID {
+    case 1:
+      return UIImage(systemName: "figure.run", withConfiguration: UIImage.configure)
+    case 2:
+      return UIImage(systemName: "figure.pool.swim", withConfiguration: UIImage.configure)
+    case 3:
+      return UIImage(systemName: "figure.outdoor.cycle", withConfiguration: UIImage.configure)
+    default:
+      return UIImage(systemName: "figure.run", withConfiguration: UIImage.configure)
+    }
+  }
+}
+
+private extension UIImage {
+  static let configure: UIImage.SymbolConfiguration = .init(font: .boldSystemFont(ofSize: 35))
 }
