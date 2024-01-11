@@ -35,7 +35,7 @@ final class WorkoutHistorySelectViewModel {
   // MARK: - Properties
 
   private var subscriptions: Set<AnyCancellable> = []
-  weak var writeBoardCoordinator: WriteBoardCoordinator
+  weak var writeBoardCoordinator: WriteBoardCoordinator?
 }
 
 // MARK: SelectWorkoutViewModelRepresentable
@@ -46,7 +46,7 @@ extension WorkoutHistorySelectViewModel: SelectWorkoutViewModelRepresentable {
     
     input.selectCell
       .sink { [weak self] record in
-        
+        self?.writeBoardCoordinator?.pushWriteBoardScene(record: record)
       }
       .store(in: &subscriptions)
 
