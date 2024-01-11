@@ -201,19 +201,6 @@ private extension Record {
     return String(Double(distance) / 1000) + "km"
   }
 
-  var name: String {
-    switch workoutID {
-    case 1:
-      return "달리기"
-    case 2:
-      return "수영"
-    case 3:
-      return "사이클"
-    default:
-      return "달리기"
-    }
-  }
-
   var image: UIImage? {
     switch workoutID {
     case 1:

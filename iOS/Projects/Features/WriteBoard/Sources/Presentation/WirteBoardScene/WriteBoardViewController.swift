@@ -17,11 +17,18 @@ final class WriteBoardViewController: UIViewController {
 
   private let viewModel: WriteBoardViewModelRepresentable
 
+  private let completeButtonDidTapPublisher: PassthroughSubject<Void, Never> = .init()
+
   private var subscriptions: Set<AnyCancellable> = []
 
   // MARK: UI Component
 
-  
+  private lazy var completeBarButtonItem: UIBarButtonItem = {
+    let button = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(completeButtonDidTap))
+
+    return button
+  }()
+
   // MARK: Initializations
 
   init(viewModel: WriteBoardViewModelRepresentable) {
@@ -47,6 +54,14 @@ private extension WriteBoardViewController {
     setupStyles()
     setupHierarchyAndConstraints()
     bind()
+    setupNavigationItem()
+  }
+
+  func setupNavigationItem() {
+    navigationItem.backButtonTitle = "뒤로"
+    navigationItem.title = "글쓰기"
+
+    navigationItem.rightBarButtonItem = completeBarButtonItem
   }
 
   func setupHierarchyAndConstraints() {
@@ -66,6 +81,11 @@ private extension WriteBoardViewController {
       }
     }
     .store(in: &subscriptions)
+  }
+
+  @objc
+  func completeButtonDidTap() {
+    completeButtonDidTapPublisher.send()
   }
 
   enum Metrics {}

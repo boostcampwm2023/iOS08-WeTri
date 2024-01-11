@@ -32,7 +32,20 @@ public struct Record: Codable, Hashable {
   let distance: Int
 }
 
-extension Record {
+public extension Record {
+  var name: String {
+    switch workoutID {
+    case 1:
+      return "달리기"
+    case 2:
+      return "수영"
+    case 3:
+      return "사이클"
+    default:
+      return "달리기"
+    }
+  }
+
   var durationTime: String {
     guard
       let endDate = DateFormatter.HHmmFormatter.date(from: endTime),
