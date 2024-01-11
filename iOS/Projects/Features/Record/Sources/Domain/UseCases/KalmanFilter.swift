@@ -65,7 +65,7 @@ struct KalmanFilter {
   // 우리가 궁금한건 위도와 경도이기 때문에 필요한 부분만 기재했습니다.
 
   var prevTime: Date
-  
+
   init(initLocation: CLLocation) {
     x = .init(initLocation.coordinate.latitude, 0, initLocation.coordinate.longitude, 0)
     prevTime = initLocation.timestamp
