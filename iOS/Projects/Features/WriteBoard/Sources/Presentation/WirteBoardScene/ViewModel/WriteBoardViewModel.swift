@@ -25,6 +25,7 @@ public enum WriteBoardState {
 
 protocol WriteBoardViewModelRepresentable {
   func transform(input: WriteBoardViewModelInput) -> WriteBoardViewModelOutput
+  func record() -> Record
 }
 
 // MARK: - WriteBoardViewModel
@@ -37,6 +38,10 @@ final class WriteBoardViewModel {
   private let currentRecord: Record
   init(record: Record) {
     currentRecord = record
+  }
+
+  func record() -> Record {
+    return currentRecord
   }
 }
 

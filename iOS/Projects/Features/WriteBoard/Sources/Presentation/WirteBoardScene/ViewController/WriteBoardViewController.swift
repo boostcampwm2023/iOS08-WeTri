@@ -23,6 +23,8 @@ final class WriteBoardViewController: UIViewController {
 
   // MARK: UI Component
 
+  private lazy var workoutHistoryDescriptionView: WorkoutHistoryDescriptionView? = nil
+
   private lazy var completeBarButtonItem: UIBarButtonItem = {
     let button = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(completeButtonDidTap))
 
@@ -51,6 +53,7 @@ final class WriteBoardViewController: UIViewController {
 
 private extension WriteBoardViewController {
   func setup() {
+    workoutHistoryDescriptionView = .init(record: viewModel.record())
     setupStyles()
     setupHierarchyAndConstraints()
     bind()
@@ -66,6 +69,19 @@ private extension WriteBoardViewController {
 
   func setupHierarchyAndConstraints() {
     let safeArea = view.safeAreaLayoutGuide
+
+    guard let workoutHistoryDescriptionView else {
+      return
+    }
+    workoutHistoryDescriptionView.backgroundColor = .red
+    view.addSubview(workoutHistoryDescriptionView)
+    workoutHistoryDescriptionView.translatesAutoresizingMaskIntoConstraints = false
+    workoutHistoryDescriptionView.topAnchor
+      .constraint(equalTo: safeArea.topAnchor, constant: Metrics.historyViewTopSpacing).isActive = true
+    workoutHistoryDescriptionView.leadingAnchor
+      .constraint(equalTo: safeArea.leadingAnchor).isActive = true
+    workoutHistoryDescriptionView.trailingAnchor
+      .constraint(equalTo: safeArea.trailingAnchor).isActive = true
   }
 
   func setupStyles() {
@@ -88,5 +104,7 @@ private extension WriteBoardViewController {
     completeButtonDidTapPublisher.send()
   }
 
-  enum Metrics {}
+  enum Metrics {
+    static let historyViewTopSpacing: CGFloat = 6
+  }
 }
