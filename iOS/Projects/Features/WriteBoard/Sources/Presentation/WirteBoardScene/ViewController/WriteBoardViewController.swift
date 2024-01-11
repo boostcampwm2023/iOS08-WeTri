@@ -27,6 +27,7 @@ final class WriteBoardViewController: UIViewController {
 
   private let contentScrollView: UIScrollView = {
     let scrollView = UIScrollView()
+    scrollView.isScrollEnabled = true
 
     scrollView.translatesAutoresizingMaskIntoConstraints = false
     return scrollView
@@ -124,37 +125,38 @@ private extension WriteBoardViewController {
   func setupHierarchyAndConstraints() {
     let safeArea = view.safeAreaLayoutGuide
 
+    contentScrollView.backgroundColor = .cyan
     view.addSubview(contentScrollView)
     contentScrollView.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
     contentScrollView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor).isActive = true
     contentScrollView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor).isActive = true
     contentScrollView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor).isActive = true
+
     guard let workoutHistoryDescriptionView else {
       return
     }
-    workoutHistoryDescriptionView.backgroundColor = .red
+
     contentScrollView.addSubview(workoutHistoryDescriptionView)
     workoutHistoryDescriptionView.translatesAutoresizingMaskIntoConstraints = false
     workoutHistoryDescriptionView.topAnchor
       .constraint(equalTo: contentScrollView.topAnchor, constant: Metrics.historyViewTopSpacing).isActive = true
     workoutHistoryDescriptionView.leadingAnchor
-      .constraint(equalTo: contentScrollView.leadingAnchor).isActive = true
-    workoutHistoryDescriptionView.trailingAnchor
-      .constraint(equalTo: contentScrollView.trailingAnchor).isActive = true
+      .constraint(equalTo: contentScrollView.leadingAnchor, constant: ConstraintsGuideLine.value).isActive = true
 
     contentScrollView.addSubview(attachPictureTitleLabel)
     attachPictureTitleLabel.topAnchor
       .constraint(equalTo: workoutHistoryDescriptionView.bottomAnchor, constant: Metrics.historyViewBottomSpacing).isActive = true
     attachPictureTitleLabel.leadingAnchor
-      .constraint(equalTo: contentScrollView.leadingAnchor, constant: Metrics.pictureTitleLabelLeadingSpacing).isActive = true
+      .constraint(equalTo: workoutHistoryDescriptionView.leadingAnchor).isActive = true
 
     contentScrollView.addSubview(attachPictureCollectionView)
+    attachPictureCollectionView.backgroundColor = .red
     attachPictureCollectionView.topAnchor
       .constraint(equalTo: attachPictureTitleLabel.bottomAnchor, constant: Metrics.attachPictureBottomSpacing).isActive = true
     attachPictureCollectionView.leadingAnchor
-      .constraint(equalTo: contentScrollView.leadingAnchor).isActive = true
+      .constraint(equalTo: safeArea.leadingAnchor).isActive = true
     attachPictureTitleLabel.trailingAnchor
-      .constraint(equalTo: contentScrollView.trailingAnchor).isActive = true
+      .constraint(equalTo: safeArea.trailingAnchor).isActive = true
   }
 
   func setupStyles() {

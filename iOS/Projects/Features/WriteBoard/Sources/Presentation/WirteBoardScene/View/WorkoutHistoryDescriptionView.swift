@@ -11,12 +11,33 @@ import UIKit
 
 // MARK: - WorkoutHistoryDescriptionView
 
-final class WorkoutHistoryDescriptionView: UIView {
+final class WorkoutHistoryDescriptionView: UIStackView {
   init(record: Record) {
     super.init(frame: .zero)
-
+    axis = .vertical
     tableCellStackView = makeTableCellStackView(record)
     setupViewHierarchyAndConstraints()
+  }
+
+  /// UIComponents
+  private var tableCellStackView: UIStackView?
+
+  private let workoutHistoryTitleLabel: UILabel = {
+    let label = UILabel()
+    label.text = "운동 정보"
+    label.textColor = DesignSystemColor.primaryText
+    label.font = .preferredFont(forTextStyle: .title2, weight: .bold)
+
+    label.translatesAutoresizingMaskIntoConstraints = false
+    return label
+  }()
+
+  func setupViewHierarchyAndConstraints() {
+    addArrangedSubview(workoutHistoryTitleLabel)
+    guard let tableCellStackView else {
+      return
+    }
+    addArrangedSubview(tableCellStackView)
   }
 
   private func makeTableCellStackView(_ record: Record) -> UIStackView {
@@ -36,41 +57,12 @@ final class WorkoutHistoryDescriptionView: UIView {
     return tableCellStackView
   }
 
-  /// UIComponents
-  private var tableCellStackView: UIStackView?
-
-  private let workoutHistoryTitleLabel: UILabel = {
-    let label = UILabel()
-    label.text = "운동 정보"
-    label.textColor = DesignSystemColor.primaryText
-    label.font = .preferredFont(forTextStyle: .title2, weight: .bold)
-
-    label.translatesAutoresizingMaskIntoConstraints = false
-    return label
-  }()
-
-  func setupViewHierarchyAndConstraints() {
-    addSubview(workoutHistoryTitleLabel)
-    workoutHistoryTitleLabel.topAnchor.constraint(equalTo: topAnchor, constant: Constants.titleLabelTopSpacing).isActive = true
-    workoutHistoryTitleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: ConstraintsGuideLine.value).isActive = true
-
-    guard let tableCellStackView else {
-      return
-    }
-
-    addSubview(tableCellStackView)
-    tableCellStackView.topAnchor
-      .constraint(equalTo: workoutHistoryTitleLabel.bottomAnchor, constant: Constants.titleAndTableTopSpacing).isActive = true
-    tableCellStackView.leadingAnchor
-      .constraint(equalTo: workoutHistoryTitleLabel.leadingAnchor, constant: Constants.titleAndTableLeadingSpacing).isActive = true
-  }
-
   override init(frame: CGRect) {
     super.init(frame: frame)
   }
 
   @available(*, unavailable)
-  required init?(coder _: NSCoder) {
+  required init(coder _: NSCoder) {
     fatalError("사용할 수 없는 생성자 입니다.")
   }
 
@@ -91,19 +83,14 @@ final class WorkoutHistoryDescriptionView: UIView {
 
 // MARK: - WorkoutHistoryDescriptionRowView
 
-private final class WorkoutHistoryDescriptionRowView: UIView {
+private final class WorkoutHistoryDescriptionRowView: UIStackView {
   init(titleString: String, description: String) {
     super.init(frame: .zero)
     titleLabel.text = titleString
     descriptionLabel.text = description
-    setupViewHierarchyAndConstraints()
-  }
 
-  override var intrinsicContentSize: CGSize {
-    return .init(
-      width: titleLabel.frame.width + Constants.titleAndDescriptionWidthSpacing + descriptionLabel.frame.width,
-      height: Constants.intrinsicContentHeight
-    )
+    distribution = .fillProportionally
+    setupViewHierarchyAndConstraints()
   }
 
   override init(frame _: CGRect) {
@@ -111,9 +98,16 @@ private final class WorkoutHistoryDescriptionRowView: UIView {
   }
 
   @available(*, unavailable)
-  required init?(coder _: NSCoder) {
-    fatalError("사용 할 수 없는 생성자 입니다.")
+  required init(coder _: NSCoder) {
+    fatalError("사용할 수 없습니다.")
   }
+
+  private let spacingView: UIView = {
+    let view = UIView()
+
+    view.translatesAutoresizingMaskIntoConstraints = false
+    return view
+  }()
 
   private let titleLabel: UILabel = {
     let label = UILabel()
@@ -121,6 +115,7 @@ private final class WorkoutHistoryDescriptionRowView: UIView {
     label.tintColor = DesignSystemColor.primaryText
     label.textAlignment = .left
 
+    label.setContentHuggingPriority(.defaultLow, for: .horizontal)
     label.translatesAutoresizingMaskIntoConstraints = false
     return label
   }()
@@ -130,27 +125,30 @@ private final class WorkoutHistoryDescriptionRowView: UIView {
     label.font = .preferredFont(forTextStyle: .headline, weight: .bold)
     label.tintColor = DesignSystemColor.primaryText
 
+    label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
     label.translatesAutoresizingMaskIntoConstraints = false
     return label
   }()
 
   func setupViewHierarchyAndConstraints() {
-    addSubview(titleLabel)
-    titleLabel.topAnchor.constraint(equalTo: topAnchor).isActive = true
-    titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+    addArrangedSubview(spacingView)
+    spacingView.widthAnchor.constraint(equalToConstant: Constants.spacingViewWidth).isActive = true
+
+    addArrangedSubview(titleLabel)
     titleLabel.widthAnchor.constraint(equalToConstant: Constants.titleWidth).isActive = true
 
-    addSubview(descriptionLabel)
-    descriptionLabel.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor).isActive = true
-    descriptionLabel.leadingAnchor
-      .constraint(equalTo: titleLabel.trailingAnchor, constant: Constants.titleAndDescriptionWidthSpacing).isActive = true
+    addArrangedSubview(descriptionLabel)
+    descriptionLabel.widthAnchor.constraint(equalToConstant: Constants.descriptionWidth).isActive = true
   }
 
   enum Constants {
     static let titleWidth: CGFloat = 99
+    static let descriptionWidth: CGFloat = 212
 
     static let titleAndDescriptionWidthSpacing: CGFloat = 15
 
     static let intrinsicContentHeight: CGFloat = 24
+
+    static let spacingViewWidth: CGFloat = 9
   }
 }
