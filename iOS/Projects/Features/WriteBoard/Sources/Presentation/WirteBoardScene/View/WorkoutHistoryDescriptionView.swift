@@ -35,7 +35,7 @@ final class WorkoutHistoryDescriptionView: UIView {
     }()
     return tableCellStackView
   }
-  
+
   /// UIComponents
   private var tableCellStackView: UIStackView?
 
@@ -89,7 +89,7 @@ final class WorkoutHistoryDescriptionView: UIView {
   }
 }
 
-// MARK: - WorkoutHistoryTableCellView
+// MARK: - WorkoutHistoryDescriptionRowView
 
 private final class WorkoutHistoryDescriptionRowView: UIView {
   init(titleString: String, description: String) {
