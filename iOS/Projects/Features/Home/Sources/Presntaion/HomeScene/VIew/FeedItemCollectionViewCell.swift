@@ -24,6 +24,12 @@ class FeedItemCollectionViewCell: UICollectionViewCell {
     fatalError("생성할 수 없습니다.")
   }
 
+  override func prepareForReuse() {
+    super.prepareForReuse()
+
+    profileImage.image = nil
+  }
+
   // MARK: - Property
 
   private var dataSource: UICollectionViewDiffableDataSource<Int, URL>? = nil
@@ -65,6 +71,7 @@ class FeedItemCollectionViewCell: UICollectionViewCell {
     label.text = "2023.12.07"
     label.font = .preferredFont(forTextStyle: .subheadline)
     label.textColor = DesignSystemColor.primaryText
+    label.contentMode = .scaleAspectFit
 
     label.translatesAutoresizingMaskIntoConstraints = false
     return label
@@ -310,10 +317,10 @@ extension FeedItemCollectionViewCell {
       return
     }
 
+    let url = url.compactMap { $0 }
     snapshot.deleteAllItems()
     snapshot.appendSections([0])
-    let url = url.compactMap { $0 }
-    snapshot.appendItems(Array(Set(url)), toSection: 0)
+    snapshot.appendItems(url, toSection: 0)
     dataSource?.apply(snapshot)
   }
 }
