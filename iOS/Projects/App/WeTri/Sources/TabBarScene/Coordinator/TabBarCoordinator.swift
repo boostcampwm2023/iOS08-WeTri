@@ -40,7 +40,7 @@ final class TabBarCoordinator: TabBarCoordinating {
   }
 
   func start() {
-    let tabBarViewControllers = [TabBarPage.record, TabBarPage.profile].map {
+    let tabBarViewControllers = TabBarPage.allCases.map {
       return makePageNavigationController(page: $0)
     }
     let tabBarController = makeTabBarController(tabBarViewControllers: tabBarViewControllers)
@@ -58,6 +58,13 @@ final class TabBarCoordinator: TabBarCoordinating {
 
   private func startTabBarCoordinator(page: TabBarPage, pageNavigationViewController: UINavigationController) {
     switch page {
+    case .home:
+      let coordinator = HomeCoordinator(
+        navigationController: pageNavigationViewController,
+        delegate: self
+      )
+      childCoordinators.append(coordinator)
+      coordinator.start()
     case .record:
       let recordCoordinator = RecordFeatureCoordinator(
         navigationController: pageNavigationViewController,
