@@ -35,13 +35,12 @@ final class WorkoutRouteMapViewController: UIViewController {
   private let viewModel: WorkoutRouteMapViewModelRepresentable
 
   /// 사용자 위치 추적 배열
-  @Published private var locations: [CLLocation] = []
+  @Published private var locations: [CLLocationCoordinate2D] = []
 
   private let mapCaptureDataSubject: PassthroughSubject<Data?, Never> = .init()
   private let mapSnapshotterImageDataSubject: PassthroughSubject<[CLLocation], Never> = .init()
 
   private let kalmanFilterShouldUpdatePositionSubject: PassthroughSubject<KalmanFilterUpdateRequireElement, Never> = .init()
-  private let kalmanFilterShouldUpdateHeadingSubject: PassthroughSubject<Double, Never> = .init()
 
   private var subscriptions: Set<AnyCancellable> = []
 
@@ -137,7 +136,6 @@ final class WorkoutRouteMapViewController: UIViewController {
 
     let input: WorkoutRouteMapViewModelInput = .init(
       filterShouldUpdatePositionPublisher: kalmanFilterShouldUpdatePositionSubject.eraseToAnyPublisher(),
-      filterShouldUpdateHeadingPublisher: kalmanFilterShouldUpdateHeadingSubject.eraseToAnyPublisher(),
       locationListPublisher: locationPublisher
     )
 
@@ -167,8 +165,7 @@ final class WorkoutRouteMapViewController: UIViewController {
       return
     }
 
-    let coordinates = locations.map(\.coordinate)
-    let polyLine = MKPolyline(coordinates: coordinates, count: coordinates.count)
+    let polyLine = MKPolyline(coordinates: locations, count: locations.count)
     let span = MKCoordinateSpan(
       latitudeDelta: (regionData.maxLatitude - regionData.minLatitude) * 1.15,
       longitudeDelta: (regionData.maxLongitude - regionData.minLongitude) * 1.15
@@ -209,14 +206,10 @@ final class WorkoutRouteMapViewController: UIViewController {
 
       self?.locations
         .forEach { location in
-          let currentCLLocationCoordinator2D = CLLocationCoordinate2D(
-            latitude: location.coordinate.latitude,
-            longitude: location.coordinate.longitude
-          )
 
           // snapshot에서 현재 위도 경도에 대한 데이터가 어느 CGPoint에 있는지 찾아내고, 이를 Polyline을 그립니다.
-          context.cgContext.addLine(to: snapshot.point(for: currentCLLocationCoordinator2D))
-          context.cgContext.move(to: snapshot.point(for: currentCLLocationCoordinator2D))
+          context.cgContext.addLine(to: snapshot.point(for: location))
+          context.cgContext.move(to: snapshot.point(for: location))
         }
 
       // 현재 컨텍스트 에서 여태 그린 Path를 적용합니다.
@@ -232,9 +225,8 @@ final class WorkoutRouteMapViewController: UIViewController {
     }
 
     let currentLocation = CLLocation(latitude: value.latitude, longitude: value.longitude)
-    locations.append(currentLocation)
-    let coordinates = locations.map(\.coordinate)
-    let polyline = MKPolyline(coordinates: coordinates, count: coordinates.count)
+    locations.append(currentLocation.coordinate)
+    let polyline = MKPolyline(coordinates: locations, count: locations.count)
 
     mapView.removeOverlays(mapView.overlays)
     mapView.addOverlay(polyline)
@@ -260,6 +252,7 @@ final class WorkoutRouteMapViewController: UIViewController {
 
 extension WorkoutRouteMapViewController: LocationTrackingProtocol {
   func requestCapture() {
+    let locations = locations.map { CLLocation(latitude: $0.latitude, longitude: $0.longitude) }
     mapSnapshotterImageDataSubject.send(locations)
   }
 
@@ -268,7 +261,12 @@ extension WorkoutRouteMapViewController: LocationTrackingProtocol {
   }
 
   var locationPublisher: AnyPublisher<[CLLocation], Never> {
-    $locations.eraseToAnyPublisher()
+    return Just(
+      locations.map {
+        CLLocation(latitude: $0.latitude, longitude: $0.longitude)
+      }
+    )
+    .eraseToAnyPublisher()
   }
 }
 
@@ -293,28 +291,13 @@ extension WorkoutRouteMapViewController: CLLocationManagerDelegate {
       return
     }
 
-    let currentTime = Date.now
-    let timeDistance = currentTime.distance(to: prevDate)
-
-    // 과거 위치와 현재 위치를 통해 위 경도에 관한 속력을 구합니다.
-    let v = (
-      (newLocation.coordinate.latitude - prevLocation.coordinate.latitude) / timeDistance,
-      (newLocation.coordinate.longitude - prevLocation.coordinate.longitude) / timeDistance
-    )
-    prevLocation = newLocation
-
     kalmanFilterShouldUpdatePositionSubject.send(
       .init(
-        longitude: newLocation.coordinate.longitude,
-        latitude: newLocation.coordinate.latitude,
-        prevSpeedAtLongitude: v.1,
-        prevSpeedAtLatitude: v.0
+        prevCLLocation: prevLocation,
+        currentCLLocation: newLocation
       )
     )
-  }
-
-  func locationManager(_: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
-    kalmanFilterShouldUpdateHeadingSubject.send(newHeading.trueHeading)
+    prevLocation = newLocation
   }
 
   func locationManager(_: CLLocationManager, didFailWithError error: Error) {
