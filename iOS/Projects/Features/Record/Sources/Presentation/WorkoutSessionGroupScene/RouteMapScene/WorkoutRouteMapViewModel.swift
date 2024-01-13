@@ -13,7 +13,6 @@ import Foundation
 
 public struct WorkoutRouteMapViewModelInput {
   let filterShouldUpdatePositionPublisher: AnyPublisher<KalmanFilterUpdateRequireElement, Never>
-  let filterShouldUpdateHeadingPublisher: AnyPublisher<Double, Never>
   let locationListPublisher: AnyPublisher<[LocationModel], Never>
 }
 
@@ -58,13 +57,6 @@ extension WorkoutRouteMapViewModel: WorkoutRouteMapViewModelRepresentable {
   public func transform(input: WorkoutRouteMapViewModelInput) -> WorkoutRouteMapViewModelOutput {
     subscriptions.removeAll()
 
-    input
-      .filterShouldUpdateHeadingPublisher
-      .sink { [kalmanUseCase] value in
-        kalmanUseCase.updateHeading(value)
-      }
-      .store(in: &subscriptions)
-
     let region = input
       .locationListPublisher
       .map(locationPathUseCase.processPath(locations:))
@@ -73,6 +65,7 @@ extension WorkoutRouteMapViewModel: WorkoutRouteMapViewModelRepresentable {
     let updateValue: WorkoutRouteMapViewModelOutput = input
       .filterShouldUpdatePositionPublisher
       .dropFirst(4)
+      .throttle(for: 1, scheduler: RunLoop.main, latest: false)
       .map { [kalmanUseCase] element in
         let censoredValue = kalmanUseCase.updateFilter(element)
         return WorkoutRouteMapState.censoredValue(censoredValue)

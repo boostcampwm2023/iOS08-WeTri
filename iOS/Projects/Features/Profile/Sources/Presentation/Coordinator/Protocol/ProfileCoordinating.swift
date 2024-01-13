@@ -18,4 +18,7 @@ public protocol ProfileCoordinating: Coordinating {
 
   /// 프로필 설정 화면으로 넘어갑니다.
   func moveToProfileSettings()
+
+  /// 글쓰기 화면으로 넘어갑니다.
+  func presentWriteBoard()
 }
