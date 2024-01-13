@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct FeedElement: Hashable {
+public struct FeedElement: Hashable, Codable {
   /// 개시물의 아이디 입니다.
   let ID: Int
 
