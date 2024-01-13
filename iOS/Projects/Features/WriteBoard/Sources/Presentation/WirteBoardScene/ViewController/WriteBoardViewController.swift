@@ -123,7 +123,7 @@ private extension WriteBoardViewController {
     contentScrollView.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
     contentScrollView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor).isActive = true
     contentScrollView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor).isActive = true
-    contentScrollView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor).isActive = true
+    contentScrollView.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor).isActive = true
 
     guard let workoutHistoryDescriptionView else {
       return
