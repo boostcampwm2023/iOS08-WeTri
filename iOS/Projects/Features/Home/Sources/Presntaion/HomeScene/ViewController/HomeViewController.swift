@@ -194,8 +194,7 @@ private extension HomeViewController {
 
 extension HomeViewController: UICollectionViewDelegate {
   func collectionView(_: UICollectionView, willDisplay _: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-    
-    /// 사용자가 아직 보지 않은 셀의 갯수
+    // 사용자가 아직 보지 않은 셀의 갯수
     let toShowCellCount = (feedCount - 1) - indexPath.row
     if toShowCellCount < 3 {
       fetchFeedPublisher.send()
