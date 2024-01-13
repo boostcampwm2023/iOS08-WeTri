@@ -7,6 +7,7 @@
 //
 
 import Combine
+import CombineCocoa
 import DesignSystem
 import Log
 import UIKit
@@ -27,6 +28,7 @@ final class WriteBoardViewController: UIViewController {
   private let contentScrollView: UIScrollView = {
     let scrollView = UIScrollView()
     scrollView.isScrollEnabled = true
+    scrollView.backgroundColor = .clear
 
     scrollView.translatesAutoresizingMaskIntoConstraints = false
     return scrollView
@@ -60,7 +62,7 @@ final class WriteBoardViewController: UIViewController {
     let textView = UITextView()
     textView.textColor = DesignSystemColor.primaryText
     textView.font = .preferredFont(forTextStyle: .body)
-    textView.contentInset = .init(top: 0, left: Metrics.pictureTitleLabelLeadingSpacing, bottom: 0, right: Metrics.pictureTitleLabelLeadingSpacing)
+    textView.contentInset = .init(top: 0, left: 0, bottom: 0, right: 0)
     textView.backgroundColor = DesignSystemColor.gray01
 
     textView.translatesAutoresizingMaskIntoConstraints = false
@@ -140,12 +142,11 @@ private extension WriteBoardViewController {
     attachPictureTitleLabel.leadingAnchor
       .constraint(equalTo: workoutHistoryDescriptionView.leadingAnchor).isActive = true
 
-    // TODO: View에 관한 layout이 어떻게 이루어지는지 그리고 View에 lifeCycle에 대해서 자세하게 공부하기
     guard let attachPictureCollectionView = attachPictureViewController.collectionView else { return }
     contentScrollView.addSubview(attachPictureCollectionView)
     attachPictureCollectionView.translatesAutoresizingMaskIntoConstraints = false
     attachPictureCollectionView.topAnchor
-      .constraint(equalTo: attachPictureTitleLabel.bottomAnchor, constant: Metrics.attachPictureBottomSpacing).isActive = true
+      .constraint(equalTo: attachPictureTitleLabel.bottomAnchor, constant: Metrics.inGroupTitleAndContentSpacing).isActive = true
     attachPictureCollectionView.leadingAnchor
       .constraint(equalTo: safeArea.leadingAnchor).isActive = true
     attachPictureCollectionView.trailingAnchor
@@ -174,6 +175,11 @@ private extension WriteBoardViewController {
   }
 
   func bind() {
+    resignTextViewFirstResponder()
+    bindViewModel()
+  }
+
+  func bindViewModel() {
     let output = viewModel.transform(input: .init())
     output.sink { state in
       switch state {
@@ -184,6 +190,14 @@ private extension WriteBoardViewController {
     .store(in: &subscriptions)
   }
 
+  func resignTextViewFirstResponder() {
+    view.publisher(gesture: .tap)
+      .sink { [weak self] _ in
+        self?.boardDetailTextView.resignFirstResponder()
+      }
+      .store(in: &subscriptions)
+  }
+
   @objc
   func completeButtonDidTap() {
     completeButtonDidTapPublisher.send()
@@ -192,23 +206,12 @@ private extension WriteBoardViewController {
   enum Metrics {
     static let historyViewTopSpacing: CGFloat = 6
 
-    static let groupBottomSpacing: CGFloat = 18
+    static let groupBottomSpacing: CGFloat = 27
 
-    static let pictureTitleLabelLeadingSpacing: CGFloat = ConstraintsGuideLine.value + 9
-    static let attachPictureBottomSpacing: CGFloat = 9
-
-    static let inGroupTitleAndContentSpacing: CGFloat = 9
+    static let inGroupTitleAndContentSpacing: CGFloat = 12
   }
 
   enum Constants {
     static let pictureTitleLabelText = "사진"
-  }
-}
-
-// MARK: UIScrollViewDelegate
-
-extension WriteBoardViewController: UIScrollViewDelegate {
-  func scrollViewDidScroll(_ scrollView: UIScrollView) {
-    Log.make().debug("Yes, \(scrollView.isScrollEnabled)")
   }
 }
