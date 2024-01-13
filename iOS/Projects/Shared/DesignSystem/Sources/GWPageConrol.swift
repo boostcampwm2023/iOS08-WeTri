@@ -62,7 +62,6 @@ private extension GWPageControl {
     var targetSpacing: CGFloat = 0
 
     pages.forEach { page in
-      // 중요: 맨 처음 Page객체는 왼쪽으로 붙여야 하기에 필수 불가결적으로 다음 로직이 필요합니다.
       if targetLeadingAnchor != safeAreaLayoutGuide.leadingAnchor {
         targetSpacing = spacing
       }
