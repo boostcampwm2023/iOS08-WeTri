@@ -18,8 +18,6 @@ final class WriteBoardViewController: UIViewController {
 
   private let viewModel: WriteBoardViewModelRepresentable
 
-  private var attachPictureCollectionViewDataSource: UICollectionViewDiffableDataSource<Int, UIImage>? = nil
-
   private let completeButtonDidTapPublisher: PassthroughSubject<Void, Never> = .init()
 
   private var subscriptions: Set<AnyCancellable> = []
@@ -46,15 +44,7 @@ final class WriteBoardViewController: UIViewController {
     return label
   }()
 
-  private lazy var attachPictureCollectionView: UICollectionView = {
-    let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .makeAttachPictureCollectionViewLayout())
-    collectionView.register(AttachPictureCollectionViewCell.self, forCellWithReuseIdentifier: AttachPictureCollectionViewCell.identifier)
-    collectionView.delegate = self
-    collectionView.backgroundColor = .clear
-
-    collectionView.translatesAutoresizingMaskIntoConstraints = false
-    return collectionView
-  }()
+  private let attachPictureViewController = AttachPictureViewController()
 
   private let boardDetailTitleLabel: UILabel = {
     let label = UILabel()
@@ -111,37 +101,10 @@ final class WriteBoardViewController: UIViewController {
 private extension WriteBoardViewController {
   func setup() {
     workoutHistoryDescriptionView = .init(record: viewModel.record())
-    setAttachPictureCollectionViewDataSource()
     setupStyles()
     setupHierarchyAndConstraints()
     bind()
     setupNavigationItem()
-  }
-
-  func setAttachPictureCollectionViewDataSource() {
-    attachPictureCollectionViewDataSource = .init(collectionView: attachPictureCollectionView) { collectionView, indexPath, itemIdentifier in
-      guard
-        let cell = collectionView.dequeueReusableCell(
-          withReuseIdentifier: AttachPictureCollectionViewCell.identifier,
-          for: indexPath
-        ) as? AttachPictureCollectionViewCell
-      else {
-        return UICollectionViewCell()
-      }
-
-      cell.configure(image: itemIdentifier)
-      return cell
-    }
-    guard
-      var snapshot = attachPictureCollectionViewDataSource?.snapshot(),
-      let addPicImage = Constants.addPictureImage,
-      let testImage = UIImage(systemName: "figure.run")
-    else {
-      return
-    }
-    snapshot.appendSections([0])
-    snapshot.appendItems([addPicImage, testImage])
-    attachPictureCollectionViewDataSource?.apply(snapshot)
   }
 
   func setupNavigationItem() {
@@ -177,7 +140,10 @@ private extension WriteBoardViewController {
     attachPictureTitleLabel.leadingAnchor
       .constraint(equalTo: workoutHistoryDescriptionView.leadingAnchor).isActive = true
 
+    // TODO: View에 관한 layout이 어떻게 이루어지는지 그리고 View에 lifeCycle에 대해서 자세하게 공부하기
+    guard let attachPictureCollectionView = attachPictureViewController.collectionView else { return }
     contentScrollView.addSubview(attachPictureCollectionView)
+    attachPictureCollectionView.translatesAutoresizingMaskIntoConstraints = false
     attachPictureCollectionView.topAnchor
       .constraint(equalTo: attachPictureTitleLabel.bottomAnchor, constant: Metrics.attachPictureBottomSpacing).isActive = true
     attachPictureCollectionView.leadingAnchor
@@ -236,57 +202,10 @@ private extension WriteBoardViewController {
 
   enum Constants {
     static let pictureTitleLabelText = "사진"
-
-    static let addPictureImage: UIImage? = .init(systemName: "plus")
   }
 }
 
-// MARK: UICollectionViewDelegate
-
-extension WriteBoardViewController: UICollectionViewDelegate {}
-
-extension UICollectionViewLayout {
-  static func makeAttachPictureCollectionViewLayout() -> UICollectionViewLayout {
-    let itemSize = NSCollectionLayoutSize(
-      widthDimension: .absolute(attachPictureCollectionViewCellConstants.width),
-      heightDimension: .fractionalHeight(1)
-    )
-    let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    item.contentInsets = .init(
-      top: 0,
-      leading: attachPictureCollectionViewCellConstants.itemLeadingAndTrailingInset,
-      bottom: 0,
-      trailing: attachPictureCollectionViewCellConstants.itemLeadingAndTrailingInset
-    )
-
-    let groupSize = NSCollectionLayoutSize(
-      widthDimension: .fractionalWidth(1),
-      heightDimension: .absolute(attachPictureCollectionViewCellConstants.height)
-    )
-    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-    group.contentInsets = .init(
-      top: 0,
-      leading: attachPictureCollectionViewCellConstants.groupLeadingAndTrailingInset,
-      bottom: 0,
-      trailing: attachPictureCollectionViewCellConstants.groupLeadingAndTrailingInset
-    )
-
-    let section = NSCollectionLayoutSection(group: group)
-
-    return UICollectionViewCompositionalLayout(section: section)
-  }
-
-  private enum attachPictureCollectionViewCellConstants {
-    static let height: CGFloat = 94
-    static let width: CGFloat = 94
-
-    static let itemLeadingAndTrailingInset: CGFloat = 6
-
-    static let groupLeadingAndTrailingInset: CGFloat = 29
-  }
-}
-
-// MARK: - WriteBoardViewController + UIScrollViewDelegate
+// MARK: UIScrollViewDelegate
 
 extension WriteBoardViewController: UIScrollViewDelegate {
   func scrollViewDidScroll(_ scrollView: UIScrollView) {

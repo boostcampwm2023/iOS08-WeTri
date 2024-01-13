@@ -57,9 +57,9 @@ public extension Record {
     let hours = Int(timeInterval / 3600)
     let minutes = Int((timeInterval.truncatingRemainder(dividingBy: 3600)) / 60)
     if minutes == 0 {
-      return hours == 0 ? "" : "(\(hours)시간)"
+      return hours == 0 ? "" : "\(hours)시간"
     }
-    return hours == 0 ? "(\(minutes)분)" : "(\(hours)시간\(minutes)분)"
+    return hours == 0 ? "\(minutes)분" : "\(hours)시간\(minutes)분"
   }
 }
 

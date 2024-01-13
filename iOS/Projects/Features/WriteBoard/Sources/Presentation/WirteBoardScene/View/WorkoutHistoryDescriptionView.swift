@@ -46,7 +46,7 @@ final class WorkoutHistoryDescriptionView: UIStackView {
         WorkoutHistoryDescriptionRowView(titleString: Constants.workoutName, description: record.name),
         WorkoutHistoryDescriptionRowView(titleString: Constants.date, description: record.dateString),
         WorkoutHistoryDescriptionRowView(titleString: Constants.time, description: record.durationTime + " (" + record.startTime + "~" + record.endTime + ")"),
-        WorkoutHistoryDescriptionRowView(titleString: Constants.distance, description: String(format: "%01f", Double(record.distance) / 1000) + "km"),
+        WorkoutHistoryDescriptionRowView(titleString: Constants.distance, description: String(format: "%.1f", Double(record.distance) / 1000) + "km"),
       ])
       stackView.axis = .vertical
       stackView.spacing = Constants.cellSpacing
