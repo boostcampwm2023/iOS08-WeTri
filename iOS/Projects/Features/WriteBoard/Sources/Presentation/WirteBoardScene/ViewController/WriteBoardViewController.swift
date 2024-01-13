@@ -209,9 +209,9 @@ private extension WriteBoardViewController {
     static let groupBottomSpacing: CGFloat = 27
 
     static let inGroupTitleAndContentSpacing: CGFloat = 12
-    
+
     static let collectionViewHeight: CGFloat = 99
-    
+
     static let boardDetailTextViewHeight: CGFloat = 500
   }
 
