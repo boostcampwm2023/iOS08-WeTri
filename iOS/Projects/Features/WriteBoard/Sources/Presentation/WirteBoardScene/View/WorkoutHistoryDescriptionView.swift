@@ -37,6 +37,7 @@ final class WorkoutHistoryDescriptionView: UIStackView {
     guard let tableCellStackView else {
       return
     }
+    spacing = Constants.inGroupTitleAndContentSpacing
     addArrangedSubview(tableCellStackView)
   }
 
@@ -72,12 +73,9 @@ final class WorkoutHistoryDescriptionView: UIStackView {
     static let time = "시간"
     static let distance = "거리"
 
+    static let inGroupTitleAndContentSpacing: CGFloat = 12
+
     static let cellSpacing: CGFloat = 6
-
-    static let titleLabelTopSpacing: CGFloat = 6
-
-    static let titleAndTableTopSpacing: CGFloat = 9
-    static let titleAndTableLeadingSpacing: CGFloat = 9
   }
 }
 
