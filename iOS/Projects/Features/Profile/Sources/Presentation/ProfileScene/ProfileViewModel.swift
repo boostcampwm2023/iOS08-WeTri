@@ -8,6 +8,7 @@ public struct ProfileViewModelInput {
   let didTapSettingButtonPublisher: AnyPublisher<Void, Never>
   let paginationEventPublisher: AnyPublisher<ProfileItem, Never>
   let refreshPostsPublisher: AnyPublisher<Void, Never>
+  let writeBoardPublisher: AnyPublisher<Void, Never>
 }
 
 public typealias ProfileViewModelOutput = AnyPublisher<ProfileViewModelState, Never>
@@ -56,6 +57,12 @@ extension ProfileViewModel: ProfileViewModelRepresentable {
     input.didTapSettingButtonPublisher
       .sink { [weak self] _ in
         self?.coordinating?.pushToSettings()
+      }
+      .store(in: &subscriptions)
+
+    input.writeBoardPublisher
+      .sink { [weak self] _ in
+        self?.coordinating?.presentWriteBoard()
       }
       .store(in: &subscriptions)
 

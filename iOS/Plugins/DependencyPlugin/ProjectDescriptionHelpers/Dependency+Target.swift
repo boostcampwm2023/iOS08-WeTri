@@ -10,6 +10,7 @@ import ProjectDescription
 // MARK: - Feature
 
 public enum Feature: String {
+  case writeBoard
   case home
   case splash
   case profile

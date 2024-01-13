@@ -17,6 +17,7 @@ let project = Project.makeModule(
       .commonNetworkingKeyManager,
       .keychain,
       .userInformationManager,
+      .feature(.writeBoard),
     ],
     testDependencies: [],
     resources: "Resources/**"
