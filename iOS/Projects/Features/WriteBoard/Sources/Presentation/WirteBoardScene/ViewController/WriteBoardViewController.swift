@@ -151,7 +151,7 @@ private extension WriteBoardViewController {
       .constraint(equalTo: safeArea.leadingAnchor).isActive = true
     attachPictureCollectionView.trailingAnchor
       .constraint(equalTo: safeArea.trailingAnchor).isActive = true
-    attachPictureCollectionView.heightAnchor.constraint(equalToConstant: 99).isActive = true
+    attachPictureCollectionView.heightAnchor.constraint(equalToConstant: Metrics.collectionViewHeight).isActive = true
 
     contentScrollView.addSubview(boardDetailTitleLabel)
     boardDetailTitleLabel.topAnchor
@@ -166,7 +166,7 @@ private extension WriteBoardViewController {
       .constraint(equalTo: safeArea.leadingAnchor, constant: ConstraintsGuideLine.value).isActive = true
     boardDetailTextView.trailingAnchor
       .constraint(equalTo: safeArea.trailingAnchor, constant: -ConstraintsGuideLine.value).isActive = true
-    boardDetailTextView.heightAnchor.constraint(equalToConstant: 500).isActive = true
+    boardDetailTextView.heightAnchor.constraint(equalToConstant: Metrics.boardDetailTextViewHeight).isActive = true
   }
 
   func setupStyles() {
@@ -209,6 +209,10 @@ private extension WriteBoardViewController {
     static let groupBottomSpacing: CGFloat = 27
 
     static let inGroupTitleAndContentSpacing: CGFloat = 12
+    
+    static let collectionViewHeight: CGFloat = 99
+    
+    static let boardDetailTextViewHeight: CGFloat = 500
   }
 
   enum Constants {
