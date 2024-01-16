@@ -72,6 +72,8 @@ final class WorkoutHistoryCell: UITableViewCell {
     label.textColor = DesignSystemColor.primaryText
     label.font = .preferredFont(forTextStyle: .body)
     label.text = "06:00 ~ 06:30 (30분)"
+    label.numberOfLines = 1
+    label.contentMode = .scaleAspectFit
     label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
 
     label.translatesAutoresizingMaskIntoConstraints = false
@@ -100,8 +102,7 @@ final class WorkoutHistoryCell: UITableViewCell {
   }()
 
   private let workoutImageView: UIImageView = {
-    let configure: UIImage.SymbolConfiguration = .init(font: .boldSystemFont(ofSize: 35))
-    var image = UIImage(systemName: "figure.run", withConfiguration: configure)
+    var image = UIImage(systemName: "figure.run")
 
     let imageView = UIImageView(image: image)
     imageView.contentMode = .scaleAspectFit
@@ -115,6 +116,8 @@ final class WorkoutHistoryCell: UITableViewCell {
   private lazy var itemStackView: UIStackView = {
     let stackView = UIStackView(arrangedSubviews: [workoutImageView, descriptionContentStackView])
     stackView.spacing = Metrics.imageAndContentSpacing
+    stackView.alignment = .fill
+    stackView.distribution = .fillProportionally
 
     stackView.translatesAutoresizingMaskIntoConstraints = false
     return stackView
@@ -160,7 +163,6 @@ private extension WorkoutHistoryCell {
     dateLabel.widthAnchor.constraint(equalToConstant: Metrics.middleLabelWidth).isActive = true
 
     workoutImageView.widthAnchor.constraint(equalToConstant: Metrics.imageViewWidthAndHeight).isActive = true
-    workoutImageView.heightAnchor.constraint(equalToConstant: Metrics.imageViewWidthAndHeight).isActive = true
   }
 
   func makeShadowAndRounded() {
@@ -178,4 +180,41 @@ private extension WorkoutHistoryCell {
     layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: radius).cgPath
     layer.cornerRadius = radius
   }
+}
+
+extension WorkoutHistoryCell {
+  func configure(record: Record) {
+    workoutImageView.image = record.image
+    workoutTitleLabel.text = record.name
+    workoutDistanceLabel.text = record.kmDistance
+    dateLabel.text = record.dateString
+    timeLabel.text = record.timeDescription
+  }
+}
+
+private extension Record {
+  var timeDescription: String {
+    return "\(startTime) ~ \(endTime) \(durationTime)"
+  }
+
+  var kmDistance: String {
+    return String(Double(distance) / 1000) + "km"
+  }
+
+  var image: UIImage? {
+    switch workoutID {
+    case 1:
+      return UIImage(systemName: "figure.run", withConfiguration: UIImage.configure)
+    case 2:
+      return UIImage(systemName: "figure.pool.swim", withConfiguration: UIImage.configure)
+    case 3:
+      return UIImage(systemName: "figure.outdoor.cycle", withConfiguration: UIImage.configure)
+    default:
+      return UIImage(systemName: "figure.run", withConfiguration: UIImage.configure)
+    }
+  }
+}
+
+private extension UIImage {
+  static let configure: UIImage.SymbolConfiguration = .init(font: .boldSystemFont(ofSize: 30))
 }

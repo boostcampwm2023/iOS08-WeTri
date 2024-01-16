@@ -20,7 +20,7 @@ public protocol WriteBoardFeatureFinishDelegate: AnyObject {
 // MARK: - WriteBoardFeatureCoordinating
 
 public protocol WriteBoardFeatureCoordinating: Coordinating {
-  func pushWriteBoardScene()
+  func pushWriteBoardScene(record: Record)
   func didFinishWriteBoard()
   func cancelWriteBoard()
 }
@@ -59,12 +59,18 @@ public final class WriteBoardCoordinator: WriteBoardFeatureCoordinating {
 
   private func pushWorkoutHistorySelectScene() {
     let viewModel = WorkoutHistorySelectViewModel()
+    viewModel.writeBoardCoordinator = self
     let viewController = WorkoutHistorySelectViewController(viewModel: viewModel)
 
     containerViewController?.pushViewController(viewController, animated: false)
   }
 
-  public func pushWriteBoardScene() {}
+  public func pushWriteBoardScene(record: Record) {
+    let viewModel = WriteBoardViewModel(record: record)
+    let viewController = WriteBoardViewController(viewModel: viewModel)
+
+    containerViewController?.pushViewController(viewController, animated: true)
+  }
 
   public func didFinishWriteBoard() {}
 

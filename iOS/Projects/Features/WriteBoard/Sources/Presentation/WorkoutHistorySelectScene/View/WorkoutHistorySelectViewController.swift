@@ -20,7 +20,9 @@ final class WorkoutHistorySelectViewController: UIViewController {
 
   private var subscriptions: Set<AnyCancellable> = []
 
-  private var dataSource: UITableViewDiffableDataSource<Int, UUID>? = nil
+  private let selectWorkoutHistoryCellPublisher: PassthroughSubject<Record, Never> = .init()
+
+  private var dataSource: UITableViewDiffableDataSource<Int, Record>? = nil
 
   // MARK: UI Components
 
@@ -85,11 +87,11 @@ private extension WorkoutHistorySelectViewController {
   }
 
   func setDataSource() {
-    dataSource = .init(tableView: workoutHistoryTableView) { tableView, _, _ in
+    dataSource = .init(tableView: workoutHistoryTableView) { tableView, _, itemIdentifier in
       guard let cell = tableView.dequeueReusableCell(withIdentifier: WorkoutHistoryCell.identifier) as? WorkoutHistoryCell else {
         return UITableViewCell()
       }
-
+      cell.configure(record: itemIdentifier)
       return cell
     }
     guard let dataSource else { return }
@@ -104,7 +106,11 @@ private extension WorkoutHistorySelectViewController {
       return
     }
     var snapshot = dataSource.snapshot()
-    snapshot.appendItems([.init(), .init(), .init()])
+    snapshot.appendItems([
+      .init(dateString: "11월 9일", workoutID: 2, startTime: "06:00", endTime: "06:30", distance: 500),
+      .init(dateString: "11월 7일", workoutID: 1, startTime: "06:00", endTime: "07:00", distance: 1500),
+      .init(dateString: "11월 6일", workoutID: 3, startTime: "06:00", endTime: "06:30", distance: 1000),
+    ])
     dataSource.apply(snapshot)
   }
 
@@ -117,7 +123,9 @@ private extension WorkoutHistorySelectViewController {
   }
 
   func bind() {
-    let output = viewModel.transform(input: .init())
+    let output = viewModel.transform(input:
+      .init(selectCell: selectWorkoutHistoryCellPublisher.eraseToAnyPublisher())
+    )
     output.sink { state in
       switch state {
       case .idle:
@@ -133,7 +141,16 @@ private extension WorkoutHistorySelectViewController {
 // MARK: UITableViewDelegate
 
 extension WorkoutHistorySelectViewController: UITableViewDelegate {
-  func tableView(_: UITableView, estimatedHeightForRowAt _: IndexPath) -> CGFloat {
-    return 80
+  func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
+    guard let item = dataSource?.snapshot().itemIdentifiers[indexPath.row] else {
+      return
+    }
+    selectWorkoutHistoryCellPublisher.send(item)
+  }
+}
+
+private extension Collection {
+  subscript(safe index: Index) -> Element? {
+    return indices.contains(index) ? self[index] : nil
   }
 }
