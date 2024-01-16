@@ -7,6 +7,7 @@
 //
 
 import Cacher
+import ImageDownsampling
 import UIKit
 
 // MARK: - FeedImageCell
@@ -55,6 +56,7 @@ final class FeedImageCell: UICollectionViewCell {
         guard let data = try? Data(contentsOf: imageURL) else { return }
         DispatchQueue.main.async { [weak self] in
           self?.feedImage.image = UIImage(data: data)
+          self?.layoutIfNeeded()
         }
       }
       return
