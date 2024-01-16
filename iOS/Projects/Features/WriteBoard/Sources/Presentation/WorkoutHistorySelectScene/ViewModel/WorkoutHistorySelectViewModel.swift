@@ -11,7 +11,9 @@ import Foundation
 
 // MARK: - SelectWorkoutViewModelInput
 
-public struct SelectWorkoutViewModelInput {}
+public struct SelectWorkoutViewModelInput {
+  let selectCell: AnyPublisher<Record, Never>
+}
 
 public typealias SelectWorkoutViewModelOutput = AnyPublisher<SelectWorkoutState, Never>
 
@@ -33,13 +35,20 @@ final class WorkoutHistorySelectViewModel {
   // MARK: - Properties
 
   private var subscriptions: Set<AnyCancellable> = []
+  weak var writeBoardCoordinator: WriteBoardCoordinator?
 }
 
 // MARK: SelectWorkoutViewModelRepresentable
 
 extension WorkoutHistorySelectViewModel: SelectWorkoutViewModelRepresentable {
-  public func transform(input _: SelectWorkoutViewModelInput) -> SelectWorkoutViewModelOutput {
+  public func transform(input: SelectWorkoutViewModelInput) -> SelectWorkoutViewModelOutput {
     subscriptions.removeAll()
+
+    input.selectCell
+      .sink { [weak self] record in
+        self?.writeBoardCoordinator?.pushWriteBoardScene(record: record)
+      }
+      .store(in: &subscriptions)
 
     let initialState: SelectWorkoutViewModelOutput = Just(.idle).eraseToAnyPublisher()
 
