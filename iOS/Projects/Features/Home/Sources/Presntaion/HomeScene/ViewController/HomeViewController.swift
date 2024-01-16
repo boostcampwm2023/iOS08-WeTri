@@ -7,6 +7,7 @@
 //
 
 import Combine
+import CombineCocoa
 import DesignSystem
 import Log
 import UIKit
@@ -24,6 +25,7 @@ final class HomeViewController: UIViewController {
 
   private let fetchFeedPublisher: PassthroughSubject<Void, Never> = .init()
   private let didDisplayFeedPublisher: PassthroughSubject<Void, Never> = .init()
+  private let refreshFeedPublisher: PassthroughSubject<Void, Never> = .init()
 
   private var feedCount: Int = 0
 
@@ -89,6 +91,7 @@ private extension HomeViewController {
     setupHierarchyAndConstraints()
     setNavigationItem()
     bind()
+    configureRefreshControl()
     fetchFeedPublisher.send()
   }
 
@@ -134,7 +137,8 @@ private extension HomeViewController {
     let output = viewModel.transform(
       input: HomeViewModelInput(
         requestFeedPublisher: fetchFeedPublisher.eraseToAnyPublisher(),
-        didDisplayFeed: didDisplayFeedPublisher.eraseToAnyPublisher()
+        didDisplayFeed: didDisplayFeedPublisher.eraseToAnyPublisher(),
+        refreshFeedPublisher: refreshFeedPublisher.eraseToAnyPublisher()
       )
     )
 
@@ -144,6 +148,8 @@ private extension HomeViewController {
         break
       case let .fetched(feed):
         self?.updateFeed(feed)
+      case let .refresh(feed):
+        self?.refreshFeed(feed)
       }
     }
     .store(in: &subscriptions)
@@ -152,6 +158,20 @@ private extension HomeViewController {
   func setNavigationItem() {
     navigationItem.rightBarButtonItem = addBarButtonItem
     navigationItem.leftBarButtonItem = titleBarButtonItem
+  }
+
+  func refreshFeed(_ item: [FeedElement]) {
+    guard let dataSource else {
+      return
+    }
+    var snapshot = dataSource.snapshot()
+    snapshot.deleteAllItems()
+    snapshot.appendSections([0])
+    snapshot.appendItems(item)
+    DispatchQueue.main.async { [weak self] in
+      dataSource.apply(snapshot)
+      self?.feedListCollectionView.refreshControl?.endRefreshing()
+    }
   }
 
   func updateFeed(_ item: [FeedElement]) {
@@ -168,6 +188,17 @@ private extension HomeViewController {
     feedCount = snapshot.numberOfItems
   }
 
+  func configureRefreshControl() {
+    // Add the refresh control to your UIScrollView object.
+    feedListCollectionView.refreshControl = UIRefreshControl()
+    feedListCollectionView.refreshControl?
+      .publisher(.valueChanged)
+      .sink { [weak self] _ in
+        self?.refreshFeedPublisher.send()
+      }
+      .store(in: &subscriptions)
+  }
+
   enum Constants {
     static let navigationTitleText = "홈"
   }
@@ -175,28 +206,12 @@ private extension HomeViewController {
   enum Metrics {}
 }
 
-private extension HomeViewController {
-  static func makeFeedCollectionViewLayout() -> UICollectionViewCompositionalLayout {
-    let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
-    let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    item.contentInsets = .init(top: 9, leading: 0, bottom: 9, trailing: 0)
-
-    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(455))
-    let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
-
-    let section = NSCollectionLayoutSection(group: group)
-
-    return UICollectionViewCompositionalLayout(section: section)
-  }
-}
-
 // MARK: UICollectionViewDelegate
 
 extension HomeViewController: UICollectionViewDelegate {
   func collectionView(_: UICollectionView, willDisplay _: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-    // 사용자가 아직 보지 않은 셀의 갯수
-    let toShowCellCount = (feedCount - 1) - indexPath.row
-    if toShowCellCount < 3 {
+    // 만약 셀이 모자르다면 요청을 보냄
+    if (feedCount - 1) - indexPath.row < 3 {
       fetchFeedPublisher.send()
     }
   }
